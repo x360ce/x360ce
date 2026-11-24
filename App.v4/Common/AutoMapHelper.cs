@@ -84,7 +84,7 @@ namespace x360ce.App
 			if (ud == null || ud.InputSource != InputSourceType.Plugin)
 				return null;
 			var manager = PluginManager.Current;
-			return GetPluginMapping(ud, manager == null ? null : manager.FindDeviceType(ud.ProductGuid));
+			return GetPluginMapping(ud, PluginDevices.FindType(ud, manager));
 		}
 
 		/// <summary>The mapping a kind of plugin device recommends (<see cref="PluginDeviceType.Mapping"/>), as an SDL row of the device, translated for it; null when it recommends none, or none of the device's controls.</summary>

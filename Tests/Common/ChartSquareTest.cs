@@ -45,6 +45,8 @@ namespace x360ce.Tests
 		{
 			var pad = ButtonIconTest.All(window).OfType<PadControl>().Single();
 			when += " " + pad.Font.Name;
+			// The Wheel tab is there only while a wheel is selected.
+			pad.UpdateWheelTabs(new Engine.Data.UserDevice { ProductName = "Logitech G29 Driving Force", CapType = (int)SharpDX.DirectInput.DeviceType.Driving });
 			var tabs = (TabControl)Find(pad, nameof(PadControl.PadTabControl));
 			var first = window.ClientSize;
 			var sizes = new[]

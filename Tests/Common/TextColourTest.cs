@@ -712,6 +712,10 @@ namespace x360ce.Tests
 		{
 			var counted = 0;
 			foreach (DataGridViewRow row in grid.Rows)
+			{
+				// A row dimmed because its item is switched off or away has rules of its own, checked by the test of dimmed rows.
+				if (!ControlsHelper.IsItemAvailable(row.DataBoundItem))
+					continue;
 				foreach (DataGridViewCell cell in row.Cells)
 				{
 					if (!cell.Visible || cell.ColumnIndex < 0)
@@ -731,6 +735,7 @@ namespace x360ce.Tests
 					counted += Expect(faults, where, style.ForeColor, "the row", style.BackColor);
 					counted += Expect(faults, where + " selected", style.SelectionForeColor, "the selected row", style.SelectionBackColor);
 				}
+			}
 			return counted;
 		}
 

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Each telemetry format's official specifications.-->
+<Data Version="0">
+  <Items>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>e102c0ab-36a1-5713-b3ec-2299ead5fe81</TelemetryFormatSpecId>
+      <TelemetryFormatId>Forza</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url>https://support.forza.net/hc/en-us/articles/21742934024211</Url>
+      <Version>Forza Motorsport "Data Out" Documentation</Version>
+      <SpecDate>2023-10-18T00:00:00</SpecDate>
+      <Note>Sled and Dash, as Forza Motorsport 7, with TireWear and TrackOrdinal added to Dash.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>316d31d6-ae4c-5a22-8e48-bc84b1a08eed</TelemetryFormatSpecId>
+      <TelemetryFormatId>Forza</TelemetryFormatId>
+      <SpecOrder>2</SpecOrder>
+      <Url>https://support.forza.net/hc/en-us/articles/51744149102611</Url>
+      <Version>Forza Horizon 6 Data Out Documentation</Version>
+      <Note>One 324-byte packet.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>c54292fe-c830-5d82-8408-ad78bc0174c6</TelemetryFormatSpecId>
+      <TelemetryFormatId>EaF1</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url>https://forums.ea.com/blog/f1-games-game-info-hub-en/ea-sports%E2%84%A2-f1%C2%AE25-2026-season-pack-udp-specification/12187347</Url>
+      <Version>EA SPORTS F1 25: 2026 Season Pack UDP specification, version 11.0</Version>
+      <Note>Its attachments: Data Output from F1 25 v3.pdf, F1 25 Telemetry Output Structures.txt and the 2026 Season Pack structures.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>de108d7a-c0ca-51ad-b076-894b3549df63</TelemetryFormatSpecId>
+      <TelemetryFormatId>Codemasters</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url></Url>
+      <Version></Version>
+      <Note>Codemasters publishes no specification of this layout.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>c2b9ef1c-0246-53dd-9cea-9b9e6c50ed10</TelemetryFormatSpecId>
+      <TelemetryFormatId>OutSim</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url>https://www.lfs.net/programmer</Url>
+      <Version>LFS File Specifications and Data for Programmers</Version>
+      <Note>OutSim is described in InSim.txt, also in the game's docs folder.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>052adb7c-4cad-5996-ba33-0fbb5c78c084</TelemetryFormatSpecId>
+      <TelemetryFormatId>OutSim</TelemetryFormatId>
+      <SpecOrder>2</SpecOrder>
+      <Url>https://documentation.beamng.com/modding/protocols/</Url>
+      <Version>BeamNG.drive Protocols</Version>
+      <Note></Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>016a746a-5422-5231-8317-f93cd9356cad</TelemetryFormatSpecId>
+      <TelemetryFormatId>ProjectCarsV1</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url></Url>
+      <Version></Version>
+      <Note>Slightly Mad Studios published it on its own forum, which is no longer online.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>0afe1272-8b4d-5b81-8c67-2db934d92e47</TelemetryFormatSpecId>
+      <TelemetryFormatId>ProjectCarsV2</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url></Url>
+      <Version></Version>
+      <Note>Slightly Mad Studios published it on its own forum, which is no longer online.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>48eb2e44-003c-5582-bdaa-2b7336c26199</TelemetryFormatSpecId>
+      <TelemetryFormatId>AssettoCorsa</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url>https://www.assettocorsa.net/forum/index.php?threads/shared-memory-reference.3352/</Url>
+      <Version>Shared Memory Reference, Kunos Simulazioni official forum</Version>
+      <Note>The forum shows it in a browser only.</Note>
+    </TelemetryFormatSpec>
+    <TelemetryFormatSpec>
+      <TelemetryFormatSpecId>e74e41e1-7da3-5429-8d60-50ea06590f6a</TelemetryFormatSpecId>
+      <TelemetryFormatId>IRacing</TelemetryFormatId>
+      <SpecOrder>1</SpecOrder>
+      <Url>https://forums.iracing.com/discussion/62/iracing-sdk</Url>
+      <Version>iRacing SDK, iRacing members' forum</Version>
+      <Note>Sign in with an iRacing account to read it.</Note>
+    </TelemetryFormatSpec>
+  </Items>
+</Data>

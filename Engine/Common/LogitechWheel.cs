@@ -68,6 +68,44 @@ namespace x360ce.Engine
 			}
 		}
 
+		/// <summary>Whether the wheel has the 5-pair RGB/RPM shift LED strip addressed by the Logitech HID 0xF8 0x12 report.</summary>
+		public static bool SupportsLeds(int vendorId, int productId)
+		{
+			if (vendorId != VendorId)
+				return false;
+			switch (productId)
+			{
+				case 0xC29B: // G27
+				case 0xC24F: // G29
+				case 0xC266: // G923 (PlayStation)
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		/// <summary>The report that sets the 5-pair RPM/RGB LED strip (bits 0..4 from outer green to inner red), with the report identifier in front.</summary>
+		/// <param name="mask">Bitmask 0x00 (all off) to 0x1F (all 5 pairs lit).</param>
+		/// <param name="reportLength">The output report length the interface declares, report identifier included.</param>
+		public static byte[] LedReport(byte mask, int reportLength)
+		{
+			return Report(LedCommand(mask), reportLength);
+		}
+
+		/// <summary>Converts a normalized engine RPM fraction (0..1) into the 5-bit symmetric shift-light bitmask (flashes at redline &gt;= 97 %).</summary>
+		public static byte RpmToLedMask(float rpmFraction, long nowMs)
+		{
+			if (float.IsNaN(rpmFraction) || float.IsInfinity(rpmFraction) || rpmFraction < 0.50f)
+				return 0x00;
+			if (rpmFraction < 0.62f) return 0x01;
+			if (rpmFraction < 0.74f) return 0x03;
+			if (rpmFraction < 0.84f) return 0x07;
+			if (rpmFraction < 0.92f) return 0x0F;
+			if (rpmFraction < 0.97f) return 0x1F;
+			// Redline shift flash (~6 Hz).
+			return ((nowMs / 85) & 1) == 0 ? (byte)0x1F : (byte)0x00;
+		}
+
 		/// <summary>The report that sets the range, with the report identifier Windows wants in front.</summary>
 		/// <param name="degrees">Lock to lock. Held within what the wheel takes.</param>
 		/// <param name="reportLength">The output report length the interface declares, report identifier included.</param>
@@ -94,6 +132,11 @@ namespace x360ce.Engine
 			return new byte[] { on ? (byte)0x14 : (byte)0xF5 };
 		}
 
+		static byte[] LedCommand(byte mask)
+		{
+			return new byte[] { 0xF8, 0x12, (byte)(mask & 0x1F) };
+		}
+
 		static byte[] Report(byte[] command, int reportLength)
 		{
 			var report = new byte[Math.Max(reportLength, 8)];
@@ -113,6 +156,13 @@ namespace x360ce.Engine
 		public static bool SetCentering(string hidDevicePath, bool on)
 		{
 			return Send(hidDevicePath, CenteringCommand(on));
+		}
+
+		/// <summary>Sets the wheel's 5-pair RGB/RPM LED strip on its HID interface (bits 0..4).</summary>
+		/// <returns>False when the interface could not be opened or would not take the report.</returns>
+		public static bool SetLeds(string hidDevicePath, byte mask)
+		{
+			return Send(hidDevicePath, LedCommand(mask));
 		}
 
 		static bool Send(string hidDevicePath, byte[] command)

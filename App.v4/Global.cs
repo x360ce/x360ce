@@ -54,7 +54,8 @@ namespace x360ce.App
 				System.IO.Path.Combine(EngineHelper.AppDataPath, Plugins.PluginManager.FolderName),
 				CertificateHelper.GetSigner(System.Windows.Forms.Application.ExecutablePath),
 				() => SettingsManager.Options.AllowThirdPartyPlugins,
-				typeof(Global).Assembly);
+				typeof(Global).Assembly,
+				name => SettingsManager.Options.IsPluginEnabled(name));
 			Plugins.PluginManager.Current = manager;
 			// A plugin found, loaded or switched off changes which devices are online, which the next device refresh says,
 			// and what the AI skill's plugin documents say. A plugin device's MCP server opens once its kind is loaded.

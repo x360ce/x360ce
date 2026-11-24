@@ -1165,6 +1165,55 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("critical")]
+		[Description("Selecting another Bluetooth machine disconnects immediately and unchecks Enabled; toggling Enabled keeps the Fitness Machine tab in place without disappearing")]
+		public void Switching_machine_disconnects_and_unchecks_and_toggling_keeps_tab_in_place()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var session = NewSession();
+				var device = NewDevice(session);
+				var guid = Guid.NewGuid();
+				var setting = new UserSetting { InstanceGuid = guid, ProductGuid = Product, IsEnabled = true };
+				x360ce.App.SettingsManager.UserSettings.Items.Add(setting);
+				try
+				{
+					// Start connected to EJT.
+					Call(device, "Choose", Address, "EJT");
+					Read(device);
+					Assert.AreEqual("A1B2C3D4E5F6 EJT", Wanted(session));
+
+					using (var form = new Form { Width = 1100, Height = 700 })
+					using (var pad = new PadControl(MapTo.Controller1) { Dock = DockStyle.Fill })
+					{
+						form.Controls.Add(pad);
+						form.Show();
+						pad.ShowPluginTab(guid, Type(), device);
+						var tabBefore = pad.PadTabControl.TabPages.Cast<TabPage>().Single(p => p.Text == "Fitness Machine");
+
+						// Selecting a different Bluetooth machine immediately drops the link AND unchecks Enabled.
+						setting.IsEnabled = true;
+						Call(device, "Choose", RowerAddress, "Rower");
+						Assert.IsNull(Wanted(session), "Selecting another Bluetooth machine must immediately disconnect the current one.");
+						Assert.IsFalse(setting.IsEnabled, "Selecting another Bluetooth machine must uncheck Enabled so x360ce never auto-connects to another person's machine.");
+
+						// Toggling Enabled off (device -> null) and back on (null -> device) must keep the exact same TabPage instance without flicker.
+						pad.ShowPluginTab(guid, Type(), null);
+						var tabWhileOff = pad.PadTabControl.TabPages.Cast<TabPage>().Single(p => p.Text == "Fitness Machine");
+						Assert.AreSame(tabBefore, tabWhileOff, "Unchecking Fitness Machine must not remove and re-add its TabPage.");
+
+						pad.ShowPluginTab(guid, Type(), device);
+						var tabWhileOn = pad.PadTabControl.TabPages.Cast<TabPage>().Single(p => p.Text == "Fitness Machine");
+						Assert.AreSame(tabBefore, tabWhileOn, "Checking Fitness Machine must not remove and re-add its TabPage.");
+					}
+				}
+				finally
+				{
+					x360ce.App.SettingsManager.UserSettings.Items.Remove(setting);
+				}
+			});
+		}
+
 		#endregion
 
 		/// <summary>A plugin device that takes force, and counts what x360ce asks of it, making nothing while it does.</summary>

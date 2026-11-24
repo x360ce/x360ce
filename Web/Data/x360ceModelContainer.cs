@@ -114,5 +114,23 @@ namespace x360ce.Engine.Data
 		/// <summary>Vendor</summary>
 		public virtual DbSet<Vendor> Vendors { get; set; }
 
+		/// <summary>Telemetry Format</summary>
+		public virtual DbSet<TelemetryFormat> TelemetryFormats { get; set; }
+
+		/// <summary>Telemetry Format Spec</summary>
+		public virtual DbSet<TelemetryFormatSpec> TelemetryFormatSpecs { get; set; }
+
+		/// <summary>Telemetry Game</summary>
+		public virtual DbSet<TelemetryGame> TelemetryGames { get; set; }
+
+		/// <summary>Telemetry Game File</summary>
+		public virtual DbSet<TelemetryGameFile> TelemetryGameFiles { get; set; }
+
+		/// <summary>Telemetry Game Mod</summary>
+		public virtual DbSet<TelemetryGameMod> TelemetryGameMods { get; set; }
+
+		/// <summary>Telemetry Game Step</summary>
+		public virtual DbSet<TelemetryGameStep> TelemetryGameSteps { get; set; }
+
 	}
 }

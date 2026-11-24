@@ -245,6 +245,10 @@
             this.ForceSpringSpeedLabel = new System.Windows.Forms.Label();
             this.ForceSpringSpeedTrackBar = new System.Windows.Forms.TrackBar();
             this.ForceSpringSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.WheelSoftLockCheckBox = new System.Windows.Forms.CheckBox();
+            this.WheelRgbStripCheckBox = new System.Windows.Forms.CheckBox();
+            this.WheelRgbStripBar = new x360ce.App.Controls.WheelLedStripControl();
+            this.WheelRgbTestButton = new System.Windows.Forms.Button();
             this.WheelDescriptionLabel = new System.Windows.Forms.Label();
             this.ForceDefaultsButton = new System.Windows.Forms.Button();
             this.LeftMotorGroupBox = new System.Windows.Forms.GroupBox();
@@ -2742,12 +2746,18 @@
             this.WheelSettingsTableLayoutPanel.Controls.Add(this.ForceSpringSpeedTextBox, 2, 8);
             this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRangeLabel, 0, 9);
             this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRangeComboBox, 1, 9);
-            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelDescriptionLabel, 0, 10);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelSoftLockCheckBox, 0, 10);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRgbStripCheckBox, 0, 11);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRgbStripBar, 1, 11);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRgbTestButton, 3, 11);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelDescriptionLabel, 0, 12);
             this.WheelSettingsTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.WheelSettingsTableLayoutPanel.Location = new System.Drawing.Point(421, 3);
             this.WheelSettingsTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
             this.WheelSettingsTableLayoutPanel.Name = "WheelSettingsTableLayoutPanel";
-            this.WheelSettingsTableLayoutPanel.RowCount = 12;
+            this.WheelSettingsTableLayoutPanel.RowCount = 14;
+            this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -3098,6 +3108,47 @@
             this.WheelRangeComboBox.Size = new System.Drawing.Size(297, 19);
             this.WheelRangeComboBox.TabIndex = 26;
             this.WheelRangeComboBox.SelectedIndexChanged += new System.EventHandler(this.WheelRangeComboBox_SelectedIndexChanged);
+            //
+            // WheelSoftLockCheckBox
+            //
+            this.WheelSoftLockCheckBox.AutoSize = true;
+            this.WheelSettingsTableLayoutPanel.SetColumnSpan(this.WheelSoftLockCheckBox, 4);
+            this.WheelSoftLockCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelSoftLockCheckBox.Name = "WheelSoftLockCheckBox";
+            this.WheelSoftLockCheckBox.TabIndex = 27;
+            this.WheelSoftLockCheckBox.Text = "Soft lock";
+            this.WheelSoftLockCheckBox.UseVisualStyleBackColor = true;
+            //
+            // WheelRgbStripCheckBox
+            //
+            this.WheelRgbStripCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.WheelRgbStripCheckBox.AutoSize = true;
+            this.WheelRgbStripCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelRgbStripCheckBox.Name = "WheelRgbStripCheckBox";
+            this.WheelRgbStripCheckBox.TabIndex = 28;
+            this.WheelRgbStripCheckBox.Text = "RGB strip";
+            this.WheelRgbStripCheckBox.UseVisualStyleBackColor = true;
+            //
+            // WheelRgbStripBar
+            //
+            this.WheelSettingsTableLayoutPanel.SetColumnSpan(this.WheelRgbStripBar, 2);
+            this.WheelRgbStripBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.WheelRgbStripBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelRgbStripBar.Name = "WheelRgbStripBar";
+            this.WheelRgbStripBar.Size = new System.Drawing.Size(364, 20);
+            this.WheelRgbStripBar.TabIndex = 29;
+            //
+            // WheelRgbTestButton
+            //
+            this.WheelRgbTestButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.WheelRgbTestButton.AutoSize = true;
+            this.WheelRgbTestButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.WheelRgbTestButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelRgbTestButton.Name = "WheelRgbTestButton";
+            this.WheelRgbTestButton.TabIndex = 30;
+            this.WheelRgbTestButton.Text = "Test";
+            this.WheelRgbTestButton.UseVisualStyleBackColor = true;
+            this.WheelRgbTestButton.Click += new System.EventHandler(this.WheelRgbTestButton_Click);
             //
             // WheelDescriptionLabel
             //
@@ -4218,6 +4269,10 @@
 		internal System.Windows.Forms.TextBox ForceSpringSpeedTextBox;
 		public System.Windows.Forms.Button ForceSpringAutoButton;
 		System.Windows.Forms.Label WheelRangeLabel;
+		public System.Windows.Forms.CheckBox WheelSoftLockCheckBox;
+		public System.Windows.Forms.CheckBox WheelRgbStripCheckBox;
+		public x360ce.App.Controls.WheelLedStripControl WheelRgbStripBar;
+		public System.Windows.Forms.Button WheelRgbTestButton;
 		internal System.Windows.Forms.Label WheelDescriptionLabel;
 		public System.Windows.Forms.ComboBox WheelRangeComboBox;
 		System.Windows.Forms.Timer SpringAutoTimer;

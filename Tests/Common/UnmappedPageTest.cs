@@ -43,6 +43,8 @@ namespace x360ce.Tests
 							form.Controls.Add(pad);
 							FormsTheme.Apply(form);
 							form.Show();
+							// The Wheel tab is there only while a wheel is selected; it stays as the device goes.
+							pad.UpdateWheelTabs(new UserDevice { ProductName = "Logitech G29 Driving Force", CapType = (int)SharpDX.DirectInput.DeviceType.Driving });
 							var mapped = Look(pad, new UserDevice());
 							var unmapped = Look(pad, null);
 							foreach (var pair in mapped)

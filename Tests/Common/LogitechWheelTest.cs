@@ -85,5 +85,28 @@ namespace x360ce.Tests
 			Assert.IsFalse(LogitechWheel.SupportsCentering(0x046D, 0xC26E), "The G923 for Xbox speaks another protocol.");
 			Assert.IsFalse(LogitechWheel.SupportsCentering(0x045E, 0x028E), "An Xbox controller.");
 		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The RGB/RPM LED strip report is 0xf8 0x12 with a 5-bit mask, matching hid-lg4ff, and RPM maps progressively with a redline flash")]
+		public void Led_reports_and_rpm_progression_match_logitech_shift_strip()
+		{
+			Assert.IsTrue(LogitechWheel.SupportsLeds(0x046D, 0xC29B), "G27");
+			Assert.IsTrue(LogitechWheel.SupportsLeds(0x046D, 0xC24F), "G29");
+			Assert.IsTrue(LogitechWheel.SupportsLeds(0x046D, 0xC266), "G923 PlayStation");
+			Assert.IsFalse(LogitechWheel.SupportsLeds(0x045E, 0x028E), "Xbox controller");
+
+			CollectionAssert.AreEqual(new byte[] { 0x00, 0xF8, 0x12, 0x1F, 0x00, 0x00, 0x00, 0x00 }, LogitechWheel.LedReport(0xFF, 8));
+			CollectionAssert.AreEqual(new byte[] { 0x00, 0xF8, 0x12, 0x07, 0x00, 0x00, 0x00, 0x00 }, LogitechWheel.LedReport(0x07, 8));
+
+			Assert.AreEqual((byte)0x00, LogitechWheel.RpmToLedMask(0.40f, 0));
+			Assert.AreEqual((byte)0x01, LogitechWheel.RpmToLedMask(0.55f, 0));
+			Assert.AreEqual((byte)0x03, LogitechWheel.RpmToLedMask(0.68f, 0));
+			Assert.AreEqual((byte)0x07, LogitechWheel.RpmToLedMask(0.78f, 0));
+			Assert.AreEqual((byte)0x0F, LogitechWheel.RpmToLedMask(0.88f, 0));
+			Assert.AreEqual((byte)0x1F, LogitechWheel.RpmToLedMask(0.95f, 0));
+			// Redline >= 97 % alternates between all-on and all-off.
+			Assert.AreEqual((byte)0x1F, LogitechWheel.RpmToLedMask(0.99f, 0));
+			Assert.AreEqual((byte)0x00, LogitechWheel.RpmToLedMask(0.99f, 85));
+		}
 	}
 }

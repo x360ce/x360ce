@@ -9,8 +9,10 @@ A plugin is one .NET Framework DLL, built from **one `.cs` file**, which can tak
 ## Where plugins come from
 
 - **Inside x360ce.** The Test Controller, a pretend controller that moves by itself, the Remote MCP Controller, whose
-  controls a program sets over MCP, and the Fitness Machine, which reads an exercise bike, treadmill, rower or cross
-  trainer over Bluetooth, chosen on its tab's Connection page, are part of x360ce.exe.
+  controls a program sets over MCP, the Fitness Machine, which reads an exercise bike, treadmill, rower or cross
+  trainer over Bluetooth, chosen on its tab's Connection page, Wheel Telemetry, which feeds live vehicle telemetry
+  from racing games into the wheel centering spring, and Wheel Telemetry Games, which helps games send their
+  telemetry to Wheel Telemetry from a tab on the Games tab, are part of x360ce.exe.
 - **The plugins folder:** `Plugins` in the x360ce data folder, usually `C:\ProgramData\X360CE\Plugins`. Each plugin
   has a folder of its own there, holding the DLL named like the folder and any DLLs it needs:
   `Plugins\MyDevice\MyDevice.dll`. A plugin put there loads at once; x360ce watches the folder. **Open Folder** on the
@@ -18,14 +20,18 @@ A plugin is one .NET Framework DLL, built from **one `.cs` file**, which can tak
 
 ## Which plugins load
 
-- A plugin inside x360ce always loads.
+- Built-in plugins embedded inside x360ce are enabled and load by default. Wheel Telemetry Games is off until its
+  **Enabled** box is ticked: see [Wheel Telemetry Games](#wheel-telemetry-games).
 - A plugin signed with the same certificate as x360ce.exe loads by itself.
 - Any other plugin, signed by someone else or not signed, waits until **Allow third-party plugins** is ticked on the
   **Plugins** page. A plugin runs inside x360ce with all its rights, so allow plugins only from people you trust.
   Ticking the box loads the waiting plugins at once; unticking it takes effect when x360ce starts again.
+- Each row on the **Plugins** page has an **Enabled** checkbox. Unticking a plugin immediately disables it (stopping its
+  devices, telemetry listeners, MCP server and plugin UI such as the **Wheel Telemetry** controller tab) and keeps it
+  unloaded on future starts until ticked again.
 
-The **Plugins** page lists every plugin found: the devices it adds, whether it loaded, who signed it, and why it did not
-load. The **Issues** tab says so too. A plugin that throws an error is switched off until x360ce starts again.
+The **Plugins** page lists every plugin found: whether it is enabled, the devices or telemetry providers it adds, whether it loaded, who signed it, and why it did not
+load. The **Issues** tab says so too for plugins that failed or wait for permission (intentionally disabled plugins are not reported as issues). A plugin that throws an error is switched off until x360ce starts again.
 
 ## Use a plugin device
 
@@ -34,6 +40,42 @@ load. The **Issues** tab says so too. A plugin that throws an error is switched 
 2. Select it and press **Add Selected Device**. x360ce adds the device and maps it to the controller.
 3. For another device of a kind already added, press **Add Plugin Device** on the **Devices** tab, then map it the
    same way.
+
+## Wheel Telemetry Games
+
+Helps a game send its telemetry to x360ce's Wheel Telemetry plugin, so your wheel feels the road. Its games: GTA V (Legacy and Enhanced), Forza Horizon 6 and F1 25. Each game's own steps are on its page; these are the steps for every game.
+
+**Read the warnings first.** A game's page starts with them. GTA V needs mods: play story mode only, switch BattlEye off in the game's launcher, and remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.
+
+1. On the Options tab, open the Plugins page.
+2. Tick Enabled on the WheelTelemetry.Games row. It is off until you tick it.
+3. On the Games tab, press Add... and choose the game's program file, or press Scan.
+4. Select the game in the list.
+5. Under the list, open the Wheel Telemetry Games tab. Its first page is named after the game.
+6. Read the warnings at the top of the page.
+7. Do the page's steps in order. For a mod, press Official page, download it, press Open game folder, and unzip it there. Its line says Found when it is there. x360ce does not include or download mods.
+8. Where the page has Install, press it. It writes only the files it lists into the game's folder. Remove deletes them.
+9. Leave Port at 37150, where x360ce's Wheel Telemetry plugin listens. A game set in its own menus is given the port in its steps.
+10. Open the controller tab your wheel is mapped to, such as Controller 1. Its device list shows the wheel, ticked.
+11. On its Wheel tab, tick Centering spring. x360ce uses a game's telemetry only while the centering spring is on, for a wheel with force feedback.
+12. On its Game Telemetry tab, on the Telemetry page, keep Enable live game telemetry ticked and Listen port at 37150, the port the game sends to. Both are so at first.
+13. Start the game and drive.
+14. On the Game Telemetry tab, Live Telemetry shows the format, the speed and the packets a second, such as Forza Data Out - 72 km/h (60 Hz). It says Waiting for game telemetry... until packets arrive.
+
+**When nothing arrives**
+
+- The game and Listen port must name the same port. The line under the status says whether another program holds it.
+- The game sends to 127.0.0.1, this computer, so no firewall rule is needed.
+- Forza Horizon 6 from the Microsoft Store or the Xbox app needs the one command its page shows.
+- F1 25 sends what x360ce reads with UDP Format 2025.
+- GTA V: after the game is updated, Script Hook V works again only once its own update for that game version is out. Download it again. Script Hook V .NET writes ScriptHookVDotNet.log in the game's folder; an error about x360ce.Telemetry.3.cs there says why the script did not start.
+
+**To remove everything**
+
+1. Press Remove on the game's page.
+2. Delete from the game's folder the files you unzipped there, such as ScriptHookV.dll, dinput8.dll or xinput1_4.dll, and Script Hook V .NET's files.
+3. In a game set in its own menus, switch its telemetry off there.
+4. On the Options tab's Plugins page, untick Enabled on the WheelTelemetry.Games row.
 
 ## Write a plugin
 
@@ -109,6 +151,7 @@ A plugin implements `x360ce.Plugins.IPluginDevice`, in `x360ce.Plugins.dll`:
 | `void Read(PluginState state)` | Writes where the controls are now. |
 | `void SetForce(int largeMotor, int smallMotor)` | Optional, from `IPluginForceFeedback`: takes the game's force. |
 | `string Mapping` | Optional, from `IPluginMapping`: how the device is mapped, as a row of SDL's controller database. |
+| `bool TryReadTelemetry(ref WheelTelemetry telemetry)` | Optional, from `IPluginWheelTelemetry`: feeds live vehicle speed, slip angle, grip, curb impulse and damping into the wheel centering spring. |
 
 A device that also implements `x360ce.Plugins.IPluginForceFeedback` feels the game. x360ce calls its `SetForce` on the
 input thread just before `Read`, whenever the force changes: each motor 0 to 65535, as the game asks for it, before the
@@ -160,6 +203,9 @@ Rules:
 - **Errors switch it off.** An exception from any member switches that kind of device off until x360ce starts again;
   the Plugins page and the Issues tab say why. A control of its own that cannot be made says why on its tab instead,
   and the device keeps working.
+- **Off until ticked, when it should be.** `[assembly: x360ce.Plugins.PluginOffByDefault]` in any file of the plugin
+  keeps it off until the person ticks **Enabled** on the **Plugins** page: x360ce offers none of its devices and makes
+  none of its classes until then. Wheel Telemetry Games, which can write into a game's folder, is off by default.
 - **.NET Framework 4.6.2, C# 7.3.** The build settings in `Directory.Build.props` set both. A plugin can use anything in
   .NET Framework, and other DLLs it brings in its own folder; x360ce looks for a plugin's DLLs only there, so the DLLs
   of one plugin never stand in for another's.
@@ -168,6 +214,31 @@ Rules:
   plugin can use Bluetooth, sensors and Windows' other WinRT APIs. Such a plugin needs Windows 10 or later. It awaits
   a WinRT operation through a `TaskCompletionSource`, as the Fitness Machine does, because the library that awaits
   one directly needs the Windows SDK.
+
+### A plugin for a game
+
+A plugin can add a tab for a game to the **Games** tab instead of a device: a public class that implements
+`x360ce.Plugins.IPluginGame`, and its page, a public Windows Forms control whose constructor takes the class.
+
+| Member | What x360ce does with it |
+|---|---|
+| `string Name` | Names the tab, after x360ce's own **x360ce** page of the game. |
+| `string[] FileNames` | The program files of the games it is for, such as `GTA5.exe`. Read each time a game is selected; the tab shows only for these. |
+| `IPluginTelemetryData TelemetryData` | Set by x360ce before anything else: its telemetry formats and games, read only. |
+| `string GamePath` | Set by x360ce before it makes the page: the selected game's file. |
+
+The tab holds the page, named by its `Text`, then **Help**, the class's `[Description]`. Another game selected, the
+plugin unticked or x360ce closing disposes both. The tab is as tall as x360ce's own page of the game: make a longer page
+scroll itself, AutoScroll with its table docked to the top.
+
+- **A plugin that helps a program send telemetry to the Wheel Telemetry plugin is named WheelTelemetry.{Name}.**
+  Wheel Telemetry Games is `WheelTelemetry.Games`.
+- **A new game is a row of data, not code.** x360ce keeps its telemetry games in its settings, `TelemetryGames.xml`
+  and the files beside it, made from the `[x360ce]` tables of its database: a game's program file, the format it
+  sends, its warnings and steps, the mods it needs with their official pages, and the files a plugin installs. Wheel
+  Telemetry Games makes every game's page from those rows, and `TelemetryData` gives them to any plugin.
+- **The formats and their official specifications** are x360ce's `TelemetryFormats.xml`, the formats the Wheel
+  Telemetry plugin reads, by the ids it gives them, with a link to each publisher's specification where there is one.
 
 ### Settings, an MCP server, and a control of its own
 

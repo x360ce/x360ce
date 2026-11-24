@@ -458,6 +458,29 @@ namespace x360ce.Engine.Data
 		}
 		volatile int _ForceSpringSpeedOverride = -1;
 
+		/// <summary>Short name of the live telemetry source currently driving this wheel's spring, or null while idle. Not stored.</summary>
+		[XmlIgnore, NotMapped]
+		public string WheelTelemetrySource { get { return _WheelTelemetrySource; } set { _WheelTelemetrySource = value; } }
+		volatile string _WheelTelemetrySource;
+
+		/// <summary>Current 5-bit RGB/RPM shift LED bitmask (0x00..0x1F) for this wheel. Not stored.</summary>
+		[XmlIgnore, NotMapped]
+		public byte WheelLedMask { get { return (byte)_WheelLedMask; } set { _WheelLedMask = value; } }
+		volatile int _WheelLedMask;
+
+		/// <summary>Last 5-bit LED bitmask sent to this wheel's HID interface, or -1 before any was sent. Engine thread only.</summary>
+		[XmlIgnore, NotMapped]
+		public int LastSentWheelLedMask = -1;
+
+		/// <summary>Optional manual test sweep bitmask (0..31), or -1 for normal live telemetry LED drive. Not stored.</summary>
+		[XmlIgnore, NotMapped]
+		public int WheelLedTestMask { get { return _WheelLedTestMask; } set { _WheelLedTestMask = value; } }
+		volatile int _WheelLedTestMask = -1;
+
+		/// <summary>Per-device smoothed steering velocity state for gamepad steering-filter lead compensation. Engine thread only.</summary>
+		[XmlIgnore, NotMapped]
+		public SteeringLeadState SteeringLead;
+
 		[XmlIgnore]
 		public bool? IsExclusiveMode;
 

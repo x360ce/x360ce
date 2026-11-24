@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.31.20.0, built 2026-11-22.
+Version 4.31.29.0, built 2026-11-24.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -78,11 +78,11 @@ not shown in this state of the program.
 [Label]     │   │   ├── Input source                                                    # The device the chips below belong to, or that none is selected.
 [Section]   │   │   ├── Buttons (hidden)                                                # One chip per button, lit while it is held. Click or drag a chip into a mapping box.
 [Group]     │   │   │   └── Button chips -> InputChipGroup (hidden)                     # The device's buttons, numbered as the mapping list numbers them.
-[Section]   │   │   ├── Axes (hidden)                                                   # One chip per axis with its reading, lit while it moves and for half a second after.
+[Section]   │   │   ├── Axes (hidden)                                                   # One chip per axis with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.
 [Group]     │   │   │   └── Axis chips -> InputChipGroup (hidden)                       # The device's axes, numbered by the slot each answers to, as the mapping list numbers them.
-[Section]   │   │   ├── Sliders (hidden)                                                # One chip per slider with its reading, lit while it moves and for half a second after.
+[Section]   │   │   ├── Sliders (hidden)                                                # One chip per slider with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.
 [Group]     │   │   │   └── Slider chips -> InputChipGroup (hidden)                     # The device's sliders, numbered as the mapping list numbers them.
-[Section]   │   │   └── POVs (hidden)                                                   # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
+[Section]   │   │   └── POVs (hidden)                                                   # One chip per POV with its reading in degrees, then its four directions, lit while pressed. Click or drag a chip into a mapping box.
 [Group]     │   │       └── POV chips -> InputChipGroup (hidden)                        # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
 [Control]   │   ├── MouseDemoUserControl                                                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
@@ -150,7 +150,7 @@ not shown in this state of the program.
 [CheckBox]  │   │   │   │   ├── Left Thumb Down formula -> MapExpressionToggle          # Writes the Left Thumb Down mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Left Thumb Down                                         # Button Id. Disable = 0.
 [Label]     │   │   │   │   ├── Left Thumb Down value                                   # The stick's position the game is being given while the stick points this way, otherwise 0.
-[Group]     │   │   │   │   ├── Controller picture -> XboxImageUserControl              # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
+[Group]     │   │   │   │   ├── Controller picture -> XboxImageUserControl              # Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.
 [CheckBox]  │   │   │   │   ├── D-Pad Up formula -> MapExpressionToggle                 # Writes the D-Pad Up mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── D-Pad Up                                                # D-Pad up button.
 [Label]     │   │   │   │   ├── D-Pad Up value                                          # 1 while the game is being given this button pressed, otherwise 0.
@@ -295,7 +295,13 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   ├── Speed 0..250                                            # The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.
 [Value]     │   │   │   │   ├── Speed                                                   # The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.
 [List]      │   │   │   │   ├── Wheel range                                             # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
-[Label]     │   │   │   │   └── Wheel message                                           # What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.
+[CheckBox]  │   │   │   │   ├── Soft lock                                               # Enforce the selected Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of.
+[Label]     │   │   │   │   ├── Wheel message                                           # What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.
+[CheckBox]  │   │   │   │   ├── RGB LED strip                                           # Drive supported steering wheels' RGB/RPM shift LED strip from live game telemetry RPM.
+[Group]     │   │   │   │   ├── RGB LED strip preview -> WheelLedStripControl           # Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.
+[Button]    │   │   │   │   └── Test RGB LEDs                                           # Sweeps the RGB/RPM LED strip on screen and on a connected supported Logitech wheel.
+[Tab]       │   │   │   ├── Game Telemetry                                              # Live game telemetry ports, force feel tuning, vehicle readings and protocol help.
+[Group]     │   │   │   │   └── Game Telemetry -> WheelTelemetryPage                    # Live game telemetry connection, UDP port forwarding, force feel tuning and live vehicle readings.
 [Tab]       │   │   │   ├── Mouse                                                       # How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.
 [Label]     │   │   │   │   ├── What the Mouse page sets                                # The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.
 [Group]     │   │   │   │   ├── (LeftMouseStickPanel) -> MouseStickUserControl          # How a mouse moves one stick.
@@ -333,8 +339,52 @@ not shown in this state of the program.
 [Label]     │   │   ├── Wheel angle                                                     # The wheel's angle now, in degrees from the centre; negative is to the left.
 [Label]     │   │   ├── Spring force                                                    # The spring's force at that angle, in percent of the wheel's force, and which way it pushes.
 [Picture]   │   │   └── Centering chart                                                 # The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel's angle and force now.
+[Control]   │   ├── WheelLedStripControl                                                # Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.
+[Control]   │   ├── WheelTelemetryPage                                                  # Live game telemetry connection, UDP port forwarding, force feel tuning and live vehicle readings.
+[Tabs]      │   │   └── Game Telemetry sections                                         # Switches between live telemetry settings and protocol help.
+[Tab]       │   │       ├── Telemetry                                                   # Telemetry ports, force feel tuning, live vehicle readings and activity log.
+[Section]   │   │       │   ├── Connection and Ports                                    # Telemetry enable switch, dedicated UDP port, optional standard game ports and UDP IP/port forwarding.
+[CheckBox]  │   │       │   │   ├── Enable live game telemetry                          # Reads live vehicle telemetry from Shared Memory (Assetto Corsa, iRacing) and localhost UDP to drive wheels and telemetry-enabled devices.
+[CheckBox]  │   │       │   │   ├── Listen on standard game ports                       # Also binds standard game UDP ports (5300, 20777, 4123, 5606). Off by default so SimHub, CrewChief and wheel dashboards keep their ports. Occupied ports are always skipped automatically.
+[Number]    │   │       │   │   ├── Listen UDP port 1024..65535                         # Dedicated conflict-free loopback UDP port x360ce listens on (default 37150). Point games or SimHub forwarding here.
+[Button]    │   │       │   │   ├── Reset telemetry defaults                            # Restores telemetry ports and force tuning sliders to their default values.
+[CheckBox]  │   │       │   │   ├── Enable forward telemetry                            # Relays received UDP telemetry datagrams to Forward IP and Port (for example, SimHub on 127.0.0.1 or a dashboard on another PC/tablet).
+[Text]      │   │       │   │   ├── Forward IP address                                  # Destination IP address to relay received UDP telemetry to (127.0.0.1 for local apps like SimHub, or a LAN PC/tablet IP).
+[Number]    │   │       │   │   └── Forward UDP port 0..65535                           # Destination UDP port to relay received telemetry packets to (0 = forwarding off).
+[Section]   │   │       │   ├── Force Feel Tuning                                       # Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer and steering lead.
+[Slider]    │   │       │   │   ├── Aligning torque 0..200                              # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
+[Value]     │   │       │   │   ├── Aligning torque value                               # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
+[Slider]    │   │       │   │   ├── Understeer 0..100                                   # Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.
+[Value]     │   │       │   │   ├── Understeer value                                    # Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.
+[Slider]    │   │       │   │   ├── Curb bumps 0..100                                   # Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %).
+[Value]     │   │       │   │   ├── Curb bumps value                                    # Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %).
+[Slider]    │   │       │   │   ├── Dynamic damping 0..200                              # Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %).
+[Value]     │   │       │   │   ├── Dynamic damping value                               # Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %).
+[Slider]    │   │       │   │   ├── Rumble understeer 0..60                             # Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).
+[Value]     │   │       │   │   ├── Rumble understeer value                             # Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).
+[Slider]    │   │       │   │   ├── Steering lead 0..80                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
+[Value]     │   │       │   │   └── Steering lead value                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
+[Section]   │   │       │   ├── Live telemetry                                          # Connection state and newest vehicle physics values received from the running game.
+[Label]     │   │       │   │   ├── Telemetry connection status                         # Current telemetry state and detected game or protocol.
+[Label]     │   │       │   │   ├── Listener ports                                      # Currently bound UDP ports and any skipped port conflicts.
+[Label]     │   │       │   │   ├── Speed                                               # Vehicle speed in km/h.
+[Progress]  │   │       │   │   ├── Speed meter                                         # Vehicle speed in km/h.
+[Label]     │   │       │   │   ├── Aligning angle                                      # Self-aligning / counter-steer equilibrium shift in degrees.
+[Progress]  │   │       │   │   ├── Aligning angle meter                                # Self-aligning / counter-steer equilibrium shift in degrees.
+[Label]     │   │       │   │   ├── Front grip                                          # Estimated front-tire grip (100 % full grip, lower = understeer).
+[Progress]  │   │       │   │   ├── Front grip meter                                    # Estimated front-tire grip (100 % full grip, lower = understeer).
+[Label]     │   │       │   │   ├── Lateral G                                           # Sideways cornering acceleration in G.
+[Progress]  │   │       │   │   ├── Lateral G meter                                     # Sideways cornering acceleration in G.
+[Label]     │   │       │   │   ├── Road pitch                                          # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
+[Progress]  │   │       │   │   ├── Road pitch meter                                    # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
+[Label]     │   │       │   │   ├── Engine RPM                                          # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
+[Progress]  │   │       │   │   └── Engine RPM meter                                    # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
+[Section]   │   │       │   └── Telemetry activity                                      # Recent telemetry port binds, protocol switches and setup hints, newest first.
+[Value]     │   │       │       └── Telemetry activity log                              # Recent telemetry port binds, protocol switches and setup hints, newest first.
+[Tab]       │   │       └── Help                                                        # Supported games, standard telemetry protocols, port coexistence and testing instructions.
+[Value]     │   │           └── Game Telemetry help                                     # Supported racing games, UDP ports, SimHub coexistence and Virtual Car testing guide.
 [Control]   │   ├── WidestTextButton                                                    # Clears the mapping, then asks you to press each control in turn.
-[Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
+[Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
 [Status]    │   │   ├── Last action                                                     # The most recent thing the program did.
@@ -465,7 +515,7 @@ not shown in this state of the program.
 [Tab]       │           │           ├── HID Guardian (obsolete)                         # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Section]   │           │           │   ├── HID Guardian                                # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Text]      │           │           │   │   ├── HID Guardian state                      # Whether HID Guardian is still installed.
-[Button]    │           │           │   │   ├── Install (hidden)                        # Installs HID Guardian. Use HID Hide instead.
+[Button]    │           │           │   │   ├── Install                                 # Installs HID Guardian. Use HID Hide instead.
 [Button]    │           │           │   │   ├── Uninstall                               # Removes HID Guardian. Needs Administrator.
 [Button]    │           │           │   │   └── Refresh                                 # Checks HID Guardian again.
 [Value]     │           │           │   └── HID Guardian notes                          # Explains why HID Guardian is no longer recommended.
@@ -544,7 +594,7 @@ not shown in this state of the program.
 [Label]     │           │                   ├── About plugins                           # Which plugins load by themselves, and why plugins from others need permission.
 [Value]     │           │                   ├── Plugins folder                          # The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.
 [Button]    │           │                   ├── Open Folder                             # Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\MyDevice.dll, loads at once.
-[Grid]      │           │                   ├── Plugins                                 # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
+[Grid]      │           │                   ├── Plugins                                 # Each plugin found: whether it is enabled (built-in plugins load by default and can be unticked to unload), the devices or providers it adds, whether it loaded, who signed it, and why it did not load or was switched off.
 [Section]   │           │                   └── AutoHotkey scripts                      # Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.
 [CheckBox]  │           │                       ├── Allow AutoHotkey scripts            # Let AutoHotkey scripts read devices and change what controllers read.
 [Label]     │           │                       ├── About AutoHotkey scripts            # How a script reaches x360ce, and where the library it includes is written.
@@ -564,52 +614,54 @@ not shown in this state of the program.
 [Button]    │           │       │       ├── Show: All                                   # Lists every game.
 [Button]    │           │       │       ├── Show: Enabled                               # Lists only the games that are switched on.
 [Button]    │           │       │       └── Show: Disabled                              # Lists only the games that are switched off.
-[Group]     │           │       └── (GameDetailsControl)                                # How the selected game is set up.
-[Section]   │           │           ├── Hook mask                                       # Which questions a game asks about controllers this program answers for it.
-[CheckBox]  │           │           │   ├── Hook COM                                    # Answers when the game asks Windows for a controller through COM.
-[CheckBox]  │           │           │   ├── Hook Direct Input                           # Answers when the game asks for a controller through Direct Input.
-[CheckBox]  │           │           │   ├── Hook product and vendor codes               # Reports the fake product and vendor codes instead of the real ones.
-[CheckBox]  │           │           │   ├── Hook name                                   # Reports a different controller name to the game.
-[CheckBox]  │           │           │   ├── Stop                                        # Stops answering once the game has started.
-[CheckBox]  │           │           │   ├── Hook Load Library                           # Answers when the game loads a library, so the replacement is loaded instead.
-[CheckBox]  │           │           │   ├── Hook SetupAPI                               # Answers when the game asks Windows to list devices.
-[CheckBox]  │           │           │   ├── Hook WinVerifyTrust                         # Answers when the game checks a file's signature.
-[CheckBox]  │           │           │   └── Disable                                     # Turns every answer off, leaving the game with the real controllers.
-[Section]   │           │           ├── XInput files                                    # Which XInput library files this program supplies to the game.
-[CheckBox]  │           │           │   ├── XInput 9.1, 32-bit                          # Supplies the 32-bit XInput 9.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 9.1, 64-bit                          # Supplies the 64-bit XInput 9.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.1, 32-bit                          # Supplies the 32-bit XInput 1.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.1, 64-bit                          # Supplies the 64-bit XInput 1.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.2, 32-bit                          # Supplies the 32-bit XInput 1.2 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.2, 64-bit                          # Supplies the 64-bit XInput 1.2 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.3, 32-bit                          # Supplies the 32-bit XInput 1.3 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.3, 64-bit                          # Supplies the 64-bit XInput 1.3 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.4, 32-bit                          # Supplies the 32-bit XInput 1.4 library to the game.
-[CheckBox]  │           │           │   └── XInput 1.4, 64-bit                          # Supplies the 64-bit XInput 1.4 library to the game.
-[Section]   │           │           ├── Auto map                                        # Not available yet, so greyed out: the program does not map devices to controllers by itself.
-[CheckBox]  │           │           │   ├── Auto map controller 1                       # Lets the program assign controller 1 to a device when this game starts.
-[CheckBox]  │           │           │   ├── Auto map controller 2                       # Lets the program assign controller 2 to a device when this game starts.
-[CheckBox]  │           │           │   ├── Auto map controller 3                       # Lets the program assign controller 3 to a device when this game starts.
-[CheckBox]  │           │           │   └── Auto map controller 4                       # Lets the program assign controller 4 to a device when this game starts.
-[Section]   │           │           ├── DInput file                                     # Whether the Direct Input library is supplied to the game as well.
-[CheckBox]  │           │           │   ├── DInput 8, 32-bit                            # Supplies the 32-bit Direct Input library to the game.
-[CheckBox]  │           │           │   └── DInput 8, 64-bit                            # Supplies the 64-bit Direct Input library to the game.
-[Section]   │           │           ├── Help                                            # Searches the web for other people's settings for this game.
-[Button]    │           │           │   ├── Search on Google...                         # Searches the web for this game.
-[Button]    │           │           │   ├── Search on NGemu...                          # Searches the NGemu forum for this game.
-[Button]    │           │           │   └── Open NGemu...                               # Opens the NGemu forum.
-[Section]   │           │           ├── Other options                                   # How the game is started, and what it is told about the controller.
-[Number]    │           │           │   ├── Fake vendor code 0..65535                   # Vendor code reported to a game that only accepts one make of controller.
-[Value]     │           │           │   ├── Fake vendor code                            # Vendor code reported to a game that only accepts one make of controller.
-[Number]    │           │           │   ├── Fake product code 0..65535                  # Product code reported to a game that only accepts one model of controller.
-[Value]     │           │           │   ├── Fake product code                           # Product code reported to a game that only accepts one model of controller.
-[Number]    │           │           │   ├── Timeout -1..65535                           # How long to wait for the game before giving up.
-[Text]      │           │           │   ├── XInput path                                 # Folder the XInput library is written into.
-[List]      │           │           │   ├── Architecture                                # Whether the game is a 32-bit or a 64-bit program.
-[Text]      │           │           │   ├── DInput file                                 # Name of the Direct Input library written for the game.
-[List]      │           │           │   └── Emulation                                   # Whether the controller is presented by the virtual driver or by replaced library files.
-[Section]   │           │           └── Action                                          # Undoes every change made to this game.
-[Button]    │           │               └── Reset to Default                            # Puts this game's settings back the way they started.
+[Tabs]      │           │       └── Game pages                                          # The selected game's pages: x360ce's own settings for it, then a page for each game plugin that is for it.
+[Tab]       │           │           └── x360ce                                          # How x360ce sets the selected game up: which libraries are replaced, and how.
+[Group]     │           │               └── (GameDetailsControl)                        # How the selected game is set up.
+[Section]   │           │                   ├── Hook mask                               # Which questions a game asks about controllers this program answers for it.
+[CheckBox]  │           │                   │   ├── Hook COM                            # Answers when the game asks Windows for a controller through COM.
+[CheckBox]  │           │                   │   ├── Hook Direct Input                   # Answers when the game asks for a controller through Direct Input.
+[CheckBox]  │           │                   │   ├── Hook product and vendor codes       # Reports the fake product and vendor codes instead of the real ones.
+[CheckBox]  │           │                   │   ├── Hook name                           # Reports a different controller name to the game.
+[CheckBox]  │           │                   │   ├── Stop                                # Stops answering once the game has started.
+[CheckBox]  │           │                   │   ├── Hook Load Library                   # Answers when the game loads a library, so the replacement is loaded instead.
+[CheckBox]  │           │                   │   ├── Hook SetupAPI                       # Answers when the game asks Windows to list devices.
+[CheckBox]  │           │                   │   ├── Hook WinVerifyTrust                 # Answers when the game checks a file's signature.
+[CheckBox]  │           │                   │   └── Disable                             # Turns every answer off, leaving the game with the real controllers.
+[Section]   │           │                   ├── XInput files                            # Which XInput library files this program supplies to the game.
+[CheckBox]  │           │                   │   ├── XInput 9.1, 32-bit                  # Supplies the 32-bit XInput 9.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 9.1, 64-bit                  # Supplies the 64-bit XInput 9.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.1, 32-bit                  # Supplies the 32-bit XInput 1.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.1, 64-bit                  # Supplies the 64-bit XInput 1.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.2, 32-bit                  # Supplies the 32-bit XInput 1.2 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.2, 64-bit                  # Supplies the 64-bit XInput 1.2 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.3, 32-bit                  # Supplies the 32-bit XInput 1.3 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.3, 64-bit                  # Supplies the 64-bit XInput 1.3 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.4, 32-bit                  # Supplies the 32-bit XInput 1.4 library to the game.
+[CheckBox]  │           │                   │   └── XInput 1.4, 64-bit                  # Supplies the 64-bit XInput 1.4 library to the game.
+[Section]   │           │                   ├── Auto map                                # Not available yet, so greyed out: the program does not map devices to controllers by itself.
+[CheckBox]  │           │                   │   ├── Auto map controller 1               # Lets the program assign controller 1 to a device when this game starts.
+[CheckBox]  │           │                   │   ├── Auto map controller 2               # Lets the program assign controller 2 to a device when this game starts.
+[CheckBox]  │           │                   │   ├── Auto map controller 3               # Lets the program assign controller 3 to a device when this game starts.
+[CheckBox]  │           │                   │   └── Auto map controller 4               # Lets the program assign controller 4 to a device when this game starts.
+[Section]   │           │                   ├── DInput file                             # Whether the Direct Input library is supplied to the game as well.
+[CheckBox]  │           │                   │   ├── DInput 8, 32-bit                    # Supplies the 32-bit Direct Input library to the game.
+[CheckBox]  │           │                   │   └── DInput 8, 64-bit                    # Supplies the 64-bit Direct Input library to the game.
+[Section]   │           │                   ├── Help                                    # Searches the web for other people's settings for this game.
+[Button]    │           │                   │   ├── Search on Google...                 # Searches the web for this game.
+[Button]    │           │                   │   ├── Search on NGemu...                  # Searches the NGemu forum for this game.
+[Button]    │           │                   │   └── Open NGemu...                       # Opens the NGemu forum.
+[Section]   │           │                   ├── Other options                           # How the game is started, and what it is told about the controller.
+[Number]    │           │                   │   ├── Fake vendor code 0..65535           # Vendor code reported to a game that only accepts one make of controller.
+[Value]     │           │                   │   ├── Fake vendor code                    # Vendor code reported to a game that only accepts one make of controller.
+[Number]    │           │                   │   ├── Fake product code 0..65535          # Product code reported to a game that only accepts one model of controller.
+[Value]     │           │                   │   ├── Fake product code                   # Product code reported to a game that only accepts one model of controller.
+[Number]    │           │                   │   ├── Timeout -1..65535                   # How long to wait for the game before giving up.
+[Text]      │           │                   │   ├── XInput path                         # Folder the XInput library is written into.
+[List]      │           │                   │   ├── Architecture                        # Whether the game is a 32-bit or a 64-bit program.
+[Text]      │           │                   │   ├── DInput file                         # Name of the Direct Input library written for the game.
+[List]      │           │                   │   └── Emulation                           # Whether the controller is presented by the virtual driver or by replaced library files.
+[Section]   │           │                   └── Action                                  # Undoes every change made to this game.
+[Button]    │           │                       └── Reset to Default                    # Puts this game's settings back the way they started.
 [Tab]       │           ├── Devices                                                     # Every controller the program can see, whether mapped or not.
 [Group]     │           │   ├── (XInputDevicesPanel)
 [Toolbar]   │           │   │   ├── Emulated controller actions                         # Buttons that act on the emulated controllers shown below.

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.DInput;
+using x360ce.Engine.Data;
 
 namespace x360ce.Tests
 {
@@ -248,6 +249,8 @@ namespace x360ce.Tests
 				window.Size = window.MinimumSize;
 				Application.DoEvents();
 				var page = PadPageShortWindowTest.Descendants(window).OfType<PadControl>().Single();
+				// The Mouse page is there only while a mouse is selected.
+				page.UpdateWheelTabs(new UserDevice { ProductName = "Mouse", CapType = (int)SharpDX.DirectInput.DeviceType.Mouse });
 				page.PadTabControl.SelectedTab = page.MouseTabPage;
 				Application.DoEvents();
 				var demo = page.MouseDemoPanel;
@@ -257,6 +260,25 @@ namespace x360ce.Tests
 				var line = string.Format("{0}: the demo is at {1} on a tab {2}, the stick group at {3}, its picture {4}.", when, at, tab.ClientSize, groups, demo.DemoPictureBox.Size);
 				Assert.IsTrue(demo.Visible && at.Width > 0 && at.Height > 0 && demo.DemoPictureBox.Width > 0 && demo.DemoPictureBox.Height > 0, "The demo is not shown. " + line);
 				Assert.IsTrue(at.Top >= groups.Bottom && at.Bottom <= tab.ClientSize.Height, "The demo is not whole under the stick groups. " + line);
+			});
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("The Mouse page is on a controller tab only while the selected device is a mouse")]
+		public void The_mouse_page_shows_only_for_a_mouse()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var pad = new PadControl(x360ce.Engine.MapTo.Controller1))
+				{
+					var pages = pad.PadTabControl.TabPages;
+					pad.UpdateWheelTabs(new UserDevice { ProductName = "Mouse", CapType = (int)SharpDX.DirectInput.DeviceType.Mouse });
+					Assert.IsTrue(pages.Contains(pad.MouseTabPage), "A mouse has no Mouse page.");
+					pad.UpdateWheelTabs(new UserDevice { ProductName = "Gamepad", CapType = (int)SharpDX.DirectInput.DeviceType.Gamepad });
+					Assert.IsFalse(pages.Contains(pad.MouseTabPage), "A gamepad has a Mouse page.");
+					pad.UpdateWheelTabs(null);
+					Assert.IsFalse(pages.Contains(pad.MouseTabPage), "No device, yet a Mouse page.");
+				}
 			});
 		}
 	}

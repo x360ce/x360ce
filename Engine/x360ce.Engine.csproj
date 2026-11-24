@@ -184,6 +184,8 @@
     <Compile Include="Common\LogitechWheel.cs" />
     <Compile Include="Common\SpringCalibration.cs" />
     <Compile Include="Common\SpringCurve.cs" />
+    <Compile Include="Common\WheelAxisHelper.cs" />
+    <Compile Include="Common\WheelTelemetrySample.cs" />
     <Compile Include="Common\ForegroundWindowHook.cs" />
     <Compile Include="Common\GamepadOffset.cs" />
     <Compile Include="Common\IChecksum.cs" />
@@ -238,6 +240,12 @@
     <Compile Include="Data\Model\dbo\UserProfile.cs" />
     <Compile Include="Data\Model\dbo\UserSetting.cs" />
     <Compile Include="Data\Model\dbo\Vendor.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryFormat.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryFormatSpec.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGame.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGameFile.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGameMod.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGameStep.cs" />
     <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\Collections\CollectionsHelper.cs" />

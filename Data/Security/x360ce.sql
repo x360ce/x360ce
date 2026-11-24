@@ -1,0 +1,2 @@
+CREATE SCHEMA [x360ce]
+    AUTHORIZATION [dbo];

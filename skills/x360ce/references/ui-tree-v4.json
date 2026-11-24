@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.31.20.0",
-	"Built":"2026-11-22",
+	"Version":"4.31.29.0",
+	"Built":"2026-11-24",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -332,7 +332,7 @@
 						},
 						{
 							"Name":"Axes",
-							"Description":"One chip per axis with its reading, lit while it moves and for half a second after.",
+							"Description":"One chip per axis with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.",
 							"Role":"Section",
 							"Id":"AxesGroupBox",
 							"Hidden":true,
@@ -350,7 +350,7 @@
 						},
 						{
 							"Name":"Sliders",
-							"Description":"One chip per slider with its reading, lit while it moves and for half a second after.",
+							"Description":"One chip per slider with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.",
 							"Role":"Section",
 							"Id":"SlidersGroupBox",
 							"Hidden":true,
@@ -368,7 +368,7 @@
 						},
 						{
 							"Name":"POVs",
-							"Description":"One chip per POV with its reading in degrees, then its four directions, lit while pressed.",
+							"Description":"One chip per POV with its reading in degrees, then its four directions, lit while pressed. Click or drag a chip into a mapping box.",
 							"Role":"Section",
 							"Id":"PovsGroupBox",
 							"Hidden":true,
@@ -825,7 +825,7 @@
 										},
 										{
 											"Name":"Controller picture",
-											"Description":"Lights up each part of the controller as it is used, so a mapping can be checked by eye.",
+											"Description":"Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.",
 											"Role":"Group",
 											"Id":"XboxImage",
 											"Type":"XboxImageUserControl",
@@ -1837,10 +1837,52 @@
 											"Id":"WheelRangeComboBox"
 										},
 										{
+											"Name":"Soft lock",
+											"Description":"Enforce the selected Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of.",
+											"Role":"CheckBox",
+											"Id":"WheelSoftLockCheckBox"
+										},
+										{
 											"Name":"Wheel message",
 											"Description":"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.",
 											"Role":"Label",
 											"Id":"WheelDescriptionLabel"
+										},
+										{
+											"Name":"RGB LED strip",
+											"Description":"Drive supported steering wheels' RGB/RPM shift LED strip from live game telemetry RPM.",
+											"Role":"CheckBox",
+											"Id":"WheelRgbStripCheckBox"
+										},
+										{
+											"Name":"RGB LED strip preview",
+											"Description":"Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.",
+											"Role":"Group",
+											"Id":"WheelRgbStripBar",
+											"Type":"WheelLedStripControl",
+											"SameAs":"WheelLedStripControl"
+										},
+										{
+											"Name":"Test RGB LEDs",
+											"Description":"Sweeps the RGB/RPM LED strip on screen and on a connected supported Logitech wheel.",
+											"Role":"Button",
+											"Id":"WheelRgbTestButton"
+										}
+									]
+								},
+								{
+									"Name":"Game Telemetry",
+									"Description":"Live game telemetry ports, force feel tuning, vehicle readings and protocol help.",
+									"Role":"Tab",
+									"Id":"WheelTelemetryTabPage",
+									"Items":[
+										{
+											"Name":"Game Telemetry",
+											"Description":"Live game telemetry connection, UDP port forwarding, force feel tuning and live vehicle readings.",
+											"Role":"Group",
+											"Id":"WheelTelemetryPage",
+											"Type":"WheelTelemetryPage",
+											"SameAs":"WheelTelemetryPage"
 										}
 									]
 								},
@@ -2092,13 +2134,307 @@
 					]
 				},
 				{
+					"Name":"WheelLedStripControl",
+					"Description":"Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.",
+					"Role":"Control"
+				},
+				{
+					"Name":"WheelTelemetryPage",
+					"Description":"Live game telemetry connection, UDP port forwarding, force feel tuning and live vehicle readings.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Game Telemetry sections",
+							"Description":"Switches between live telemetry settings and protocol help.",
+							"Role":"Tabs",
+							"Id":"PageTabControl",
+							"Items":[
+								{
+									"Name":"Telemetry",
+									"Description":"Telemetry ports, force feel tuning, live vehicle readings and activity log.",
+									"Role":"Tab",
+									"Id":"TelemetryTabPage",
+									"Items":[
+										{
+											"Name":"Connection and Ports",
+											"Description":"Telemetry enable switch, dedicated UDP port, optional standard game ports and UDP IP/port forwarding.",
+											"Role":"Section",
+											"Id":"ConnectionGroupBox",
+											"Items":[
+												{
+													"Name":"Enable live game telemetry",
+													"Description":"Reads live vehicle telemetry from Shared Memory (Assetto Corsa, iRacing) and localhost UDP to drive wheels and telemetry-enabled devices.",
+													"Role":"CheckBox",
+													"Id":"EnabledCheckBox"
+												},
+												{
+													"Name":"Listen on standard game ports",
+													"Description":"Also binds standard game UDP ports (5300, 20777, 4123, 5606). Off by default so SimHub, CrewChief and wheel dashboards keep their ports. Occupied ports are always skipped automatically.",
+													"Role":"CheckBox",
+													"Id":"StandardPortsCheckBox"
+												},
+												{
+													"Name":"Listen UDP port",
+													"Description":"Dedicated conflict-free loopback UDP port x360ce listens on (default 37150). Point games or SimHub forwarding here.",
+													"Role":"Number",
+													"Id":"ListenPortUpDown",
+													"Min":1024,
+													"Max":65535
+												},
+												{
+													"Name":"Reset telemetry defaults",
+													"Description":"Restores telemetry ports and force tuning sliders to their default values.",
+													"Role":"Button",
+													"Id":"DefaultsButton"
+												},
+												{
+													"Name":"Enable forward telemetry",
+													"Description":"Relays received UDP telemetry datagrams to Forward IP and Port (for example, SimHub on 127.0.0.1 or a dashboard on another PC/tablet).",
+													"Role":"CheckBox",
+													"Id":"ForwardEnabledCheckBox"
+												},
+												{
+													"Name":"Forward IP address",
+													"Description":"Destination IP address to relay received UDP telemetry to (127.0.0.1 for local apps like SimHub, or a LAN PC/tablet IP).",
+													"Role":"Text",
+													"Id":"ForwardIpTextBox"
+												},
+												{
+													"Name":"Forward UDP port",
+													"Description":"Destination UDP port to relay received telemetry packets to (0 = forwarding off).",
+													"Role":"Number",
+													"Id":"ForwardPortUpDown",
+													"Min":0,
+													"Max":65535
+												}
+											]
+										},
+										{
+											"Name":"Force Feel Tuning",
+											"Description":"Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer and steering lead.",
+											"Role":"Section",
+											"Id":"TuningGroupBox",
+											"Items":[
+												{
+													"Name":"Aligning torque",
+													"Description":"Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).",
+													"Role":"Slider",
+													"Id":"AlignStrengthTrackBar",
+													"Min":0,
+													"Max":200
+												},
+												{
+													"Name":"Aligning torque value",
+													"Description":"Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).",
+													"Role":"Value",
+													"Id":"AlignStrengthTextBox"
+												},
+												{
+													"Name":"Understeer",
+													"Description":"Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.",
+													"Role":"Slider",
+													"Id":"UndersteerStrengthTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Understeer value",
+													"Description":"Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.",
+													"Role":"Value",
+													"Id":"UndersteerStrengthTextBox"
+												},
+												{
+													"Name":"Curb bumps",
+													"Description":"Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %).",
+													"Role":"Slider",
+													"Id":"CurbStrengthTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Curb bumps value",
+													"Description":"Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %).",
+													"Role":"Value",
+													"Id":"CurbStrengthTextBox"
+												},
+												{
+													"Name":"Dynamic damping",
+													"Description":"Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %).",
+													"Role":"Slider",
+													"Id":"DampingStrengthTrackBar",
+													"Min":0,
+													"Max":200
+												},
+												{
+													"Name":"Dynamic damping value",
+													"Description":"Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %).",
+													"Role":"Value",
+													"Id":"DampingStrengthTextBox"
+												},
+												{
+													"Name":"Rumble understeer",
+													"Description":"Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).",
+													"Role":"Slider",
+													"Id":"RumbleUndersteerTrackBar",
+													"Min":0,
+													"Max":60
+												},
+												{
+													"Name":"Rumble understeer value",
+													"Description":"Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).",
+													"Role":"Value",
+													"Id":"RumbleUndersteerTextBox"
+												},
+												{
+													"Name":"Steering lead",
+													"Description":"Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.",
+													"Role":"Slider",
+													"Id":"SteeringLeadTrackBar",
+													"Min":0,
+													"Max":80
+												},
+												{
+													"Name":"Steering lead value",
+													"Description":"Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.",
+													"Role":"Value",
+													"Id":"SteeringLeadTextBox"
+												}
+											]
+										},
+										{
+											"Name":"Live telemetry",
+											"Description":"Connection state and newest vehicle physics values received from the running game.",
+											"Role":"Section",
+											"Id":"ReadingsGroupBox",
+											"Items":[
+												{
+													"Name":"Telemetry connection status",
+													"Description":"Current telemetry state and detected game or protocol.",
+													"Role":"Label",
+													"Id":"StatusLabel"
+												},
+												{
+													"Name":"Listener ports",
+													"Description":"Currently bound UDP ports and any skipped port conflicts.",
+													"Role":"Label",
+													"Id":"PortStatusLabel"
+												},
+												{
+													"Name":"Speed",
+													"Description":"Vehicle speed in km/h.",
+													"Role":"Label",
+													"Id":"SpeedValueLabel"
+												},
+												{
+													"Name":"Speed meter",
+													"Description":"Vehicle speed in km/h.",
+													"Role":"Progress",
+													"Id":"SpeedBar"
+												},
+												{
+													"Name":"Aligning angle",
+													"Description":"Self-aligning / counter-steer equilibrium shift in degrees.",
+													"Role":"Label",
+													"Id":"AligningangleValueLabel"
+												},
+												{
+													"Name":"Aligning angle meter",
+													"Description":"Self-aligning / counter-steer equilibrium shift in degrees.",
+													"Role":"Progress",
+													"Id":"AligningangleBar"
+												},
+												{
+													"Name":"Front grip",
+													"Description":"Estimated front-tire grip (100 % full grip, lower = understeer).",
+													"Role":"Label",
+													"Id":"FrontgripValueLabel"
+												},
+												{
+													"Name":"Front grip meter",
+													"Description":"Estimated front-tire grip (100 % full grip, lower = understeer).",
+													"Role":"Progress",
+													"Id":"FrontgripBar"
+												},
+												{
+													"Name":"Lateral G",
+													"Description":"Sideways cornering acceleration in G.",
+													"Role":"Label",
+													"Id":"LateralGValueLabel"
+												},
+												{
+													"Name":"Lateral G meter",
+													"Description":"Sideways cornering acceleration in G.",
+													"Role":"Progress",
+													"Id":"LateralGBar"
+												},
+												{
+													"Name":"Road pitch",
+													"Description":"Vehicle pitch angle in degrees and road grade in percent (nose up positive).",
+													"Role":"Label",
+													"Id":"RoadpitchValueLabel"
+												},
+												{
+													"Name":"Road pitch meter",
+													"Description":"Vehicle pitch angle in degrees and road grade in percent (nose up positive).",
+													"Role":"Progress",
+													"Id":"RoadpitchBar"
+												},
+												{
+													"Name":"Engine RPM",
+													"Description":"Normalized engine RPM for steering wheel RGB/RPM shift LEDs.",
+													"Role":"Label",
+													"Id":"EngineRPMValueLabel"
+												},
+												{
+													"Name":"Engine RPM meter",
+													"Description":"Normalized engine RPM for steering wheel RGB/RPM shift LEDs.",
+													"Role":"Progress",
+													"Id":"EngineRPMBar"
+												}
+											]
+										},
+										{
+											"Name":"Telemetry activity",
+											"Description":"Recent telemetry port binds, protocol switches and setup hints, newest first.",
+											"Role":"Section",
+											"Id":"ActivityGroupBox",
+											"Items":[
+												{
+													"Name":"Telemetry activity log",
+													"Description":"Recent telemetry port binds, protocol switches and setup hints, newest first.",
+													"Role":"Value",
+													"Id":"LogTextBox"
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":"Help",
+									"Description":"Supported games, standard telemetry protocols, port coexistence and testing instructions.",
+									"Role":"Tab",
+									"Id":"HelpTabPage",
+									"Items":[
+										{
+											"Name":"Game Telemetry help",
+											"Description":"Supported racing games, UDP ports, SimHub coexistence and Virtual Car testing guide.",
+											"Role":"Value",
+											"Id":"HelpRichTextBox"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
 					"Name":"WidestTextButton",
 					"Description":"Clears the mapping, then asks you to press each control in turn.",
 					"Role":"Control"
 				},
 				{
 					"Name":"XboxImageUserControl",
-					"Description":"Lights up each part of the controller as it is used, so a mapping can be checked by eye.",
+					"Description":"Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.",
 					"Role":"Control"
 				}
 			]
@@ -2967,8 +3303,7 @@
 																			"Name":"Install",
 																			"Description":"Installs HID Guardian. Use HID Hide instead.",
 																			"Role":"Button",
-																			"Id":"HidGuardianInstallButton",
-																			"Hidden":true
+																			"Id":"HidGuardianInstallButton"
 																		},
 																		{
 																			"Name":"Uninstall",
@@ -3475,7 +3810,7 @@
 																		},
 																		{
 																			"Name":"Plugins",
-																			"Description":"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.",
+																			"Description":"Each plugin found: whether it is enabled (built-in plugins load by default and can be unticked to unload), the devices or providers it adds, whether it loaded, who signed it, and why it did not load or was switched off.",
 																			"Role":"Grid",
 																			"Id":"PluginsDataGridView"
 																		},
@@ -3615,299 +3950,316 @@
 													]
 												},
 												{
-													"Name":null,
-													"Description":"How the selected game is set up.",
-													"Role":"Group",
-													"Id":"GameDetailsControl",
-													"Type":"GameDetailsUserControl",
+													"Name":"Game pages",
+													"Description":"The selected game's pages: x360ce's own settings for it, then a page for each game plugin that is for it.",
+													"Role":"Tabs",
+													"Id":"GameTabControl",
+													"Type":"GameTabControl",
 													"Items":[
 														{
-															"Name":"Hook mask",
-															"Description":"Which questions a game asks about controllers this program answers for it.",
-															"Role":"Section",
-															"Id":"HookMaskGroupBox",
+															"Name":"x360ce",
+															"Description":"How x360ce sets the selected game up: which libraries are replaced, and how.",
+															"Role":"Tab",
+															"Id":"GameSettingsTabPage",
 															"Items":[
 																{
-																	"Name":"Hook COM",
-																	"Description":"Answers when the game asks Windows for a controller through COM.",
-																	"Role":"CheckBox",
-																	"Id":"HookCOMCheckBox"
-																},
-																{
-																	"Name":"Hook Direct Input",
-																	"Description":"Answers when the game asks for a controller through Direct Input.",
-																	"Role":"CheckBox",
-																	"Id":"HookDICheckBox"
-																},
-																{
-																	"Name":"Hook product and vendor codes",
-																	"Description":"Reports the fake product and vendor codes instead of the real ones.",
-																	"Role":"CheckBox",
-																	"Id":"HookPIDVIDCheckBox"
-																},
-																{
-																	"Name":"Hook name",
-																	"Description":"Reports a different controller name to the game.",
-																	"Role":"CheckBox",
-																	"Id":"HookNAMECheckBox"
-																},
-																{
-																	"Name":"Stop",
-																	"Description":"Stops answering once the game has started.",
-																	"Role":"CheckBox",
-																	"Id":"HookSTOPCheckBox"
-																},
-																{
-																	"Name":"Hook Load Library",
-																	"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
-																	"Role":"CheckBox",
-																	"Id":"HookLLCheckBox"
-																},
-																{
-																	"Name":"Hook SetupAPI",
-																	"Description":"Answers when the game asks Windows to list devices.",
-																	"Role":"CheckBox",
-																	"Id":"HookSACheckBox"
-																},
-																{
-																	"Name":"Hook WinVerifyTrust",
-																	"Description":"Answers when the game checks a file's signature.",
-																	"Role":"CheckBox",
-																	"Id":"HookWTCheckBox"
-																},
-																{
-																	"Name":"Disable",
-																	"Description":"Turns every answer off, leaving the game with the real controllers.",
-																	"Role":"CheckBox",
-																	"Id":"HookDISABLECheckBox"
-																}
-															]
-														},
-														{
-															"Name":"XInput files",
-															"Description":"Which XInput library files this program supplies to the game.",
-															"Role":"Section",
-															"Id":"XInputMaskGroupBox",
-															"Items":[
-																{
-																	"Name":"XInput 9.1, 32-bit",
-																	"Description":"Supplies the 32-bit XInput 9.1 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput91_x86CheckBox"
-																},
-																{
-																	"Name":"XInput 9.1, 64-bit",
-																	"Description":"Supplies the 64-bit XInput 9.1 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput91_x64CheckBox"
-																},
-																{
-																	"Name":"XInput 1.1, 32-bit",
-																	"Description":"Supplies the 32-bit XInput 1.1 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput11_x86CheckBox"
-																},
-																{
-																	"Name":"XInput 1.1, 64-bit",
-																	"Description":"Supplies the 64-bit XInput 1.1 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput11_x64CheckBox"
-																},
-																{
-																	"Name":"XInput 1.2, 32-bit",
-																	"Description":"Supplies the 32-bit XInput 1.2 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput12_x86CheckBox"
-																},
-																{
-																	"Name":"XInput 1.2, 64-bit",
-																	"Description":"Supplies the 64-bit XInput 1.2 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput12_x64CheckBox"
-																},
-																{
-																	"Name":"XInput 1.3, 32-bit",
-																	"Description":"Supplies the 32-bit XInput 1.3 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput13_x86CheckBox"
-																},
-																{
-																	"Name":"XInput 1.3, 64-bit",
-																	"Description":"Supplies the 64-bit XInput 1.3 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput13_x64CheckBox"
-																},
-																{
-																	"Name":"XInput 1.4, 32-bit",
-																	"Description":"Supplies the 32-bit XInput 1.4 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput14_x86CheckBox"
-																},
-																{
-																	"Name":"XInput 1.4, 64-bit",
-																	"Description":"Supplies the 64-bit XInput 1.4 library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"XInput14_x64CheckBox"
-																}
-															]
-														},
-														{
-															"Name":"Auto map",
-															"Description":"Not available yet, so greyed out: the program does not map devices to controllers by itself.",
-															"Role":"Section",
-															"Id":"AutoMapMaskGroupBox",
-															"Items":[
-																{
-																	"Name":"Auto map controller 1",
-																	"Description":"Lets the program assign controller 1 to a device when this game starts.",
-																	"Role":"CheckBox",
-																	"Id":"Controller1CheckBox"
-																},
-																{
-																	"Name":"Auto map controller 2",
-																	"Description":"Lets the program assign controller 2 to a device when this game starts.",
-																	"Role":"CheckBox",
-																	"Id":"Controller2CheckBox"
-																},
-																{
-																	"Name":"Auto map controller 3",
-																	"Description":"Lets the program assign controller 3 to a device when this game starts.",
-																	"Role":"CheckBox",
-																	"Id":"Controller3CheckBox"
-																},
-																{
-																	"Name":"Auto map controller 4",
-																	"Description":"Lets the program assign controller 4 to a device when this game starts.",
-																	"Role":"CheckBox",
-																	"Id":"Controller4CheckBox"
-																}
-															]
-														},
-														{
-															"Name":"DInput file",
-															"Description":"Whether the Direct Input library is supplied to the game as well.",
-															"Role":"Section",
-															"Id":"DInputMaskGroupBox",
-															"Items":[
-																{
-																	"Name":"DInput 8, 32-bit",
-																	"Description":"Supplies the 32-bit Direct Input library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"DInput8_x86CheckBox"
-																},
-																{
-																	"Name":"DInput 8, 64-bit",
-																	"Description":"Supplies the 64-bit Direct Input library to the game.",
-																	"Role":"CheckBox",
-																	"Id":"DInput8_x64CheckBox"
-																}
-															]
-														},
-														{
-															"Name":"Help",
-															"Description":"Searches the web for other people's settings for this game.",
-															"Role":"Section",
-															"Id":"groupBox5",
-															"Items":[
-																{
-																	"Name":"Search on Google...",
-																	"Description":"Searches the web for this game.",
-																	"Role":"Button",
-																	"Id":"GoogleSearchButton"
-																},
-																{
-																	"Name":"Search on NGemu...",
-																	"Description":"Searches the NGemu forum for this game.",
-																	"Role":"Button",
-																	"Id":"button3"
-																},
-																{
-																	"Name":"Open NGemu...",
-																	"Description":"Opens the NGemu forum.",
-																	"Role":"Button",
-																	"Id":"button4"
-																}
-															]
-														},
-														{
-															"Name":"Other options",
-															"Description":"How the game is started, and what it is told about the controller.",
-															"Role":"Section",
-															"Id":"OtherOptionsGroupBox",
-															"Items":[
-																{
-																	"Name":"Fake vendor code",
-																	"Description":"Vendor code reported to a game that only accepts one make of controller.",
-																	"Role":"Number",
-																	"Id":"HookModeFakeVidNumericUpDown",
-																	"Min":0,
-																	"Max":65535
-																},
-																{
-																	"Name":"Fake vendor code",
-																	"Description":"Vendor code reported to a game that only accepts one make of controller.",
-																	"Role":"Value",
-																	"Id":"HookModeFakeVidTextBox"
-																},
-																{
-																	"Name":"Fake product code",
-																	"Description":"Product code reported to a game that only accepts one model of controller.",
-																	"Role":"Number",
-																	"Id":"HookModeFakePidNumericUpDown",
-																	"Min":0,
-																	"Max":65535
-																},
-																{
-																	"Name":"Fake product code",
-																	"Description":"Product code reported to a game that only accepts one model of controller.",
-																	"Role":"Value",
-																	"Id":"HookModeFakePidTextBox"
-																},
-																{
-																	"Name":"Timeout",
-																	"Description":"How long to wait for the game before giving up.",
-																	"Role":"Number",
-																	"Id":"TimeoutNumericUpDown",
-																	"Min":-1,
-																	"Max":65535
-																},
-																{
-																	"Name":"XInput path",
-																	"Description":"Folder the XInput library is written into.",
-																	"Role":"Text",
-																	"Id":"XInputPathTextBox"
-																},
-																{
-																	"Name":"Architecture",
-																	"Description":"Whether the game is a 32-bit or a 64-bit program.",
-																	"Role":"List",
-																	"Id":"ProcessorArchitectureComboBox"
-																},
-																{
-																	"Name":"DInput file",
-																	"Description":"Name of the Direct Input library written for the game.",
-																	"Role":"Text",
-																	"Id":"DInputFileTextBox"
-																},
-																{
-																	"Name":"Emulation",
-																	"Description":"Whether the controller is presented by the virtual driver or by replaced library files.",
-																	"Role":"List",
-																	"Id":"EmulationTypeComboBox"
-																}
-															]
-														},
-														{
-															"Name":"Action",
-															"Description":"Undoes every change made to this game.",
-															"Role":"Section",
-															"Id":"ActionGroupBox",
-															"Items":[
-																{
-																	"Name":"Reset to Default",
-																	"Description":"Puts this game's settings back the way they started.",
-																	"Role":"Button",
-																	"Id":"ResetToDefaultButton"
+																	"Name":null,
+																	"Description":"How the selected game is set up.",
+																	"Role":"Group",
+																	"Id":"GameDetailsControl",
+																	"Type":"GameDetailsUserControl",
+																	"Items":[
+																		{
+																			"Name":"Hook mask",
+																			"Description":"Which questions a game asks about controllers this program answers for it.",
+																			"Role":"Section",
+																			"Id":"HookMaskGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Hook COM",
+																					"Description":"Answers when the game asks Windows for a controller through COM.",
+																					"Role":"CheckBox",
+																					"Id":"HookCOMCheckBox"
+																				},
+																				{
+																					"Name":"Hook Direct Input",
+																					"Description":"Answers when the game asks for a controller through Direct Input.",
+																					"Role":"CheckBox",
+																					"Id":"HookDICheckBox"
+																				},
+																				{
+																					"Name":"Hook product and vendor codes",
+																					"Description":"Reports the fake product and vendor codes instead of the real ones.",
+																					"Role":"CheckBox",
+																					"Id":"HookPIDVIDCheckBox"
+																				},
+																				{
+																					"Name":"Hook name",
+																					"Description":"Reports a different controller name to the game.",
+																					"Role":"CheckBox",
+																					"Id":"HookNAMECheckBox"
+																				},
+																				{
+																					"Name":"Stop",
+																					"Description":"Stops answering once the game has started.",
+																					"Role":"CheckBox",
+																					"Id":"HookSTOPCheckBox"
+																				},
+																				{
+																					"Name":"Hook Load Library",
+																					"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
+																					"Role":"CheckBox",
+																					"Id":"HookLLCheckBox"
+																				},
+																				{
+																					"Name":"Hook SetupAPI",
+																					"Description":"Answers when the game asks Windows to list devices.",
+																					"Role":"CheckBox",
+																					"Id":"HookSACheckBox"
+																				},
+																				{
+																					"Name":"Hook WinVerifyTrust",
+																					"Description":"Answers when the game checks a file's signature.",
+																					"Role":"CheckBox",
+																					"Id":"HookWTCheckBox"
+																				},
+																				{
+																					"Name":"Disable",
+																					"Description":"Turns every answer off, leaving the game with the real controllers.",
+																					"Role":"CheckBox",
+																					"Id":"HookDISABLECheckBox"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"XInput files",
+																			"Description":"Which XInput library files this program supplies to the game.",
+																			"Role":"Section",
+																			"Id":"XInputMaskGroupBox",
+																			"Items":[
+																				{
+																					"Name":"XInput 9.1, 32-bit",
+																					"Description":"Supplies the 32-bit XInput 9.1 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput91_x86CheckBox"
+																				},
+																				{
+																					"Name":"XInput 9.1, 64-bit",
+																					"Description":"Supplies the 64-bit XInput 9.1 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput91_x64CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.1, 32-bit",
+																					"Description":"Supplies the 32-bit XInput 1.1 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput11_x86CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.1, 64-bit",
+																					"Description":"Supplies the 64-bit XInput 1.1 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput11_x64CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.2, 32-bit",
+																					"Description":"Supplies the 32-bit XInput 1.2 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput12_x86CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.2, 64-bit",
+																					"Description":"Supplies the 64-bit XInput 1.2 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput12_x64CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.3, 32-bit",
+																					"Description":"Supplies the 32-bit XInput 1.3 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput13_x86CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.3, 64-bit",
+																					"Description":"Supplies the 64-bit XInput 1.3 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput13_x64CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.4, 32-bit",
+																					"Description":"Supplies the 32-bit XInput 1.4 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput14_x86CheckBox"
+																				},
+																				{
+																					"Name":"XInput 1.4, 64-bit",
+																					"Description":"Supplies the 64-bit XInput 1.4 library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"XInput14_x64CheckBox"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"Auto map",
+																			"Description":"Not available yet, so greyed out: the program does not map devices to controllers by itself.",
+																			"Role":"Section",
+																			"Id":"AutoMapMaskGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Auto map controller 1",
+																					"Description":"Lets the program assign controller 1 to a device when this game starts.",
+																					"Role":"CheckBox",
+																					"Id":"Controller1CheckBox"
+																				},
+																				{
+																					"Name":"Auto map controller 2",
+																					"Description":"Lets the program assign controller 2 to a device when this game starts.",
+																					"Role":"CheckBox",
+																					"Id":"Controller2CheckBox"
+																				},
+																				{
+																					"Name":"Auto map controller 3",
+																					"Description":"Lets the program assign controller 3 to a device when this game starts.",
+																					"Role":"CheckBox",
+																					"Id":"Controller3CheckBox"
+																				},
+																				{
+																					"Name":"Auto map controller 4",
+																					"Description":"Lets the program assign controller 4 to a device when this game starts.",
+																					"Role":"CheckBox",
+																					"Id":"Controller4CheckBox"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"DInput file",
+																			"Description":"Whether the Direct Input library is supplied to the game as well.",
+																			"Role":"Section",
+																			"Id":"DInputMaskGroupBox",
+																			"Items":[
+																				{
+																					"Name":"DInput 8, 32-bit",
+																					"Description":"Supplies the 32-bit Direct Input library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"DInput8_x86CheckBox"
+																				},
+																				{
+																					"Name":"DInput 8, 64-bit",
+																					"Description":"Supplies the 64-bit Direct Input library to the game.",
+																					"Role":"CheckBox",
+																					"Id":"DInput8_x64CheckBox"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"Help",
+																			"Description":"Searches the web for other people's settings for this game.",
+																			"Role":"Section",
+																			"Id":"groupBox5",
+																			"Items":[
+																				{
+																					"Name":"Search on Google...",
+																					"Description":"Searches the web for this game.",
+																					"Role":"Button",
+																					"Id":"GoogleSearchButton"
+																				},
+																				{
+																					"Name":"Search on NGemu...",
+																					"Description":"Searches the NGemu forum for this game.",
+																					"Role":"Button",
+																					"Id":"button3"
+																				},
+																				{
+																					"Name":"Open NGemu...",
+																					"Description":"Opens the NGemu forum.",
+																					"Role":"Button",
+																					"Id":"button4"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"Other options",
+																			"Description":"How the game is started, and what it is told about the controller.",
+																			"Role":"Section",
+																			"Id":"OtherOptionsGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Fake vendor code",
+																					"Description":"Vendor code reported to a game that only accepts one make of controller.",
+																					"Role":"Number",
+																					"Id":"HookModeFakeVidNumericUpDown",
+																					"Min":0,
+																					"Max":65535
+																				},
+																				{
+																					"Name":"Fake vendor code",
+																					"Description":"Vendor code reported to a game that only accepts one make of controller.",
+																					"Role":"Value",
+																					"Id":"HookModeFakeVidTextBox"
+																				},
+																				{
+																					"Name":"Fake product code",
+																					"Description":"Product code reported to a game that only accepts one model of controller.",
+																					"Role":"Number",
+																					"Id":"HookModeFakePidNumericUpDown",
+																					"Min":0,
+																					"Max":65535
+																				},
+																				{
+																					"Name":"Fake product code",
+																					"Description":"Product code reported to a game that only accepts one model of controller.",
+																					"Role":"Value",
+																					"Id":"HookModeFakePidTextBox"
+																				},
+																				{
+																					"Name":"Timeout",
+																					"Description":"How long to wait for the game before giving up.",
+																					"Role":"Number",
+																					"Id":"TimeoutNumericUpDown",
+																					"Min":-1,
+																					"Max":65535
+																				},
+																				{
+																					"Name":"XInput path",
+																					"Description":"Folder the XInput library is written into.",
+																					"Role":"Text",
+																					"Id":"XInputPathTextBox"
+																				},
+																				{
+																					"Name":"Architecture",
+																					"Description":"Whether the game is a 32-bit or a 64-bit program.",
+																					"Role":"List",
+																					"Id":"ProcessorArchitectureComboBox"
+																				},
+																				{
+																					"Name":"DInput file",
+																					"Description":"Name of the Direct Input library written for the game.",
+																					"Role":"Text",
+																					"Id":"DInputFileTextBox"
+																				},
+																				{
+																					"Name":"Emulation",
+																					"Description":"Whether the controller is presented by the virtual driver or by replaced library files.",
+																					"Role":"List",
+																					"Id":"EmulationTypeComboBox"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"Action",
+																			"Description":"Undoes every change made to this game.",
+																			"Role":"Section",
+																			"Id":"ActionGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Reset to Default",
+																					"Description":"Puts this game's settings back the way they started.",
+																					"Role":"Button",
+																					"Id":"ResetToDefaultButton"
+																				}
+																			]
+																		}
+																	]
 																}
 															]
 														}

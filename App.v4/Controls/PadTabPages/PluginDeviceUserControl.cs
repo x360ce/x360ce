@@ -122,6 +122,9 @@ namespace x360ce.App.Controls
 			_notifying = Shown as INotifyPropertyChanged;
 			if (_notifying != null)
 				_notifying.PropertyChanged += Shown_PropertyChanged;
+			_identity = Shown as IPluginDeviceIdentity;
+			if (_identity != null)
+				_identity.DisconnectRequested += Shown_DisconnectRequested;
 			ResumeLayout(false);
 			PerformLayout();
 			UiHelp.Attach(this);
@@ -155,6 +158,19 @@ namespace x360ce.App.Controls
 		/// <summary>The instance shown, while it announces the settings it changes itself.</summary>
 		readonly INotifyPropertyChanged _notifying;
 
+		/// <summary>The instance shown, when it reports real external hardware identity and can request a safety disconnect.</summary>
+		readonly IPluginDeviceIdentity _identity;
+
+		/// <summary>The currently selected sub-tab index (Connection, MCP Server, Properties, Help).</summary>
+		internal int SelectedSubTabIndex { get { return PluginTabControl == null ? 0 : PluginTabControl.SelectedIndex; } }
+
+		/// <summary>Restores the selected sub-tab index after an in-place panel refresh.</summary>
+		internal void SelectSubTab(int index)
+		{
+			if (PluginTabControl != null && index >= 0 && index < PluginTabControl.TabPages.Count)
+				PluginTabControl.SelectedIndex = index;
+		}
+
 		/// <summary>What the status rows said, and the values kept for the other rows, when the grid last read them.</summary>
 		string[] _statuses;
 		string[] _kept;
@@ -184,6 +200,19 @@ namespace x360ce.App.Controls
 			if (setting == null)
 				return;
 			_store.Set(InstanceGuid, setting.Name, setting.ToText(setting.Property.GetValue(sender)));
+		}
+
+		void Shown_DisconnectRequested(object sender, EventArgs e)
+		{
+			if (IsDisposed)
+				return;
+			if (InvokeRequired)
+			{
+				if (IsHandleCreated)
+					BeginInvoke((Action)(() => PluginDevices.DisableDevice(InstanceGuid)));
+				return;
+			}
+			PluginDevices.DisableDevice(InstanceGuid);
 		}
 
 		/// <summary>Shows what a status the device reports, or a value kept for it, says now, when it has changed since the grid read it.</summary>
@@ -275,6 +304,8 @@ namespace x360ce.App.Controls
 			{
 				if (_notifying != null)
 					_notifying.PropertyChanged -= Shown_PropertyChanged;
+				if (_identity != null)
+					_identity.DisconnectRequested -= Shown_DisconnectRequested;
 				// The tab's own instance goes with the tab; the engine's is the engine's to let go of.
 				if (_tabReader != null)
 				{

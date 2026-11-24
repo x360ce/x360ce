@@ -78,6 +78,30 @@ namespace x360ce.App.Plugins
 					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
 				AppendTab(sb, type);
 			}
+			foreach (var type in file.TelemetryTypes)
+			{
+				sb.Append("\n## ").Append(type.Name).Append("\n\n");
+				sb.Append("- Kind: wheel telemetry provider (`IPluginWheelTelemetry`), active automatically while a wheel's centering spring and telemetry are enabled.\n");
+				if (type.ControlType != null)
+					sb.Append("- Dedicated tab: ").Append(type.ControlType.Name).Append(", hosted as the Wheel Telemetry tab on a steering wheel's controller page.\n");
+				if (type.Faulted)
+					sb.Append("- Switched off after it failed, until x360ce starts again: ").Append(type.FaultReason).Append('\n');
+				if (!string.IsNullOrWhiteSpace(type.Description))
+					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
+			}
+			foreach (var type in file.GameTypes)
+			{
+				sb.Append("\n## ").Append(type.Name).Append("\n\n");
+				var fileNames = type.FileNames;
+				sb.Append("- Kind: game plugin (`IPluginGame`), a tab named ").Append(type.Name).Append(" on the Games tab while a game it is for is selected")
+					.Append(fileNames.Length == 0 ? "" : ": " + string.Join(", ", fileNames)).Append(".\n");
+				if (type.ControlType != null)
+					sb.Append("- Its page: ").Append(type.ControlType.Name).Append(", then Help with the text below.\n");
+				if (type.Faulted)
+					sb.Append("- Switched off after it failed, until x360ce starts again: ").Append(type.FaultReason).Append('\n');
+				if (!string.IsNullOrWhiteSpace(type.Description))
+					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
+			}
 			return sb.ToString();
 		}
 
@@ -123,6 +147,8 @@ namespace x360ce.App.Plugins
 			{
 				case PluginFileState.Loaded:
 					return file.Reason == null ? "loaded" : "loaded. " + file.Reason;
+				case PluginFileState.Disabled:
+					return "disabled. " + file.Reason;
 				case PluginFileState.WaitingForPermission:
 					return "waiting for permission. " + file.Reason;
 				default:

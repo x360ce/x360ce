@@ -73,7 +73,7 @@ namespace x360ce.App.UiTree
 		static void AddRemainingCommands(Dictionary<string, Text> d)
 		{
 			d[nameof(XboxImageUserControl)] = new Text("Controller picture",
-				"Lights up each part of the controller as it is used, so a mapping can be checked by eye.");
+				"Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.");
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowAllGamesMenuItem)] = new Text(null,
 				"Lists every game.");
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowEnabledGamesMenuItem)] = new Text(null,

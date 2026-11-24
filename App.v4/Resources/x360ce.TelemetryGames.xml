@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Games x360ce helps send telemetry to its Wheel Telemetry plugin.-->
+<Data Version="0">
+  <Items>
+    <TelemetryGame>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <FileName>GTA5.exe</FileName>
+      <FileProductName>Grand Theft Auto V</FileProductName>
+      <GameName>GTA V</GameName>
+      <TelemetryFormatId>Forza</TelemetryFormatId>
+      <Edition>Legacy</Edition>
+      <Comment></Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryGame>
+    <TelemetryGame>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <FileName>GTA5_Enhanced.exe</FileName>
+      <FileProductName>Grand Theft Auto V Enhanced</FileProductName>
+      <GameName>GTA V</GameName>
+      <TelemetryFormatId>Forza</TelemetryFormatId>
+      <Edition>Enhanced</Edition>
+      <Comment></Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryGame>
+    <TelemetryGame>
+      <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
+      <FileName>ForzaHorizon6.exe</FileName>
+      <FileProductName>Forza Horizon 6</FileProductName>
+      <GameName>Forza Horizon 6</GameName>
+      <TelemetryFormatId>Forza</TelemetryFormatId>
+      <Edition></Edition>
+      <Comment></Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryGame>
+    <TelemetryGame>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <FileName>F1_25.exe</FileName>
+      <FileProductName>F1 25</FileProductName>
+      <GameName>F1 25</GameName>
+      <TelemetryFormatId>EaF1</TelemetryFormatId>
+      <Edition></Edition>
+      <Comment></Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryGame>
+  </Items>
+</Data>

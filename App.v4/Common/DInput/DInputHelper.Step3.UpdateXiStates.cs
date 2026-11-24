@@ -10,6 +10,10 @@ namespace x360ce.App.DInput
 		/// <remarks>Reserved here and cleared for each row, rather than made for every row on every pass.</remarks>
 		readonly bool[] _dPadButtons = new bool[4 * 4];
 
+		/// <summary>Soft lock and steering lead for this pass, from the options <see cref="UpdateDiStates"/> reads once a pass.</summary>
+		bool _wheelSoftLock;
+		int _wheelLeadMs;
+
 		/// <summary>
 		/// Convert DiStates to XInput states.
 		/// </summary>
@@ -31,6 +35,8 @@ namespace x360ce.App.DInput
 			var axisDPadShifts = routing.RowAxisToDPadShifts;
 			var rowMouse = routing.RowMouse;
 			var now = System.Diagnostics.Stopwatch.GetTimestamp();
+			var wheelSoftLock = _wheelSoftLock;
+			var wheelLeadMs = _wheelLeadMs;
 			var dPadButtons = _dPadButtons;
 			for (int i = 0; i < settings.Length; i++)
 			{
@@ -326,6 +332,17 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (map.Target != TargetType.None)
 						{
+							// Apply optional universal software soft-lock scaling and steering lead compensation on the wheel's steering axis.
+							if (map.IsAxis && (wheelSoftLock || wheelLeadMs > 0)
+								&& (map.Target == TargetType.LeftThumbX || map.Target == TargetType.RightThumbX)
+								&& ud.FFState != null && map.Index - 1 == ud.FFState.SpringAxisIndex)
+							{
+								var softLockScale = 1.0;
+								if (wheelSoftLock && !LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId)
+									&& ud.FFState.RangeDegrees > 0 && ud.FFState.RangeDegrees < ForceFeedbackState.DefaultRangeDegrees)
+									softLockScale = (double)ForceFeedbackState.DefaultRangeDegrees / ud.FFState.RangeDegrees;
+								v = WheelAxisHelper.ProcessSteeringAxis(v, softLockScale, wheelLeadMs, now, System.Diagnostics.Stopwatch.Frequency, ref ud.SteeringLead);
+							}
 							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
 							// Set negative center value (-1) to 0.
 							if (thumbValue == -1)

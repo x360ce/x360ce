@@ -255,22 +255,31 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("The engine times the run with a clock that is never negative and never goes back, read only while a run is under way")]
+		[Description("The engine times the run with a clock that is never negative and never goes back, read only while a run or live telemetry needs it")]
 		public void The_engine_times_the_run_at_any_uptime()
 		{
 			// The run marks a time not yet taken with -1, so it needs times from 0 up. Environment.TickCount
 			// is negative from 24.9 to 49.7 days after Windows starts: timed by it, no phase ends, and the
 			// wheel is pushed against its stop until the program closes. The engine's own pass clock starts
 			// again whenever the update thread does, which a run under way would read as time going back.
-			// Every force feedback device takes this call on every poll, so the clock is read only for a run,
-			// and the run is read once, so one started between two reads is never handed time 0.
+			// Every force feedback device takes this call on every poll, so the clock is read only when a run
+			// or live telemetry needs it, and the run is read once, so one started between two reads is never
+			// handed time 0. The Stopwatch's count since Windows started is never negative and never goes back.
 			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs");
+			var source = File.ReadAllText(path);
 			// The call itself, not its name in quotes, which the engine gives the call for error reports and a recording.
-			var call = Regex.Match(File.ReadAllText(path), @"(?<!"")ud\.FFState\.UpdateSpring\((?<args>[^;]*)\);");
+			var call = Regex.Match(source, @"(?<!"")ud\.FFState\.UpdateSpring\((?<args>[^;]*)\);");
 			Assert.IsTrue(call.Success, "The engine's call to UpdateSpring was not found.");
 			var args = call.Groups["args"].Value;
-			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0,\s*ud\.ForceSpringSpeedOverride,\s*ud\.GetForceSpringFriction\(\)$"),
-				"The engine times the run with a clock that can be negative or go back, or reads it for every device: " + args);
+			var passed = Regex.Match(args, @",\s*(?<run>\w+),\s*(?<now>\w+),\s*ud\.ForceSpringSpeedOverride,\s*ud\.GetForceSpringFriction\(\)");
+			Assert.IsTrue(passed.Success, "The run and its time are not handed to the spring: " + args);
+			var run = passed.Groups["run"].Value;
+			var now = passed.Groups["now"].Value;
+			Assert.IsTrue(Regex.IsMatch(source, @"var " + run + @" = ud\.SpringCalibration;"), "The run is read more than once.");
+			var clock = Regex.Match(source, @"var " + now + @" = (?<need>\w+) \? WheelTelemetryMath\.MonotonicNowMs\(\) : 0;");
+			Assert.IsTrue(clock.Success, "The engine times the run with a clock that can be negative or go back, or reads it for every device.");
+			Assert.IsTrue(Regex.IsMatch(source, @"var " + clock.Groups["need"].Value + @" = " + run + @" != null \|\|"),
+				"The clock is not read while a run is under way.");
 		}
 
 		[TestMethod, TestCategory("devices")]

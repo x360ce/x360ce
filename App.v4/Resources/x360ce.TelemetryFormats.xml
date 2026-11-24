@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Telemetry formats x360ce reads.-->
+<Data Version="0">
+  <Items>
+    <TelemetryFormat>
+      <TelemetryFormatId>Forza</TelemetryFormatId>
+      <Name>Forza Data Out</Name>
+      <Publisher>Turn 10 Studios and Playground Games</Publisher>
+      <Transport>UDP</Transport>
+      <DefaultPort>0</DefaultPort>
+      <MapName></MapName>
+      <PacketSizes>232 Sled; 311 Dash (Forza Motorsport 7); 324 (Forza Horizon 6); 331 Dash (Forza Motorsport 2023)</PacketSizes>
+      <Comment>Sent to the address and port set in the game. Forza Horizon 6 adds CarGroup, SmashableVelDiff and SmashableMass after NumCylinders.</Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+    <TelemetryFormat>
+      <TelemetryFormatId>EaF1</TelemetryFormatId>
+      <Name>EA F1</Name>
+      <Publisher>Electronic Arts (Codemasters)</Publisher>
+      <Transport>UDP</Transport>
+      <DefaultPort>20777</DefaultPort>
+      <MapName></MapName>
+      <PacketSizes>F1 25, format 2025: 29-byte header, 22 cars, Motion 1349, Car Telemetry 1352. F1 25: 2026 Season Pack, format 2026: 24 cars, Motion 1325, Car Telemetry 1448</PacketSizes>
+      <Comment>Format 2026 sends the g-forces as int16 thousandths, a one-byte engine temperature and packet 16, Car Telemetry 2.</Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+    <TelemetryFormat>
+      <TelemetryFormatId>Codemasters</TelemetryFormatId>
+      <Name>Codemasters UDP</Name>
+      <Publisher>Codemasters</Publisher>
+      <Transport>UDP</Transport>
+      <DefaultPort>20777</DefaultPort>
+      <MapName></MapName>
+      <PacketSizes>264 (extradata 3)</PacketSizes>
+      <Comment>DiRT Rally, GRID and WRC games before the EA F1 format.</Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+    <TelemetryFormat>
+      <TelemetryFormatId>OutSim</TelemetryFormatId>
+      <Name>OutSim</Name>
+      <Publisher>Live for Speed; BeamNG</Publisher>
+      <Transport>UDP</Transport>
+      <DefaultPort>0</DefaultPort>
+      <MapName></MapName>
+      <PacketSizes>64; 68 with an OutSim ID</PacketSizes>
+      <Comment>Sent to the address and port set in the game: cfg.txt in Live for Speed, Options, Other, Protocols in BeamNG.drive.</Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+    <TelemetryFormat>
+      <TelemetryFormatId>ProjectCarsV1</TelemetryFormatId>
+      <Name>Project CARS UDP</Name>
+      <Publisher>Slightly Mad Studios</Publisher>
+      <Transport>UDP</Transport>
+      <DefaultPort>5606</DefaultPort>
+      <MapName></MapName>
+      <PacketSizes>1367</PacketSizes>
+      <Comment></Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+    <TelemetryFormat>
+      <TelemetryFormatId>ProjectCarsV2</TelemetryFormatId>
+      <Name>Project CARS 2 UDP</Name>
+      <Publisher>Slightly Mad Studios</Publisher>
+      <Transport>UDP</Transport>
+      <DefaultPort>5606</DefaultPort>
+      <MapName></MapName>
+      <PacketSizes>559 telemetry packet</PacketSizes>
+      <Comment></Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+    <TelemetryFormat>
+      <TelemetryFormatId>AssettoCorsa</TelemetryFormatId>
+      <Name>Assetto Corsa</Name>
+      <Publisher>Kunos Simulazioni</Publisher>
+      <Transport>SharedMemory</Transport>
+      <DefaultPort>0</DefaultPort>
+      <MapName>Local\acpmf_physics</MapName>
+      <PacketSizes>SPageFilePhysics</PacketSizes>
+      <Comment>Assetto Corsa, Assetto Corsa Competizione and Assetto Corsa EVO.</Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+    <TelemetryFormat>
+      <TelemetryFormatId>IRacing</TelemetryFormatId>
+      <Name>iRacing</Name>
+      <Publisher>iRacing.com Motorsport Simulations</Publisher>
+      <Transport>SharedMemory</Transport>
+      <DefaultPort>0</DefaultPort>
+      <MapName>Local\IRSDKMemMapFileName</MapName>
+      <PacketSizes>Header and variable table</PacketSizes>
+      <Comment></Comment>
+      <IsEnabled>true</IsEnabled>
+      <DateCreated>2026-11-22T00:00:00</DateCreated>
+      <DateUpdated>2026-11-22T00:00:00</DateUpdated>
+    </TelemetryFormat>
+  </Items>
+</Data>

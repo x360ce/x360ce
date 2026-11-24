@@ -82,6 +82,12 @@ namespace x360ce.App.Controls
 			{
 				ReleaseTables();
 				UpdateSdlPage();
+				if (PadTabControl.SelectedTab == WheelTabPage || (WheelTelemetryTabPage != null && PadTabControl.SelectedTab == WheelTelemetryTabPage))
+				{
+					if (Global.DHelper != null)
+						Global.DHelper.MarkWheelTelemetryMonitored();
+					RefreshWheelTelemetryPluginStatus();
+				}
 			};
 			PadTableLayoutPanel.Layout += PadTableLayoutPanel_Layout;
 			// The tab strip tells the room its pages have only once Windows has made it.
@@ -118,6 +124,7 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
+			InitWheelTelemetryPluginUi();
 			// The icon columns show a short heading or none, as on the Devices page. A screen reader still hears the full name,
 			// and the mouse finds it on the heading.
 			IconColumnHeaderCell.Apply(IsOnlineColumn, "Online");
@@ -268,6 +275,7 @@ namespace x360ce.App.Controls
 				}
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
+				UpdateWheelTabs(ud);
 				UpdatePluginTab(ud);
 				DirectInputPanel.UpdateFrom(ud);
 				// Drawn while it is shown, and again only when the device, its settings or the database changed.
@@ -913,6 +921,10 @@ namespace x360ce.App.Controls
 			ForceSpringCarComboBox.Items.Add(CustomSpringCar);
 			ShowSpringCar();
 			UpdateSpringChart();
+			SettingsManager.LoadAndMonitor(x => x.WheelSoftLockEnabled, WheelSoftLockCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.WheelRgbStripEnabled, WheelRgbStripCheckBox);
+			UpdateWheelTooltips();
+			UpdateWheelTelemetryPluginUi();
 			PassThroughIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
 			PassThroughIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
@@ -2588,7 +2600,16 @@ namespace x360ce.App.Controls
 		/// <param name="hidden">True to put them there while the tab is not shown too, as when the page shows another controller.</param>
 		void UpdateWheelChart(bool hidden = false)
 		{
-			if (!hidden && PadTabControl.SelectedTab != WheelTabPage)
+			var onWheel = PadTabControl.SelectedTab == WheelTabPage;
+			var onTelemetry = WheelTelemetryTabPage != null && PadTabControl.SelectedTab == WheelTelemetryTabPage;
+			if ((onWheel || onTelemetry) && Global.DHelper != null)
+				Global.DHelper.MarkWheelTelemetryMonitored();
+			if (onTelemetry)
+			{
+				UpdateWheelTelemetryPluginUi();
+				RefreshWheelTelemetryPluginStatus();
+			}
+			if (!hidden && !onWheel)
 				return;
 			// The wheel the range is counted for can change with the selection or arrive after the page was drawn.
 			UpdateSpringChart();
@@ -2617,7 +2638,605 @@ namespace x360ce.App.Controls
 			WheelChartUserControl.UpdateWheel(position,
 				driven == null ? null : driven.ForceSpringSpeedOverride,
 				friction);
+			UpdateWheelRgbStrip(driven);
+			UpdateWheelTelemetryPluginUi();
+			RefreshWheelTelemetryPluginStatus();
 		}
+
+		Timer _wheelRgbTestTimer;
+		int _wheelRgbTestStep;
+		UserDevice _wheelRgbTestDevice;
+		static readonly byte[] WheelRgbTestSteps = { 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x00, 0x1F, 0x00, 0x1F, 0x00 };
+
+		void UpdateWheelRgbStrip(UserDevice driven)
+		{
+			if (WheelRgbStripBar == null)
+				return;
+			if (_wheelRgbTestTimer != null && _wheelRgbTestTimer.Enabled)
+				return;
+			byte mask = 0;
+			if (driven != null && driven.WheelLedMask != 0)
+			{
+				mask = driven.WheelLedMask;
+			}
+			else if (SettingsManager.Options.WheelRgbStripEnabled && Global.DHelper != null)
+			{
+				var s = Global.DHelper.GetLatestWheelTelemetry();
+				var nowMs = WheelTelemetryMath.MonotonicNowMs();
+				if (s.Active && !float.IsNaN(s.RpmFraction) && WheelTelemetryMath.Freshness(s.TimestampMs, nowMs) > 0.0)
+					mask = LogitechWheel.RpmToLedMask(s.RpmFraction, nowMs);
+			}
+			WheelRgbStripBar.Mask = mask;
+		}
+
+		void WheelRgbTestButton_Click(object sender, EventArgs e)
+		{
+			var ud = GetSelectedDevice();
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
+			_wheelRgbTestDevice = driven;
+			_wheelRgbTestStep = 0;
+			if (_wheelRgbTestTimer == null)
+			{
+				_wheelRgbTestTimer = new Timer { Interval = 120 };
+				_wheelRgbTestTimer.Tick += WheelRgbTestTimer_Tick;
+			}
+			ApplyWheelRgbTestStep();
+			_wheelRgbTestTimer.Start();
+		}
+
+		void WheelRgbTestTimer_Tick(object sender, EventArgs e)
+		{
+			_wheelRgbTestStep++;
+			if (_wheelRgbTestStep >= WheelRgbTestSteps.Length)
+			{
+				StopWheelRgbTest();
+				return;
+			}
+			ApplyWheelRgbTestStep();
+		}
+
+		void ApplyWheelRgbTestStep()
+		{
+			var mask = WheelRgbTestSteps[_wheelRgbTestStep];
+			WheelRgbStripBar.Mask = mask;
+			var dev = _wheelRgbTestDevice;
+			if (dev != null)
+			{
+				dev.WheelLedTestMask = mask;
+				if (LogitechWheel.SupportsLeds(dev.DevVendorId, dev.DevProductId) && !string.IsNullOrEmpty(dev.HidDevicePath))
+				{
+					var path = dev.HidDevicePath;
+					System.Threading.ThreadPool.QueueUserWorkItem(_ => LogitechWheel.SetLeds(path, mask));
+				}
+			}
+		}
+
+		void StopWheelRgbTest()
+		{
+			if (_wheelRgbTestTimer != null)
+				_wheelRgbTestTimer.Stop();
+			WheelRgbStripBar.Mask = 0;
+			var dev = _wheelRgbTestDevice;
+			_wheelRgbTestDevice = null;
+			if (dev != null)
+			{
+				dev.WheelLedTestMask = -1;
+				if (LogitechWheel.SupportsLeds(dev.DevVendorId, dev.DevProductId) && !string.IsNullOrEmpty(dev.HidDevicePath))
+				{
+					var path = dev.HidDevicePath;
+					System.Threading.ThreadPool.QueueUserWorkItem(_ => LogitechWheel.SetLeds(path, 0));
+				}
+			}
+		}
+
+		void UpdateWheelTooltips()
+		{
+			if (MainToolTip == null)
+				return;
+			MainToolTip.SetToolTip(WheelSoftLockCheckBox,
+				"Enforce the chosen Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of.");
+			MainToolTip.SetToolTip(WheelRgbStripCheckBox,
+				"Drive supported steering wheels' RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.");
+			MainToolTip.SetToolTip(WheelRgbTestButton,
+				"Sweeps the RGB/RPM LED strip on screen and on a connected Logitech G27, G29 or G923 wheel.");
+		}
+
+		#region Wheel telemetry plugin UI
+
+		/// <summary>Dedicated tab hosted for an enabled wheel telemetry plugin's full page (similar to a plugin device tab); null while disabled.</summary>
+		public TabPage WheelTelemetryTabPage { get; private set; }
+
+		WheelTelemetryHost _wheelTelemetryHost;
+		Plugins.PluginTelemetryType[] _wheelTelemetryHostedTypes = new Plugins.PluginTelemetryType[0];
+		readonly List<x360ce.Plugins.IPluginWheelTelemetryControl> _wheelTelemetryControls = new List<x360ce.Plugins.IPluginWheelTelemetryControl>();
+		Plugins.PluginManager _wheelTelemetryManager;
+
+		void InitWheelTelemetryPluginUi()
+		{
+			_wheelTelemetryHost = new WheelTelemetryHost(this);
+			HandleCreated += (s, e) =>
+			{
+				AttachWheelTelemetryManager(Plugins.PluginManager.Current);
+				UpdateWheelTelemetryPluginUi();
+			};
+			HandleDestroyed += (s, e) => AttachWheelTelemetryManager(null);
+			Disposed += (s, e) =>
+			{
+				StopWheelRgbTest();
+				if (_wheelRgbTestTimer != null)
+				{
+					_wheelRgbTestTimer.Dispose();
+					_wheelRgbTestTimer = null;
+				}
+				AttachWheelTelemetryManager(null);
+				if (_wheelTelemetryHost != null)
+				{
+					_wheelTelemetryHost.Dispose();
+					_wheelTelemetryHost = null;
+				}
+				if (WheelTelemetryTabPage != null && !WheelTelemetryTabPage.IsDisposed)
+				{
+					WheelTelemetryTabPage.Dispose();
+					WheelTelemetryTabPage = null;
+				}
+				if (WheelTabPage != null && !WheelTabPage.IsDisposed && WheelTabPage.Parent == null)
+					WheelTabPage.Dispose();
+				if (MouseTabPage != null && !MouseTabPage.IsDisposed && MouseTabPage.Parent == null)
+					MouseTabPage.Dispose();
+			};
+			AttachWheelTelemetryManager(Plugins.PluginManager.Current);
+			UpdateWheelTelemetryPluginUi();
+		}
+
+		void AttachWheelTelemetryManager(Plugins.PluginManager manager)
+		{
+			if (ReferenceEquals(_wheelTelemetryManager, manager))
+				return;
+			if (_wheelTelemetryManager != null)
+				_wheelTelemetryManager.Changed -= WheelTelemetryManager_Changed;
+			_wheelTelemetryManager = manager;
+			if (_wheelTelemetryManager != null)
+				_wheelTelemetryManager.Changed += WheelTelemetryManager_Changed;
+		}
+
+		void WheelTelemetryManager_Changed(object sender, EventArgs e)
+		{
+			if (IsDisposed)
+				return;
+			if (InvokeRequired)
+			{
+				if (IsHandleCreated)
+					BeginInvoke((Action)UpdateWheelTelemetryPluginUi);
+				return;
+			}
+			UpdateWheelTelemetryPluginUi();
+		}
+
+		/// <summary>True when <paramref name="ud"/> is a steering wheel / driving controller that uses the Wheel tab.</summary>
+		public static bool IsWheelDevice(UserDevice ud)
+		{
+			if (ud == null)
+				return false;
+			if (ud.CapType == (int)SharpDX.DirectInput.DeviceType.Driving)
+				return true;
+			if (LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId)
+				|| LogitechWheel.SupportsLeds(ud.DevVendorId, ud.DevProductId))
+				return true;
+			var name = ud.ProductName;
+			if (!string.IsNullOrEmpty(name) &&
+				(name.IndexOf("wheel", StringComparison.OrdinalIgnoreCase) >= 0 ||
+				 name.IndexOf("steering", StringComparison.OrdinalIgnoreCase) >= 0))
+				return true;
+			return false;
+		}
+
+		/// <summary>True when <paramref name="ud"/> is a loaded plugin device whose class implements <see cref="x360ce.Plugins.IPluginTelemetryConsumer"/>.</summary>
+		public static bool IsTelemetryConsumerDevice(UserDevice ud)
+		{
+			if (ud == null || ud.InputSourceType != (int)InputSourceType.Plugin)
+				return false;
+			var manager = Plugins.PluginManager.Current;
+			var type = Plugins.PluginDevices.FindType(ud, manager);
+			return type != null && !type.Faulted && typeof(x360ce.Plugins.IPluginTelemetryConsumer).IsAssignableFrom(type.Type);
+		}
+
+		/// <summary>Shows the Wheel tab only for Driving/wheel devices, the Game Telemetry tab only for Driving/wheel or telemetry-consuming devices, and the Mouse tab only for a mouse (never when no device is loaded).</summary>
+		public void UpdateWheelTabs(UserDevice ud)
+		{
+			if (IsDisposed || PadTabControl == null || WheelTabPage == null)
+				return;
+			var exporting = Program.ExportUiFolder != null;
+			var showWheel = exporting || (ud != null && IsWheelDevice(ud));
+			var showTelemetry = exporting || (ud != null && (IsWheelDevice(ud) || IsTelemetryConsumerDevice(ud)));
+			var wheelShown = PadTabControl.TabPages.Contains(WheelTabPage);
+			if (showWheel && !wheelShown)
+			{
+				InsertTabAfter(WheelTabPage, ForceFeedbackTabPage);
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(WheelTabPage);
+			}
+			else if (!showWheel && wheelShown)
+			{
+				if (PadTabControl.SelectedTab == WheelTabPage)
+					PadTabControl.SelectedTab = GeneralTabPage;
+				PadTabControl.TabPages.Remove(WheelTabPage);
+			}
+			if (WheelTelemetryTabPage != null)
+			{
+				var telemetryShown = PadTabControl.TabPages.Contains(WheelTelemetryTabPage);
+				if (showTelemetry && !telemetryShown)
+				{
+					var anchor = PadTabControl.TabPages.Contains(WheelTabPage) ? WheelTabPage : ForceFeedbackTabPage;
+					InsertTabAfter(WheelTelemetryTabPage, anchor);
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(WheelTelemetryTabPage);
+				}
+				else if (!showTelemetry && telemetryShown)
+				{
+					if (PadTabControl.SelectedTab == WheelTelemetryTabPage)
+						PadTabControl.SelectedTab = GeneralTabPage;
+					PadTabControl.TabPages.Remove(WheelTelemetryTabPage);
+				}
+			}
+			// The Mouse page only for a mouse; a touchpad reports as one.
+			var showMouse = exporting || (ud != null && ud.IsMouse);
+			var mouseShown = PadTabControl.TabPages.Contains(MouseTabPage);
+			if (showMouse && !mouseShown)
+			{
+				var anchor = new[] { WheelTelemetryTabPage, WheelTabPage, ForceFeedbackTabPage }
+					.First(p => p != null && PadTabControl.TabPages.Contains(p));
+				InsertTabAfter(MouseTabPage, anchor);
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(MouseTabPage);
+			}
+			else if (!showMouse && mouseShown)
+			{
+				if (PadTabControl.SelectedTab == MouseTabPage)
+					PadTabControl.SelectedTab = GeneralTabPage;
+				PadTabControl.TabPages.Remove(MouseTabPage);
+			}
+		}
+
+		void InsertTabAfter(TabPage page, TabPage anchor)
+		{
+			var anchorIndex = anchor == null ? -1 : PadTabControl.TabPages.IndexOf(anchor);
+			if (anchorIndex >= 0 && anchorIndex + 1 < PadTabControl.TabPages.Count)
+			{
+				if (PadTabControl.IsHandleCreated)
+				{
+					PadTabControl.TabPages.Insert(anchorIndex + 1, page);
+				}
+				else
+				{
+					var after = PadTabControl.TabPages.Cast<TabPage>().Skip(anchorIndex + 1).ToArray();
+					foreach (var p in after)
+						PadTabControl.TabPages.Remove(p);
+					PadTabControl.TabPages.Add(page);
+					PadTabControl.TabPages.AddRange(after);
+				}
+			}
+			else
+			{
+				PadTabControl.TabPages.Add(page);
+			}
+		}
+
+		/// <summary>Loads or unloads the wheel telemetry plugin's dedicated "Wheel Telemetry" tab (single source of truth; no duplicate controls on the Wheel tab).</summary>
+		public void UpdateWheelTelemetryPluginUi()
+		{
+			if (IsDisposed || PadTabControl == null)
+				return;
+			var manager = Plugins.PluginManager.Current;
+			if (IsHandleCreated)
+				AttachWheelTelemetryManager(manager);
+			var desired = manager == null
+				? new Plugins.PluginTelemetryType[0]
+				: manager.TelemetryTypes.Where(t => !t.Faulted && t.ControlType != null).ToArray();
+			if (_wheelTelemetryHostedTypes.SequenceEqual(desired))
+			{
+				UpdateWheelTabs(GetSelectedDevice());
+				return;
+			}
+			_wheelTelemetryHostedTypes = desired;
+			_wheelTelemetryControls.Clear();
+			var host = _wheelTelemetryHost ?? (_wheelTelemetryHost = new WheelTelemetryHost(this));
+
+			var pageType = desired.FirstOrDefault();
+			var wasSelected = WheelTelemetryTabPage != null && PadTabControl.SelectedTab == WheelTelemetryTabPage;
+			if (WheelTelemetryTabPage != null)
+			{
+				if (PadTabControl.TabPages.Contains(WheelTelemetryTabPage))
+					PadTabControl.TabPages.Remove(WheelTelemetryTabPage);
+				WheelTelemetryTabPage.Dispose();
+				WheelTelemetryTabPage = null;
+			}
+			if (pageType != null)
+			{
+				var pageControl = CreateTelemetryControl(pageType.ControlType, host);
+				pageControl.Dock = DockStyle.Fill;
+				// Render the plugin's Markdown help with x360ce's shared MarkdownRtf viewer, matching PluginDeviceUserControl.
+				var helpBox = pageControl.Controls.Find("HelpRichTextBox", true).OfType<RichTextBox>().FirstOrDefault();
+				var helpProp = pageControl.GetType().GetProperty("HelpMarkdown", BindingFlags.Public | BindingFlags.Instance);
+				var helpMarkdown = helpProp == null ? null : helpProp.GetValue(pageControl) as string;
+				if (helpBox != null && !string.IsNullOrWhiteSpace(helpMarkdown))
+					AppHelper.ShowHelp(helpBox, helpMarkdown);
+				var title = !string.IsNullOrWhiteSpace(pageControl.Text)
+					? pageControl.Text
+					: (string.IsNullOrWhiteSpace(pageType.Name) ? "Game Telemetry" : pageType.Name);
+				var tab = new TabPage
+				{
+					Name = nameof(WheelTelemetryTabPage),
+					Text = title,
+					AccessibleName = title,
+					AccessibleDescription = "Live game telemetry ports, force feel tuning, vehicle readings and protocol help.",
+					BackColor = System.Drawing.SystemColors.Control,
+					Padding = AppHelper.ScaledPadding(0, 0, 8, 8),
+				};
+				tab.Controls.Add(pageControl);
+				UiTree.UiHelp.Attach(tab);
+				WheelTelemetryTabPage = tab;
+			}
+
+			UpdateWheelTabs(GetSelectedDevice());
+			if (wasSelected && WheelTelemetryTabPage != null && PadTabControl.TabPages.Contains(WheelTelemetryTabPage))
+				PadTabControl.SelectedTab = WheelTelemetryTabPage;
+
+			RefreshWheelTelemetryPluginStatus();
+		}
+
+		Control CreateTelemetryControl(Type controlType, WheelTelemetryHost host)
+		{
+			try
+			{
+				var ctor = controlType.GetConstructor(new[] { typeof(x360ce.Plugins.IPluginWheelTelemetryHost) });
+				var control = ctor != null
+					? (Control)ctor.Invoke(new object[] { host })
+					: (Control)Activator.CreateInstance(controlType);
+				var refreshable = control as x360ce.Plugins.IPluginWheelTelemetryControl;
+				if (refreshable != null)
+					_wheelTelemetryControls.Add(refreshable);
+				return control;
+			}
+			catch (Exception ex)
+			{
+				var inner = ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
+				return new Label
+				{
+					AutoSize = true,
+					Text = "The plugin's controls could not be made: " + inner.GetType().Name + ": " + inner.Message,
+				};
+			}
+		}
+
+		void RefreshWheelTelemetryPluginStatus()
+		{
+			for (var i = 0; i < _wheelTelemetryControls.Count; i++)
+				_wheelTelemetryControls[i].RefreshStatus();
+		}
+
+		sealed class WheelTelemetryHost : x360ce.Plugins.IPluginWheelTelemetryHost, IDisposable
+		{
+			readonly PadControl _pad;
+			bool _disposed;
+
+			public WheelTelemetryHost(PadControl pad)
+			{
+				_pad = pad;
+				SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+			}
+
+			public event EventHandler SettingsChanged;
+
+			void Options_PropertyChanged(object sender, PropertyChangedEventArgs e)
+			{
+				if (_disposed)
+					return;
+				switch (e.PropertyName)
+				{
+					case nameof(Options.WheelTelemetryEnabled):
+					case nameof(Options.WheelTelemetryStandardPorts):
+					case nameof(Options.WheelTelemetryPort):
+					case nameof(Options.WheelTelemetryForwardEnabled):
+					case nameof(Options.WheelTelemetryForwardIp):
+					case nameof(Options.WheelTelemetryForwardPort):
+					case nameof(Options.WheelTelemetryForwardTargets):
+					case nameof(Options.WheelTelemetryAlignStrength):
+					case nameof(Options.WheelTelemetryUndersteerStrength):
+					case nameof(Options.WheelTelemetryCurbStrength):
+					case nameof(Options.WheelTelemetryDampingStrength):
+					case nameof(Options.WheelRumbleUndersteer):
+					case nameof(Options.WheelSteeringLeadMs):
+						var handler = SettingsChanged;
+						if (handler != null)
+							handler(this, EventArgs.Empty);
+						break;
+				}
+			}
+
+			UserDevice DrivenDevice()
+			{
+				var ud = _pad.GetSelectedDevice();
+				return ud == null ? null : DeviceRouting.Current.ForceDevice(ud);
+			}
+
+			public bool Enabled
+			{
+				get { return SettingsManager.Options.WheelTelemetryEnabled; }
+				set { SettingsManager.Options.WheelTelemetryEnabled = value; }
+			}
+
+			public bool ListenStandardPorts
+			{
+				get { return SettingsManager.Options.WheelTelemetryStandardPorts; }
+				set { SettingsManager.Options.WheelTelemetryStandardPorts = value; }
+			}
+
+			public int Port
+			{
+				get { return SettingsManager.Options.WheelTelemetryPort; }
+				set { SettingsManager.Options.WheelTelemetryPort = value; }
+			}
+
+			public bool ForwardEnabled
+			{
+				get { return SettingsManager.Options.WheelTelemetryForwardEnabled; }
+				set { SettingsManager.Options.WheelTelemetryForwardEnabled = value; }
+			}
+
+			public string ForwardIp
+			{
+				get { return SettingsManager.Options.WheelTelemetryForwardIp; }
+				set { SettingsManager.Options.WheelTelemetryForwardIp = value; }
+			}
+
+			public int ForwardPort
+			{
+				get { return SettingsManager.Options.WheelTelemetryForwardPort; }
+				set { SettingsManager.Options.WheelTelemetryForwardPort = value; }
+			}
+
+			public int AlignStrength
+			{
+				get { return SettingsManager.Options.WheelTelemetryAlignStrength; }
+				set { SettingsManager.Options.WheelTelemetryAlignStrength = value; }
+			}
+
+			public int UndersteerStrength
+			{
+				get { return SettingsManager.Options.WheelTelemetryUndersteerStrength; }
+				set { SettingsManager.Options.WheelTelemetryUndersteerStrength = value; }
+			}
+
+			public int CurbStrength
+			{
+				get { return SettingsManager.Options.WheelTelemetryCurbStrength; }
+				set { SettingsManager.Options.WheelTelemetryCurbStrength = value; }
+			}
+
+			public int DampingStrength
+			{
+				get { return SettingsManager.Options.WheelTelemetryDampingStrength; }
+				set { SettingsManager.Options.WheelTelemetryDampingStrength = value; }
+			}
+
+			public int RumbleUndersteer
+			{
+				get { return SettingsManager.Options.WheelRumbleUndersteer; }
+				set { SettingsManager.Options.WheelRumbleUndersteer = value; }
+			}
+
+			public int SteeringLeadMs
+			{
+				get { return SettingsManager.Options.WheelSteeringLeadMs; }
+				set { SettingsManager.Options.WheelSteeringLeadMs = value; }
+			}
+
+			public void ResetDefaults()
+			{
+				var o = SettingsManager.Options;
+				o.WheelTelemetryEnabled = true;
+				o.WheelTelemetryPort = 37150;
+				o.WheelTelemetryStandardPorts = false;
+				o.WheelTelemetryForwardEnabled = false;
+				o.WheelTelemetryForwardIp = "127.0.0.1";
+				o.WheelTelemetryForwardPort = 0;
+				o.WheelTelemetryForwardTargets = "";
+				o.WheelTelemetryAlignStrength = 100;
+				o.WheelTelemetryUndersteerStrength = 100;
+				o.WheelTelemetryCurbStrength = 100;
+				o.WheelTelemetryDampingStrength = 100;
+				o.WheelRumbleUndersteer = 0;
+				o.WheelSteeringLeadMs = 0;
+			}
+
+			public string Source
+			{
+				get
+				{
+					var driven = DrivenDevice();
+					if (driven != null && !string.IsNullOrEmpty(driven.WheelTelemetrySource))
+						return driven.WheelTelemetrySource;
+					if (Global.DHelper != null)
+					{
+						var latest = Global.DHelper.GetLatestWheelTelemetry();
+						if (latest.Active && WheelTelemetryMath.Freshness(latest.TimestampMs, WheelTelemetryMath.MonotonicNowMs()) > 0.0)
+							return latest.Source;
+					}
+					return null;
+				}
+			}
+
+			public int? SpeedKmh
+			{
+				get
+				{
+					var driven = DrivenDevice();
+					if (driven != null && driven.ForceSpringSpeedOverride.HasValue)
+						return driven.ForceSpringSpeedOverride;
+					if (Global.DHelper != null)
+					{
+						var latest = Global.DHelper.GetLatestWheelTelemetry();
+						if (latest.Active && !float.IsNaN(latest.SpeedKmh) && latest.SpeedKmh >= 0f
+							&& WheelTelemetryMath.Freshness(latest.TimestampMs, WheelTelemetryMath.MonotonicNowMs()) > 0.0)
+							return (int)Math.Round(latest.SpeedKmh);
+					}
+					return null;
+				}
+			}
+
+			public x360ce.Plugins.WheelTelemetry LiveTelemetry
+			{
+				get
+				{
+					if (Global.DHelper == null)
+						return x360ce.Plugins.WheelTelemetry.Neutral;
+					var s = Global.DHelper.GetLatestWheelTelemetry();
+					if (!s.Active)
+						return x360ce.Plugins.WheelTelemetry.Neutral;
+					return new x360ce.Plugins.WheelTelemetry
+					{
+						SpeedKmh = s.SpeedKmh,
+						AlignAngleDeg = s.AlignAngleDeg,
+						FrontGrip = s.FrontGrip,
+						LateralG = s.LateralG,
+						Impulse = s.Impulse,
+						DampingScale = s.DampingScale,
+						RpmFraction = s.RpmFraction,
+						PitchDeg = s.PitchDeg,
+						TimestampMs = s.TimestampMs,
+						Source = s.Source,
+					};
+				}
+			}
+
+			public double Freshness
+			{
+				get
+				{
+					if (Global.DHelper == null)
+						return 0.0;
+					var s = Global.DHelper.GetLatestWheelTelemetry();
+					return s.Active ? WheelTelemetryMath.Freshness(s.TimestampMs, WheelTelemetryMath.MonotonicNowMs()) : 0.0;
+				}
+			}
+
+			public int PacketRateHz
+			{
+				get { return Global.DHelper == null ? 0 : Global.DHelper.WheelTelemetryPacketRateHz; }
+			}
+
+			public string PortStatus
+			{
+				get { return Global.DHelper == null ? null : Global.DHelper.WheelTelemetryPortStatus; }
+			}
+
+			public void Dispose()
+			{
+				if (_disposed)
+					return;
+				_disposed = true;
+				SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+			}
+		}
+
+		#endregion
 
 		#endregion
 
@@ -2729,8 +3348,13 @@ namespace x360ce.App.Controls
 			if (springAutoDevice != null)
 				return;
 			var ud = GetSelectedDevice();
+			var selectedRange = SelectedWheelRange();
+			var softLockNote = ud != null && SettingsManager.Options.WheelSoftLockEnabled && selectedRange > 0 && !TakesRange(ud)
+				? string.Format("Soft lock holds this wheel at {0}° and scales steering to match.", selectedRange)
+				: null;
 			var note = ud == null ? null : SpringNote(ForceSpringEnableCheckBox.Checked, (int)MappedTo - 1, ForceRoute(DInput.DeviceRouting.Current, ud))
-				?? RangeNote(SelectedWheelRange(), TakesRange(ud));
+				?? softLockNote
+				?? RangeNote(selectedRange, TakesRange(ud));
 			// A note already shown is written again when its reason changes, as when another tab comes to drive the wheel.
 			if (note != null && springNoteShown)
 			{
@@ -3452,6 +4076,7 @@ namespace x360ce.App.Controls
 			UpdateForceFeedbackTitle();
 			UpdateEffectDescription();
 			UpdateForceSource();
+			UpdateWheelTabs(GetSelectedDevice());
 		}
 
 		/// <summary>The Force Feedback page's title, naming the other tabs the selected device is on.</summary>
@@ -3549,7 +4174,7 @@ namespace x360ce.App.Controls
 			var manager = Plugins.PluginManager.Current;
 			// An export describes the program as every computer has it; a plugin device's tab is this computer's.
 			var type = ud != null && ud.InputSourceType == (int)InputSourceType.Plugin && manager != null && Program.ExportUiFolder == null
-				? manager.FindDeviceType(ud.ProductGuid)
+				? Plugins.PluginDevices.FindType(ud, manager)
 				: null;
 			var device = type == null || Global.DHelper == null ? null : Global.DHelper.GetPluginDevice(ud.InstanceGuid);
 			ShowPluginTab(ud == null ? Guid.Empty : ud.InstanceGuid, type, device);
@@ -3575,6 +4200,26 @@ namespace x360ce.App.Controls
 			var panel = PluginPanel;
 			if (show && panel != null && panel.InstanceGuid == instanceGuid && panel.Type == type && panel.Device == device)
 				return;
+			// Same device toggled on/off (engine reader created or disposed): keep the existing TabPage in place so the tab never disappears and reappears.
+			if (show && PluginTabPage != null && panel != null && panel.InstanceGuid == instanceGuid && panel.Type == type)
+			{
+				var subTab = panel.SelectedSubTabIndex;
+				PluginTabPage.SuspendLayout();
+				try
+				{
+					PluginTabPage.Controls.Remove(panel);
+					panel.Dispose();
+					PluginPanel = new PluginDeviceUserControl(instanceGuid, type, device, Plugins.PluginSettings.Current) { Dock = DockStyle.Fill };
+					PluginPanel.SelectSubTab(subTab);
+					PluginTabPage.Controls.Add(PluginPanel);
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(PluginTabPage);
+				}
+				finally
+				{
+					PluginTabPage.ResumeLayout(true);
+				}
+				return;
+			}
 			// A tab made again while it is open stays open.
 			var selected = PluginTabPage != null && PadTabControl.SelectedTab == PluginTabPage;
 			if (PluginTabPage != null)
@@ -3587,10 +4232,11 @@ namespace x360ce.App.Controls
 			if (!show)
 				return;
 			PluginPanel = new PluginDeviceUserControl(instanceGuid, type, device, Plugins.PluginSettings.Current) { Dock = DockStyle.Fill };
-			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
+			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, BackColor = System.Drawing.SystemColors.Control, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
 			PluginTabPage.AccessibleDescription = "The settings of the plugin device mapped here, and the controls its plugin adds.";
 			PluginTabPage.Controls.Add(PluginPanel);
 			PadTabControl.TabPages.Add(PluginTabPage);
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(PluginTabPage);
 			if (selected)
 				PadTabControl.SelectedTab = PluginTabPage;
 		}

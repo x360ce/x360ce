@@ -42,9 +42,15 @@ namespace x360ce.App.Issues
 			var list = new List<string>();
 			foreach (var file in manager.Files)
 			{
+				if (file.State == PluginFileState.Disabled)
+					continue;
 				if (file.State != PluginFileState.Loaded || file.Reason != null)
 					list.Add(file.Name + ": " + file.Reason);
 				foreach (var type in file.DeviceTypes.Where(x => x.Faulted))
+					list.Add(file.Name + ", " + type.Name + ": switched off after it failed: " + type.FaultReason);
+				foreach (var type in file.TelemetryTypes.Where(x => x.Faulted))
+					list.Add(file.Name + ", " + type.Name + ": switched off after it failed: " + type.FaultReason);
+				foreach (var type in file.GameTypes.Where(x => x.Faulted))
 					list.Add(file.Name + ", " + type.Name + ": switched off after it failed: " + type.FaultReason);
 			}
 			return list.ToArray();

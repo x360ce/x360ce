@@ -154,6 +154,14 @@ namespace x360ce.Engine
         // Speed sent by the game.
         short old_LeftMotorSpeed;
         short old_RightMotorSpeed;
+        /// <summary>Latest normalised rumble drive (0 to 1) from the game, used for optional zero-telemetry understeer lightening.</summary>
+        double rumbleDrive;
+        /// <summary>Smoothed rumble envelope (0 to 1) updated on each spring poll.</summary>
+        double rumbleEnvelope;
+        long lastSpringClockMs = -1;
+
+        /// <summary>The signed spring force in percent (-100 to +100) computed on the last <see cref="UpdateSpring"/> call.</summary>
+        public int LastSpringPercent { get; private set; }
 
         Guid GUID_Force;
 
@@ -311,7 +319,12 @@ namespace x360ce.Engine
                 motorsRefused &= ~MotorEffects.Right;
 
             // Which of the effects this state holds are stopped and disposed, and which are made.
-            var motors = actuatorR == null ? MotorEffects.Left : MotorEffects.Left | MotorEffects.Right;
+            // On a single-actuator wheel with periodic effects, try two concurrent effects on actuatorL (Left impact + Right texture)
+            // so both motor frequencies and strengths stay distinct; if the driver refuses the second effect, fall back transparently
+            // to combining both motors into effectL.
+            var singleActuatorDual = actuatorR == null && GUID_Force != EffectGuid.ConstantForce && (motorsRefused & MotorEffects.Right) == 0;
+            var hasRightEffect = actuatorR != null || singleActuatorDual;
+            var motors = hasRightEffect ? (MotorEffects.Left | MotorEffects.Right) : MotorEffects.Left;
             var held = (effectL == null ? MotorEffects.None : MotorEffects.Left)
                 | (effectR == null ? MotorEffects.None : MotorEffects.Right);
             MotorEffects drop, make;
@@ -367,6 +380,15 @@ namespace x360ce.Engine
                 {
                     paramsL = GetParameters();
                     paramsL.Axes = new int[1] { actuatorL.ObjectId };
+                    if (singleActuatorDual)
+                    {
+                        paramsR = GetParameters();
+                        paramsR.Axes = new int[1] { actuatorL.ObjectId };
+                    }
+                    else
+                    {
+                        paramsR = null;
+                    }
                 }
             }
 
@@ -387,7 +409,7 @@ namespace x360ce.Engine
             }
 
             // Direction needs to be updated when force or direction change.
-            if (actuatorR != null && (motorsChanged || forceChanged || directionRChanged))
+            if (hasRightEffect && paramsR != null && (motorsChanged || forceChanged || directionRChanged))
             {
                 var directionR = TryParse(old_RightDirection);
                 var dirR = new int[paramsR.Axes.Length];
@@ -408,7 +430,7 @@ namespace x360ce.Engine
                 flagsL |= EffectParameterFlags.Gain;
             }
 
-            if (actuatorR != null && (motorsChanged || forceChanged || strengthChanged || strengthRChanged))
+            if (hasRightEffect && paramsR != null && (motorsChanged || forceChanged || strengthChanged || strengthRChanged))
             {
                 int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
                 int rightGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetRightMotorStrength());
@@ -421,6 +443,7 @@ namespace x360ce.Engine
 
             var speedLChanged = Changed(ref old_LeftMotorSpeed, v.LeftMotorSpeed);
             var speedRChanged = Changed(ref old_RightMotorSpeed, v.RightMotorSpeed);
+            rumbleDrive = Math.Max(Drive(old_LeftMotorSpeed), Drive(old_RightMotorSpeed));
 
             // Convert speed into magnitude/amplitude.
             int leftMagnitudeAdjusted;
@@ -429,8 +452,8 @@ namespace x360ce.Engine
             int leftPeriod;
             int rightPeriod = 0;
 
-            // If device have only one force feedback actuator (probably wheel).
-            var combine = actuatorR == null;
+            // Combine into effectL when the device has only one actuator and does not run a separate right effect.
+            var combine = !hasRightEffect;
 
             // Get right values first for possible combine later.
             if (motorsChanged || forceChanged || periodRChanged || speedRChanged || combine)
@@ -439,7 +462,7 @@ namespace x360ce.Engine
                 // The setting is the period at full drive; a real motor slows as the drive falls, and
                 // so does the period played, along the measured line. Microseconds for the device.
                 rightPeriod = MotorModel.PeriodMs(ps.GetRightMotorPeriod(), false, Drive(old_RightMotorSpeed)) * 1000;
-                if (actuatorR != null)
+                if (hasRightEffect && paramsR != null)
                 {
                     // Update force values.
                     if (GUID_Force == EffectGuid.ConstantForce)
@@ -509,7 +532,7 @@ namespace x360ce.Engine
                     else
                         Counts.Made++;
                 }
-                if (actuatorR != null)
+                if (hasRightEffect && paramsR != null)
                 {
                     // Update Right force
                     paramsR.Parameters = GUID_Force == EffectGuid.ConstantForce
@@ -691,6 +714,9 @@ namespace x360ce.Engine
         /// <summary>The steering range, lock to lock, the spring is counted against: <see cref="SpringRange"/>.</summary>
         int rangeDegrees = DefaultRangeDegrees;
 
+        /// <summary>The steering range, lock to lock, currently active on this state.</summary>
+        public int RangeDegrees { get { return rangeDegrees; } }
+
         /// <summary>
         /// A DirectInput direction names where a force comes from, so a positive magnitude along the
         /// positive axis pushes towards the low end. A force towards the high end is the negative one.
@@ -698,20 +724,31 @@ namespace x360ce.Engine
         const int TowardsHighEnd = -1;
 
         /// <summary>Holds a wheel at its centre with a spring the game never asked for. Called every poll.</summary>
-        /// <remarks>
-        /// A game made for a gamepad sends rumble and nothing else, so a wheel driven from that
-        /// rumble has no force at all between bumps and turns freely. The force is looked up in the
-        /// spring's curve (<see cref="Curve"/>), which is built again only when a setting, the wheel
-        /// range or the speed changes. While a calibration is on, it decides the force and the damping
-        /// instead. The device is only spoken to when the force changes by a whole percent, so a poll
-        /// of a still wheel compares a few numbers and returns.
-        /// </remarks>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent)
+        {
+            UpdateSpring(device, position, calibration, nowMs, speedOverride, frictionPercent, WheelTelemetrySample.Inactive, 0, 0);
+        }
+
+        /// <summary>Holds a wheel at its centre with a spring shaped by the car's curve, live vehicle telemetry, optional rumble understeer and software soft-lock. Called every poll.</summary>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent,
+            WheelTelemetrySample telemetry, int rumbleUndersteerPercent, int softLockRangeDegrees)
+        {
+            UpdateSpring(device, position, calibration, nowMs, speedOverride, frictionPercent,
+                telemetry, rumbleUndersteerPercent, softLockRangeDegrees, WheelTelemetryTuning.Default);
+        }
+
+        /// <summary>Holds a wheel at its centre with a spring shaped by the car's curve, live vehicle telemetry, user tuning scales, optional rumble understeer and software soft-lock. Called every poll.</summary>
         /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
         /// <param name="calibration">The Auto button's run, or null.</param>
-        /// <param name="nowMs">The time, for the calibration.</param>
+        /// <param name="nowMs">Monotonic clock in milliseconds.</param>
         /// <param name="speedOverride">The car's speed from a live source, which replaces the Speed setting while it is not null (<see cref="UserDevice.ForceSpringSpeedOverride"/>).</param>
         /// <param name="frictionPercent">The least force that turns the wheel, which the spring never falls below outside the centre (<see cref="UserDevice.ForceSpringFriction"/>).</param>
-        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent)
+        /// <param name="telemetry">Live vehicle telemetry snapshot, or <see cref="WheelTelemetrySample.Inactive"/>.</param>
+        /// <param name="rumbleUndersteerPercent">Zero-telemetry rumble-coupled understeer lightening (0 to 60 %).</param>
+        /// <param name="softLockRangeDegrees">Optional virtual soft-lock range lock to lock (&gt; 0 and narrower than physical range), or 0 for off.</param>
+        /// <param name="tuning">User-configured telemetry channel gain scales.</param>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent,
+            WheelTelemetrySample telemetry, int rumbleUndersteerPercent, int softLockRangeDegrees, WheelTelemetryTuning tuning)
         {
             int percent;
             int damper;
@@ -724,12 +761,38 @@ namespace x360ce.Engine
             }
             else
             {
+                var effectiveSpeed = WheelTelemetryMath.EffectiveSpeed(springSpeed, speedOverride, telemetry, nowMs);
+                // When software soft-lock narrows a wheel without hardware range control, degrees are counted against its full physical range.
+                var physicalRange = softLockRangeDegrees > 0 && softLockRangeDegrees < DefaultRangeDegrees
+                    ? DefaultRangeDegrees
+                    : rangeDegrees;
                 // The friction is the spring's floor, so it plays only while the spring does.
-                Curve.Set(springStrength, springCentre, springPeak, springLightening, rangeDegrees, speedOverride ?? springSpeed,
-                    springStrength == 0 ? 0 : frictionPercent);
-                percent = Curve.Force(position);
-                damper = springDamper;
+                var activeFriction = springStrength == 0 ? 0 : frictionPercent;
+                Curve.Set(springStrength, springCentre, springPeak, springLightening, physicalRange, effectiveSpeed, activeFriction);
+
+                // Smooth rumble envelope for zero-telemetry tire-scrub lightening (attack ~60 ms, release ~180 ms).
+                double rumbleAttenuation = 0.0;
+                if (rumbleUndersteerPercent > 0 && springStrength > 0)
+                {
+                    var dtMs = lastSpringClockMs >= 0 ? Math.Max(0, Math.Min(100, nowMs - lastSpringClockMs)) : 0;
+                    var tau = rumbleDrive > rumbleEnvelope ? 60.0 : 180.0;
+                    var alpha = dtMs > 0 ? dtMs / (tau + dtMs) : 0.0;
+                    rumbleEnvelope += alpha * (rumbleDrive - rumbleEnvelope);
+                    var maxDrop = Math.Max(0, Math.Min(60, rumbleUndersteerPercent)) / 100.0;
+                    rumbleAttenuation = rumbleEnvelope * maxDrop;
+                }
+                else
+                {
+                    rumbleEnvelope = 0.0;
+                }
+                lastSpringClockMs = nowMs;
+
+                double dampingMultiplier;
+                percent = WheelTelemetryMath.ComputeSpringForce(Curve, position, physicalRange, activeFriction, springStrength,
+                    telemetry, nowMs, rumbleAttenuation, softLockRangeDegrees, tuning, out dampingMultiplier);
+                damper = springDamper == 0 ? 0 : Math.Max(0, Math.Min(DI_FFNOMINALMAX, (int)Math.Round(springDamper * dampingMultiplier)));
             }
+            LastSpringPercent = percent;
             UpdateDamper(device, damper);
             var magnitude = TowardsHighEnd * percent * (DI_FFNOMINALMAX / 100);
             if (magnitude == springMagnitude && (magnitude == 0 || effectS != null))
@@ -905,7 +968,7 @@ namespace x360ce.Engine
                 var list = new List<string>();
                 if (paramsL != null && (effectL == null || unsupported.Contains(effectL)))
                     list.Add(actuatorR == null ? "the motor" : "the left motor");
-                if (paramsR != null && (effectR == null || unsupported.Contains(effectR)))
+                if (actuatorR != null && paramsR != null && (effectR == null || unsupported.Contains(effectR)))
                     list.Add("the right motor");
                 if (springRefused)
                     list.Add("the centering spring");

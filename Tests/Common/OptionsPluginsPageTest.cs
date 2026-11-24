@@ -46,6 +46,7 @@ namespace x360ce.Tests
 							var rows = (OptionsPluginsUserControl.PluginRow[])grid.DataSource;
 							var row = rows.SingleOrDefault(x => x.Name == "SamplePlugin");
 							Assert.IsNotNull(row, "The plugin found before the page was shown is not on the list.");
+							Assert.IsTrue(row.Enabled, "A loaded plugin starts enabled.");
 							Assert.AreEqual("Loaded", row.State);
 							Assert.AreEqual(@"SamplePlugin\SamplePlugin.dll", row.Source, "The folder is shown above the list.");
 						}
@@ -56,6 +57,65 @@ namespace x360ce.Tests
 			{
 				PluginManager.Current = before;
 				Directory.Delete(folder, true);
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("critical")]
+		[Description("Unticking the Enabled checkbox on Options > Plugins disables/unloads the plugin and persists the choice; re-ticking restores it")]
+		public void Enabled_checkbox_toggles_plugin_state_and_persists_in_options()
+		{
+			var before = PluginManager.Current;
+			try
+			{
+				x360ce.App.SettingsManager.Options.SetPluginEnabled("WheelTelemetry", true);
+				using (var manager = new PluginManager(null, null, () => false, typeof(PluginManager).Assembly,
+					name => x360ce.App.SettingsManager.Options.IsPluginEnabled(name)))
+				{
+					manager.LoadEmbedded();
+					PluginManager.Current = manager;
+					Ui.OnUiThread(() =>
+					{
+						using (var form = new Form())
+						using (var page = new OptionsPluginsUserControl { Dock = DockStyle.Fill })
+						{
+							form.Controls.Add(page);
+							form.Show();
+							Application.DoEvents();
+							var grid = page.PluginsDataGridView;
+							Assert.IsTrue(grid.Columns[0] is DataGridViewCheckBoxColumn, "First column should be the Enabled checkbox.");
+							var rows = (OptionsPluginsUserControl.PluginRow[])grid.DataSource;
+							var index = Array.FindIndex(rows, r => r.Name == "WheelTelemetry");
+							Assert.IsTrue(index >= 0, "WheelTelemetry built-in plugin should be listed.");
+							Assert.IsTrue(rows[index].Enabled, "Built-in plugin must start enabled.");
+							Assert.AreEqual("Loaded", rows[index].State);
+
+							// Untick Enabled on the grid.
+							grid.Rows[index].Cells[0].Value = false;
+							Application.DoEvents();
+							Assert.IsFalse(x360ce.App.SettingsManager.Options.IsPluginEnabled("WheelTelemetry"), "Disabled state must be persisted in Options.");
+							Assert.AreEqual(0, manager.TelemetryTypes.Length, "Disabling WheelTelemetry must unload its active provider.");
+							rows = (OptionsPluginsUserControl.PluginRow[])grid.DataSource;
+							index = Array.FindIndex(rows, r => r.Name == "WheelTelemetry");
+							Assert.IsFalse(rows[index].Enabled);
+							Assert.AreEqual("Disabled", rows[index].State);
+
+							// Re-tick Enabled on the grid.
+							grid.Rows[index].Cells[0].Value = true;
+							Application.DoEvents();
+							Assert.IsTrue(x360ce.App.SettingsManager.Options.IsPluginEnabled("WheelTelemetry"));
+							Assert.IsTrue(manager.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"));
+							rows = (OptionsPluginsUserControl.PluginRow[])grid.DataSource;
+							index = Array.FindIndex(rows, r => r.Name == "WheelTelemetry");
+							Assert.IsTrue(rows[index].Enabled);
+							Assert.AreEqual("Loaded", rows[index].State);
+						}
+					});
+				}
+			}
+			finally
+			{
+				x360ce.App.SettingsManager.Options.SetPluginEnabled("WheelTelemetry", true);
+				PluginManager.Current = before;
 			}
 		}
 

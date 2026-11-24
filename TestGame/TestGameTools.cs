@@ -104,5 +104,66 @@ namespace x360ce.TestGame
 		{
 			return XInputReader.Rumble(place, left, right);
 		}
+
+		[McpTool(AiAccess.Read, "Reads the Virtual Car simulator's live physics and UDP telemetry transmission status.")]
+		public static object CarState()
+		{
+			var panel = Window.VirtualCar;
+			var car = panel.Car;
+			return new System.Collections.Generic.Dictionary<string, object>
+			{
+				{ "SpeedKmh", car.SpeedKmh },
+				{ "Gear", car.Gear },
+				{ "Rpm", car.Rpm },
+				{ "FrontGrip", car.FrontGrip },
+				{ "AlignAngleDeg", car.AlignAngleDeg },
+				{ "LateralG", car.LateralG },
+				{ "CurbImpulse", car.CurbImpulse },
+				{ "Surface", car.Surface.ToString() },
+				{ "AutoDrive", panel.AutoDrive },
+				{ "SendTelemetry", panel.SendTelemetry },
+				{ "Protocol", panel.Protocol.ToString() },
+				{ "TargetPort", panel.TargetPort },
+				{ "PacketsSent", panel.PacketsSent },
+				{ "SendRateHz", panel.SendRateHz },
+			};
+		}
+
+		[McpTool(AiAccess.Configure, "Controls the Virtual Car tab: switches to it, toggles Auto-Drive or UDP telemetry, picks protocol/surface/port, or triggers a curb strike.")]
+		public static object CarControl(
+			[Description("Optional: true to enable Auto-Drive, false to disable.")] bool? autoDrive = null,
+			[Description("Optional: true to send UDP telemetry, false to stop.")] bool? sendTelemetry = null,
+			[Description("Optional protocol: ForzaDataOut, EaF1Udp, CodemastersUdp, OutSimUdp, ProjectCars2Udp.")] string protocol = null,
+			[Description("Optional surface: DryTarmac, WetTarmac, Gravel, Ice.")] string surface = null,
+			[Description("Optional target UDP port (1024 to 65535).")] int? port = null,
+			[Description("Optional curb strike: -1 left, +1 right, 0 none.")] int curb = 0,
+			[Description("Optional: true to reset the car to the start line.")] bool reset = false)
+		{
+			Window.SelectVirtualCarTab();
+			var panel = Window.VirtualCar;
+			if (autoDrive.HasValue)
+				panel.AutoDrive = autoDrive.Value;
+			if (sendTelemetry.HasValue)
+				panel.SendTelemetry = sendTelemetry.Value;
+			if (!string.IsNullOrEmpty(protocol))
+			{
+				VirtualCarProtocol parsed;
+				if (System.Enum.TryParse(protocol, true, out parsed))
+					panel.Protocol = parsed;
+			}
+			if (!string.IsNullOrEmpty(surface))
+			{
+				VirtualCarSurface parsed;
+				if (System.Enum.TryParse(surface, true, out parsed))
+					panel.Car.Surface = parsed;
+			}
+			if (port.HasValue)
+				panel.TargetPort = port.Value;
+			if (curb != 0)
+				panel.Car.TriggerCurb(curb < 0 ? -1f : 1f);
+			if (reset)
+				panel.Car.Reset();
+			return CarState();
+		}
 	}
 }

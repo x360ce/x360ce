@@ -432,4 +432,119 @@ namespace x360ce.App.Controls
 			base.Dispose(disposing);
 		}
 	}
+
+	/// <summary>
+	/// Symmetric 10-LED RGB/RPM shift indicator bar matching Logitech G27/G29/G923 wheel LEDs (5 pairs: 2 green, 1 amber,
+	/// 2 red, lighting outside-in). Uses x360ce's shared theme frame colours and scales height cleanly on the 4 px grid.
+	/// </summary>
+	public sealed class WheelLedStripControl : Control
+	{
+		static readonly Color[] PairColors =
+		{
+			Color.FromArgb(46, 196, 86),   // Bit 0: outer green
+			Color.FromArgb(106, 212, 64),  // Bit 1: inner green
+			Color.FromArgb(240, 188, 36),  // Bit 2: amber
+			Color.FromArgb(236, 98, 42),   // Bit 3: orange-red
+			Color.FromArgb(228, 42, 42),   // Bit 4: centre red / shift
+		};
+
+		byte _mask;
+
+		public WheelLedStripControl()
+		{
+			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
+			TabStop = false;
+			var scale = ControlsHelper.DpiScale;
+			var h = Math.Max(16, (int)Math.Round(20 * scale));
+			MinimumSize = new Size((int)Math.Round(80 * scale), h);
+			Height = h;
+			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
+		}
+
+		void FormsTheme_ThemeChanged(object sender, EventArgs e)
+		{
+			if (!IsDisposed)
+				Invalidate();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
+			base.Dispose(disposing);
+		}
+
+		/// <summary>5-bit LED bitmask (bits 0..4 from outer green pair to centre red pair).</summary>
+		public byte Mask
+		{
+			get { return _mask; }
+			set
+			{
+				var clamped = (byte)(value & 0x1F);
+				if (clamped == _mask)
+					return;
+				_mask = clamped;
+				Invalidate();
+			}
+		}
+
+		protected override void OnFontChanged(EventArgs e)
+		{
+			base.OnFontChanged(e);
+			var scale = ControlsHelper.DpiScale;
+			var h = Math.Max((int)Math.Round(20 * scale), ((Font.Height + 7) / 4) * 4);
+			if (MinimumSize.Height != h)
+			{
+				MinimumSize = new Size((int)Math.Round(80 * scale), h);
+				Height = h;
+			}
+		}
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			var g = e.Graphics;
+			var rect = ClientRectangle;
+			if (rect.Width < 24 || rect.Height < 8)
+				return;
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			var face = FormsTheme.FrameFace(this);
+			var borderCol = FormsTheme.GetColor("BorderField");
+			var offCol = FormsTheme.GetColor("BackgroundDark");
+			using (var bg = new SolidBrush(face))
+				g.FillRectangle(bg, rect);
+
+			const int count = 10;
+			var unit = Math.Max(4, (int)Math.Round(4 * ControlsHelper.DpiScale));
+			var pad = unit;
+			var gap = unit;
+			var availW = Math.Max(count * 4, rect.Width - pad * 2 - gap * (count - 1));
+			var segW = (float)availW / count;
+			var segH = Math.Max(4f, rect.Height - pad * 2);
+			var y = (rect.Height - segH) * 0.5f;
+
+			using (var offBrush = new SolidBrush(offCol))
+			using (var borderPen = new Pen(borderCol))
+			{
+				for (var i = 0; i < count; i++)
+				{
+					// Symmetric outside-in mapping: slots 0 & 9 -> bit 0, 1 & 8 -> bit 1, ..., 4 & 5 -> bit 4.
+					var bit = i < 5 ? i : 9 - i;
+					var lit = Enabled && (_mask & (1 << bit)) != 0;
+					var x = pad + i * (segW + gap);
+					var seg = new RectangleF(x, y, segW, segH);
+					if (lit)
+					{
+						using (var onBrush = new SolidBrush(PairColors[bit]))
+							g.FillRectangle(onBrush, seg);
+					}
+					else
+					{
+						g.FillRectangle(offBrush, seg);
+					}
+					g.DrawRectangle(borderPen, seg.X, seg.Y, seg.Width, seg.Height);
+				}
+				g.DrawRectangle(borderPen, 0, 0, rect.Width - 1, rect.Height - 1);
+			}
+		}
+	}
 }

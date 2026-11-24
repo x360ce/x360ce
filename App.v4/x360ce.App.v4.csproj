@@ -463,6 +463,7 @@
     <Compile Include="Plugins\PluginMcpDoors.cs" />
     <Compile Include="Plugins\PluginSettings.cs" />
     <Compile Include="Plugins\PluginSettingsView.cs" />
+    <Compile Include="Plugins\PluginTelemetryData.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -653,6 +654,13 @@
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
+    <!-- Telemetry formats and games, made from the [x360ce] tables' rows; plain XML, so a change can be read in a diff. -->
+    <EmbeddedResource Include="Resources\x360ce.TelemetryFormats.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryFormatSpecs.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGames.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGameSteps.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGameMods.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGameFiles.xml" />
     <EmbeddedResource Include="Resources\ViGEmBus.zip" />
   </ItemGroup>
   <ItemGroup>

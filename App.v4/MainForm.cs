@@ -465,7 +465,8 @@ namespace x360ce.App
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
 			UpdateStatusAiAccessLabel();
-			LoadSteps = BuildMainControl().GetEnumerator();
+			UpdateStatusErrorsLabel();
+			LoadSteps =BuildMainControl().GetEnumerator();
 			LoadTimer = new System.Windows.Forms.Timer { Interval = 1 };
 			LoadTimer.Tick += LoadTimer_Tick;
 			LoadTimer.Start();

@@ -39,7 +39,7 @@ namespace x360ce.Plugins.Samples
 	/// worker sends the machine what <see cref="NextCommand"/> works out from the game's force, four times a second at most.
 	/// x360ce sets the settings on the thread that calls Read; those the worker or the Connection page read too are volatile.
 	/// </remarks>
-	public partial class FitnessMachine : IPluginDevice, IPluginForceFeedback, IPluginMapping, INotifyPropertyChanged, IDisposable
+	public partial class FitnessMachine : IPluginDevice, IPluginForceFeedback, IPluginMapping, IPluginDeviceIdentity, INotifyPropertyChanged, IDisposable
 	{
 		/// <summary>Names the kind of device: saved mappings find the device by it.</summary>
 		internal static readonly Guid Product = new Guid("6e1793da-b362-49b0-ad25-08433feac3f8");
@@ -63,6 +63,7 @@ namespace x360ce.Plugins.Samples
 
 		public string Name { get { return "Fitness Machine"; } }
 		public Guid ProductGuid { get { return Product; } }
+		public PluginDeviceIdentity HardwareIdentity { get { return _session.HardwareIdentity; } }
 		public int AxisCount { get { return 6; } }
 		public int SliderCount { get { return 2; } }
 		public int PovCount { get { return 0; } }
@@ -80,10 +81,13 @@ namespace x360ce.Plugins.Samples
 		/// <summary>Raised on the interface thread when the Connection page chooses a machine, so x360ce keeps the Machine setting for the device.</summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		/// <summary>Raised on the interface thread when a different Bluetooth machine is selected so x360ce unchecks and disconnects the controller instead of auto-connecting to another person's machine.</summary>
+		public event EventHandler DisconnectRequested;
+
 		/// <summary>Chooses the machine the device connects to, as the Connection page does when the person selects one.</summary>
 		/// <remarks>
-		/// Called on the interface thread. It does not connect by itself: a device x360ce reads connects to the machine at its
-		/// next read, and one it does not read connects once it is ticked.
+		/// Called on the interface thread. Immediately releases any current Bluetooth link and asks x360ce to uncheck the
+		/// controller so selecting a nearby machine never auto-connects without explicit confirmation.
 		/// </remarks>
 		/// <param name="address">The machine's Bluetooth address.</param>
 		/// <param name="name">Its name, as the list shows it.</param>
@@ -93,9 +97,13 @@ namespace x360ce.Plugins.Samples
 			if (text == _machine)
 				return;
 			_machine = text;
+			_session.Hold(null);
 			var changed = PropertyChanged;
 			if (changed != null)
 				changed(this, new PropertyChangedEventArgs(nameof(Machine)));
+			var disconnect = DisconnectRequested;
+			if (disconnect != null)
+				disconnect(this, EventArgs.Empty);
 		}
 
 		#endregion
@@ -327,6 +335,11 @@ namespace x360ce.Plugins.Samples
 		public const ushort PowerRangeId = 0x2AD8;
 		public const ushort ControlPointId = 0x2AD9;
 		public const ushort StatusId = 0x2ADA;
+		// Standard Bluetooth SIG Device Information Service (0x180A) for real hardware manufacturer, model and VID/PID.
+		public const ushort DeviceInformationServiceId = 0x180A;
+		public const ushort ManufacturerNameId = 0x2A29;
+		public const ushort ModelNumberId = 0x2A24;
+		public const ushort PnpId = 0x2A50;
 
 		public const byte RequestControlOp = 0x00;
 		public const byte ResetOp = 0x01;
@@ -1324,6 +1337,99 @@ namespace x360ce.Plugins.Samples
 		/// <summary>The machine connected now; null while none is.</summary>
 		volatile Want _held;
 
+		/// <summary>Real hardware identity of the connected fitness machine, or null while unconnected.</summary>
+		volatile PluginDeviceIdentity _hardwareIdentity;
+
+		internal PluginDeviceIdentity HardwareIdentity { get { return _hardwareIdentity; } }
+
+		internal void SetHardwareIdentity(PluginDeviceIdentity identity)
+		{
+			_hardwareIdentity = identity;
+			Changed();
+		}
+
+		/// <summary>
+		/// Builds a deterministic real-hardware <see cref="PluginDeviceIdentity"/> from Bluetooth Device Information Service
+		/// characteristics (Manufacturer Name 0x2A29, Model Number 0x2A24, PnP ID 0x2A50) and the advertised BLE name.
+		/// </summary>
+		public static PluginDeviceIdentity BuildHardwareIdentity(string advertisedName, string manufacturer, string modelNumber, byte[] pnpId)
+		{
+			var cleanAdv = CleanText(advertisedName);
+			var cleanMfg = CleanText(manufacturer);
+			var cleanModel = CleanText(modelNumber);
+
+			int vid = 0;
+			int pid = 0;
+			if (pnpId != null && pnpId.Length >= 5)
+			{
+				// BLE PnP ID (0x2A50): byte 0 = Vendor ID Source (1=Bluetooth SIG, 2=USB-IF), 1..2 = VID (LE), 3..4 = PID (LE).
+				vid = pnpId[1] | (pnpId[2] << 8);
+				pid = pnpId[3] | (pnpId[4] << 8);
+			}
+
+			var productName = CombineProductName(cleanMfg, cleanModel, cleanAdv);
+			if (string.IsNullOrEmpty(productName))
+				return null;
+			var finalMfg = !string.IsNullOrEmpty(cleanMfg) ? cleanMfg : InferManufacturer(productName);
+
+			Guid productGuid;
+			if (vid > 0 && pid > 0)
+			{
+				// Standard Windows DirectInput/HID VID+PID GUID format: {PID:X4}{VID:X4}-0000-0000-0000-504944564944 ("PIDVID").
+				var d1 = (uint)(((pid & 0xFFFF) << 16) | (vid & 0xFFFF));
+				productGuid = new Guid(d1, 0, 0, 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44);
+			}
+			else
+			{
+				// Deterministic hash of manufacturer + model so every user with the same machine shares one cloud ProductGuid.
+				using (var md5 = System.Security.Cryptography.MD5.Create())
+				{
+					var key = "x360ce.FTMS|" + finalMfg.ToUpperInvariant() + "|" + productName.ToUpperInvariant();
+					productGuid = new Guid(md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(key)));
+				}
+			}
+
+			return new PluginDeviceIdentity
+			{
+				IsConnected = true,
+				Manufacturer = finalMfg,
+				ProductName = productName,
+				VendorId = vid,
+				ProductId = pid,
+				ProductGuid = productGuid,
+			};
+		}
+
+		static string CleanText(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return "";
+			return value.Replace("\0", "").Trim();
+		}
+
+		static string CombineProductName(string manufacturer, string model, string advertised)
+		{
+			if (!string.IsNullOrEmpty(model))
+			{
+				if (!string.IsNullOrEmpty(manufacturer) && !model.StartsWith(manufacturer, StringComparison.OrdinalIgnoreCase))
+					return manufacturer + " " + model;
+				return model;
+			}
+			if (!string.IsNullOrEmpty(advertised))
+			{
+				if (!string.IsNullOrEmpty(manufacturer) && !advertised.StartsWith(manufacturer, StringComparison.OrdinalIgnoreCase))
+					return manufacturer + " " + advertised;
+				return advertised;
+			}
+			return manufacturer;
+		}
+
+		static string InferManufacturer(string productName)
+		{
+			var space = productName.IndexOf(' ');
+			return space > 0 ? productName.Substring(0, space) : "Bluetooth Fitness";
+		}
+
 		/// <summary>True once the device let go: the worker lets go of the machine and ends.</summary>
 		volatile bool _closing;
 
@@ -1473,6 +1579,7 @@ namespace x360ce.Plugins.Samples
 						await link.Close();
 						link = null;
 						linked = null;
+						_hardwareIdentity = null;
 						if (lost)
 						{
 							_problem = "Lost the link to " + name + ".";
@@ -1730,7 +1837,52 @@ namespace x360ce.Plugins.Samples
 				if (_controlPoint == null)
 					_owner.Targets = 0;
 				_owner.CanCommand = _controlPoint != null;
+				await ReadDeviceInformation(name);
 				return null;
+			}
+
+			/// <summary>Reads standard Bluetooth Device Information Service (0x180A) so x360ce records the real machine manufacturer, model and VID/PID.</summary>
+			async Task ReadDeviceInformation(string advertisedName)
+			{
+				string manufacturer = null;
+				string modelNumber = null;
+				byte[] pnpId = null;
+				try
+				{
+					var dis = await Wait(_device.GetGattServicesForUuidAsync(BluetoothUuidHelper.FromShortId(Ftms.DeviceInformationServiceId), BluetoothCacheMode.Uncached));
+					if (dis.Status == GattCommunicationStatus.Success && dis.Services.Count > 0)
+					{
+						var chars = await Wait(dis.Services[0].GetCharacteristicsAsync(BluetoothCacheMode.Uncached));
+						if (chars.Status == GattCommunicationStatus.Success)
+						{
+							foreach (var c in chars.Characteristics)
+							{
+								var id = BluetoothUuidHelper.TryGetShortId(c.Uuid);
+								if (!id.HasValue)
+									continue;
+								var sid = (ushort)id.Value;
+								if (sid != Ftms.ManufacturerNameId && sid != Ftms.ModelNumberId && sid != Ftms.PnpId)
+									continue;
+								var read = await Wait(c.ReadValueAsync(BluetoothCacheMode.Uncached));
+								if (read.Status != GattCommunicationStatus.Success || read.Value == null)
+									continue;
+								var bytes = Bytes(read.Value);
+								if (sid == Ftms.ManufacturerNameId)
+									manufacturer = System.Text.Encoding.UTF8.GetString(bytes);
+								else if (sid == Ftms.ModelNumberId)
+									modelNumber = System.Text.Encoding.UTF8.GetString(bytes);
+								else if (sid == Ftms.PnpId)
+									pnpId = bytes;
+							}
+						}
+					}
+				}
+				catch (Exception)
+				{
+					// Device Information Service is optional; fall back to the BLE device's advertised name.
+				}
+				var realName = !string.IsNullOrWhiteSpace(_device.Name) ? _device.Name : advertisedName;
+				_owner.SetHardwareIdentity(FitnessSession.BuildHardwareIdentity(realName, manufacturer, modelNumber, pnpId));
 			}
 
 			/// <summary>Reads what the machine is and asks it for its values; true when it asks to be paired first.</summary>

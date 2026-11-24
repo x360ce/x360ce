@@ -27,7 +27,9 @@ namespace x360ce.TestGame
 				return McpClient.RunSwitches(parameters, true, Port, Token(), Application.ExecutablePath);
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(JocysCom.ClassLibrary.Controls.Themes.ThemeType.Auto);
 			var form = new MainForm(Folder, parameters.ContainsKey(RecordBehindArgument));
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(form);
 			TestGameTools.Window = form;
 			ControlsHelper.InitInvokeContext();
 			// The token always: the game can record what is typed in other programs, so no other program reads it without one.

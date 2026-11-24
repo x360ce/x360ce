@@ -35,6 +35,9 @@ namespace x360ce.App.Controls
 			ScriptsNoteLabel.MarginChanged += (s, e) => WrapScriptsNote();
 			ControlsHelper.ApplyBorderStyle(PluginsDataGridView);
 			PluginsDataGridView.AutoGenerateColumns = false;
+			PluginsDataGridView.CurrentCellDirtyStateChanged += PluginsDataGridView_CurrentCellDirtyStateChanged;
+			PluginsDataGridView.CellValueChanged += PluginsDataGridView_CellValueChanged;
+			PluginsDataGridView.CellBeginEdit += PluginsDataGridView_CellBeginEdit;
 			SettingsManager.LoadAndMonitor(x => x.AllowThirdPartyPlugins, AllowThirdPartyPluginsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowAutoHotkeyScripts, AllowAutoHotkeyScriptsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoHotkeyHeartbeat, HeartbeatUpDown);
@@ -69,6 +72,7 @@ namespace x360ce.App.Controls
 		/// <summary>One row of the list: a plugin DLL and what became of it.</summary>
 		public sealed class PluginRow
 		{
+			public bool Enabled { get; set; }
 			public string Name { get; set; }
 			public string Devices { get; set; }
 			public string State { get; set; }
@@ -84,17 +88,27 @@ namespace x360ce.App.Controls
 				return new PluginRow[0];
 			return manager.Files.Select(x => new PluginRow
 			{
+				Enabled = x.Enabled,
 				Name = x.Name,
-				Devices = string.Join(", ", x.DeviceTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name)),
+				Devices = string.Join(", ",
+					x.DeviceTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name)
+						.Concat(x.TelemetryTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name))
+						.Concat(x.GameTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name + " (Games tab)"))),
 				State = x.State == PluginFileState.Loaded ? "Loaded"
+					: x.State == PluginFileState.Disabled ? "Disabled"
 					: x.State == PluginFileState.WaitingForPermission ? "Waiting for permission"
 					: "Failed",
 				Signer = x.Embedded ? "Part of x360ce" : x.Signer ?? "Not signed",
 				// The folder is shown above the list: each row names the file within it.
 				Source = x.Embedded ? "Embedded" : PathHelper.GetRelativePath(manager.Folder.TrimEnd('\\') + "\\", x.Source, false),
-				Reason = x.Reason ?? string.Join(" ", x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)),
+				Reason = x.Reason ?? string.Join(" ",
+					x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)
+						.Concat(x.TelemetryTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason))
+						.Concat(x.GameTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason))),
 			}).ToArray();
 		}
+
+		bool _refreshing;
 
 		/// <summary>Lets the scripts' note wrap at the width its group has, so the group is as tall as the wrapped note needs.</summary>
 		/// <remarks>
@@ -111,7 +125,47 @@ namespace x360ce.App.Controls
 
 		void RefreshList()
 		{
-			PluginsDataGridView.DataSource = GetRows(PluginManager.Current);
+			_refreshing = true;
+			try
+			{
+				PluginsDataGridView.DataSource = GetRows(PluginManager.Current);
+			}
+			finally
+			{
+				_refreshing = false;
+			}
+		}
+
+		void PluginsDataGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+		{
+			if (e.RowIndex < 0 || e.ColumnIndex != EnabledColumn.Index)
+			{
+				e.Cancel = true;
+				return;
+			}
+			var rows = PluginsDataGridView.DataSource as PluginRow[];
+			if (rows != null && e.RowIndex < rows.Length && rows[e.RowIndex].State == "Failed")
+				e.Cancel = true;
+		}
+
+		void PluginsDataGridView_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+		{
+			if (PluginsDataGridView.IsCurrentCellDirty && PluginsDataGridView.CurrentCell is DataGridViewCheckBoxCell)
+				PluginsDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+		}
+
+		void PluginsDataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		{
+			if (_refreshing || e.RowIndex < 0 || e.ColumnIndex != EnabledColumn.Index)
+				return;
+			var rows = PluginsDataGridView.DataSource as PluginRow[];
+			if (rows == null || e.RowIndex >= rows.Length)
+				return;
+			var row = rows[e.RowIndex];
+			SettingsManager.Options.SetPluginEnabled(row.Name, row.Enabled);
+			var manager = PluginManager.Current;
+			if (manager != null)
+				manager.SetEnabled(row.Name, row.Enabled);
 		}
 
 		void AllowAutoHotkeyScriptsCheckBox_CheckedChanged(object sender, EventArgs e)

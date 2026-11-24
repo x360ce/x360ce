@@ -202,6 +202,14 @@ namespace x360ce.App.UiTree
 				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing, "
 				+ "and is for a wheel without the centering spring: ticking the spring picks 900. Any other wheel turns the range its own software sets; "
 				+ "the page then says so, and a formula in the steering box, such as =a1*900/270, steers a shorter range.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelSoftLockCheckBox)] = new Text("Soft lock",
+				"Enforces the chosen Wheel range with a software bump stop and scales the steering axis on wheels x360ce cannot set the hardware range of.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbStripCheckBox)] = new Text("RGB LED strip",
+				"Drives supported steering wheels' RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbStripBar)] = Live("RGB LED strip preview",
+				"Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbTestButton)] = new Text("Test RGB LEDs",
+				"Sweeps the RGB/RPM LED strip on screen and on a connected supported Logitech wheel.");
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelDescriptionLabel)] = Live("Wheel message",
 				"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.");
 

@@ -58,6 +58,8 @@ namespace x360ce.App
 				SdlDatabaseUrls.Add(SdlDatabaseUrl);
 			if (GameScanLocations == null)
 				GameScanLocations = new BindingList<string>() { };
+			if (DisabledPlugins == null)
+				DisabledPlugins = new BindingList<string>();
 			if (string.IsNullOrEmpty(ComputerDisk))
 				ComputerDisk = Engine.BoardInfo.GetDiskId();
 			if (ComputerId == Guid.Empty)
@@ -196,6 +198,65 @@ namespace x360ce.App
 		}
 		bool _AllowThirdPartyPlugins;
 
+		/// <summary>Names of plugins switched off on the Options tab's Plugins page. Empty by default, so built-in plugins load automatically.</summary>
+		[Description("Names of plugins switched off on the Options tab's Plugins page.")]
+		public BindingList<string> DisabledPlugins { get; set; }
+
+		/// <summary>Names of plugins off by default that were switched on on the Options tab's Plugins page.</summary>
+		[Description("Names of plugins off by default that were switched on on the Options tab's Plugins page.")]
+		public BindingList<string> EnabledPlugins { get; set; }
+
+		/// <summary>True unless the plugin was switched off on the Options tab's Plugins page. Built-in plugins are enabled by default, except those off by default until switched on.</summary>
+		public bool IsPluginEnabled(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+				return true;
+			if (DisabledPlugins != null && DisabledPlugins.Any(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase)))
+				return false;
+			return !Plugins.PluginManager.IsOffByDefault(name)
+				|| (EnabledPlugins != null && EnabledPlugins.Any(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase)));
+		}
+
+		/// <summary>Records whether a plugin is enabled or disabled on the Options tab's Plugins page.</summary>
+		public void SetPluginEnabled(string name, bool enabled)
+		{
+			if (string.IsNullOrEmpty(name))
+				return;
+			// A plugin off by default is kept as switched on, so it loads on the next start too.
+			if (EnabledPlugins == null)
+				EnabledPlugins = new BindingList<string>();
+			var switchedOn = EnabledPlugins.Where(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase)).ToArray();
+			if (enabled && switchedOn.Length == 0 && Plugins.PluginManager.IsOffByDefault(name))
+			{
+				EnabledPlugins.Add(name);
+				OnPropertyChanged(nameof(EnabledPlugins));
+			}
+			else if (!enabled && switchedOn.Length > 0)
+			{
+				foreach (var item in switchedOn)
+					EnabledPlugins.Remove(item);
+				OnPropertyChanged(nameof(EnabledPlugins));
+			}
+			if (DisabledPlugins == null)
+				DisabledPlugins = new BindingList<string>();
+			var existing = DisabledPlugins.Where(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase)).ToArray();
+			if (enabled)
+			{
+				if (existing.Length == 0)
+					return;
+				foreach (var item in existing)
+					DisabledPlugins.Remove(item);
+				OnPropertyChanged(nameof(DisabledPlugins));
+			}
+			else
+			{
+				if (existing.Length > 0)
+					return;
+				DisabledPlugins.Add(name);
+				OnPropertyChanged(nameof(DisabledPlugins));
+			}
+		}
+
 		/// <summary>True: an AutoHotkey script that includes x360ce.ahk reads the devices and changes what their controllers read. False: no script can reach the engine.</summary>
 		/// <remarks>Off by default: a script changes what games receive, so letting one do that is the person's choice.</remarks>
 		[DefaultValue(false), Description("Let AutoHotkey scripts read devices and change what controllers read.")]
@@ -225,6 +286,145 @@ namespace x360ce.App
 			set { _AutoHotkeyHangTimeout = value; OnPropertyChanged(); }
 		}
 		int _AutoHotkeyHangTimeout = ScriptChannel.DefaultLeaseMilliseconds;
+
+		#region Wheel telemetry and steering feel
+
+		/// <summary>True: read live vehicle telemetry over Shared Memory and x360ce's own port (37150) while a wheel centering spring is active.</summary>
+		[DefaultValue(true), Description("Automatically read live game telemetry over Shared Memory and x360ce's port (37150) for the wheel centering spring.")]
+		public bool WheelTelemetryEnabled
+		{
+			get { return _WheelTelemetryEnabled; }
+			set { _WheelTelemetryEnabled = value; OnPropertyChanged(); }
+		}
+		bool _WheelTelemetryEnabled = true;
+
+		/// <summary>x360ce's dedicated conflict-free loopback UDP port for game telemetry (37ACD plugin range).</summary>
+		[DefaultValue(37150), Description("Loopback UDP port x360ce listens on for standard game telemetry packets (default 37150).")]
+		public int WheelTelemetryPort
+		{
+			get { return _WheelTelemetryPort; }
+			set { _WheelTelemetryPort = value; OnPropertyChanged(); }
+		}
+		int _WheelTelemetryPort = 37150;
+
+		/// <summary>True: also bind standard game UDP ports (5300, 20777, 4123, 5606). Off by default so SimHub, CrewChief, Pit House and other telemetry apps keep their ports.</summary>
+		[DefaultValue(false), Description("Also listen on standard game UDP ports (5300, 20777, 4123, 5606). Off by default so other telemetry apps are never blocked.")]
+		public bool WheelTelemetryStandardPorts
+		{
+			get { return _WheelTelemetryStandardPorts; }
+			set { _WheelTelemetryStandardPorts = value; OnPropertyChanged(); }
+		}
+		bool _WheelTelemetryStandardPorts;
+
+		/// <summary>True: relay received UDP telemetry datagrams to <see cref="WheelTelemetryForwardIp"/>:<see cref="WheelTelemetryForwardPort"/> (or <see cref="WheelTelemetryForwardTargets"/>).</summary>
+		[DefaultValue(false), Description("Forward received UDP telemetry packets to another local app (such as SimHub) or another PC/tablet on the LAN.")]
+		public bool WheelTelemetryForwardEnabled
+		{
+			get { return _WheelTelemetryForwardEnabled; }
+			set { _WheelTelemetryForwardEnabled = value; OnPropertyChanged(); }
+		}
+		bool _WheelTelemetryForwardEnabled;
+
+		/// <summary>Destination IP address to relay received UDP telemetry datagrams to (default 127.0.0.1).</summary>
+		[DefaultValue("127.0.0.1"), Description("Destination IP address to forward received UDP telemetry packets to (default 127.0.0.1).")]
+		public string WheelTelemetryForwardIp
+		{
+			get { return _WheelTelemetryForwardIp; }
+			set { _WheelTelemetryForwardIp = string.IsNullOrWhiteSpace(value) ? "127.0.0.1" : value.Trim(); OnPropertyChanged(); }
+		}
+		string _WheelTelemetryForwardIp = "127.0.0.1";
+
+		/// <summary>Optional UDP port to relay received telemetry datagrams to (for example, SimHub), or 0 for none.</summary>
+		[DefaultValue(0), Description("Optional UDP port to forward received telemetry packets to (0 = off).")]
+		public int WheelTelemetryForwardPort
+		{
+			get { return _WheelTelemetryForwardPort; }
+			set { _WheelTelemetryForwardPort = value; OnPropertyChanged(); }
+		}
+		int _WheelTelemetryForwardPort;
+
+		/// <summary>Optional comma-separated UDP forwarding targets (port or IP:port, e.g. "127.0.0.1:20778, 192.168.1.50:20777") to relay telemetry to multiple apps or LAN dashboards.</summary>
+		[DefaultValue(""), Description("Optional comma-separated ports or IP:port targets to forward received telemetry packets to (for example, 127.0.0.1:20778, 192.168.1.50:20777).")]
+		public string WheelTelemetryForwardTargets
+		{
+			get { return _WheelTelemetryForwardTargets; }
+			set { _WheelTelemetryForwardTargets = value ?? ""; OnPropertyChanged(); }
+		}
+		string _WheelTelemetryForwardTargets = "";
+
+		/// <summary>True: enforce the selected Wheel range with a software bump stop and auto-scale steering on wheels without hardware range control.</summary>
+		[DefaultValue(false), Description("Enforce the selected Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of.")]
+		public bool WheelSoftLockEnabled
+		{
+			get { return _WheelSoftLockEnabled; }
+			set { _WheelSoftLockEnabled = value; OnPropertyChanged(); }
+		}
+		bool _WheelSoftLockEnabled;
+
+		/// <summary>True: drive supported steering wheels' RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.</summary>
+		[DefaultValue(true), Description("Drive supported steering wheels' RGB/RPM shift LED strip from live game telemetry RPM.")]
+		public bool WheelRgbStripEnabled
+		{
+			get { return _WheelRgbStripEnabled; }
+			set { _WheelRgbStripEnabled = value; OnPropertyChanged(); }
+		}
+		bool _WheelRgbStripEnabled = true;
+
+		/// <summary>How much sustained game rumble lightens the centering spring while turning when no live telemetry is active (0 to 60 %).</summary>
+		[DefaultValue(0), Description("How much sustained game rumble lightens the centering spring while turning when no live telemetry is active (0 to 60 %).")]
+		public int WheelRumbleUndersteer
+		{
+			get { return _WheelRumbleUndersteer; }
+			set { _WheelRumbleUndersteer = value; OnPropertyChanged(); }
+		}
+		int _WheelRumbleUndersteer;
+
+		/// <summary>Optional steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag.</summary>
+		[DefaultValue(0), Description("Optional steering velocity lead compensation in milliseconds (0 to 80) to counteract gamepad steering smoothing lag.")]
+		public int WheelSteeringLeadMs
+		{
+			get { return _WheelSteeringLeadMs; }
+			set { _WheelSteeringLeadMs = value; OnPropertyChanged(); }
+		}
+		int _WheelSteeringLeadMs;
+
+		/// <summary>Aligning torque / counter-steer scale in percent (0 to 200, default 100).</summary>
+		[DefaultValue(100), Description("Aligning torque and counter-steer pull strength from live game telemetry (0 to 200 %).")]
+		public int WheelTelemetryAlignStrength
+		{
+			get { return _WheelTelemetryAlignStrength; }
+			set { _WheelTelemetryAlignStrength = value; OnPropertyChanged(); }
+		}
+		int _WheelTelemetryAlignStrength = 100;
+
+		/// <summary>Front-tyre understeer lightening scale in percent (0 to 100, default 100).</summary>
+		[DefaultValue(100), Description("How strongly front-tyre grip loss lightens the wheel when understeering (0 to 100 %).")]
+		public int WheelTelemetryUndersteerStrength
+		{
+			get { return _WheelTelemetryUndersteerStrength; }
+			set { _WheelTelemetryUndersteerStrength = value; OnPropertyChanged(); }
+		}
+		int _WheelTelemetryUndersteerStrength = 100;
+
+		/// <summary>Curb and road bump impulse scale in percent (0 to 100, default 100).</summary>
+		[DefaultValue(100), Description("Strength of curb strikes and suspension bump impulses from live telemetry (0 to 100 %).")]
+		public int WheelTelemetryCurbStrength
+		{
+			get { return _WheelTelemetryCurbStrength; }
+			set { _WheelTelemetryCurbStrength = value; OnPropertyChanged(); }
+		}
+		int _WheelTelemetryCurbStrength = 100;
+
+		/// <summary>Telemetry surface damping scale in percent (0 to 200, default 100).</summary>
+		[DefaultValue(100), Description("How strongly live surface and speed telemetry scales wheel damping (0 to 200 %).")]
+		public int WheelTelemetryDampingStrength
+		{
+			get { return _WheelTelemetryDampingStrength; }
+			set { _WheelTelemetryDampingStrength = value; OnPropertyChanged(); }
+		}
+		int _WheelTelemetryDampingStrength = 100;
+
+		#endregion
 
 
 		[DefaultValue(false), Description("Hide a device through HID Hide while it is mapped to a controller.")]

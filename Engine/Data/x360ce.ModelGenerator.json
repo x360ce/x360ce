@@ -25,6 +25,8 @@
   "GenerateDataContract": true,
   // The class names the programs and the web service have always used.
   "EntityModelNames": { "dbo.x360ce_Settings": "UserSetting" },
+  // The [x360ce] schema's classes share the model's namespace with the dbo ones.
+  "SchemaNamespaces": { "x360ce": "" },
 
   // Context: EF6 under NETFRAMEWORK for the ASMX site, EF Core otherwise.
   "GenerateContext": true,
@@ -48,9 +50,9 @@
   "UseDateTimeKindUtcProperty": false,
   "StoreEnumDataAsStrings": false,
 
-  // The tables the programs and the web service read and write.
+  // The tables the programs and the web service read and write. New tables are [x360ce].[{SingularName}].
   "ExcludeFilter": ["\\b__"],
-  "IncludeFilter": "\\bdbo\\.x360ce_(Layouts|PadSettings|Products|Programs|Settings|Summaries|UserComputers|UserDevices|UserGames|UserInstances|UserProfiles|Vendors)\\b",
+  "IncludeFilter": "\\bdbo\\.x360ce_(Layouts|PadSettings|Products|Programs|Settings|Summaries|UserComputers|UserDevices|UserGames|UserInstances|UserProfiles|Vendors)\\b|\\bx360ce\\.Telemetry(Format|FormatSpec|Game|GameStep|GameMod|GameFile)\\b",
 
   "OverrideColumnInfo": []
 }

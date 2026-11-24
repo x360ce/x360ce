@@ -228,5 +228,98 @@ namespace x360ce.Tests
 				Directory.Delete(folder, true);
 			}
 		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("Built-in plugins are enabled and loaded by default, can be disabled and re-enabled live, and stay unloaded across restarts while disabled")]
+		public void Built_in_plugins_load_by_default_and_can_be_disabled_and_reenabled()
+		{
+			var appAssembly = typeof(PluginManager).Assembly;
+			using (var manager = new PluginManager(null, null, () => false, appAssembly))
+			{
+				manager.LoadEmbedded();
+				Assert.IsTrue(manager.Files.Length >= 4, "Expected embedded built-in plugins.");
+				Assert.IsTrue(manager.Files.All(f => f.Embedded && f.Enabled && f.State == PluginFileState.Loaded),
+					"All built-in plugins must be enabled and loaded by default.");
+				Assert.IsTrue(manager.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"),
+					"WheelTelemetry provider should be active by default.");
+
+				manager.SetEnabled("WheelTelemetry", false);
+				var wt = manager.Files.Single(f => f.Name == "WheelTelemetry");
+				Assert.IsFalse(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Disabled, wt.State);
+				Assert.IsFalse(manager.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"),
+					"Disabling WheelTelemetry must remove its provider from TelemetryTypes immediately.");
+
+				manager.SetEnabled("WheelTelemetry", true);
+				Assert.IsTrue(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Loaded, wt.State);
+				Assert.IsTrue(manager.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"),
+					"Re-enabling WheelTelemetry must restore its provider immediately.");
+			}
+
+			// Simulate next start with WheelTelemetry listed in DisabledPlugins: assembly must not load until re-enabled.
+			using (var restarted = new PluginManager(null, null, () => false, appAssembly, name => !string.Equals(name, "WheelTelemetry", StringComparison.OrdinalIgnoreCase)))
+			{
+				restarted.LoadEmbedded();
+				var wt = restarted.Files.Single(f => f.Name == "WheelTelemetry");
+				Assert.IsFalse(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Disabled, wt.State);
+				Assert.IsNull(wt.Assembly, "A plugin disabled at startup must not load its assembly.");
+				Assert.AreEqual(0, restarted.TelemetryTypes.Length);
+
+				restarted.SetEnabled("WheelTelemetry", true);
+				Assert.IsTrue(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Loaded, wt.State);
+				Assert.IsNotNull(wt.Assembly, "Enabling a plugin that started disabled must load its assembly.");
+				Assert.IsTrue(restarted.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"));
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A Fitness Machine device is blocked from cloud upload until connected to a real machine, then adopts its real manufacturer, product name and ProductGuid")]
+		public void Fitness_machine_adopts_real_hardware_identity_and_gates_cloud_upload()
+		{
+			var appAssembly = typeof(PluginManager).Assembly;
+			using (var manager = new PluginManager(null, null, () => false, appAssembly))
+			{
+				manager.LoadEmbedded();
+				var fitnessType = manager.DeviceTypes.Single(t => t.File.Name == "FitnessMachine");
+				Assert.IsTrue(fitnessType.RequiresHardwareIdentity, "FitnessMachine must require real hardware identity before cloud upload.");
+
+				var ud = PluginDevices.NewUserDevice(fitnessType);
+				Assert.IsFalse(PluginDevices.IsReadyForCloudUpload(ud, manager),
+					"An unconnected Fitness Machine placeholder must not be ready for cloud upload.");
+
+				// Build a real Bluetooth Device Information identity with PnP ID (VID=0x1234, PID=0x5678).
+				var sessionType = fitnessType.Type.Assembly.GetType("x360ce.Plugins.Samples.FitnessSession", true);
+				var build = sessionType.GetMethod("BuildHardwareIdentity", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+				Assert.IsNotNull(build);
+				var pnp = new byte[] { 1, 0x34, 0x12, 0x78, 0x56, 0x01, 0x00 };
+				var identity = (PluginDeviceIdentity)build.Invoke(null, new object[] { "E60R-1234", "Tunturi", "E60R", pnp });
+				Assert.IsNotNull(identity);
+				Assert.IsTrue(identity.IsConnected);
+				Assert.AreEqual("Tunturi", identity.Manufacturer);
+				Assert.AreEqual("Tunturi E60R", identity.ProductName);
+				Assert.AreEqual(0x1234, identity.VendorId);
+				Assert.AreEqual(0x5678, identity.ProductId);
+				Assert.AreEqual(new Guid("56781234-0000-0000-0000-504944564944"), identity.ProductGuid);
+
+				// Applying real hardware identity updates UserDevice and makes it ready for cloud / TOP Controllers.
+				Assert.IsTrue(PluginDevices.ApplyHardwareIdentity(ud, fitnessType, identity));
+				Assert.AreEqual("Tunturi", ud.DevManufacturer);
+				Assert.AreEqual("Tunturi", ud.HidManufacturer);
+				Assert.AreEqual("Tunturi E60R", ud.ProductName);
+				Assert.AreEqual(0x1234, ud.DevVendorId);
+				Assert.AreEqual(0x5678, ud.DevProductId);
+				Assert.AreEqual(identity.ProductGuid, ud.ProductGuid);
+				Assert.AreSame(fitnessType, PluginDevices.FindType(ud, manager),
+					"x360ce must still resolve the owning FitnessMachine plugin after ProductGuid switches to the real machine.");
+				Assert.IsTrue(PluginDevices.IsReadyForCloudUpload(ud, manager),
+					"Once connected with real hardware identity, the machine is ready to upload to the cloud.");
+
+				// Clean up PluginSettings entry written for the temporary test InstanceGuid.
+				PluginSettings.Current.Reset(ud.InstanceGuid);
+			}
+		}
 	}
 }

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--The warnings and the steps on each game's page. {Port} is the port on the page.-->
+<Data Version="0">
+  <Items>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>98ed6e7e-ccc5-55a1-8484-f019c0bdf735</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>1</StepOrder>
+      <IsWarning>true</IsWarning>
+      <Text>Story mode only. Script Hook V and Script Hook V .NET are mods, and GTA Online does not allow mods.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>19790427-15f8-5bbb-971f-7d06d2a041fa</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>2</StepOrder>
+      <IsWarning>true</IsWarning>
+      <Text>Script Hook V works only with BattlEye switched off in the game's launcher.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>5c692839-dc98-517e-a15c-f8d9c5969253</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>3</StepOrder>
+      <IsWarning>true</IsWarning>
+      <Text>Remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>ceb3f386-6328-5fd3-bc81-543df18cf0ab</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>1</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Download Script Hook V from its official page. The one download is for both editions of GTA V.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>edacf77c-2348-51e2-82bd-9b38493b946e</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>2</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Download Community Script Hook V .NET 3 from its official page.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>157e5bad-c0ff-5504-b291-7e4430d94b7d</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>3</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Press Open game folder. Unzip there ScriptHookV.dll and dinput8.dll from Script Hook V, and the files of Community Script Hook V .NET 3.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>a61c15d9-e483-5fcf-981d-6c78c4d083a5</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>4</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Switch BattlEye off in the game's launcher.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>1faa5de3-4d57-5e98-9c10-99439b9892c4</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>5</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Press Install. It writes the telemetry script and its settings into the game's scripts folder, and nothing else.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>536f3906-cdee-5bb6-b468-9723ac9eb2aa</TelemetryGameStepId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <StepOrder>6</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Start the game and play story mode. The game sends its telemetry to port {Port}.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>75206964-a8c0-552a-b0db-195162e6fc5c</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>1</StepOrder>
+      <IsWarning>true</IsWarning>
+      <Text>Story mode only. Script Hook V and Script Hook V .NET are mods, and GTA Online does not allow mods.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>14aae042-30c9-564d-85d7-de814bb68747</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>2</StepOrder>
+      <IsWarning>true</IsWarning>
+      <Text>Script Hook V works only with BattlEye switched off in the game's launcher.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>2d8e2691-273e-5325-b645-b7bbef68c1b5</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>3</StepOrder>
+      <IsWarning>true</IsWarning>
+      <Text>Remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>ad45f335-b111-5c62-aacc-631eb32acd49</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>1</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Download Script Hook V from its official page. The one download is for both editions of GTA V.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>8b283f9e-21b1-57e0-8e1b-c48705c35ca7</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>2</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Download Script Hook V .NET Enhanced from its official page.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>a5709aee-8a29-5949-8ab3-648f46717968</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>3</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Press Open game folder. Unzip there ScriptHookV.dll and xinput1_4.dll from Script Hook V, and the files of Script Hook V .NET Enhanced.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>bf897b9b-8e6a-5a2a-a6bb-83a71dc84f18</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>4</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Switch BattlEye off in the game's launcher.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>5f7e932d-ebc8-541e-9ccb-510f53cd45c2</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>5</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Press Install. It writes the telemetry script and its settings into the game's scripts folder, and nothing else.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>68f09167-8f8e-54ca-9a62-0b23306c24f2</TelemetryGameStepId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <StepOrder>6</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Start the game and play story mode. The game sends its telemetry to port {Port}.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>7d29df27-76ff-55b1-9b97-563b61b36948</TelemetryGameStepId>
+      <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
+      <StepOrder>1</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Start the game, and open Settings, then HUD and Gameplay.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>b8223575-1364-54de-bb35-8b35cc9ee671</TelemetryGameStepId>
+      <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
+      <StepOrder>2</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set Data Out to On.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>5e0165c4-aaf2-5b96-bdf1-614b9723ad5f</TelemetryGameStepId>
+      <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
+      <StepOrder>3</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set Data Out IP Address to 127.0.0.1.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>1505671a-8143-5213-b938-f75b3f7e405f</TelemetryGameStepId>
+      <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
+      <StepOrder>4</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set Data Out IP Port to {Port}.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>27c73125-1723-5849-8103-34c5e704ae14</TelemetryGameStepId>
+      <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
+      <StepOrder>5</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Only for the copy from the Microsoft Store or the Xbox app: Windows stops it sending to this computer until you let it once. Open PowerShell as administrator, find the game's package family name with Get-AppxPackage *Forza*, and run CheckNetIsolation LoopbackExempt -a -n=&lt;that name&gt;. x360ce does not run it for you. The Steam copy needs nothing.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>60c69a0f-4409-537c-82bb-090f7c8677ce</TelemetryGameStepId>
+      <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
+      <StepOrder>6</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Drive. The game sends while you drive, not in menus, pauses or replays.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>0a59030d-5c65-57cf-b81e-10de3070d26f</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>1</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Start the game, and open Game Options, then Settings, then UDP Telemetry Settings.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>2b4b7b8d-0828-571d-9610-cbaee0585be8</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>2</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set UDP Telemetry to On.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>19efa3af-87c5-51a8-98bd-17c862943b6b</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>3</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set UDP Broadcast Mode to Off.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>da8229b8-98b2-56e9-b82a-a8ac2d883e11</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>4</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set UDP IP Address to 127.0.0.1.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>603150c3-791b-5a29-a77c-5c698bde6009</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>5</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set UDP Port to {Port}.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>35ceac28-5423-5c71-8021-23dc0a3b5edd</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>6</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set UDP Send Rate to 60Hz.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>c519b812-16af-5f78-99a1-66e1894fed63</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>7</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Set UDP Format to 2025. x360ce does not read the 2026 Season Pack's format, 2026, yet.</Text>
+    </TelemetryGameStep>
+    <TelemetryGameStep>
+      <TelemetryGameStepId>d231817c-333b-5c46-8345-6906bd24c9dc</TelemetryGameStepId>
+      <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
+      <StepOrder>8</StepOrder>
+      <IsWarning>false</IsWarning>
+      <Text>Drive.</Text>
+    </TelemetryGameStep>
+  </Items>
+</Data>

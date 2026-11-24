@@ -1,4 +1,4 @@
-﻿## [4.31.20.0] - 2026-11-22
+﻿## [4.31.29.0] - 2026-11-24
 
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Fixed: A controller's SDL page shows its row from x360ce's database.
@@ -9,6 +9,7 @@
 - Fixed: A copy started with /Profile leaves the usual settings folder untouched.
 - Fixed: A controller tab works when the tabs before it are not used.
 - Fixed: Scanning a game folder no longer stops with an error on odd folder names.
+- Fixed: The error count in the status bar has its colours as x360ce starts.
 - Changed: The Mouse page's demo fills the space below the sticks, its mouse starts at the pad's centre, its stick is half the pad's size, and it is greyed out with the page's controls.
 - Changed: The Controller page's tool bar check boxes have a thin edge.
 - Changed: The record icon, as on Remap All, is a plain red dot.
@@ -16,10 +17,18 @@
 - Changed: The General tab has more room below the bumpers.
 - Changed: A taller window shows more mapped devices.
 - Changed: A plugin device's help is on its own Help page.
+- Changed: Fitness Machine adopts the real machine's identity and disconnects on device switch.
+- Changed: The Mouse page shows only for a mouse or touchpad.
+- Changed: Hints say that inputs and the controller picture can be clicked to map.
 - Added: AI assistant access lists and opens every page, and closes windows.
 - Added: The About page shows the licences of the parts x360ce uses.
 - Added: Fitness Machine device: an exercise bike drives a controller over Bluetooth. Experimental.
 - Added: A plugin device maps itself as its plugin recommends.
+- Added: Wheel Telemetry tab for live game telemetry, road grade pitch, consumer plugins, tuning and UDP forwarding.
+- Added: Soft lock and RGB/RPM LED strip support on the Wheel tab.
+- Added: Enable or disable individual plugins on Options > Plugins.
+- Added: Virtual Car simulator in x360ce Test Game to test wheel telemetry.
+- Added: Wheel Telemetry Games helps a game send its telemetry to the wheel. Off by default.
 
 ## [4.30.63.0] - 2026-11-15
 

@@ -2,14 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using x360ce.App.Plugins;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using x360ce.Plugins;
 
 namespace x360ce.App.Controls
 {
@@ -24,9 +27,14 @@ namespace x360ce.App.Controls
 			if (IsDesignMode)
 				return;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesDataGridView);
-			GamesDataGridView.AutoGenerateColumns = false;
 			ScanProgressLevel0Label.Text = "";
 			ScanProgressLevel1Label.Text = "";
+			HandleCreated += (s, e) => AttachPluginManager(PluginManager.Current);
+			HandleDestroyed += (s, e) => AttachPluginManager(null);
+			// The game's pages lay themselves out with the window of their tabs, which can make this control's window, and
+			// raise its Load, while InitializeComponent runs.
+			if (IsHandleCreated)
+				AttachPluginManager(PluginManager.Current);
 		}
 
 		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
@@ -38,6 +46,8 @@ namespace x360ce.App.Controls
 			SettingsManager.UserGames.Items.ListChanged += Games_Items_ListChanged;
 			// WORKAROUND: Remove SelectionChanged event.
 			GamesDataGridView.SelectionChanged -= GamesDataGridView_SelectionChanged;
+			// Set where the list is bound: Load, which binds it, can come before the constructor's own lines.
+			GamesDataGridView.AutoGenerateColumns = false;
 			GamesDataGridView.DataSource = SettingsManager.UserGames.Items;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			ControlsHelper.BeginInvoke(() =>
@@ -289,6 +299,7 @@ namespace x360ce.App.Controls
 			{
 				GameDetailsControl.CurrentItem = item;
 			}
+			ShowGamePlugins(item);
 			ControlsHelper.SetEnabled(OpenGameButton, selected && exists);
 			ControlsHelper.SetEnabled(StartGameButton, selected && exists);
 			ControlsHelper.SetEnabled(SaveGamesButton, selected);
@@ -538,6 +549,166 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		#region Game plugins
+
+		/// <summary>The game plugins whose tabs follow x360ce's own, and the game file they were made for.</summary>
+		PluginGameType[] _pluginTypes = new PluginGameType[0];
+		string _pluginGamePath;
+
+		/// <summary>The tab of each game plugin shown, and the instance made for it, both let go of with the next game.</summary>
+		readonly List<TabPage> _pluginTabs = new List<TabPage>();
+		readonly List<IPluginGame> _pluginGames = new List<IPluginGame>();
+
+		PluginManager _pluginManager;
+
+		/// <summary>Shows a tab, after x360ce's own settings, for each loaded game plugin that is for the game selected.</summary>
+		/// <remarks>Made again only when the game's file or the plugins for it changed, so a list redrawn keeps the tabs as they are.</remarks>
+		void ShowGamePlugins(UserGame game)
+		{
+			var manager = PluginManager.Current;
+			var path = game == null ? null : game.FullPath;
+			var types = manager == null || game == null
+				? new PluginGameType[0]
+				: manager.GameTypes.Where(x => !x.Faulted && x.IsFor(game.FileName)).ToArray();
+			if (types.SequenceEqual(_pluginTypes) && string.Equals(path, _pluginGamePath, StringComparison.OrdinalIgnoreCase))
+				return;
+			var selected = GameTabControl.SelectedTab == null ? null : GameTabControl.SelectedTab.Name;
+			RemoveGamePlugins();
+			_pluginTypes = types;
+			_pluginGamePath = path;
+			foreach (var type in types)
+			{
+				var tab = NewPluginTab(type, path);
+				_pluginTabs.Add(tab);
+				GameTabControl.TabPages.Add(tab);
+				// Once on the strip: the theme draws a page as the strip round it is drawn.
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(tab);
+				UiTree.UiHelp.Attach(tab);
+			}
+			var again = GameTabControl.TabPages.Cast<TabPage>().FirstOrDefault(x => x.Name == selected);
+			if (again != null)
+				GameTabControl.SelectedTab = again;
+			RootLayoutPanel.PerformLayout();
+		}
+
+		/// <summary>Takes away the game plugins' tabs, and disposes their pages and the instances made for them.</summary>
+		void RemoveGamePlugins()
+		{
+			foreach (var tab in _pluginTabs)
+			{
+				GameTabControl.TabPages.Remove(tab);
+				tab.Dispose();
+			}
+			_pluginTabs.Clear();
+			foreach (var game in _pluginGames.OfType<IDisposable>())
+				game.Dispose();
+			_pluginGames.Clear();
+			_pluginTypes = new PluginGameType[0];
+			_pluginGamePath = null;
+		}
+
+		/// <summary>A game plugin's tab: its page, made with an instance for the game, then Help, its class's description.</summary>
+		/// <remarks>
+		/// As a plugin device's tab holds its pages. A page that cannot be made says why in its place. The tab is as tall as
+		/// x360ce's own page of the game, so a longer page scrolls itself.
+		/// </remarks>
+		TabPage NewPluginTab(PluginGameType type, string path)
+		{
+			Control page = null;
+			string fault = null;
+			try
+			{
+				var game = type.NewInstance();
+				_pluginGames.Add(game);
+				game.GamePath = path;
+				if (type.ControlType != null)
+					page = (Control)Activator.CreateInstance(type.ControlType, game);
+			}
+			catch (Exception ex)
+			{
+				var inner = ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
+				fault = "The plugin's page could not be made: " + inner.GetType().Name + ": " + inner.Message;
+			}
+			var pages = new TabControl { Name = "PluginTabControl", Dock = DockStyle.Fill };
+			var content = page ?? new Label
+			{
+				Name = "PluginNoteLabel",
+				AutoSize = true,
+				Padding = AppHelper.ScaledPadding(8, 8, 8, 8),
+				Text = fault ?? "The plugin has no page of its own.",
+			};
+			content.Dock = DockStyle.Fill;
+			var text = page == null || string.IsNullOrWhiteSpace(page.Text) ? "Control" : page.Text;
+			AddPluginPage(pages, "PluginPageTabPage", text, "The page the plugin adds for the game.", content);
+			if (!string.IsNullOrWhiteSpace(type.Description))
+			{
+				// As a plugin device's Help page shows its help.
+				var help = new RichTextBox
+				{
+					Name = "PluginHelpRichTextBox",
+					Dock = DockStyle.Fill,
+					BackColor = SystemColors.Window,
+					BorderStyle = BorderStyle.None,
+					ReadOnly = true,
+					AccessibleName = "Help",
+					AccessibleDescription = "The game plugin's help, from its plugin: what it does for the game, and how to use it.",
+				};
+				AppHelper.ShowHelp(help, type.Description.Trim());
+				AddPluginPage(pages, "PluginHelpTabPage", "Help", "The game plugin's help, from its plugin.", help);
+			}
+			var tab = new TabPage
+			{
+				Name = type.Type.Name + "TabPage",
+				Text = type.Name,
+				AccessibleName = type.Name,
+				AccessibleDescription = "What the " + type.Name + " plugin adds for the selected game, and its help.",
+				UseVisualStyleBackColor = true,
+				Padding = AppHelper.ScaledPadding(8, 8, 8, 8),
+			};
+			tab.Controls.Add(pages);
+			return tab;
+		}
+
+		static void AddPluginPage(TabControl pages, string name, string text, string description, Control content)
+		{
+			var page = new TabPage { Name = name, Text = text, AccessibleName = text, AccessibleDescription = description, UseVisualStyleBackColor = true };
+			page.Controls.Add(content);
+			pages.TabPages.Add(page);
+		}
+
+		void AttachPluginManager(PluginManager manager)
+		{
+			if (ReferenceEquals(_pluginManager, manager))
+				return;
+			if (_pluginManager != null)
+				_pluginManager.Changed -= PluginManager_Changed;
+			_pluginManager = manager;
+			if (_pluginManager != null)
+				_pluginManager.Changed += PluginManager_Changed;
+		}
+
+		/// <summary>A plugin switched on or off: the selected game's tabs follow. Raised on any thread.</summary>
+		void PluginManager_Changed(object sender, EventArgs e)
+		{
+			if (IsDisposed)
+				return;
+			if (InvokeRequired)
+			{
+				if (IsHandleCreated)
+					BeginInvoke((Action)ShowSelectedGamePlugins);
+				return;
+			}
+			ShowSelectedGamePlugins();
+		}
+
+		void ShowSelectedGamePlugins()
+		{
+			if (!IsDisposed)
+				ShowGamePlugins(GameDetailsControl.CurrentItem as UserGame);
+		}
+
+		#endregion
+
 		private void GamesGridUserControl_Load(object sender, EventArgs e)
 		{
 			InitControl();
@@ -602,10 +773,54 @@ namespace x360ce.App.Controls
 				{
 					gs.IsStopping = true;
 				}
+				AttachPluginManager(null);
+				RemoveGamePlugins();
 			}
 			base.Dispose(disposing);
 		}
 
 		#endregion
+	}
+
+	/// <summary>Tabs as tall as their first page needs, so a table row sized to what it holds gives the rest of the height to the rows beside it.</summary>
+	/// <remarks>
+	/// A table row sized to what it holds asks each control for its preferred size, and a tab control otherwise answers with
+	/// the size it was given. This one answers with its tabs and frame, and its first page: the page's padding and the
+	/// preferred height of what it holds, at the page's width. On the Games tab the first page is x360ce's own settings of
+	/// the game, so a game without a plugin looks as it always has; a plugin's longer page scrolls in the same room.
+	///
+	/// The room the tabs leave their pages is known only once the tabs' window exists, and asking for it makes the window,
+	/// with every window round it, before the control that holds the tabs is ready. So until then it answers with its own
+	/// size, and asks the table round it to lay it out again once the window is made.
+	/// </remarks>
+	public class GameTabControl : TabControl
+	{
+		/// <summary>The room the tabs leave their pages, or the whole control until the tabs' window exists.</summary>
+		/// <remarks>
+		/// The page round the tabs lays them out while it scales what it holds. Asked then, the base makes the tabs' window,
+		/// which scales the pages for the screen a second time.
+		/// </remarks>
+		public override Rectangle DisplayRectangle
+		{
+			get { return IsHandleCreated ? base.DisplayRectangle : ClientRectangle; }
+		}
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			if (Parent != null)
+				Parent.PerformLayout(this, nameof(Bounds));
+		}
+
+		public override Size GetPreferredSize(Size proposedSize)
+		{
+			if (!IsHandleCreated || TabPages.Count == 0)
+				return base.GetPreferredSize(proposedSize);
+			var display = DisplayRectangle;
+			var page = TabPages[0];
+			var width = Math.Max(1, display.Width - page.Padding.Horizontal);
+			var content = page.Controls.Cast<Control>().Select(x => x.GetPreferredSize(new Size(width, 0)).Height).DefaultIfEmpty(0).Max();
+			return new Size(Width, Height - display.Height + page.Padding.Vertical + content);
+		}
 	}
 }

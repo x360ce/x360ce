@@ -191,7 +191,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsPluginsUserControl) + "." + nameof(OptionsPluginsUserControl.NoteLabel)] = new Text("About plugins",
 				"Which plugins load by themselves, and why plugins from others need permission.");
 			d[nameof(OptionsPluginsUserControl) + "." + nameof(OptionsPluginsUserControl.PluginsDataGridView)] = new Text("Plugins",
-				"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.");
+				"Each plugin found: whether it is enabled (built-in plugins load by default and can be unticked to unload), the devices or providers it adds, whether it loaded, who signed it, and why it did not load or was switched off.");
 		}
 
 		/// <summary>The Internet page: the online database and the account used with it.</summary>

@@ -41,6 +41,10 @@ namespace x360ce.App.UiTree
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowAllGamesMenuItem)] = new Text("Show: All", null);
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowEnabledGamesMenuItem)] = new Text("Show: Enabled", null);
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowDisabledGamesMenuItem)] = new Text("Show: Disabled", null);
+			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.GameTabControl)] = new Text("Game pages",
+				"The selected game's pages: x360ce's own settings for it, then a page for each game plugin that is for it.");
+			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.GameSettingsTabPage)] = new Text("x360ce",
+				"How x360ce sets the selected game up: which libraries are replaced, and how.");
 		}
 
 		/// <summary>How one game is set up: which libraries are replaced, and how.</summary>

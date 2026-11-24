@@ -239,7 +239,10 @@ namespace x360ce.Tests
 			Assert.IsFalse(tools["input_log"].OnUiThread, "Logging waits for its seconds, which on the interface thread would freeze the window.");
 			Assert.IsFalse(tools["ui_show"].OnUiThread, "Pointing waits too, so the balloon can be read while the window keeps drawing.");
 			Assert.IsFalse(tools["ui_read"].OnUiThread, "The tree read holds the window only while it reads; its answer is written on the request's thread.");
-			Assert.IsTrue(McpCatalog.Tools.Where(t => t.Name != "input_wait" && t.Name != "input_log" && t.Name != "ui_show" && t.Name != "ui_script" && t.Name != "ui_read").All(t => t.OnUiThread));
+			Assert.IsFalse(tools["ui_wait"].OnUiThread, "Waiting for the window to draw on the interface thread would wait for itself.");
+			Assert.IsFalse(tools["ui_open"].OnUiThread, "Opening a page waits for it to be drawn, as ui_wait does.");
+			var offUiThread = new[] { "input_wait", "input_log", "ui_show", "ui_script", "ui_read", "ui_wait", "ui_open" };
+			Assert.IsTrue(McpCatalog.Tools.Where(t => !offUiThread.Contains(t.Name)).All(t => t.OnUiThread));
 			StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.InputLog(1, "not a guid")).Message, "devices_list",
 				"A device that cannot be named must be refused with where to take its name from, before anything is logged.");
 		}

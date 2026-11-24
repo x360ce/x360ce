@@ -139,14 +139,6 @@ namespace x360ce.App.DInput
 			return true;
 		}
 
-		/// <summary>The time the centering spring's Auto run is measured by: counts up from 0, and never wraps or starts again.</summary>
-		/// <remarks>
-		/// The run marks a time not yet taken with -1, so it needs a time that is never negative, and one
-		/// that never goes back. <see cref="Environment.TickCount"/> is negative from 24.9 to 49.7 days
-		/// after Windows starts, and <see cref="watch"/> starts again with the update thread, which a
-		/// reorder of the XInput places restarts in the middle of a run.
-		/// </remarks>
-		static readonly System.Diagnostics.Stopwatch SpringCalibrationClock = System.Diagnostics.Stopwatch.StartNew();
 
 		/// <param name="routing">Which rows each controller reads and where each device's force comes from, for this pass.</param>
 		internal void UpdateDiStates(DirectInput manager, UserGame game, System.Windows.Forms.NativeWindow window, DeviceRouting routing)
@@ -174,6 +166,14 @@ namespace x360ce.App.DInput
 			// Allow if not testing or testing with option enabled. Read once for the pass.
 			var o = SettingsManager.Options;
 			var allow = !o.TestEnabled || o.TestGetDInputStates;
+			// The conversion that follows uses these, from this one read.
+			_wheelSoftLock = o.WheelSoftLockEnabled;
+			_wheelLeadMs = o.WheelSteeringLeadMs;
+			var anyWheelSpringActive = false;
+			var anyTelemetryConsumerActive = false;
+			var telemetryPolled = false;
+			var passTelemetry = WheelTelemetrySample.Inactive;
+			var passRawTelemetry = x360ce.Plugins.WheelTelemetry.Neutral;
 			for (int i = 0; i < userDevices.Length; i++)
 			{
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
@@ -197,11 +197,11 @@ namespace x360ce.App.DInput
 					ReadRawInputState(ud, o.ReadEveryChange);
 					continue;
 				}
-				// A plugin device is asked for its state by its plugin, and given its force when it takes force, and has
-				// nothing else to hold or poll.
+				// A plugin device is asked for its state by its plugin, given its force and/or telemetry when it takes them,
+				// and has nothing else to hold or poll.
 				if (ud.InputSourceType == (int)InputSourceType.Plugin)
 				{
-					ReadPluginState(ud, routing);
+					ReadPluginState(ud, routing, o, ref telemetryPolled, ref passTelemetry, ref passRawTelemetry, ref anyTelemetryConsumerActive);
 					continue;
 				}
 				JoystickState state = null;
@@ -453,9 +453,72 @@ namespace x360ce.App.DInput
 									if (ud.FFState != null && ud.SourceState != null && ud.FFState.SpringAxisIndex >= 0)
 									{
 										var run = ud.SpringCalibration;
+										var springActive = ps != null && ps.ForceSpringEnable == "1";
+										if (springActive)
+											anyWheelSpringActive = true;
+										var needClock = run != null || (springActive && (o.WheelTelemetryEnabled || o.WheelRumbleUndersteer > 0));
+										var nowMs = needClock ? WheelTelemetryMath.MonotonicNowMs() : 0;
+										var telemetry = WheelTelemetrySample.Inactive;
+										if (springActive && o.WheelTelemetryEnabled)
+										{
+											if (!telemetryPolled)
+											{
+												telemetryPolled = true;
+												passTelemetry = ReadWheelTelemetry(o, out passRawTelemetry);
+											}
+											telemetry = passTelemetry;
+											if (telemetry.Active && WheelTelemetryMath.Freshness(telemetry.TimestampMs, nowMs) > 0.0)
+											{
+												ud.WheelTelemetrySource = telemetry.Source;
+												if (!float.IsNaN(telemetry.SpeedKmh) && telemetry.SpeedKmh >= 0f)
+													ud.ForceSpringSpeedOverride = (int)Math.Round(telemetry.SpeedKmh);
+											}
+											else if (ud.WheelTelemetrySource != null)
+											{
+												ud.WheelTelemetrySource = null;
+												ud.ForceSpringSpeedOverride = null;
+											}
+										}
+										else if (ud.WheelTelemetrySource != null)
+										{
+											ud.WheelTelemetrySource = null;
+											ud.ForceSpringSpeedOverride = null;
+										}
+										var softLockRange = (springActive && o.WheelSoftLockEnabled && ps != null
+											&& !LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
+											? ps.GetWheelRange()
+											: 0;
+										var tuning = new WheelTelemetryTuning
+										{
+											AlignStrengthPercent = o.WheelTelemetryAlignStrength,
+											UndersteerStrengthPercent = o.WheelTelemetryUndersteerStrength,
+											CurbStrengthPercent = o.WheelTelemetryCurbStrength,
+											DampingStrengthPercent = o.WheelTelemetryDampingStrength,
+										};
 										step = Calling(recording, ud, "ud.FFState.UpdateSpring(device)");
-										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0,
-											ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction());
+										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, nowMs,
+											ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction(),
+											telemetry, o.WheelRumbleUndersteer, softLockRange, tuning);
+
+										// Drive wheel RGB/RPM shift LED strip (Logitech G27/G29/G923) off the 1000 Hz thread only on mask change.
+										var testMask = ud.WheelLedTestMask;
+										byte ledMask = 0;
+										if (testMask >= 0)
+											ledMask = (byte)(testMask & 0x1F);
+										else if (o.WheelRgbStripEnabled && telemetry.Active && !float.IsNaN(telemetry.RpmFraction)
+											&& WheelTelemetryMath.Freshness(telemetry.TimestampMs, nowMs) > 0.0)
+											ledMask = LogitechWheel.RpmToLedMask(telemetry.RpmFraction, nowMs);
+										ud.WheelLedMask = ledMask;
+										if (ledMask != ud.LastSentWheelLedMask && LogitechWheel.SupportsLeds(ud.DevVendorId, ud.DevProductId))
+										{
+											var hidPath = ud.HidDevicePath;
+											if (!string.IsNullOrEmpty(hidPath))
+											{
+												ud.LastSentWheelLedMask = ledMask;
+												var sendMask = ledMask;
+												System.Threading.ThreadPool.QueueUserWorkItem(_ => LogitechWheel.SetLeds(hidPath, sendMask));
+											}
+										}
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;
@@ -535,6 +598,12 @@ namespace x360ce.App.DInput
 				}
 
 			}
+			var telemetryMonitored = IsWheelTelemetryMonitored();
+			if (o.WheelTelemetryEnabled && telemetryMonitored && !telemetryPolled)
+				ReadWheelTelemetry(o, out passRawTelemetry);
+			// Release telemetry listeners immediately when telemetry is off or no wheel spring, ticked consumer device or telemetry UI needs them.
+			if (((!anyWheelSpringActive && !anyTelemetryConsumerActive && !telemetryMonitored) || !o.WheelTelemetryEnabled) && HasActiveWheelTelemetry)
+				ReleaseWheelTelemetry();
 		}
 
 		/// <summary>Raw Input devices read since the last engine log sample. Input thread only.</summary>

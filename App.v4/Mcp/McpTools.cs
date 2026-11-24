@@ -151,7 +151,7 @@ namespace x360ce.App.Mcp
 		{
 			if (manager == null || device.InputSourceType != (int)InputSourceType.Plugin)
 				return null;
-			var type = manager.FindDeviceType(device.ProductGuid);
+			var type = Plugins.PluginDevices.FindType(device, manager);
 			return type == null || type.Faulted ? null : type;
 		}
 
@@ -174,7 +174,7 @@ namespace x360ce.App.Mcp
 			return found.Body(found.Parameters.Length == 0 ? new object[0] : new object[] { value });
 		}
 
-		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, State (Loaded; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab's Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL's path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin's documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, as does picking one in the list a controller tab's Add opens, and devices_list and device_map work on it as on any device, and device_call on its tools. How to write a plugin: x360ce.exe -Skill=plugins.")]
+		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, Enabled, State (Loaded; Disabled, switched off on the Options tab's Plugins page; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab's Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL's path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin's documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, as does picking one in the list a controller tab's Add opens, and devices_list and device_map work on it as on any device, and device_call on its tools. How to write a plugin: x360ce.exe -Skill=plugins.")]
 		public static object PluginsList()
 		{
 			var manager = Plugins.PluginManager.Current;
@@ -184,6 +184,7 @@ namespace x360ce.App.Mcp
 			return manager.Files.Select(f => (object)new Dictionary<string, object>
 			{
 				{ "Name", f.Name },
+				{ "Enabled", f.Enabled },
 				{ "State", f.State.ToString() },
 				{ "Reason", f.Reason },
 				{ "Signer", f.Embedded ? "part of x360ce" : f.Signer },

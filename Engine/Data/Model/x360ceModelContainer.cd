@@ -71,4 +71,40 @@
       <FileName>dbo\Vendor.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryFormat" Collapsed="true">
+    <Position X="19.00" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryFormat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryFormatSpec" Collapsed="true">
+    <Position X="21.00" Y="0.5" Width="2.00" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryFormatSpec.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGame" Collapsed="true">
+    <Position X="23.25" Y="0.5" Width="1.50" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGameFile" Collapsed="true">
+    <Position X="25.00" Y="0.5" Width="2.00" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGameFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGameMod" Collapsed="true">
+    <Position X="27.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGameMod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGameStep" Collapsed="true">
+    <Position X="29.25" Y="0.5" Width="2.00" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGameStep.cs</FileName>
+    </TypeIdentifier>
+  </Class>
 </ClassDiagram>
