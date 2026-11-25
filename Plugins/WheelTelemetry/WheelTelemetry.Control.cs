@@ -45,6 +45,9 @@ namespace x360ce.Plugins.Samples
 		public readonly TextBox RumbleUndersteerValueTextBox;
 		public readonly TrackBar SteeringLeadTrackBar;
 		public readonly TextBox SteeringLeadValueTextBox;
+		public readonly ComboBox RumbleSourceComboBox;
+		public readonly TrackBar GearChangeRumbleTrackBar;
+		public readonly TextBox GearChangeRumbleValueTextBox;
 		public readonly Button DefaultsButton;
 
 		public readonly Label StatusLabel;
@@ -361,7 +364,7 @@ namespace x360ce.Plugins.Samples
 				Name = "TuningGroupBox",
 				Text = "Force Feel Tuning",
 				AccessibleName = "Force Feel Tuning",
-				AccessibleDescription = "Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer and steering lead.",
+				AccessibleDescription = "Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer, steering lead, and where road and impact feel comes from.",
 				Dock = DockStyle.Fill,
 				MinimumSize = new Size(120, 64),
 			};
@@ -370,14 +373,14 @@ namespace x360ce.Plugins.Samples
 				Name = "TuningTableLayoutPanel",
 				Dock = DockStyle.Fill,
 				ColumnCount = 3,
-				RowCount = 7,
+				RowCount = 9,
 				Margin = Padding.Empty,
 				Padding = Padding.Empty,
 			};
 			tuningTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
 			tuningTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			tuningTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-			for (var i = 0; i < 6; i++)
+			for (var i = 0; i < 8; i++)
 				tuningTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			tuningTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
 
@@ -433,6 +436,52 @@ namespace x360ce.Plugins.Samples
 			{
 				SteeringLeadValueTextBox.Text = SteeringLeadTrackBar.Value + " ms";
 				if (!_syncing) _host.SteeringLeadMs = SteeringLeadTrackBar.Value;
+			};
+
+			var rumbleSourceDescription = "Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: "
+				+ "the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both.";
+			var rumbleSourceLabel = new Label
+			{
+				Name = "RumbleSourceLabel",
+				Text = "Road and impact feel from",
+				AutoSize = true,
+				Anchor = AnchorStyles.Left,
+			};
+			RumbleSourceComboBox = new ComboBox
+			{
+				Name = nameof(RumbleSourceComboBox),
+				AccessibleName = "Road and impact feel from",
+				AccessibleDescription = rumbleSourceDescription,
+				DropDownStyle = ComboBoxStyle.DropDownList,
+				Anchor = AnchorStyles.Left | AnchorStyles.Right,
+			};
+			// In the order of WheelRumbleSource's values.
+			RumbleSourceComboBox.Items.AddRange(new object[] { "Game", "Game without gear changes", "Telemetry", "Both" });
+			RumbleSourceComboBox.SelectedIndex = (int)WheelRumbleSource.GameWithoutGearChanges;
+			RumbleSourceComboBox.SelectedIndexChanged += (s, e) =>
+			{
+				if (!_syncing && RumbleSourceComboBox.SelectedIndex >= 0)
+					_host.RumbleSource = (WheelRumbleSource)RumbleSourceComboBox.SelectedIndex;
+			};
+			_spacing.Add(g =>
+			{
+				var itemMargin = new Padding(g, g, 0, 0);
+				rumbleSourceLabel.Margin = itemMargin;
+				RumbleSourceComboBox.Margin = itemMargin;
+			});
+			_toolTip.SetToolTip(rumbleSourceLabel, rumbleSourceDescription);
+			_toolTip.SetToolTip(RumbleSourceComboBox, rumbleSourceDescription);
+			tuningTable.Controls.Add(rumbleSourceLabel, 0, 6);
+			tuningTable.Controls.Add(RumbleSourceComboBox, 1, 6);
+			tuningTable.SetColumnSpan(RumbleSourceComboBox, 2);
+
+			GearChangeRumbleTrackBar = AddTuningRow(tuningTable, 7, "GearChangeRumble", "Gear change",
+				"How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).",
+				0, 100, 0, 5, 20, " %", out GearChangeRumbleValueTextBox);
+			GearChangeRumbleTrackBar.ValueChanged += (s, e) =>
+			{
+				GearChangeRumbleValueTextBox.Text = GearChangeRumbleTrackBar.Value + " %";
+				if (!_syncing) _host.GearChangeRumble = GearChangeRumbleTrackBar.Value;
 			};
 
 			tuningGroup.Controls.Add(tuningTable);
@@ -815,6 +864,12 @@ namespace x360ce.Plugins.Samples
 				RumbleUndersteerValueTextBox.Text = RumbleUndersteerTrackBar.Value + " %";
 				SteeringLeadTrackBar.Value = ClampInt(_host.SteeringLeadMs, 0, 80);
 				SteeringLeadValueTextBox.Text = SteeringLeadTrackBar.Value + " ms";
+				var rumbleSource = (int)_host.RumbleSource;
+				RumbleSourceComboBox.SelectedIndex = rumbleSource >= 0 && rumbleSource < RumbleSourceComboBox.Items.Count
+					? rumbleSource
+					: (int)WheelRumbleSource.GameWithoutGearChanges;
+				GearChangeRumbleTrackBar.Value = ClampInt(_host.GearChangeRumble, 0, 100);
+				GearChangeRumbleValueTextBox.Text = GearChangeRumbleTrackBar.Value + " %";
 				UpdateControlStates();
 			}
 			finally

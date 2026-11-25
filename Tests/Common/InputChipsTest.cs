@@ -47,6 +47,45 @@ namespace x360ce.Tests
 				Assert.IsNull(InputChips.PayloadOf(text), "\"" + text + "\" names no single control, yet reads a chip.");
 		}
 
+		[TestMethod, TestCategory("mapping"), TestCategory("ui")]
+		[Description("A chip being dragged is drawn red and a chip whose control moves green, the General tab's colours, alike in both themes")]
+		public void A_dragged_chip_is_red_and_a_moving_one_green()
+		{
+			Ui.OnUiThread(() =>
+			{
+				try
+				{
+					foreach (var theme in new[] { JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light, JocysCom.ClassLibrary.Controls.Themes.ThemeType.Dark })
+					{
+						JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(theme);
+						using (var group = new InputChipGroup { Width = 600 })
+						{
+							group.Chips = InputChips.Create(3, 0, 0, 0);
+							var dragged = group.Chips[0];
+							var moving = group.Chips[1];
+							moving.Lit = true;
+							typeof(InputChipGroup).GetField("_Dragging", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+								.SetValue(group, dragged);
+							using (var bitmap = new System.Drawing.Bitmap(group.Width, group.Height))
+							{
+								group.DrawToBitmap(bitmap, new System.Drawing.Rectangle(0, 0, group.Width, group.Height));
+								foreach (var pair in new[] { new { Chip = dragged, Colour = PadControlImager.RecordColor, Name = "dragged" }, new { Chip = moving, Colour = PadControlImager.ActiveColor, Name = "moving" } })
+								{
+									var face = group.BoundsOf(pair.Chip);
+									var drawn = bitmap.GetPixel(face.X + 3, face.Y + 6);
+									Assert.AreEqual(pair.Colour.ToArgb(), drawn.ToArgb(), theme + ": the " + pair.Name + " chip is drawn " + System.Drawing.ColorTranslator.ToHtml(drawn) + ".");
+								}
+							}
+						}
+					}
+				}
+				finally
+				{
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light);
+				}
+			});
+		}
+
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
 		[Description("A stick with X, Y and RZ shows axes 1, 2 and 6, as the mapping list does")]
 		public void Axes_are_numbered_by_slot_not_by_count()

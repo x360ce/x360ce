@@ -77,7 +77,26 @@ namespace x360ce.App
 			// to select a game into controls that were already being disposed.
 			if (Program.IsClosing)
 				return;
-			SelectOpenGame(e.Data);
+			SendWheelRangesAgain();
+			if (SettingsManager.Options.AutoDetectForegroundWindow)
+				SelectOpenGame(e.Data);
+		}
+
+		/// <summary>Asks every wheel the engine drives to send its range again, soon and a little later, after another window comes to the front.</summary>
+		/// <remarks>
+		/// Logitech's driver puts its own range on the wheel when a game takes it, and x360ce cannot read the wheel's range
+		/// back. The devices are read from the engine's own routing, which is replaced whole and never locked.
+		/// </remarks>
+		static void SendWheelRangesAgain()
+		{
+			foreach (var ud in DInput.DeviceRouting.Current.MappedDevices)
+			{
+				var state = ud.FFState;
+				if (state == null)
+					continue;
+				state.SendRangeAgain(ForceFeedbackState.RangeAgainSoonMs);
+				state.SendRangeAgain(ForceFeedbackState.RangeAgainLateMs);
+			}
 		}
 
 		public static string LastActivePath;
@@ -262,7 +281,10 @@ namespace x360ce.App
 						DHelper.Frequency = o.PollingRate;
 					break;
 				case nameof(Options.AutoDetectForegroundWindow):
-					WindowHook.IsEnabled = o.AutoDetectForegroundWindow;
+					// Raised first as the Options page binds the box, once the settings are read. The hook stays on with the
+					// box off, as a change of the window in front sends the wheel ranges again too; the box decides only
+					// whether it switches the game.
+					WindowHook.IsEnabled = true;
 					break;
 				default:
 					break;

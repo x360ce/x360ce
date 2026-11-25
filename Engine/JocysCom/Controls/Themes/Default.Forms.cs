@@ -1621,13 +1621,15 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// </summary>
 		/// <param name="accent">Draws the accent check box instead: an edge in <c>ColorAccent</c>, filled with it and a white tick
 		/// while it is ticked.</param>
-		static void DrawWpfCheck(Graphics g, Rectangle box, float size, CheckState check, bool round, bool hot, bool enabled, bool accent)
+		/// <param name="onField">The box stands on the field colour, its own, as in a grid's cell: not ticked, it keeps the field
+		/// edge, as a box to type in on it does, so it does not vanish into the cell.</param>
+		static void DrawWpfCheck(Graphics g, Rectangle box, float size, CheckState check, bool round, bool hot, bool enabled, bool accent, bool onField = false)
 		{
 			var alpha = enabled ? 255 : 64;
 			var saved = Smooth(g);
 			var line = Line(g);
 			var radius = round ? box.Height / 2f : Dip(g, CheckBoxRadius) * size;
-			var edge = accent ? "ColorAccent" : hot ? "BackgroundDarkSelected" : check != CheckState.Unchecked ? "BorderField" : "BorderCheck";
+			var edge = accent ? "ColorAccent" : hot ? "BackgroundDarkSelected" : check != CheckState.Unchecked || onField ? "BorderField" : "BorderCheck";
 			var ticked = accent && check != CheckState.Unchecked;
 			using (var face = RoundedRectangle(Inset(box, line / 2), radius, radius, radius, radius))
 			{
@@ -3936,8 +3938,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// Paints a grid's headers as Default.xaml does, from the header colour at the top to the page colour at the bottom
-		/// and without lines, and its check boxes as CheckBoxCell does: Default.xaml's check box at the cell's left, in from
-		/// it by the cell's padding too.
+		/// and without lines, and its check boxes Default.xaml's, where the cell takes the click: centred on the box Windows
+		/// Forms would draw, as the column's alignment and the cell's padding place it.
 		/// </summary>
 		static void WpfGrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
@@ -3968,13 +3970,23 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var size = CheckBoxBox(font, false);
 			var height = Math.Min(size.Height, bounds.Height);
 			var box = new Rectangle(bounds.X + e.CellStyle.Padding.Left + Pixels(GridCheckBoxMargin), bounds.Y + (bounds.Height - height) / 2, size.Width, height);
-			// Padding can move the box out of the cell, as a program hides one there.
+			// Centred on the box Windows Forms would draw, where the cell takes the click that ticks it: drawn elsewhere, a
+			// click on the box the person sees does nothing.
+			if (GetContentBoundsMethod != null)
+			{
+				var cell = grid.Rows.SharedRow(e.RowIndex).Cells[e.ColumnIndex];
+				var content = (Rectangle)GetContentBoundsMethod.Invoke(cell, new object[] { e.Graphics, e.CellStyle, e.RowIndex });
+				// Padding can move the box out of the cell, as a program hides one there.
+				if (content.IsEmpty)
+					return;
+				box.X = bounds.X + content.X + (content.Width - size.Width) / 2;
+			}
 			if (box.Left >= bounds.Right)
 				return;
 			var check = e.FormattedValue is CheckState checkState ? checkState
 				: e.FormattedValue is bool isChecked && isChecked ? CheckState.Checked : CheckState.Unchecked;
 			var hot = grid.Enabled && (HasCellFocus(grid, e.ColumnIndex, e.RowIndex) || bounds.Contains(grid.PointToClient(Control.MousePosition)));
-			DrawWpfCheck(e.Graphics, box, TextScale(font), check, false, hot, grid.Enabled, false);
+			DrawWpfCheck(e.Graphics, box, TextScale(font), check, false, hot, grid.Enabled, false, true);
 		}
 
 		/// <summary>

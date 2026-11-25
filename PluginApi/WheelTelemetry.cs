@@ -3,8 +3,8 @@ namespace x360ce.Plugins
 	/// <summary>Live vehicle state a telemetry plugin feeds into x360ce's wheel centering spring.</summary>
 	/// <remarks>
 	/// A value type copied on the engine thread up to a thousand times a second, so a read makes nothing for the garbage
-	/// collector. Leave any unknown field at its neutral value (<see cref="Neutral"/>): NaN for speed, 0 for angle,
-	/// lateral G and impulse, and 1 for front grip and damping scale.
+	/// collector. Leave any unknown field at its neutral value (<see cref="Neutral"/>): NaN for speed, distance, position
+	/// and pitch, 0 for angle, the accelerations, impulse and jolt, -1 for gear, and 1 for front grip and damping scale.
 	/// </remarks>
 	public struct WheelTelemetry
 	{
@@ -22,6 +22,30 @@ namespace x360ce.Plugins
 
 		/// <summary>Short directional kick for curbs, bumps or hits: -1 left to +1 right, 0 at rest.</summary>
 		public float Impulse;
+
+		/// <summary>Short shake, without a direction, for a hit from the front or behind: 0 at rest to 1 for the hardest.</summary>
+		public float Jolt;
+
+		/// <summary>Forward and back acceleration in G (positive forward), or 0 when unknown.</summary>
+		public float LongitudinalG;
+
+		/// <summary>Up and down acceleration in G (positive up), or 0 when unknown.</summary>
+		public float VerticalG;
+
+		/// <summary>The gear the game reports (in Forza's count, 0 reverse and 1 up forward), or -1 when unknown.</summary>
+		public int Gear;
+
+		/// <summary>Distance driven in metres since the game started sending, or NaN when unknown.</summary>
+		public float DistanceMeters;
+
+		/// <summary>Position in the game's world in metres, or NaN when unknown. Axes as the game sends them (Forza: X east, Y up, Z north).</summary>
+		public float PositionX;
+
+		/// <summary>See <see cref="PositionX"/>.</summary>
+		public float PositionY;
+
+		/// <summary>See <see cref="PositionX"/>.</summary>
+		public float PositionZ;
 
 		/// <summary>Resistance multiplier applied to the wheel's damper: 1 normal, above 1 for heavy surfaces such as gravel or mud.</summary>
 		public float DampingScale;
@@ -50,6 +74,14 @@ namespace x360ce.Plugins
 					FrontGrip = 1f,
 					LateralG = 0f,
 					Impulse = 0f,
+					Jolt = 0f,
+					LongitudinalG = 0f,
+					VerticalG = 0f,
+					Gear = -1,
+					DistanceMeters = float.NaN,
+					PositionX = float.NaN,
+					PositionY = float.NaN,
+					PositionZ = float.NaN,
 					DampingScale = 1f,
 					RpmFraction = float.NaN,
 					PitchDeg = float.NaN,
@@ -58,5 +90,18 @@ namespace x360ce.Plugins
 				};
 			}
 		}
+	}
+
+	/// <summary>Where a wheel's road and impact feel comes from while live telemetry drives its centering spring.</summary>
+	public enum WheelRumbleSource
+	{
+		/// <summary>The game's rumble plays as the game sends it.</summary>
+		Game = 0,
+		/// <summary>The game's rumble plays, but quieter for a moment while the gear changes.</summary>
+		GameWithoutGearChanges = 1,
+		/// <summary>The game's rumble is ignored; hits felt from telemetry shake the wheel instead.</summary>
+		Telemetry = 2,
+		/// <summary>The game's rumble, quieter while the gear changes, and hits felt from telemetry.</summary>
+		Both = 3,
 	}
 }

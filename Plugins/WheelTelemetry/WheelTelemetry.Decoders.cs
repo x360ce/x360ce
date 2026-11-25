@@ -33,6 +33,34 @@ namespace x360ce.Plugins.Samples
 		UdpProtocol _candidateProtocol;
 		int _candidateStreak;
 		uint _lastForzaTimestamp;
+
+		/// <summary>The least horizontal acceleration, in G, that is a hit: hard driving and braking stay below 2 G.</summary>
+		public const float ImpactG = 3.5f;
+
+		/// <summary>The horizontal acceleration, in G, of the hardest hit: a hit's strength grows from <see cref="ImpactG"/> to this.</summary>
+		public const float ImpactFullG = 50f;
+
+		/// <summary>How long a hit's kick or jolt lasts, fading to nothing, in milliseconds.</summary>
+		public const long ImpactMs = 200;
+
+		/// <summary>How long after a gear change a jump of acceleration is the gear change, not a hit, in milliseconds.</summary>
+		public const long GearChangeMs = 150;
+
+		/// <summary>The most lateral acceleration, in G, that moves the spring's centre, so a hit's spike never pulls it aside.</summary>
+		const float AlignLateralGLimit = 1.5f;
+
+		// Forza Data Out: the hit that plays, the gear change and the distance, carried from packet to packet.
+		long _forzaImpactMs;
+		float _forzaImpactKick;
+		float _forzaImpactJolt;
+		long _forzaGearChangeMs;
+		int _forzaLastGear = -1;
+		float _forzaLastRpm = float.NaN;
+		float _forzaLastSpeed = float.NaN;
+		float _forzaDistance;
+		uint _forzaDistanceTimestamp;
+		bool _forzaDistanceStarted;
+
 		float _lastCodemastersTime = -1f;
 		uint _lastOutSimTime;
 
@@ -67,6 +95,7 @@ namespace x360ce.Plugins.Samples
 				_f1PitchDeg = float.NaN;
 				_f1LateralG = 0f;
 				_f1AlignDeg = 0f;
+				ResetForzaDrive();
 			}
 
 			var sample = WheelTelemetry.Neutral;
@@ -168,12 +197,16 @@ namespace x360ce.Plugins.Samples
 			}
 		}
 
-		#region Forza Data Out (232 Sled / 311 FM7 / 323 FH4-5 / 331 FM23)
+		#region Forza Data Out (232 Sled / 311 FM7 Dash / 323-324 FH4-6 / 331 FM23)
 
+		/// <remarks>
+		/// The Sled part, bytes 0 to 231, is the same in every length. The Dash part follows it at 232 in FM7 and FM 2023, and
+		/// 12 bytes later in Forza Horizon: 232 PositionX, Y, Z, 244 Speed, 280 DistanceTraveled, 307 Gear.
+		/// </remarks>
 		bool TryDecodeForza(byte[] data, int length, ref WheelTelemetry sample, out bool advancing)
 		{
 			advancing = false;
-			if (length != 232 && length != 311 && length != 323 && length != 331)
+			if (length != 232 && length != 311 && length != 323 && length != 324 && length != 331)
 				return false;
 
 			var isRaceOn = BitConverter.ToInt32(data, 0);
@@ -209,6 +242,7 @@ namespace x360ce.Plugins.Samples
 			// Paused / menu: recognised as valid Forza traffic, but emit no active driving forces.
 			if (isRaceOn == 0)
 			{
+				ResetForzaDrive();
 				sample.TimestampMs = 0;
 				return true;
 			}
@@ -220,30 +254,119 @@ namespace x360ce.Plugins.Samples
 				: 0f;
 			var frontGrip = Clamp(1f - Math.Max(0f, frontSlip - 0.8f) * 0.7f, 0.15f, 1f);
 
-			var rumbleFl = BitConverter.ToSingle(data, 132);
-			var rumbleFr = BitConverter.ToSingle(data, 136);
-			var impulse = (IsFinite(rumbleFl) && IsFinite(rumbleFr))
-				? Clamp((rumbleFr - rumbleFl) * 0.6f, -1f, 1f)
+			// Curbs: a front wheel on a rumble strip, or the surface rumbling under one side, kicks the wheel towards it.
+			var stripFl = BitConverter.ToInt32(data, 116) != 0 ? 1f : 0f;
+			var stripFr = BitConverter.ToInt32(data, 120) != 0 ? 1f : 0f;
+			var surfaceFl = BitConverter.ToSingle(data, 148);
+			var surfaceFr = BitConverter.ToSingle(data, 152);
+			var surface = (IsFinite(surfaceFl) && IsFinite(surfaceFr)) ? surfaceFr - surfaceFl : 0f;
+			var kerb = (stripFr - stripFl) * 0.5f + surface * 0.6f;
+
+			var ay = BitConverter.ToSingle(data, 24);
+			var az = BitConverter.ToSingle(data, 28);
+			var vertG = IsFinite(ay) ? ay / Gravity : 0f;
+			var longG = IsFinite(az) ? az / Gravity : 0f;
+			var rpmFraction = maxRpm > 500f ? Clamp(curRpm / maxRpm, 0f, 1f) : float.NaN;
+
+			// The Dash part, where the packet has one.
+			var dash = length == 323 || length == 324 ? 244 : 232;
+			var hasDash = length >= 311;
+			var gear = hasDash ? (int)data[dash + 75] : -1;
+
+			// A gear change: the gear changing, or, from a game that sends none, the engine falling while the car gains speed.
+			var gearChanged = gear >= 0
+				? _forzaLastGear >= 0 && gear != _forzaLastGear
+				: _forzaLastRpm - rpmFraction >= 0.15f && speedKmh > _forzaLastSpeed;
+			_forzaLastGear = gear;
+			_forzaLastRpm = rpmFraction;
+			_forzaLastSpeed = speedKmh;
+			var nowMs = sample.TimestampMs;
+			if (gearChanged)
+				_forzaGearChangeMs = nowMs;
+			var shifting = _forzaGearChangeMs > 0 && nowMs - _forzaGearChangeMs < GearChangeMs;
+
+			// A hit: horizontal acceleration past ImpactG on one sample. The sideways part kicks the wheel the way the car
+			// was pushed, away from the side hit; the forward and back part is a jolt without a direction. A harder hit
+			// than the one still playing takes its place.
+			var horizontalG = (float)Math.Sqrt(latG * latG + longG * longG);
+			var fade = _forzaImpactMs > 0 && nowMs - _forzaImpactMs < ImpactMs
+				? 1f - (float)(nowMs - _forzaImpactMs) / ImpactMs
 				: 0f;
+			if (horizontalG >= ImpactG && !shifting)
+			{
+				var strength = 0.5f + 0.5f * Clamp((horizontalG - ImpactG) / (ImpactFullG - ImpactG), 0f, 1f);
+				if (strength >= Math.Max(Math.Abs(_forzaImpactKick), _forzaImpactJolt) * fade)
+				{
+					_forzaImpactMs = nowMs;
+					_forzaImpactKick = strength * latG / horizontalG;
+					_forzaImpactJolt = strength * Math.Abs(longG) / horizontalG;
+					fade = 1f;
+				}
+			}
 
 			// Body slip angle (when moving forward) creates genuine counter-steer aligning pull.
 			var alignDeg = 0f;
 			if (speedMs > 3f && vz > 1f)
 			{
 				var bodySlipDeg = (float)Math.Atan2(vx, vz) * RadToDeg;
-				alignDeg = Clamp(bodySlipDeg * 1.4f + latG * 2.0f, -60f, 60f);
+				alignDeg = Clamp(bodySlipDeg * 1.4f + Clamp(latG, -AlignLateralGLimit, AlignLateralGLimit) * 2.0f, -60f, 60f);
+			}
+
+			// The distance the game sends, or else the speed added up over the game's own clock, gaps of over half a second left out.
+			if (_forzaDistanceStarted)
+			{
+				var stepMs = unchecked(timestamp - _forzaDistanceTimestamp);
+				if (stepMs > 0 && stepMs <= 500)
+					_forzaDistance += speedMs * stepMs / 1000f;
+			}
+			_forzaDistanceStarted = true;
+			_forzaDistanceTimestamp = timestamp;
+			var distance = hasDash ? BitConverter.ToSingle(data, dash + 48) : float.NaN;
+			if (!IsFinite(distance) || distance <= 0f)
+				distance = _forzaDistance;
+
+			var px = hasDash ? BitConverter.ToSingle(data, dash) : float.NaN;
+			var py = hasDash ? BitConverter.ToSingle(data, dash + 4) : float.NaN;
+			var pz = hasDash ? BitConverter.ToSingle(data, dash + 8) : float.NaN;
+			if (!IsFinite(px) || !IsFinite(py) || !IsFinite(pz) || (px == 0f && py == 0f && pz == 0f))
+			{
+				px = float.NaN;
+				py = float.NaN;
+				pz = float.NaN;
 			}
 
 			sample.SpeedKmh = speedKmh;
 			sample.LateralG = latG;
+			sample.LongitudinalG = longG;
+			sample.VerticalG = vertG;
 			sample.AlignAngleDeg = alignDeg;
 			sample.FrontGrip = frontGrip;
-			sample.Impulse = impulse;
+			sample.Impulse = Clamp(kerb + _forzaImpactKick * fade, -1f, 1f);
+			sample.Jolt = _forzaImpactJolt * fade;
 			sample.DampingScale = 1f;
-			sample.RpmFraction = maxRpm > 500f ? Clamp(curRpm / maxRpm, 0f, 1f) : float.NaN;
+			sample.RpmFraction = rpmFraction;
 			sample.PitchDeg = PitchFromRadians(pitchRad);
+			sample.Gear = gear;
+			sample.DistanceMeters = distance;
+			sample.PositionX = px;
+			sample.PositionY = py;
+			sample.PositionZ = pz;
 			sample.Source = "Forza Data Out";
 			return true;
+		}
+
+		/// <summary>Forgets the hit, the gear and the distance of a drive, when the game pauses or a race ends.</summary>
+		void ResetForzaDrive()
+		{
+			_forzaImpactMs = 0;
+			_forzaImpactKick = 0f;
+			_forzaImpactJolt = 0f;
+			_forzaGearChangeMs = 0;
+			_forzaLastGear = -1;
+			_forzaLastRpm = float.NaN;
+			_forzaLastSpeed = float.NaN;
+			_forzaDistance = 0f;
+			_forzaDistanceStarted = false;
 		}
 
 		#endregion

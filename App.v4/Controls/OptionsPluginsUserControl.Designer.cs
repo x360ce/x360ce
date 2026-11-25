@@ -274,6 +274,7 @@
 			//
 			this.EnabledColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.EnabledColumn.DataPropertyName = "Enabled";
+			this.EnabledColumn.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			this.EnabledColumn.HeaderText = "Enabled";
 			this.EnabledColumn.Name = "EnabledColumn";
 			this.EnabledColumn.ReadOnly = false;

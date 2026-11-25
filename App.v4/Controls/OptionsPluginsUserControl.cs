@@ -108,20 +108,27 @@ namespace x360ce.App.Controls
 			}).ToArray();
 		}
 
-		bool _refreshing;
-
 		/// <summary>Lets the scripts' note wrap at the width its group has, so the group is as tall as the wrapped note needs.</summary>
 		/// <remarks>
 		/// The group is measured as tall as what it holds needs at no width, and its table measures a note that spans the column
 		/// that takes what the others leave as one line: without a widest size the group would be a line short, and the row of
 		/// number boxes below the note cut off at its edge, the more the narrower the window.
+		///
+		/// A minimized window leaves the group no width. The note then keeps the width it had: one pixel wide, a word to a line,
+		/// it would stand thousands of pixels tall, and the rows it made that tall would stay so when the window is restored,
+		/// leaving the list of plugins a pixel high.
 		/// </remarks>
 		void WrapScriptsNote()
 		{
-			var widest = new System.Drawing.Size(Math.Max(1, AutoHotkeyLayoutPanel.DisplayRectangle.Width - ScriptsNoteLabel.Margin.Horizontal), 0);
+			var width = AutoHotkeyLayoutPanel.DisplayRectangle.Width - ScriptsNoteLabel.Margin.Horizontal;
+			if (width <= 0)
+				return;
+			var widest = new System.Drawing.Size(width, 0);
 			if (ScriptsNoteLabel.MaximumSize != widest)
 				ScriptsNoteLabel.MaximumSize = widest;
 		}
+
+		bool _refreshing;
 
 		void RefreshList()
 		{

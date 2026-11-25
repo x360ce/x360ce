@@ -472,6 +472,10 @@ namespace x360ce.Engine.Data
 		[XmlIgnore, NotMapped]
 		public int LastSentWheelLedMask = -1;
 
+		/// <summary>LED masks the wheel's HID interface was sent, and of them those it would not take, with the last refusal's error. Written by the thread that sends them, read by a recording.</summary>
+		[XmlIgnore, NotMapped]
+		public int WheelLedSends, WheelLedRefused, WheelLedLastError;
+
 		/// <summary>Optional manual test sweep bitmask (0..31), or -1 for normal live telemetry LED drive. Not stored.</summary>
 		[XmlIgnore, NotMapped]
 		public int WheelLedTestMask { get { return _WheelLedTestMask; } set { _WheelLedTestMask = value; } }
@@ -492,6 +496,11 @@ namespace x360ce.Engine.Data
 		/// <summary>Whether the engine set the device's own centering when it last held it exclusively, as <see cref="AutoCenter"/> says, or left it as the driver has it. Set by the engine only.</summary>
 		[XmlIgnore]
 		public bool AutoCenterSet;
+
+		/// <summary>The device's own centering as its driver had it before the engine first set it, or null until then. Set by the engine only.</summary>
+		/// <remarks>Given back each time the engine lets go of the device, so the driver and the wheel maker's software are left in charge as they were.</remarks>
+		[XmlIgnore]
+		public bool? AutoCenterBefore;
 
 		/// <summary>Why the engine last let go of the device, as a <c>DInputHelper.LetGoReason</c>, for a recording to say. Set by the engine only.</summary>
 		[XmlIgnore]

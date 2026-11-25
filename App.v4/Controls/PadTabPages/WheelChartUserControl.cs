@@ -161,13 +161,14 @@ namespace x360ce.App.Controls
 		void InitPaintObjects()
 		{
 			DisposePaintObjects();
-			curvePen = new Pen(FormsTheme.GetColor("ColorCurve"), 1.5f);
+			// The curve and the dot are as thick as the zoom; the frame and the crosshair stay one pixel, so they stay sharp.
+			curvePen = new Pen(AppHelper.ChartCurveColor, 1.5f * ControlsHelper.DpiScale);
 			curvePen.LineJoin = LineJoin.Round;
 			gridPen = new Pen(AppHelper.ChartLineColor, 1f);
 			// The angle is the reading and the force what the curve gives for it, coloured as the thumb charts colour their
 			// two values; the crosshair takes the force's colour.
 			var forceColor = FormsTheme.GetColor("ForegroundOutput");
-			var angleColor = FormsTheme.GetColor("ForegroundActive");
+			var angleColor = AppHelper.ChartReadingColor;
 			crossPen = new Pen(forceColor, 1f);
 			ForceValueLabel.ForeColor = forceColor;
 			AngleValueLabel.ForeColor = angleColor;
@@ -403,7 +404,7 @@ namespace x360ce.App.Controls
 			g.DrawLine(crossPen, x, 0f, x, h);
 			g.DrawLine(crossPen, 0f, y, w, y);
 			g.SmoothingMode = SmoothingMode.HighQuality;
-			const float radius = 3f;
+			var radius = 3f * ControlsHelper.DpiScale;
 			g.FillEllipse(dotBrush, x - radius + 0.5f, y - radius + 0.5f, radius * 2f, radius * 2f);
 		}
 

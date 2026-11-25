@@ -424,6 +424,24 @@ namespace x360ce.App
 		}
 		int _WheelTelemetryDampingStrength = 100;
 
+		/// <summary>Where a wheel's road and impact feel comes from while live telemetry drives its centering spring.</summary>
+		[DefaultValue(x360ce.Plugins.WheelRumbleSource.GameWithoutGearChanges), Description("Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble, the game's rumble without its gear change kicks, telemetry hits, or both.")]
+		public x360ce.Plugins.WheelRumbleSource WheelRumbleSource
+		{
+			get { return _WheelRumbleSource; }
+			set { _WheelRumbleSource = value; OnPropertyChanged(); }
+		}
+		x360ce.Plugins.WheelRumbleSource _WheelRumbleSource = x360ce.Plugins.WheelRumbleSource.GameWithoutGearChanges;
+
+		/// <summary>How much of the game's rumble plays while the gear changes, in percent (0 to 100, default 0).</summary>
+		[DefaultValue(0), Description("How much of the game's rumble plays for a moment while the gear changes (0 to 100 %).")]
+		public int WheelGearChangeRumble
+		{
+			get { return _WheelGearChangeRumble; }
+			set { _WheelGearChangeRumble = value; OnPropertyChanged(); }
+		}
+		int _WheelGearChangeRumble;
+
 		#endregion
 
 

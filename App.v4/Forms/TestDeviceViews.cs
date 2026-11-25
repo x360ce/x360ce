@@ -280,7 +280,7 @@ namespace x360ce.App.Forms
 					var r = (float)Math.Min(pair.Radius[s], 1.42) * radius;
 					return new PointF(centre.X + r * (float)Math.Cos(angle), centre.Y - r * (float)Math.Sin(angle));
 				}).ToArray();
-				using (var shape = new Pen(full ? DeviceTestPaint.Full : DeviceTestPaint.Filling, 2))
+				using (var shape = new Pen(full ? DeviceTestPaint.Full : DeviceTestPaint.Filling, 2f * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale))
 					if (reached.Length == DeviceTestSteps.Sectors)
 						g.DrawPolygon(shape, points);
 					else

@@ -366,6 +366,11 @@ namespace x360ce.App.Controls
 		public void UpdateSettingsMap()
 		{
 			var o = SettingsManager.Options;
+			// Applies always on top, the theme, the remote port box, the info window and the hotkey as they change. Attached
+			// before the boxes are bound, because binding a box raises its option's change, so each saved option is applied
+			// once as x360ce starts. Detached first so a second call cannot apply everything twice.
+			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			SettingsManager.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
 			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
 			InitWindowsStart();
@@ -392,10 +397,6 @@ namespace x360ce.App.Controls
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
-			// Applies always on top, the theme, the remote port box, the info window and the hotkey as they change.
-			// Detached first so a second call cannot apply everything twice.
-			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
-			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 		}
 
 		/// <summary>Greys out what does nothing until the box it belongs to is ticked.</summary>
@@ -420,7 +421,9 @@ namespace x360ce.App.Controls
 					RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
 					break;
 				case nameof(Options.Theme):
-					FormsTheme.SetTheme(o.Theme);
+					// Set before the first window, so binding the list does not theme every window again.
+					if (FormsTheme.Theme != o.Theme)
+						FormsTheme.SetTheme(o.Theme);
 					break;
 				case nameof(Options.InterfaceFont):
 					// Changed by other than the list, which already shows it.

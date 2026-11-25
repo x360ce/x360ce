@@ -54,8 +54,8 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("pad-images")]
-		[Description("The lights are the theme's: red #FF6B66, yellow #FFCC66 and green #42C765 in the light theme and Default_DarkTheme.xaml's in the dark, each a colour of its own, with black text on each readable")]
-		public void Lights_take_the_theme_colours()
+		[Description("The lights are red #FF6B66, yellow #FFCC66 and green #42C765 in both themes, a mark only shown the theme's blue, each a colour of its own, with black text on each readable")]
+		public void Lights_are_alike_in_both_themes()
 		{
 			var light = new Dictionary<NavImageType, string>
 			{
@@ -75,8 +75,9 @@ namespace x360ce.Tests
 						var colours = keys.Keys.ToDictionary(x => x, PadControlImager.LightColor);
 						foreach (var pair in colours)
 						{
-							var expected = theme == ThemeType.Light ? ColorTranslator.FromHtml(light[pair.Key]) : FormsTheme.Palette[keys[pair.Key]];
-							Assert.AreEqual(expected.ToArgb(), pair.Value.ToArgb(), theme + ": " + pair.Key + " is not the theme's " + keys[pair.Key] + ".");
+							// Recording, the pointer and movement are the light theme's colours in both themes; the rest the theme's.
+							var expected = theme == ThemeType.Light || pair.Key != NavImageType.Normal ? ColorTranslator.FromHtml(light[pair.Key]) : FormsTheme.Palette[keys[pair.Key]];
+							Assert.AreEqual(expected.ToArgb(), pair.Value.ToArgb(), theme + ": " + pair.Key + " is not " + ColorTranslator.ToHtml(expected) + ".");
 							if (pair.Key == NavImageType.Normal)
 								continue;
 							var contrast = TextColourTest.Contrast(FormsTheme.LightPalette["ForegroundBlack"], pair.Value);
@@ -157,12 +158,12 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("pad-images"), TestCategory("ui")]
-		[Description("While a chip of the Source Input panel is dragged, the mapping boxes it may land in are drawn green and their marks stay off; when it lands they are drawn as before, in both themes")]
-		public void The_boxes_a_dragged_chip_may_land_in_turn_green()
+		[Description("While a chip of the Source Input panel is dragged, the mapping boxes it may land in are drawn yellow and their marks stay off; when it lands they are drawn as before, in both themes")]
+		public void The_boxes_a_dragged_chip_may_land_in_turn_yellow()
 		{
 			OnGeneralPage((pad, picture, where) =>
 			{
-				var green = PadControlImager.LightColor(NavImageType.Active);
+				var yellow = PadControlImager.LightColor(NavImageType.Over);
 				using (var bare = PadGeometryTest.Draw(picture))
 				{
 					pad._Imager.Dropping = true;
@@ -170,11 +171,11 @@ namespace x360ce.Tests
 					foreach (var code in new[] { MapCode.ButtonA, MapCode.LeftTrigger })
 					{
 						var box = Box(pad, code);
-						Assert.AreEqual(green.ToArgb(), pad._Imager.GetBoxColor(box).ToArgb(), where + "the " + code + " box is not lit while a chip is dragged.");
+						Assert.AreEqual(yellow.ToArgb(), pad._Imager.GetBoxColor(box).ToArgb(), where + "the " + code + " box is not lit while a chip is dragged.");
 						using (var drawn = PadGeometryTest.Draw(box))
 						{
 							var face = drawn.GetPixel(box.Width - box.Height * 3 / 2, box.Height / 2);
-							Assert.AreEqual(green.ToArgb(), face.ToArgb(), where + "the " + code + " box is drawn " + ColorTranslator.ToHtml(face) + " while a chip is dragged.");
+							Assert.AreEqual(yellow.ToArgb(), face.ToArgb(), where + "the " + code + " box is drawn " + ColorTranslator.ToHtml(face) + " while a chip is dragged.");
 						}
 						var middle = Point.Round(MarkMiddle(picture, code));
 						using (var drawn = PadGeometryTest.Draw(picture))

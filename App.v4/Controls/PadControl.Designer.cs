@@ -3108,6 +3108,7 @@
             this.WheelRangeComboBox.Size = new System.Drawing.Size(297, 19);
             this.WheelRangeComboBox.TabIndex = 26;
             this.WheelRangeComboBox.SelectedIndexChanged += new System.EventHandler(this.WheelRangeComboBox_SelectedIndexChanged);
+            this.WheelRangeComboBox.SelectionChangeCommitted += new System.EventHandler(this.WheelRangeComboBox_SelectionChangeCommitted);
             //
             // WheelSoftLockCheckBox
             //

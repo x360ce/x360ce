@@ -63,6 +63,19 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A wheel's preset plays a game's vibration as a Periodic Sine shake, not a Constant push that jerks the wheel at each gear change; a preset that names a type keeps it")]
+		public void A_wheel_preset_shakes_rather_than_pushes()
+		{
+			string note;
+			var none = SdlDatabase.Merge();
+			var guessed = AutoMapHelper.GetAutoPreset(Wheel(SeparatedPedals()), out note, none, none);
+			Assert.AreEqual(((int)ForceEffectType.PeriodicSine).ToString(), guessed.ForceType, "The guessed wheel preset plays vibration as a push.");
+			var fromDatabase = AutoMapHelper.GetAutoPreset(Wheel(SeparatedPedals()));
+			Assert.AreEqual(((int)ForceEffectType.PeriodicSine).ToString(), fromDatabase.ForceType, "The wheel preset from x360ce's database plays vibration as a push.");
+			Assert.AreEqual(fromDatabase.CleanAndGetCheckSum(), fromDatabase.PadSettingChecksum, "The checksum does not follow the force type.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
 		[Description("A wheel with separate pedals is guessed as most G27 owners map it, by x360ce's controller database")]
 		public void Separated_pedals_match_the_databases_G27_row()
 		{

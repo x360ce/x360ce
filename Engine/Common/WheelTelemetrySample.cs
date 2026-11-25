@@ -27,6 +27,30 @@ namespace x360ce.Engine
 		/// <summary>Short directional kick for curbs/bumps (-1 left to +1 right).</summary>
 		public float Impulse;
 
+		/// <summary>Short shake without a direction for a hit from the front or behind (0 at rest to 1).</summary>
+		public float Jolt;
+
+		/// <summary>Forward and back acceleration in G (positive forward), or 0 when unknown.</summary>
+		public float LongitudinalG;
+
+		/// <summary>Up and down acceleration in G (positive up), or 0 when unknown.</summary>
+		public float VerticalG;
+
+		/// <summary>The gear the game reports, or -1 when unknown.</summary>
+		public int Gear;
+
+		/// <summary>Distance driven in metres, or NaN when unknown.</summary>
+		public float DistanceMeters;
+
+		/// <summary>Position in the game's world in metres, or NaN when unknown.</summary>
+		public float PositionX;
+
+		/// <summary>See <see cref="PositionX"/>.</summary>
+		public float PositionY;
+
+		/// <summary>See <see cref="PositionX"/>.</summary>
+		public float PositionZ;
+
 		/// <summary>Damper resistance multiplier (1 normal, &gt; 1 heavy surface).</summary>
 		public float DampingScale;
 
@@ -55,6 +79,14 @@ namespace x360ce.Engine
 					FrontGrip = 1f,
 					LateralG = 0f,
 					Impulse = 0f,
+					Jolt = 0f,
+					LongitudinalG = 0f,
+					VerticalG = 0f,
+					Gear = -1,
+					DistanceMeters = float.NaN,
+					PositionX = float.NaN,
+					PositionY = float.NaN,
+					PositionZ = float.NaN,
 					DampingScale = 1f,
 					RpmFraction = float.NaN,
 					PitchDeg = float.NaN,
@@ -80,7 +112,10 @@ namespace x360ce.Engine
 		/// <summary>Telemetry surface damping scale in percent (0 to 200, default 100).</summary>
 		public int DampingStrengthPercent;
 
-		/// <summary>Default 1:1 tuning (100 % across all channels).</summary>
+		/// <summary>Whether a hit felt from telemetry (<see cref="WheelTelemetrySample.Jolt"/>) shakes the wheel; false leaves the shake to the game's rumble.</summary>
+		public bool JoltEnabled;
+
+		/// <summary>Default 1:1 tuning (100 % across all channels), with the shake left to the game's rumble.</summary>
 		public static WheelTelemetryTuning Default
 		{
 			get
@@ -94,6 +129,34 @@ namespace x360ce.Engine
 				};
 			}
 		}
+	}
+
+	/// <summary>The parts the centering spring's force was made of on the last poll, for a recording to show how telemetry turned into force.</summary>
+	/// <remarks>A value type filled in place by <see cref="WheelTelemetryMath.ComputeSpringForce(SpringCurve, int, int, int, int, WheelTelemetrySample, long, double, int, WheelTelemetryTuning, ref SpringTerms, out double)"/>, so the engine makes nothing.</remarks>
+	public struct SpringTerms
+	{
+		/// <summary>The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</summary>
+		public int Position;
+		/// <summary>The range, lock to lock, the degrees are counted against.</summary>
+		public int RangeDegrees;
+		/// <summary>The speed the curve was set for, in km/h.</summary>
+		public int SpeedKmh;
+		/// <summary>How fresh the telemetry was, 0 to 1.</summary>
+		public double Weight;
+		/// <summary>How far telemetry moved the spring's centre, in wheel degrees (positive right).</summary>
+		public double AlignDeg;
+		/// <summary>The curve's force at the moved centre, in percent.</summary>
+		public int CurveForce;
+		/// <summary>The front grip the car's part of the force was scaled by, 0 to 1.</summary>
+		public double Grip;
+		/// <summary>The curb or bump kick added, in percent.</summary>
+		public double ImpulsePercent;
+		/// <summary>The shake added for a hit from the front or behind, in percent, its sign alternating.</summary>
+		public double JoltPercent;
+		/// <summary>The soft lock's bump stop took over.</summary>
+		public bool SoftLock;
+		/// <summary>The force sent, in percent (-100 to 100).</summary>
+		public int Percent;
 	}
 
 	/// <summary>Pure, allocation-free wheel physics calculations combining <see cref="SpringCurve"/>, live telemetry, rumble understeer and software soft-lock.</summary>
@@ -110,6 +173,9 @@ namespace x360ce.Engine
 
 		/// <summary>Maximum directional impulse contribution on top of the curve, in percent of device force.</summary>
 		public const double MaxImpulsePercent = 40.0;
+
+		/// <summary>Half a period of the jolt's shake in milliseconds: the push changes side every 50 ms, a 100 ms period.</summary>
+		public const long JoltHalfPeriodMs = 50;
 
 		/// <summary>Degrees past the soft-lock stop over which the virtual bump stop ramps to full opposing force.</summary>
 		public const double SoftLockRampDegrees = 4.0;
@@ -200,7 +266,39 @@ namespace x360ce.Engine
 			WheelTelemetryTuning tuning,
 			out double dampingMultiplier)
 		{
+			var terms = new SpringTerms();
+			return ComputeSpringForce(curve, position, rangeDegrees, frictionPercent, springStrength, telemetry, nowMs,
+				rumbleUndersteerAttenuation, softLockRangeDegrees, tuning, ref terms, out dampingMultiplier);
+		}
+
+		/// <summary>
+		/// Computes the signed steering force as above, and fills <paramref name="terms"/> with the parts it was made of.
+		/// </summary>
+		public static int ComputeSpringForce(
+			SpringCurve curve,
+			int position,
+			int rangeDegrees,
+			int frictionPercent,
+			int springStrength,
+			WheelTelemetrySample telemetry,
+			long nowMs,
+			double rumbleUndersteerAttenuation,
+			int softLockRangeDegrees,
+			WheelTelemetryTuning tuning,
+			ref SpringTerms terms,
+			out double dampingMultiplier)
+		{
 			dampingMultiplier = 1.0;
+			terms.Position = position;
+			terms.RangeDegrees = rangeDegrees;
+			terms.Weight = 0.0;
+			terms.AlignDeg = 0.0;
+			terms.CurveForce = 0;
+			terms.Grip = 1.0;
+			terms.ImpulsePercent = 0.0;
+			terms.JoltPercent = 0.0;
+			terms.SoftLock = false;
+			terms.Percent = 0;
 			if (springStrength <= 0 || curve == null)
 				return 0;
 
@@ -246,9 +344,25 @@ namespace x360ce.Engine
 				force = Math.Sign(rawForce) * (floor + carPart * effectiveGrip);
 			}
 
+			terms.Weight = weight;
+			terms.AlignDeg = alignDeg;
+			terms.CurveForce = rawForce;
+			terms.Grip = effectiveGrip;
+
 			// 3. Directional curb / suspension impulse from telemetry.
 			if (weight > 0.0 && curbScale > 0.0 && IsFinite(telemetry.Impulse) && Math.Abs(telemetry.Impulse) > 0.001f)
-				force += Clamp(telemetry.Impulse, -1.0, 1.0) * MaxImpulsePercent * curbScale * weight;
+			{
+				terms.ImpulsePercent = Clamp(telemetry.Impulse, -1.0, 1.0) * MaxImpulsePercent * curbScale * weight;
+				force += terms.ImpulsePercent;
+			}
+
+			// 3b. Shake for a hit from the front or behind: the same push as a kick, changing side every half period.
+			if (tuning.JoltEnabled && weight > 0.0 && curbScale > 0.0 && IsFinite(telemetry.Jolt) && telemetry.Jolt > 0.001f)
+			{
+				var side = (nowMs / JoltHalfPeriodMs) % 2 == 0 ? 1.0 : -1.0;
+				terms.JoltPercent = side * Clamp(telemetry.Jolt, 0.0, 1.0) * MaxImpulsePercent * curbScale * weight;
+				force += terms.JoltPercent;
+			}
 
 			// 4. Surface damping multiplier from telemetry.
 			if (weight > 0.0 && IsFinite(telemetry.DampingScale) && telemetry.DampingScale > 0f)
@@ -271,10 +385,12 @@ namespace x360ce.Engine
 					var stopDirection = offset > 0 ? -1.0 : 1.0;
 					var stopForce = stopDirection * (35.0 + 65.0 * penetration);
 					force = stopDirection < 0 ? Math.Min(force, stopForce) : Math.Max(force, stopForce);
+					terms.SoftLock = true;
 				}
 			}
 
-			return ClampInt((int)Math.Round(force), -100, 100);
+			terms.Percent = ClampInt((int)Math.Round(force), -100, 100);
+			return terms.Percent;
 		}
 
 		static bool IsFinite(float v)

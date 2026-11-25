@@ -277,7 +277,7 @@ namespace x360ce.App.DInput
 								if (autoCenter.HasValue)
 								{
 									step = Calling(recording, ud, "AutoCenter");
-									SetAutoCenter(device, autoCenter.Value);
+									SetAutoCenter(ud, device, autoCenter.Value);
 									ud.AutoCenter = autoCenter.Value;
 								}
 								ud.AutoCenterSet = autoCenter.HasValue;
@@ -297,6 +297,8 @@ namespace x360ce.App.DInput
 								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
 								step = Calling(recording, ud, "Unacquire (NonExclusive)");
 								device.Unacquire();
+								// Not held for force any more: the driver's own centering is back in charge.
+								RestoreAutoCenter(ud, device);
 								directInput.KeepChanges();
 								step = Calling(recording, ud, "SetCooperativeLevel (NonExclusive)");
 								device.SetCooperativeLevel(window.Handle, flags);
@@ -401,6 +403,30 @@ namespace x360ce.App.DInput
 											// once it is due, as to a device held again.
 											byte large, small;
 											var forceArrived = MergeForces(route.ForcePads, arrived, _lastLargeMotor, _lastSmallMotor, out large, out small);
+											// While live telemetry drives the centering spring, the game's rumble can be quieter
+											// for a moment while the gear changes, or left out for the telemetry's own feel.
+											var rumblePercent = 100;
+											if (o.WheelTelemetryEnabled && ps.ForceSpringEnable == "1")
+											{
+												if (!telemetryPolled)
+												{
+													telemetryPolled = true;
+													passTelemetry = ReadWheelTelemetry(o, out passRawTelemetry);
+												}
+												var source = o.WheelRumbleSource;
+												rumblePercent = ud.FFState.GameRumblePercent(passTelemetry, WheelTelemetryMath.MonotonicNowMs(),
+													source == x360ce.Plugins.WheelRumbleSource.Telemetry,
+													source == x360ce.Plugins.WheelRumbleSource.Game ? 100 : o.WheelGearChangeRumble);
+											}
+											if (rumblePercent < 100)
+											{
+												large = (byte)(large * rumblePercent / 100);
+												small = (byte)(small * rumblePercent / 100);
+											}
+											// A share that changed is a new force, though the game sent nothing new.
+											if (rumblePercent != ud.FFState.LastGameRumblePercent)
+												forceArrived = true;
+											ud.FFState.LastGameRumblePercent = rumblePercent;
 											if (forceArrived || held || ud.ForceFailures > 0 || ud.FFState.Changed(ps))
 											{
 												var v = new Vibration();
@@ -494,6 +520,8 @@ namespace x360ce.App.DInput
 											UndersteerStrengthPercent = o.WheelTelemetryUndersteerStrength,
 											CurbStrengthPercent = o.WheelTelemetryCurbStrength,
 											DampingStrengthPercent = o.WheelTelemetryDampingStrength,
+											JoltEnabled = o.WheelRumbleSource == x360ce.Plugins.WheelRumbleSource.Telemetry
+												|| o.WheelRumbleSource == x360ce.Plugins.WheelRumbleSource.Both,
 										};
 										step = Calling(recording, ud, "ud.FFState.UpdateSpring(device)");
 										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, nowMs,
@@ -516,7 +544,17 @@ namespace x360ce.App.DInput
 											{
 												ud.LastSentWheelLedMask = ledMask;
 												var sendMask = ledMask;
-												System.Threading.ThreadPool.QueueUserWorkItem(_ => LogitechWheel.SetLeds(hidPath, sendMask));
+												var ledDevice = ud;
+												System.Threading.ThreadPool.QueueUserWorkItem(_ =>
+												{
+													var taken = LogitechWheel.SetLeds(hidPath, sendMask);
+													if (!taken)
+													{
+														ledDevice.WheelLedLastError = LogitechWheel.LastError;
+														System.Threading.Interlocked.Increment(ref ledDevice.WheelLedRefused);
+													}
+													System.Threading.Interlocked.Increment(ref ledDevice.WheelLedSends);
+												});
 											}
 										}
 									}
@@ -601,6 +639,9 @@ namespace x360ce.App.DInput
 			var telemetryMonitored = IsWheelTelemetryMonitored();
 			if (o.WheelTelemetryEnabled && telemetryMonitored && !telemetryPolled)
 				ReadWheelTelemetry(o, out passRawTelemetry);
+			// What the game sent, as the wheels' springs took it this pass.
+			if (recording != null && telemetryPolled)
+				recording.Telemetry(passTelemetry, _wheelTelemetryPacketRateHz, System.Diagnostics.Stopwatch.GetTimestamp());
 			// Release telemetry listeners immediately when telemetry is off or no wheel spring, ticked consumer device or telemetry UI needs them.
 			if (((!anyWheelSpringActive && !anyTelemetryConsumerActive && !telemetryMonitored) || !o.WheelTelemetryEnabled) && HasActiveWheelTelemetry)
 				ReleaseWheelTelemetry();
@@ -854,6 +895,7 @@ namespace x360ce.App.DInput
 					try
 					{
 						device.Unacquire();
+						RestoreAutoCenter(ud, device);
 					}
 					catch (Exception ex)
 					{
@@ -930,16 +972,44 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
-		static void SetAutoCenter(Joystick device, bool on)
+		/// <remarks>The driver's own setting is read before the first change, so <see cref="RestoreAutoCenter"/> can give it back.</remarks>
+		static void SetAutoCenter(UserDevice ud, Joystick device, bool on)
 		{
 			try
 			{
+				if (!ud.AutoCenterBefore.HasValue)
+					ud.AutoCenterBefore = device.Properties.AutoCenter;
 				device.Properties.AutoCenter = on;
 			}
 			catch (SharpDXException)
 			{
 				// Not every device has a centre of its own to switch.
 			}
+		}
+
+		/// <summary>Gives the device's own centering back as its driver had it, once the device is let go of.</summary>
+		/// <remarks>
+		/// The engine turns it off while its own spring holds the centre, and DirectInput keeps a setting after the program lets go,
+		/// so a wheel let go of, or left when the program closes, would keep no centering of its own. Called after Unacquire: the
+		/// setting can only be changed while the device is not held.
+		/// </remarks>
+		internal static void RestoreAutoCenter(UserDevice ud, Joystick device)
+		{
+			if (!ud.AutoCenterSet || !ud.AutoCenterBefore.HasValue)
+				return;
+			if (ud.AutoCenter != ud.AutoCenterBefore.Value)
+			{
+				try
+				{
+					device.Properties.AutoCenter = ud.AutoCenterBefore.Value;
+				}
+				catch (SharpDXException)
+				{
+					// Not every device has a centre of its own to switch.
+				}
+			}
+			ud.AutoCenter = ud.AutoCenterBefore.Value;
+			ud.AutoCenterSet = false;
 		}
 
 		/// <summary>The device's reserved state the next poll reads into: its two, in turn, so a state is not written until one whole poll after it stops being shown.</summary>

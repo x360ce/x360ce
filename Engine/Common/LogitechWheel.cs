@@ -165,10 +165,18 @@ namespace x360ce.Engine
 			return Send(hidDevicePath, LedCommand(mask));
 		}
 
+		/// <summary>Why the last report sent on this thread failed: the Windows error or HRESULT, -1 for no interface path, or 0 when it was taken.</summary>
+		/// <remarks>Per thread, so the engine and a thread-pool send of the LEDs each read their own.</remarks>
+		[ThreadStatic]
+		public static int LastError;
+
 		static bool Send(string hidDevicePath, byte[] command)
 		{
 			if (string.IsNullOrEmpty(hidDevicePath))
+			{
+				LastError = -1;
 				return false;
+			}
 			// Generic read and write, which is what the HID class driver expects a client to ask for.
 			var genericReadWrite = unchecked((FileAccess)0xC0000000);
 			try
@@ -177,22 +185,28 @@ namespace x360ce.Engine
 					FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero))
 				{
 					if (handle.IsInvalid)
+					{
+						LastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
 						return false;
+					}
 					var report = Report(command, OutputReportLength(handle));
 					using (var stream = new FileStream(handle, FileAccess.Write, report.Length, false))
 					{
 						stream.Write(report, 0, report.Length);
 						stream.Flush();
 					}
+					LastError = 0;
 					return true;
 				}
 			}
-			catch (IOException)
+			catch (IOException ex)
 			{
+				LastError = ex.HResult;
 				return false;
 			}
-			catch (UnauthorizedAccessException)
+			catch (UnauthorizedAccessException ex)
 			{
+				LastError = ex.HResult;
 				return false;
 			}
 		}

@@ -86,6 +86,88 @@ namespace x360ce.Tests
 			Assert.IsFalse(LogitechWheel.SupportsCentering(0x045E, 0x028E), "An Xbox controller.");
 		}
 
+		/// <summary>
+		/// The range was sent once per setting: a range the wheel did not take, or one Logitech's software replaced when the
+		/// wheel was held again, stayed lost until the person chose another range and then theirs again.
+		/// </summary>
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The range is sent again while the wheel will not take it, each time the wheel is held again, and when the person chooses the range the list already names")]
+		public void The_range_reaches_the_wheel_again()
+		{
+			// A G27 at a path that opens nothing, so every send fails and is counted.
+			var g27 = new UserDevice { DevVendorId = 0x046D, DevProductId = 0xC29B, HidDevicePath = @"\\?\hid#x360ce-test-no-such-wheel" };
+			var ps = new PadSetting { WheelRange = "900" };
+			var state = new ForceFeedbackState();
+			const int t = 1000000;
+			state.UpdateRange(g27, null, ps, false, t);
+			state.UpdateCentering(t);
+			Assert.AreEqual(1, state.Counts.RangeSends, "The range chosen is sent at once.");
+			state.UpdateCentering(t + ForceFeedbackState.RangeRetryMs / 2);
+			Assert.AreEqual(1, state.Counts.RangeSends, "A range the wheel did not take is not sent on every poll.");
+			for (var i = 1; i <= 10; i++)
+				state.UpdateCentering(t + ForceFeedbackState.RangeRetryMs * i);
+			Assert.AreEqual(ForceFeedbackState.RangeTries, state.Counts.RangeSends, "A range the wheel did not take is sent again a few times, then left.");
+
+			state.UpdateRange(g27, null, ps, false, t + 20000);
+			state.UpdateCentering(t + 20000);
+			Assert.AreEqual(ForceFeedbackState.RangeTries, state.Counts.RangeSends, "The same range is sent again with nothing changed.");
+
+			// Held again: Logitech's software may have put its own range on the wheel. Sent once the device settles.
+			state.UpdateRange(g27, null, ps, true, t + 30000);
+			state.UpdateCentering(t + 30000);
+			Assert.AreEqual(ForceFeedbackState.RangeTries, state.Counts.RangeSends, "The range is sent before the device settles.");
+			state.UpdateCentering(t + 30000 + ForceFeedbackState.CenteringSettleMs);
+			Assert.AreEqual(ForceFeedbackState.RangeTries + 1, state.Counts.RangeSends, "The range is not sent again to a wheel held again.");
+
+			// The person chooses the range the list already names.
+			var sent = state.Counts.RangeSends;
+			state.SendRangeAgain();
+			state.UpdateCentering(t + 60000);
+			Assert.AreEqual(sent + 1, state.Counts.RangeSends, "Choosing the range again does not send it.");
+
+			// Left as it is: nothing is sent, also when asked.
+			var asIs = new ForceFeedbackState();
+			asIs.UpdateRange(g27, null, new PadSetting { WheelRange = "0" }, true, t);
+			asIs.SendRangeAgain();
+			for (var i = 0; i < 10; i++)
+				asIs.UpdateCentering(t + ForceFeedbackState.RangeRetryMs * i);
+			Assert.AreEqual(0, asIs.Counts.RangeSends, "A range left as it is was sent.");
+		}
+
+		/// <summary>
+		/// Logitech's driver puts its own range, 270 degrees on a G27, on the wheel a moment after a game comes to the front,
+		/// after the range chosen was sent, so the range is sent again after that.
+		/// </summary>
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Asked to send the range again after a delay, twice before the engine's next poll, the wheel is sent it at each delay and not before")]
+		public void The_range_is_sent_again_after_each_delay_asked()
+		{
+			// A G27 at a path that opens nothing, so every send fails and is counted.
+			var g27 = new UserDevice { DevVendorId = 0x046D, DevProductId = 0xC29B, HidDevicePath = @"\\?\hid#x360ce-test-no-such-wheel" };
+			var state = new ForceFeedbackState();
+			const int t = 1000000;
+			state.UpdateRange(g27, null, new PadSetting { WheelRange = "900" }, false, t);
+			for (var i = 0; i < ForceFeedbackState.RangeTries; i++)
+				state.UpdateCentering(t + ForceFeedbackState.RangeRetryMs * i);
+			Assert.AreEqual(ForceFeedbackState.RangeTries, state.Counts.RangeSends, "The range chosen was not sent its tries first.");
+
+			// Another program comes to the front: both asks arrive before the engine polls again.
+			const int front = t + 60000;
+			state.SendRangeAgain(ForceFeedbackState.RangeAgainSoonMs);
+			state.SendRangeAgain(ForceFeedbackState.RangeAgainLateMs);
+			var sentAt = new System.Collections.Generic.List<int>();
+			for (var ms = 0; ms < ForceFeedbackState.RangeAgainLateMs + ForceFeedbackState.RangeRetryMs / 2; ms++)
+			{
+				var sent = state.Counts.RangeSends;
+				state.UpdateCentering(front + ms);
+				if (state.Counts.RangeSends != sent)
+					sentAt.Add(ms);
+			}
+			// Between the two, the first send is sent again a second later, as the wheel did not take it.
+			CollectionAssert.AreEqual(new[] { ForceFeedbackState.RangeAgainSoonMs, ForceFeedbackState.RangeAgainSoonMs + ForceFeedbackState.RangeRetryMs, ForceFeedbackState.RangeAgainLateMs },
+				sentAt, "The range was sent at " + string.Join(", ", sentAt) + " ms after the asks.");
+		}
+
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("The RGB/RPM LED strip report is 0xf8 0x12 with a 5-bit mask, matching hid-lg4ff, and RPM maps progressively with a redline flash")]
 		public void Led_reports_and_rpm_progression_match_logitech_shift_strip()

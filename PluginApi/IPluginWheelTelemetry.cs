@@ -89,6 +89,12 @@ namespace x360ce.Plugins
 		/// <summary>Zero-telemetry rumble-coupled understeer lightening in percent (0 to 60, default 0).</summary>
 		int RumbleUndersteer { get; set; }
 
+		/// <summary>Where the wheel's road and impact feel comes from while telemetry drives the spring (default <see cref="WheelRumbleSource.GameWithoutGearChanges"/>).</summary>
+		WheelRumbleSource RumbleSource { get; set; }
+
+		/// <summary>How much of the game's rumble plays while the gear changes, in percent (0 to 100, default 0).</summary>
+		int GearChangeRumble { get; set; }
+
 		/// <summary>Steering velocity lead compensation in milliseconds (0 to 80, default 0).</summary>
 		int SteeringLeadMs { get; set; }
 

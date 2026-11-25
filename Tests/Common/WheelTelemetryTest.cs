@@ -73,22 +73,53 @@ namespace x360ce.Tests
 			Array.Copy(BitConverter.GetBytes(value), 0, buf, offset, 4);
 		}
 
-		static byte[] ForzaPacket(int length, int raceOn, uint timestampMs, float speedMs, float vx = 0f, float ax = 0f, float frontSlip = 0f, float rumbleFl = 0f, float rumbleFr = 0f)
+		static byte[] ForzaPacket(int length, int raceOn, uint timestampMs, float speedMs, float vx = 0f, float ax = 0f, float frontSlip = 0f, float rumbleFl = 0f, float rumbleFr = 0f,
+			float ay = 0f, float az = 0f, int gear = -1, float rpm = 4500f, int stripFl = 0, int stripFr = 0, float distance = 0f)
 		{
 			var buf = new byte[length];
 			WriteInt32(buf, 0, raceOn);
 			WriteUInt32(buf, 4, timestampMs);
 			WriteSingle(buf, 8, 8000f);   // EngineMaxRpm
 			WriteSingle(buf, 12, 900f);   // EngineIdleRpm
-			WriteSingle(buf, 16, 4500f);  // CurrentEngineRpm
+			WriteSingle(buf, 16, rpm);    // CurrentEngineRpm
 			WriteSingle(buf, 20, ax);     // AccelerationX
+			WriteSingle(buf, 24, ay);     // AccelerationY
+			WriteSingle(buf, 28, az);     // AccelerationZ
 			WriteSingle(buf, 32, vx);     // VelocityX
 			WriteSingle(buf, 40, speedMs); // VelocityZ
-			WriteSingle(buf, 132, rumbleFl);
-			WriteSingle(buf, 136, rumbleFr);
+			WriteInt32(buf, 116, stripFl); // WheelOnRumbleStripFrontLeft
+			WriteInt32(buf, 120, stripFr); // WheelOnRumbleStripFrontRight
+			WriteSingle(buf, 148, rumbleFl); // SurfaceRumbleFrontLeft
+			WriteSingle(buf, 152, rumbleFr); // SurfaceRumbleFrontRight
 			WriteSingle(buf, 164, frontSlip);
 			WriteSingle(buf, 168, frontSlip);
+			if (length >= 311)
+			{
+				// The Dash part: at 232, or 12 bytes later in Forza Horizon's 323 and 324 byte packets.
+				var dash = length == 323 || length == 324 ? 244 : 232;
+				WriteSingle(buf, dash + 48, distance); // DistanceTraveled
+				if (gear >= 0)
+					buf[dash + 75] = (byte)gear;   // Gear
+			}
 			return buf;
+		}
+
+		/// <summary>A Forza provider locked on 311-byte packets in <paramref name="gear"/>, its last packet taken at <paramref name="nowMs"/>.</summary>
+		static IPluginWheelTelemetry LockedForza(long nowMs, int gear = 3)
+		{
+			var telemetry = NewOfflineProvider();
+			for (var i = 2; i >= 0; i--)
+				TakeUdp(telemetry, 37150, ForzaPacket(311, 1, (uint)(nowMs - i * 16), 20f, gear: gear), nowMs - i * 16);
+			return telemetry;
+		}
+
+		/// <summary>Feeds one packet to a locked provider and returns the sample it published.</summary>
+		static WheelTelemetry Take(IPluginWheelTelemetry telemetry, long nowMs, byte[] packet)
+		{
+			Assert.IsTrue(TakeUdp(telemetry, 37150, packet, nowMs), "A locked Forza packet was not taken.");
+			var sample = WheelTelemetry.Neutral;
+			Assert.IsTrue(telemetry.TryReadTelemetry(ref sample));
+			return sample;
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
@@ -131,6 +162,190 @@ namespace x360ce.Tests
 				Assert.IsTrue(telemetry.TryReadTelemetry(ref sample));
 				Assert.AreEqual(prevTs, sample.TimestampMs, "Paused Forza packet must not refresh active driving timestamp.");
 			}
+		}
+
+		const float G = 9.80665f;
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("Forza Data Out carries the gear, forward-back and up-down G, the distance and the position, from the Dash part at 232 or 12 bytes later in Forza Horizon's 324-byte packet")]
+		public void Forza_data_out_decodes_gear_accelerations_distance_and_position()
+		{
+			foreach (var length in new[] { 311, 324 })
+			{
+				var telemetry = LockedForza(1000);
+				using ((IDisposable)telemetry)
+				{
+					var packet = ForzaPacket(length, 1, 1016, 20f, ay: 0.5f * G, az: -0.8f * G, gear: 4, distance: 1234.5f);
+					var dash = length == 324 ? 244 : 232;
+					WriteSingle(packet, dash, 100f);
+					WriteSingle(packet, dash + 4, 5f);
+					WriteSingle(packet, dash + 8, -200f);
+					var s = Take(telemetry, 1016, packet);
+					Assert.AreEqual(4, s.Gear, length + " bytes: the gear byte is not read.");
+					Assert.AreEqual(-0.8f, s.LongitudinalG, 0.01f, length + " bytes: braking is not forward-back G.");
+					Assert.AreEqual(0.5f, s.VerticalG, 0.01f, length + " bytes: up-down G is not read.");
+					Assert.AreEqual(1234.5f, s.DistanceMeters, 0.01f, length + " bytes: the game's distance is not read.");
+					Assert.AreEqual(100f, s.PositionX, 0.01f, length + " bytes: position X");
+					Assert.AreEqual(5f, s.PositionY, 0.01f, length + " bytes: position Y");
+					Assert.AreEqual(-200f, s.PositionZ, 0.01f, length + " bytes: position Z");
+				}
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A Forza Sled packet sends no gear or position, so the distance is the speed added up over the game's clock, a gap of over half a second left out, and starts again after a pause")]
+		public void Forza_sled_distance_is_added_up_from_speed()
+		{
+			using (var provider = (IDisposable)NewOfflineProvider())
+			{
+				var telemetry = (IPluginWheelTelemetry)provider;
+				for (uint t = 0; t <= 1000; t += 100)
+					TakeUdp(telemetry, 37150, ForzaPacket(232, 1, t, 20f), 5000 + t);
+				var s = WheelTelemetry.Neutral;
+				Assert.IsTrue(telemetry.TryReadTelemetry(ref s));
+				Assert.AreEqual(-1, s.Gear, "A Sled packet has no gear.");
+				Assert.IsTrue(float.IsNaN(s.PositionX), "A Sled packet has no position.");
+				Assert.AreEqual(20f, s.DistanceMeters, 0.01f, "One second at 20 m/s is 20 m.");
+				// The game's clock jumps two seconds while the packets keep arriving, so the lock holds.
+				s = Take(telemetry, 6100, ForzaPacket(232, 1, 3000, 20f));
+				Assert.AreEqual(20f, s.DistanceMeters, 0.01f, "A gap of two seconds must add nothing.");
+				TakeUdp(telemetry, 37150, ForzaPacket(232, 0, 3100, 0f), 6200);
+				s = Take(telemetry, 6300, ForzaPacket(232, 1, 3200, 20f));
+				Assert.AreEqual(0f, s.DistanceMeters, 0.01f, "A pause must start the distance again.");
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("Hard braking at 1 G is no hit: no kick and no jolt")]
+		public void Forza_braking_is_no_impact()
+		{
+			var telemetry = LockedForza(1000);
+			using ((IDisposable)telemetry)
+			{
+				var s = Take(telemetry, 1016, ForzaPacket(311, 1, 1016, 20f, az: -1f * G, gear: 3));
+				Assert.AreEqual(0f, s.Impulse, 0.001f, "Braking must not kick the wheel.");
+				Assert.AreEqual(0f, s.Jolt, 0.001f, "Braking must not jolt the wheel.");
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A hit from the right, the -9.9 G sideways spike of the owner's truck hit, kicks the wheel left harder than a 5.1 G hit, for about 200 ms, and does not pull the spring's centre aside")]
+		public void Forza_side_hit_kicks_the_wheel_away_from_the_hit()
+		{
+			float truck, smaller;
+			var telemetry = LockedForza(1000);
+			using ((IDisposable)telemetry)
+			{
+				var s = Take(telemetry, 1016, ForzaPacket(311, 1, 1016, 12f, ax: -9.9f * G, gear: 3));
+				truck = s.Impulse;
+				Assert.IsTrue(truck < -0.5f, "A hit from the right must kick the wheel left, was " + truck + ".");
+				Assert.AreEqual(0f, s.Jolt, 0.001f, "A hit from the side is no jolt.");
+				Assert.IsTrue(s.AlignAngleDeg >= -3.01f, "A hit's spike must not pull the spring's centre aside, was " + s.AlignAngleDeg + "°.");
+				s = Take(telemetry, 1116, ForzaPacket(311, 1, 1116, 12f, gear: 3));
+				Assert.IsTrue(s.Impulse < 0f && s.Impulse > truck, "The kick must fade over the next samples, was " + s.Impulse + ".");
+				s = Take(telemetry, 1226, ForzaPacket(311, 1, 1226, 12f, gear: 3));
+				Assert.AreEqual(0f, s.Impulse, 0.001f, "The kick must be over after 200 ms.");
+			}
+			telemetry = LockedForza(1000);
+			using ((IDisposable)telemetry)
+				smaller = Take(telemetry, 1016, ForzaPacket(311, 1, 1016, 12f, ax: 5.1f * G, gear: 3)).Impulse;
+			Assert.IsTrue(smaller > 0f, "A hit from the left must kick the wheel right.");
+			Assert.IsTrue(Math.Abs(truck) > smaller, "The harder hit must kick harder.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A hit from the front is a jolt without a direction, and a jump of acceleration while the gear changes is no hit")]
+		public void Forza_front_hit_jolts_unless_the_gear_changes()
+		{
+			var telemetry = LockedForza(1000);
+			using ((IDisposable)telemetry)
+			{
+				var s = Take(telemetry, 1016, ForzaPacket(311, 1, 1016, 12f, az: -6f * G, gear: 3));
+				Assert.IsTrue(s.Jolt > 0.5f, "A hit from the front must jolt the wheel, was " + s.Jolt + ".");
+				Assert.AreEqual(0f, s.Impulse, 0.001f, "A hit from the front has no side.");
+			}
+			telemetry = LockedForza(1000);
+			using ((IDisposable)telemetry)
+			{
+				var s = Take(telemetry, 1016, ForzaPacket(311, 1, 1016, 12f, az: 5f * G, gear: 4));
+				Assert.AreEqual(0f, s.Jolt, 0.001f, "The lurch of a gear change is no hit.");
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A front wheel on a rumble strip kicks the wheel towards its side")]
+		public void Forza_rumble_strip_kicks_towards_its_side()
+		{
+			var telemetry = LockedForza(1000);
+			using ((IDisposable)telemetry)
+			{
+				Assert.IsTrue(Take(telemetry, 1016, ForzaPacket(311, 1, 1016, 20f, gear: 3, stripFr: 1)).Impulse > 0.3f, "Right strip");
+				Assert.IsTrue(Take(telemetry, 1032, ForzaPacket(311, 1, 1032, 20f, gear: 3, stripFl: 1)).Impulse < -0.3f, "Left strip");
+				Assert.AreEqual(0f, Take(telemetry, 1048, ForzaPacket(311, 1, 1048, 20f, gear: 3, stripFl: 1, stripFr: 1)).Impulse, 0.001f, "Both strips");
+			}
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("While telemetry drives the spring the game's rumble plays at the Gear change share for 150 ms after the gear changes and whole after it, not at all from Telemetry alone, and whole without fresh telemetry")]
+		public void Game_rumble_is_scaled_while_the_gear_changes()
+		{
+			var ff = new ForceFeedbackState();
+			var s = new WheelTelemetrySample { Active = true, SpeedKmh = 40f, RpmFraction = 0.9f, Gear = 2, TimestampMs = 1000 };
+			Assert.AreEqual(100, ff.GameRumblePercent(s, 1000, false, 0), "No gear change yet.");
+			s.Gear = 3;
+			s.TimestampMs = 1016;
+			Assert.AreEqual(0, ff.GameRumblePercent(s, 1016 + 100, false, 0), "100 ms after the gear changed.");
+			Assert.AreEqual(25, ff.GameRumblePercent(s, 1016 + 120, false, 25), "The share the slider sets.");
+			Assert.AreEqual(100, ff.GameRumblePercent(s, 1016 + 200, false, 0), "200 ms after the gear changed.");
+			Assert.AreEqual(1, ff.Counts.GearChanges);
+			Assert.AreEqual(3, ff.LastGear);
+			Assert.AreEqual(0, ff.GameRumblePercent(s, 1016 + 200, true, 100), "From telemetry alone the game's rumble is ignored.");
+			Assert.AreEqual(100, ff.GameRumblePercent(s, 1016 + 2000, true, 0), "Stale telemetry leaves the game's rumble whole.");
+			Assert.AreEqual(100, ff.GameRumblePercent(WheelTelemetrySample.Inactive, 1016, true, 0), "No telemetry leaves the game's rumble whole.");
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("From the owner's GTA V drive: an upshift, the engine falling from 95 % to 70 % while the car gains speed, silences the game's 110 rumble at Gear change 0 %, and a downshift while braking is no upshift")]
+		public void Gta_upshift_rumble_is_silenced_at_gear_change_zero()
+		{
+			var ff = new ForceFeedbackState();
+			var s = new WheelTelemetrySample { Active = true, SpeedKmh = 30f, RpmFraction = 0.95f, Gear = -1, TimestampMs = 4600 };
+			ff.GameRumblePercent(s, 4600, false, 0);
+			s.SpeedKmh = 30.5f;
+			s.RpmFraction = 0.70f;
+			s.TimestampMs = 4620;
+			var percent = ff.GameRumblePercent(s, 4630, false, 0);
+			Assert.AreEqual(0, 110 * percent / 100, "The upshift's rumble must not play at Gear change 0 %.");
+			s.SpeedKmh = 20f;
+			s.RpmFraction = 0.95f;
+			s.TimestampMs = 13200;
+			ff.GameRumblePercent(s, 13200, false, 0);
+			s.SpeedKmh = 18f;
+			s.RpmFraction = 0.75f;
+			s.TimestampMs = 13220;
+			Assert.AreEqual(100, ff.GameRumblePercent(s, 13230, false, 0), "Slowing down is no upshift.");
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("A jolt shakes the wheel, its push changing side every 50 ms, scaled by Curb bumps, only where the jolt is switched on")]
+		public void Jolt_shakes_the_wheel_both_ways()
+		{
+			var curve = new SpringCurve();
+			curve.Set(60, 12, 60, 40, 900, 100, 20);
+			var s = new WheelTelemetrySample { Active = true, SpeedKmh = 100f, FrontGrip = 1f, DampingScale = 1f, Jolt = 0.5f, TimestampMs = 1000 };
+			var on = WheelTelemetryTuning.Default;
+			on.JoltEnabled = true;
+			var terms = new SpringTerms();
+			double damping;
+			WheelTelemetryMath.ComputeSpringForce(curve, SpringCalibration.Center, 900, 20, 60, s, 1000, 0, 0, on, ref terms, out damping);
+			Assert.AreEqual(20.0, terms.JoltPercent, 0.01, "Half a jolt is half the kick's most.");
+			WheelTelemetryMath.ComputeSpringForce(curve, SpringCalibration.Center, 900, 20, 60, s, 1050, 0, 0, on, ref terms, out damping);
+			Assert.AreEqual(-20.0, terms.JoltPercent, 0.01, "50 ms later the push changes side.");
+			on.CurbStrengthPercent = 50;
+			WheelTelemetryMath.ComputeSpringForce(curve, SpringCalibration.Center, 900, 20, 60, s, 1000, 0, 0, on, ref terms, out damping);
+			Assert.AreEqual(10.0, terms.JoltPercent, 0.01, "Curb bumps scales the jolt.");
+			WheelTelemetryMath.ComputeSpringForce(curve, SpringCalibration.Center, 900, 20, 60, s, 1000, 0, 0, WheelTelemetryTuning.Default, ref terms, out damping);
+			Assert.AreEqual(0.0, terms.JoltPercent, 0.001, "The game's rumble keeps the shake while the jolt is off.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]

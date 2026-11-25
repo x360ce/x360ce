@@ -818,7 +818,11 @@ namespace x360ce.App.Controls
 				return base.GetPreferredSize(proposedSize);
 			var display = DisplayRectangle;
 			var page = TabPages[0];
-			var width = Math.Max(1, display.Width - page.Padding.Horizontal);
+			var width = display.Width - page.Padding.Horizontal;
+			// A minimized window leaves the page no width, and what it holds, measured a word to a line, would stand
+			// thousands of pixels tall: the tabs keep their size until there is room again.
+			if (width <= 0)
+				return Size;
 			var content = page.Controls.Cast<Control>().Select(x => x.GetPreferredSize(new Size(width, 0)).Height).DefaultIfEmpty(0).Max();
 			return new Size(Width, Height - display.Height + page.Padding.Vertical + content);
 		}

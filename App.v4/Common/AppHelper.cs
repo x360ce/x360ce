@@ -774,6 +774,18 @@ namespace x360ce.App
 		/// <summary>The faint grey of a chart's frame and grid lines.</summary>
 		public static readonly Color ChartLineColor = Color.FromArgb(32, Color.Gray);
 
+		/// <summary>The red of a chart's curve: the theme's, and in the dark theme the General tab's red, as bright as in the light.</summary>
+		public static Color ChartCurveColor
+		{
+			get { return JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark ? Controls.PadControlImager.RecordColor : JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ColorCurve"); }
+		}
+
+		/// <summary>The green of a chart's reading, its line and its value: the theme's, and in the dark theme the General tab's green.</summary>
+		public static Color ChartReadingColor
+		{
+			get { return JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark ? Controls.PadControlImager.ActiveColor : JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundActive"); }
+		}
+
 		/// <summary>
 		/// The height a table's rows need: each row as tall as its tallest control with its margins, as the table makes it,
 		/// leaving out a control that takes its height from the rows: one that spans several, or stretches to its own.

@@ -2450,6 +2450,17 @@ namespace x360ce.App.Controls
 			UpdateSpringChart();
 		}
 
+		/// <summary>Sends the range to the wheel again when the person chooses it, also the range the list already names.</summary>
+		/// <remarks>Another program can set the wheel to another range, and the list, naming the one chosen, would not change.</remarks>
+		void WheelRangeComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			var ud = GetSelectedDevice();
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
+			var state = driven == null ? null : driven.FFState;
+			if (state != null)
+				state.SendRangeAgain();
+		}
+
 		/// <summary>Picks the cars' range when the centering spring is ticked with the range left as it is.</summary>
 		/// <remarks>
 		/// The spring's degrees are counted against the range, and no wheel says what range it turns, so the spring needs
@@ -3078,6 +3089,8 @@ namespace x360ce.App.Controls
 					case nameof(Options.WheelTelemetryCurbStrength):
 					case nameof(Options.WheelTelemetryDampingStrength):
 					case nameof(Options.WheelRumbleUndersteer):
+					case nameof(Options.WheelRumbleSource):
+					case nameof(Options.WheelGearChangeRumble):
 					case nameof(Options.WheelSteeringLeadMs):
 						var handler = SettingsChanged;
 						if (handler != null)
@@ -3158,6 +3171,18 @@ namespace x360ce.App.Controls
 				set { SettingsManager.Options.WheelRumbleUndersteer = value; }
 			}
 
+			public x360ce.Plugins.WheelRumbleSource RumbleSource
+			{
+				get { return SettingsManager.Options.WheelRumbleSource; }
+				set { SettingsManager.Options.WheelRumbleSource = value; }
+			}
+
+			public int GearChangeRumble
+			{
+				get { return SettingsManager.Options.WheelGearChangeRumble; }
+				set { SettingsManager.Options.WheelGearChangeRumble = value; }
+			}
+
 			public int SteeringLeadMs
 			{
 				get { return SettingsManager.Options.WheelSteeringLeadMs; }
@@ -3179,6 +3204,8 @@ namespace x360ce.App.Controls
 				o.WheelTelemetryCurbStrength = 100;
 				o.WheelTelemetryDampingStrength = 100;
 				o.WheelRumbleUndersteer = 0;
+				o.WheelRumbleSource = x360ce.Plugins.WheelRumbleSource.GameWithoutGearChanges;
+				o.WheelGearChangeRumble = 0;
 				o.WheelSteeringLeadMs = 0;
 			}
 
@@ -3233,6 +3260,14 @@ namespace x360ce.App.Controls
 						FrontGrip = s.FrontGrip,
 						LateralG = s.LateralG,
 						Impulse = s.Impulse,
+						Jolt = s.Jolt,
+						LongitudinalG = s.LongitudinalG,
+						VerticalG = s.VerticalG,
+						Gear = s.Gear,
+						DistanceMeters = s.DistanceMeters,
+						PositionX = s.PositionX,
+						PositionY = s.PositionY,
+						PositionZ = s.PositionZ,
 						DampingScale = s.DampingScale,
 						RpmFraction = s.RpmFraction,
 						PitchDeg = s.PitchDeg,

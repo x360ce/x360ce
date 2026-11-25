@@ -731,13 +731,28 @@ namespace x360ce.App.DInput
 				_testing = null;
 				var stopped = Stop();
 				Program.StartupTrace.Mark("closing: engine stopped");
-				// The update thread has gone, so nothing else touches the effects. Taken off, they give each wheel its own
-				// centering back, so none is left without it once the program has closed.
+				// The update thread has gone, so nothing else touches the effects or the devices. Taken off, the effects give
+				// each wheel its own centering back, and each device let go of gets its driver's own centering back, as it was
+				// before the spring turned it off, so none is left without it once the program has closed.
 				if (stopped)
 					lock (SettingsManager.UserDevices.SyncRoot)
 						foreach (var ud in SettingsManager.UserDevices.Items)
+						{
 							if (ud.FFState != null)
 								ud.FFState.StopDeviceForces();
+							var device = ud.Device == null ? null : ud.Device.Joystick;
+							if (device == null || !ud.AutoCenterSet)
+								continue;
+							try
+							{
+								device.Unacquire();
+								RestoreAutoCenter(ud, device);
+							}
+							catch (SharpDX.SharpDXException)
+							{
+								// A device unplugged since keeps nothing to give back.
+							}
+						}
 				// The hub outlives every stop of the update thread, and goes with the helper.
 				StopRawInputHub();
 				Program.StartupTrace.Mark("closing: Raw Input stopped");

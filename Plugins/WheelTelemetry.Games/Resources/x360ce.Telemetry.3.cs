@@ -88,6 +88,9 @@ namespace X360ce.GtaV
 		float _lastYaw;
 		float _lastRoll;
 
+		/// <summary>Metres driven since the script started, in any vehicle; time on foot adds nothing.</summary>
+		double _distance;
+
 		public TelemetryScript()
 		{
 			var settings = TelemetrySettings.Read(Path.Combine(BaseDirectory, SettingsFileName));
@@ -173,6 +176,7 @@ namespace X360ce.GtaV
 					_sample.AngularVelocityX = Turn(_lastPitch, bodyPitch) / dt;
 					_sample.AngularVelocityY = Turn(_lastYaw, _sample.Yaw) / dt;
 					_sample.AngularVelocityZ = Turn(_lastRoll, _sample.Roll) / dt;
+					_distance += vehicle.Speed * step;
 				}
 			}
 			_hasLast = true;
@@ -186,6 +190,7 @@ namespace X360ce.GtaV
 			_lastRoll = _sample.Roll;
 			Place(vehicle.Position);
 			_sample.Speed = vehicle.Speed;
+			_sample.DistanceTraveled = (float)_distance;
 			_sample.CurrentEngineRpm = vehicle.CurrentRPM * RedLineRpm;
 			SetEngineRange();
 			var gear = vehicle.CurrentGear;
@@ -388,6 +393,8 @@ namespace X360ce.GtaV
 		public float PositionZ;
 		/// <summary>Metres a second.</summary>
 		public float Speed;
+		/// <summary>Metres driven since the script started.</summary>
+		public float DistanceTraveled;
 		/// <summary>The driver's pedals, 0 to 255.</summary>
 		public byte Accel;
 		public byte Brake;
@@ -420,6 +427,7 @@ namespace X360ce.GtaV
 			PositionY = 0f;
 			PositionZ = 0f;
 			Speed = 0f;
+			DistanceTraveled = 0f;
 			Accel = 0;
 			Brake = 0;
 			HandBrake = 0;
@@ -442,7 +450,8 @@ namespace X360ce.GtaV
 	///     combined slip and suspension travel in metres, front left, front right, rear left, rear right: 0, GTA gives none.
 	/// 212 S32 CarOrdinal, CarClass, CarPerformanceIndex, DrivetrainType, NumCylinders: 0.
 	/// 232 F32 PositionX, Y, Z        244 F32 Speed
-	/// 248 to 299: power, torque, tyre temperatures, boost, fuel, distance and lap times: 0.
+	/// 248 to 279: power, torque, tyre temperatures, boost and fuel: 0.
+	/// 280 F32 DistanceTraveled       284 to 299: lap times: 0.
 	/// 300 U16 LapNumber, 302 U8 RacePosition: 0.
 	/// 303 U8 Accel                   304 U8 Brake                  305 U8 Clutch: 0
 	/// 306 U8 HandBrake               307 U8 Gear                   308 S8 Steer
@@ -480,6 +489,7 @@ namespace X360ce.GtaV
 			PutFloat(packet, 236, sample.PositionY);
 			PutFloat(packet, 240, sample.PositionZ);
 			PutFloat(packet, 244, sample.Speed);
+			PutFloat(packet, 280, sample.DistanceTraveled);
 			packet[303] = sample.Accel;
 			packet[304] = sample.Brake;
 			packet[306] = sample.HandBrake;

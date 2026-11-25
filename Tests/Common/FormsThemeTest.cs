@@ -516,7 +516,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("A grid's check box has a text box's edge too: the selection colour in the current cell of the grid with the focus, the field edge while ticked and, in the dark theme, the field colour while not")]
+		[Description("A grid's check box has a text box's edge too: the selection colour in the current cell of the grid with the focus, and the field edge at rest, ticked or not, as the cell is the box's own colour and a box edged in it would not show")]
 		public void Grid_check_box_edge_follows_a_text_box_s()
 		{
 			OnUiThread(() =>
@@ -560,7 +560,7 @@ namespace x360ce.Tests
 							{
 								Tuple.Create(1, palette["BorderField"], "the ticked box at rest"),
 								Tuple.Create(0, palette["BackgroundDarkSelected"], "the box in the current cell of the grid with the focus"),
-								Tuple.Create(2, theme == ThemeType.Dark ? palette["BackgroundWhite"] : palette["BorderField"], "the box not ticked, at rest"),
+								Tuple.Create(2, palette["BorderField"], "the box not ticked, at rest"),
 							};
 							foreach (var place in expected)
 							{

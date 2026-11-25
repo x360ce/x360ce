@@ -424,6 +424,7 @@ namespace x360ce.Tests
 				"App.v4/Controls/PadControl.cs",
 				"App.v4/Controls/PadTabPages/General/PadControlImager.cs",
 				"App.v4/Controls/AxisToButtonUserControl.cs",
+				"App.v4/Common/AppHelper.cs", // a chart's reading, for the charts
 				"App.v4/Controls/AxisMapUserControl.cs",
 				"App.v4/Controls/PadTabPages/WheelChartUserControl.cs",
 				"App.v4/Forms/TestDeviceViews.cs",
@@ -444,6 +445,7 @@ namespace x360ce.Tests
 			// A chart's curve.
 			{ "ColorCurve", new[]
 			{
+				"App.v4/Common/AppHelper.cs", // for the charts
 				"App.v4/Controls/AxisMapUserControl.cs",
 				"App.v4/Controls/PadTabPages/WheelChartUserControl.cs",
 				"App.v3/Controls/ThumbUserControl.cs",
@@ -624,7 +626,7 @@ namespace x360ce.Tests
 			// The curve is drawn into the picture on another thread, after the theme changed.
 			if (chart is AxisMapUserControl)
 			{
-				var curve = FormsTheme.GetColor("ColorCurve");
+				var curve = x360ce.App.AppHelper.ChartCurveColor;
 				var picture = typeof(AxisMapUserControl).GetField("LastBackgroundImage", BindingFlags.Instance | BindingFlags.NonPublic);
 				// Smoothed onto a clear picture, a colour may come back a few steps off in a channel.
 				Func<Color, bool> isCurve = c => !c.IsEmpty && Math.Abs(c.R - curve.R) <= 4 && Math.Abs(c.G - curve.G) <= 4 && Math.Abs(c.B - curve.B) <= 4;

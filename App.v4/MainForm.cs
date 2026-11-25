@@ -108,11 +108,9 @@ namespace x360ce.App
 		{
 			Main.OptionsPanel.InitOptions();
 			Main.RecorderPanel.InitOptions();
-			// Update settings manager with [Options] section.
+			// Update settings manager with [Options] section. Binding each option applies it, the hotkey and the emulation
+			// buttons among them.
 			UpdateSettingsMap();
-			// The hotkey and the emulation buttons are read from the settings just loaded.
-			ApplyEmulationHotkey();
-			ApplyEmulationButtons();
 			// The controller pages are offered as ready only now: what finds them before reads their controls as settings,
 			// which hold none yet.
 			Main.PadControls = Main.BuiltPadControls;

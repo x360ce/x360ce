@@ -433,10 +433,10 @@ namespace x360ce.Tests
 				faults.Add(string.Format("{0}: without a device the line is as strong as with one ({1} and {2}).", at, faded2, full2));
 		}
 
-		/// <summary>How far the theme's curve colour is redder than it is green or blue: less for the dark theme's light red.</summary>
+		/// <summary>How far the chart's curve colour is redder than it is green or blue: less for the dark theme's lighter red.</summary>
 		static int CurveRedness()
 		{
-			var c = FormsTheme.GetColor("ColorCurve");
+			var c = AppHelper.ChartCurveColor;
 			return c.R - Math.Max(c.G, c.B);
 		}
 

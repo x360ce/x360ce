@@ -52,8 +52,8 @@ namespace x360ce.App.Controls
 		public event EventHandler DragStarted;
 		public event EventHandler DragEnded;
 
-		/// <summary>The green of the controller tab lights, so "in use" reads the same everywhere.</summary>
-		static readonly Color LitColor = ColorTranslator.FromHtml(AppHelper.StatusGreen);
+		/// <summary>The General tab's green of a control that moves, as its mapping box and its mark on the picture are lit.</summary>
+		static readonly Color LitColor = PadControlImager.ActiveColor;
 
 		/// <summary>At most eight chips a row, as x360ce 5 shows them.</summary>
 		const int ChipsPerRow = 8;
@@ -197,7 +197,7 @@ namespace x360ce.App.Controls
 				var cell = CellBounds(i);
 				var face = new Rectangle(cell.X, cell.Y, cell.Width, _ChipHeight);
 				var marked = chip == _Dragging || chip.Lit;
-				var back = chip == _Dragging ? PadControlImager.LightColor(NavImageType.Over) : chip.Lit ? LitColor : SystemColors.ControlLight;
+				var back = chip == _Dragging ? PadControlImager.LightColor(NavImageType.Record) : chip.Lit ? LitColor : SystemColors.ControlLight;
 				using (var path = AppHelper.RoundedRectangle(new Rectangle(face.X, face.Y, face.Width - 1, face.Height - 1), _Radius))
 				using (var brush = new SolidBrush(back))
 					g.FillPath(brush, path);
@@ -231,8 +231,8 @@ namespace x360ce.App.Controls
 			var drag = SystemInformation.DragSize;
 			if (Math.Abs(e.X - _PressedAt.X) < drag.Width / 2 && Math.Abs(e.Y - _PressedAt.Y) < drag.Height / 2)
 				return;
-			// Past the drag threshold: the chip travels to a mapping box. The chip is painted in
-			// the pointed-at colour while it is in the air, and DoDragDrop returns when it lands.
+			// Past the drag threshold: the chip travels to a mapping box. The chip is painted red
+			// while it is in the air, the boxes it may land in yellow, and DoDragDrop returns when it lands.
 			_Dragging = _Pressed;
 			_Pressed = null;
 			Invalidate();

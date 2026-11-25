@@ -422,6 +422,25 @@ namespace x360ce.Tests
 		}
 
 		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern int GetWindowLong(IntPtr window, int index);
+
+		/// <remarks>Binding the box raises the option's change, and that is what applies a saved option as x360ce starts.</remarks>
+		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive"), Timeout(240000)]
+		[Description("Always on Top left on keeps the window in front of other windows from the next start")]
+		public void Always_on_top_left_on_applies_at_the_next_start()
+		{
+			const int GWL_EXSTYLE = -20;
+			const int WS_EX_TOPMOST = 0x8;
+			using (var copy = new Copy("always-on-top"))
+			{
+				copy.Write("Options.xml", new Options { AlwaysOnTop = true });
+				copy.Start();
+				Ui.WaitFor(() => (GetWindowLong(copy.Window, GWL_EXSTYLE) & WS_EX_TOPMOST) != 0 ? "on top" : null,
+					TimeSpan.FromSeconds(10), "the window to stay on top, as the options saved say");
+			}
+		}
+
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
 		static extern bool IsWindowVisible(IntPtr window);
 
 		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive"), Timeout(240000)]

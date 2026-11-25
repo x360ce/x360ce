@@ -84,7 +84,7 @@ namespace x360ce.App.Controls
 		/// <summary>Shows every mark on the picture, to check where they stand.</summary>
 		public bool ShowAllMarks;
 
-		/// <summary>A chip of the Source Input panel is being dragged: every box it may land in is lit green, as a moving one is.</summary>
+		/// <summary>A chip of the Source Input panel is being dragged: every box it may land in is lit yellow, as the box under the pointer is.</summary>
 		public bool Dropping;
 
 		/// <summary>The mapping whose box the pointer is on, or null.</summary>
@@ -118,29 +118,30 @@ namespace x360ce.App.Controls
 			return null;
 		}
 
-		/// <summary>The theme's colour of a state, which its mark and its box are drawn in.</summary>
+		/// <summary>The colour of a state, which its mark and its box are drawn in.</summary>
 		/// <remarks>
-		/// Default.xaml's colours in the light theme and Default_DarkTheme.xaml's in the dark. The class library's copy of the
-		/// light colours holds no ColorOver or ColorRecord, so Default.xaml's are given here.
+		/// Recording, the pointer and movement are Default.xaml's colours in both themes, so a mapping is lit alike in the dark
+		/// theme; a mark only shown takes the theme's colour.
 		/// </remarks>
 		public static Color LightColor(NavImageType type)
 		{
 			switch (type)
 			{
 				case NavImageType.Record:
-					return FormsTheme.GetColor("ColorRecord", LightRecord);
+					return RecordColor;
 				case NavImageType.Over:
-					return FormsTheme.GetColor("ColorOver", LightOver);
+					return OverColor;
 				case NavImageType.Active:
-					return FormsTheme.GetColor("ColorActive");
+					return ActiveColor;
 				default:
 					return FormsTheme.GetColor("ColorNormal");
 			}
 		}
 
-		/// <summary>Default.xaml's ColorRecord and ColorOver.</summary>
-		static readonly Color LightRecord = Color.FromArgb(0xFF, 0x6B, 0x66);
-		static readonly Color LightOver = Color.FromArgb(0xFF, 0xCC, 0x66);
+		/// <summary>Default.xaml's ColorRecord, ColorOver and ColorActive: red while recording or dragged, yellow under the pointer or where a dragged chip may land, green while moving.</summary>
+		public static readonly Color RecordColor = Color.FromArgb(0xFF, 0x6B, 0x66);
+		public static readonly Color OverColor = Color.FromArgb(0xFF, 0xCC, 0x66);
+		public static readonly Color ActiveColor = Color.FromArgb(0x42, 0xC7, 0x65);
 
 		/// <summary>The colour a box is lit in: its state's, but none for a mark only shown.</summary>
 		public static Color BoxColor(NavImageType? light)
@@ -175,7 +176,7 @@ namespace x360ce.App.Controls
 					IsMoving != null && IsMoving(ii),
 					ShowAllMarks || InShownGroup(ii.Code));
 				var box = BoxColor(light);
-				SetBoxColor(ii.Control as ComboBox, box.IsEmpty && Dropping ? LightColor(NavImageType.Active) : box);
+				SetBoxColor(ii.Control as ComboBox, box.IsEmpty && Dropping ? LightColor(NavImageType.Over) : box);
 				NavImageType? other;
 				if (!_Marks.TryGetValue(mark, out other) || light.HasValue && (!other.HasValue || light.Value > other.Value))
 					_Marks[mark] = light;

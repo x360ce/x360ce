@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.31.35.0, built 2026-11-25.
+Version 4.31.55.0, built 2026-11-25.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -351,7 +351,7 @@ not shown in this state of the program.
 [CheckBox]  │   │       │   │   ├── Enable forward telemetry                            # Relays received UDP telemetry datagrams to Forward IP and Port (for example, SimHub on 127.0.0.1 or a dashboard on another PC/tablet).
 [Text]      │   │       │   │   ├── Forward IP address                                  # Destination IP address to relay received UDP telemetry to (127.0.0.1 for local apps like SimHub, or a LAN PC/tablet IP).
 [Number]    │   │       │   │   └── Forward UDP port 0..65535                           # Destination UDP port to relay received telemetry packets to (0 = forwarding off).
-[Section]   │   │       │   ├── Force Feel Tuning                                       # Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer and steering lead.
+[Section]   │   │       │   ├── Force Feel Tuning                                       # Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer, steering lead, and where road and impact feel comes from.
 [Slider]    │   │       │   │   ├── Aligning torque 0..200                              # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
 [Value]     │   │       │   │   ├── Aligning torque value                               # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
 [Slider]    │   │       │   │   ├── Understeer 0..100                                   # Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.
@@ -363,7 +363,10 @@ not shown in this state of the program.
 [Slider]    │   │       │   │   ├── Rumble understeer 0..60                             # Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).
 [Value]     │   │       │   │   ├── Rumble understeer value                             # Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).
 [Slider]    │   │       │   │   ├── Steering lead 0..80                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
-[Value]     │   │       │   │   └── Steering lead value                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
+[Value]     │   │       │   │   ├── Steering lead value                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
+[List]      │   │       │   │   ├── Road and impact feel from                           # Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both.
+[Slider]    │   │       │   │   ├── Gear change 0..100                                  # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
+[Value]     │   │       │   │   └── Gear change value                                   # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
 [Section]   │   │       │   ├── Live telemetry                                          # Connection state and newest vehicle physics values received from the running game.
 [Label]     │   │       │   │   ├── Telemetry connection status                         # Current telemetry state and detected game or protocol.
 [Label]     │   │       │   │   ├── Listener ports                                      # Currently bound UDP ports and any skipped port conflicts.

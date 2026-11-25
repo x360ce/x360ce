@@ -110,6 +110,35 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("Adding a device switches its controller on, also one switched off by hand with a device on it, ticks its row, and shows the XInput state, so a new controller works and shows it at once")]
+		public void Adding_a_device_switches_the_controller_on_and_shows_its_XInput_state()
+		{
+			var o = SettingsManager.Options;
+			var wasShown = o.GetXInputStates;
+			try
+			{
+				o.GetXInputStates = false;
+				var game = NewGame();
+				var wheel = NewDevice("Wheel");
+				var pedals = NewDevice("Pedals");
+				Map(game, wheel, MapTo.Controller1);
+				// Switched off by hand, the wheel still on it.
+				SettingsManager.SetTabEnabled(game, MapTo.Controller1, false);
+				o.GetXInputStates = false;
+
+				SettingsManager.MapGamePadDevices(game, MapTo.Controller1, new[] { pedals }, false, false);
+
+				Assert.IsTrue(IsOn(game, MapTo.Controller1), "The controller a device was added to stays switched off.");
+				Assert.IsTrue(RowsOf(game, pedals).Single().IsEnabled, "The device added is not ticked.");
+				Assert.IsTrue(o.GetXInputStates, "Show XInput State is not switched on.");
+			}
+			finally
+			{
+				o.GetXInputStates = wasShown;
+			}
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
 		[Description("Move takes the device off the other tab and switches that tab off when nothing is left on it")]
 		public void Move_switches_off_the_tab_it_leaves_empty()
 		{
