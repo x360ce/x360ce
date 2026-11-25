@@ -88,6 +88,8 @@ A device can drive up to four emulated controllers at once.
 6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 7. Launch the game and see how it works.
 
+A mapping box and its mark on the controller picture light together, in one colour: green while the control in the box moves or is pressed, as the `[Input]` column lights it, yellow while the pointer is on the box or the mark, and red while the box is being recorded. Red wins over yellow, and yellow over green.
+
 The small green number under each name on the `[General]` tab is what the game is being given for that part right now, the same as the controller picture shows: `1` while a button is pressed and `0` while not, `0` to `255` for a trigger, and `-32768` to `32767` for a stick axis. A stick direction, such as `[Stick Up]`, shows the stick's position while it points that way and `0` otherwise. The D-Pad shows its directions added up: up `1`, down `2`, left `4`, right `8`.
 
 Buttons are numbered from 1 in the mapping boxes, the `[Input]` column and the `[Direct Input]` page's list of pressed buttons. Windows names them from 0, and the `[Direct Input]` page's list of the device's controls shows those names: its `[Maps as]` column says what a mapping box calls each one, so the button Windows calls `Button 0` is `Button 1` in a box.

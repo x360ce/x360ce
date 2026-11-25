@@ -1,7 +1,9 @@
-﻿using SharpDX.XInput;
+﻿using JocysCom.ClassLibrary.Controls.Themes;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -74,7 +76,257 @@ namespace x360ce.App.Controls
 		public bool ShowTriggerButtons;
 		public bool ShowShoulderButtons;
 
-		public void DrawState(ImageInfo ii, Gamepad gp, Control currentCbx)
+		#region Lights
+
+		/// <summary>The mappings this picture and its boxes show: each with its place on the picture and its box.</summary>
+		public ImageInfos Infos;
+
+		/// <summary>Shows every mark on the picture, to check where they stand.</summary>
+		public bool ShowAllMarks;
+
+		/// <summary>The mapping whose box the pointer is on, or null.</summary>
+		public MapCode? PointedBox;
+
+		/// <summary>The mark the pointer is on, as the code it is drawn for (<see cref="NavImages.GetNameCode"/>), or null.</summary>
+		public MapCode? PointedMark;
+
+		/// <summary>Whether the control a mapping's box names is lit in the Source Input panel: moving, or pressed.</summary>
+		public Func<ImageInfo, bool> IsMoving;
+
+		/// <summary>
+		/// The one rule for how a mapping is lit, the same on its box and on its mark on the picture: recording outranks the
+		/// pointer, the pointer outranks movement, and movement outranks a mark shown only because the pointer is near it.
+		/// </summary>
+		/// <param name="recording">The mapping is being recorded.</param>
+		/// <param name="pointed">The pointer is on its box or on its mark.</param>
+		/// <param name="moving">The control its box names is moving or pressed.</param>
+		/// <param name="shown">Its mark is shown, the pointer being near it on the picture.</param>
+		/// <returns>The state that wins, or null when the mapping is not lit.</returns>
+		public static NavImageType? Light(bool recording, bool pointed, bool moving, bool shown)
+		{
+			if (recording)
+				return NavImageType.Record;
+			if (pointed)
+				return NavImageType.Over;
+			if (moving)
+				return NavImageType.Active;
+			if (shown)
+				return NavImageType.Normal;
+			return null;
+		}
+
+		/// <summary>The theme's colour of a state, which its mark and its box are drawn in.</summary>
+		/// <remarks>
+		/// Default.xaml's colours in the light theme and Default_DarkTheme.xaml's in the dark. The class library's copy of the
+		/// light colours holds no ColorOver or ColorRecord, so Default.xaml's are given here.
+		/// </remarks>
+		public static Color LightColor(NavImageType type)
+		{
+			switch (type)
+			{
+				case NavImageType.Record:
+					return FormsTheme.GetColor("ColorRecord", LightRecord);
+				case NavImageType.Over:
+					return FormsTheme.GetColor("ColorOver", LightOver);
+				case NavImageType.Active:
+					return FormsTheme.GetColor("ColorActive");
+				default:
+					return FormsTheme.GetColor("ColorNormal");
+			}
+		}
+
+		/// <summary>Default.xaml's ColorRecord and ColorOver.</summary>
+		static readonly Color LightRecord = Color.FromArgb(0xFF, 0x6B, 0x66);
+		static readonly Color LightOver = Color.FromArgb(0xFF, 0xCC, 0x66);
+
+		/// <summary>The colour a box is lit in: its state's, but none for a mark only shown.</summary>
+		public static Color BoxColor(NavImageType? light)
+		{
+			return light.HasValue && light.Value != NavImageType.Normal ? LightColor(light.Value) : Color.Empty;
+		}
+
+		/// <summary>The state each mark is drawn in, by the code it is drawn for: kept to be filled again on each update.</summary>
+		readonly Dictionary<MapCode, NavImageType?> _Marks = new Dictionary<MapCode, NavImageType?>();
+
+		/// <summary>
+		/// Lights every box and every mark from the state now, each by <see cref="Light"/>: what is recorded, where the pointer
+		/// is, and what moves in the Source Input panel.
+		/// </summary>
+		/// <remarks>
+		/// On the interface thread, from what the interface already holds: the recorder, the pointer and the panel's chips,
+		/// which read the state the engine last published. The engine is not asked anything. Two mappings that share a mark,
+		/// such as a stick's X axis and its right, light it in the stronger of their two states.
+		/// </remarks>
+		public void UpdateLights()
+		{
+			if (Infos == null || ImageControl == null)
+				return;
+			var recorded = Recorder.Recording ? Recorder.CurrentMap : null;
+			_Marks.Clear();
+			foreach (var ii in Infos)
+			{
+				var mark = NavImages.GetNameCode(ii.Code);
+				var light = Light(
+					recorded != null && recorded.Code == ii.Code,
+					PointedBox == ii.Code || PointedMark == mark,
+					IsMoving != null && IsMoving(ii),
+					ShowAllMarks || InShownGroup(ii.Code));
+				SetBoxColor(ii.Control as ComboBox, BoxColor(light));
+				NavImageType? other;
+				if (!_Marks.TryGetValue(mark, out other) || light.HasValue && (!other.HasValue || light.Value > other.Value))
+					_Marks[mark] = light;
+			}
+			foreach (var pair in _Marks)
+			{
+				var light = pair.Value;
+				// A mark being recorded blinks.
+				var show = light.HasValue && (light.Value != NavImageType.Record || Recorder.DrawRecordingImage);
+				ImageControl.SetImage(pair.Key, light ?? NavImageType.Normal, show);
+			}
+		}
+
+		/// <summary>Whether a mapping's mark is shown because the pointer is in its group on the picture.</summary>
+		bool InShownGroup(MapCode code)
+		{
+			return ShowLeftThumbButtons && SettingsConverter.LeftThumbCodes.Contains(code) ||
+				ShowRightThumbButtons && SettingsConverter.RightThumbCodes.Contains(code) ||
+				ShowDPadButtons && SettingsConverter.DPadCodes.Contains(code) ||
+				ShowMainButtons && SettingsConverter.MainButtonCodes.Contains(code) ||
+				ShowMenuButtons && SettingsConverter.MenuButtonCodes.Contains(code) ||
+				ShowTriggerButtons && SettingsConverter.TriggerButtonCodes.Contains(code) ||
+				ShowShoulderButtons && SettingsConverter.ShoulderButtonCodes.Contains(code);
+		}
+
+		readonly Dictionary<ComboBox, BoxPainter> _Boxes = new Dictionary<ComboBox, BoxPainter>();
+
+		/// <summary>Lights a mapping box in a colour, or puts it back to the theme's look with an empty one.</summary>
+		void SetBoxColor(ComboBox box, Color color)
+		{
+			if (box == null)
+				return;
+			BoxPainter painter;
+			if (!_Boxes.TryGetValue(box, out painter))
+			{
+				if (color.IsEmpty)
+					return;
+				painter = new BoxPainter(box);
+				_Boxes.Add(box, painter);
+			}
+			painter.Face = color;
+		}
+
+		/// <summary>The colour a box is lit in now, or empty; what the box shows.</summary>
+		public Color GetBoxColor(ComboBox box)
+		{
+			BoxPainter painter;
+			return box != null && _Boxes.TryGetValue(box, out painter) ? painter.Face : Color.Empty;
+		}
+
+		/// <summary>
+		/// Paints a mapping box in the colour it is lit in, over the theme's drawing of it.
+		/// </summary>
+		/// <remarks>
+		/// The theme fills a drop-down list's face in its own colour and leaves the box's back colour unused, and a handler of
+		/// the box's Paint event runs before or after the theme's depending on which was added last. So the lit face is drawn
+		/// here, after the box has drawn itself: on the screen as the box paints, and on a bitmap as it is printed. It is drawn
+		/// as the theme draws the face, its text and its triangle, in the light theme's text colour on every lit colour, as the
+		/// lit colours are as light in both themes. A box holding a formula is a text field and is left to the theme; so is
+		/// every box in high contrast, which keeps the Windows colours.
+		/// </remarks>
+		sealed class BoxPainter : NativeWindow
+		{
+			const int WM_PAINT = 0x000F;
+			const int WM_PRINTCLIENT = 0x0318;
+
+			/// <summary>Default.xaml's rounding of a field's corners, the room inside its edge, and the column and size of its triangle, in device-independent pixels.</summary>
+			const float CornerRadius = 4;
+			const float Room = 4;
+			const float ArrowColumn = 16;
+			const float ArrowWidth = 16;
+			const float ArrowHeight = 8;
+
+			static readonly System.Reflection.PropertyInfo ShowFocusCuesProperty = typeof(Control).GetProperty("ShowFocusCues",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+			readonly ComboBox Box;
+			Color _Face;
+
+			public BoxPainter(ComboBox box)
+			{
+				Box = box;
+				// Windows makes a box's window again when its style changes, as when it is switched to a formula and back.
+				box.HandleCreated += (sender, e) => AssignHandle(Box.Handle);
+				box.HandleDestroyed += (sender, e) => ReleaseHandle();
+				if (box.IsHandleCreated)
+					AssignHandle(box.Handle);
+			}
+
+			/// <summary>The colour the box is lit in, or empty for the theme's look.</summary>
+			public Color Face
+			{
+				get { return _Face; }
+				set
+				{
+					if (_Face.ToArgb() == value.ToArgb() && _Face.IsEmpty == value.IsEmpty)
+						return;
+					_Face = value;
+					Box.Invalidate();
+				}
+			}
+
+			protected override void WndProc(ref Message m)
+			{
+				base.WndProc(ref m);
+				if (_Face.IsEmpty || Box.DropDownStyle != ComboBoxStyle.DropDownList || SystemInformation.HighContrast)
+					return;
+				if (m.Msg == WM_PRINTCLIENT || m.Msg == WM_PAINT && m.WParam != IntPtr.Zero)
+					using (var g = Graphics.FromHdc(m.WParam))
+						Draw(g);
+				else if (m.Msg == WM_PAINT)
+					using (var g = Box.CreateGraphics())
+						Draw(g);
+			}
+
+			void Draw(Graphics g)
+			{
+				var client = Box.ClientRectangle;
+				var dip = g.DpiX / 96f;
+				var alpha = Box.Enabled ? 255 : 128;
+				using (var brush = new SolidBrush(Box.Parent == null ? SystemColors.Control : Box.Parent.BackColor))
+					g.FillRectangle(brush, client);
+				var text = Color.FromArgb(alpha, FormsTheme.LightPalette["ForegroundBlack"]);
+				var saved = g.Save();
+				g.SmoothingMode = SmoothingMode.AntiAlias;
+				g.PixelOffsetMode = PixelOffsetMode.Half;
+				var radius = (int)Math.Round(CornerRadius * dip);
+				using (var brush = new SolidBrush(Color.FromArgb(alpha, _Face)))
+				using (var face = AppHelper.RoundedRectangle(client, radius))
+					g.FillPath(brush, face);
+				var line = Math.Max(1f, (float)Math.Floor(dip));
+				var side = (int)line + (int)Math.Round(Room * dip);
+				// The triangle points down, its top left corner on a whole pixel so its edges are sharp.
+				var left = (float)Math.Round(client.Width - side - ArrowColumn * dip / 2 - ArrowWidth * dip / 2, MidpointRounding.AwayFromZero);
+				var top = (float)Math.Round(client.Height / 2f - ArrowHeight * dip / 2, MidpointRounding.AwayFromZero);
+				using (var brush = new SolidBrush(text))
+					g.FillPolygon(brush, new[]
+					{
+						new PointF(left, top), new PointF(left + ArrowWidth * dip, top), new PointF(left + ArrowWidth * dip / 2, top + ArrowHeight * dip),
+					});
+				if (Box.Focused && (bool)(ShowFocusCuesProperty?.GetValue(Box, null) ?? false))
+					using (var pen = new Pen(text, line) { DashPattern = new[] { 1f, 2f } })
+					using (var focus = AppHelper.RoundedRectangle(new Rectangle(0, 0, client.Width - 1, client.Height - 1), radius))
+						g.DrawPath(pen, focus);
+				g.Restore(saved);
+				var room = Rectangle.FromLTRB(side, 0, client.Width - side - (int)Math.Round((Room + ArrowColumn) * dip), client.Height);
+				TextRenderer.DrawText(g, Box.Text, Box.Font, room, text, TextFormatFlags.Left | TextFormatFlags.VerticalCenter
+					| TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding);
+			}
+		}
+
+		#endregion
+
+		/// <summary>Shows what the controller is given for one part: a trigger's bar, a stick's dot, and its name lit while it is used.</summary>
+		public void DrawState(ImageInfo ii, Gamepad gp)
 		{
 			bool on;
 			// Show trigger axis state -green minus image.
@@ -154,54 +406,6 @@ namespace x360ce.App.Controls
 			{
 				// Check when value is on.
 				on = gp.Buttons.HasFlag(ii.Button);
-			}
-			MapCode recordingCode = ii.Code;
-
-			var isRecordingItem = Recorder.Recording && ii.Code == Recorder.CurrentMap.Code;
-			// If recording then...
-			if (Recorder.Recording)
-			{
-				MapCode? redirect = null;
-				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisX)
-					redirect = MapCode.RightThumbRight;
-				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisY)
-					redirect = MapCode.RightThumbUp;
-				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisX)
-					redirect = MapCode.LeftThumbRight;
-				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisY)
-					redirect = MapCode.LeftThumbUp;
-				if (redirect.HasValue)
-				{
-					recordingCode = redirect.Value;
-					// Skip if redirected control.
-					if (ii.Code == recordingCode)
-						return;
-				}
-			}
-			// If recording is in progress then...
-			if (isRecordingItem)
-			{
-				ImageControl.SetImage(recordingCode, NavImageType.Record, Recorder.DrawRecordingImage);
-			}
-			else if (
-				 ShowLeftThumbButtons && SettingsConverter.LeftThumbCodes.Contains(ii.Code) ||
-				 ShowRightThumbButtons && SettingsConverter.RightThumbCodes.Contains(ii.Code) ||
-				 ShowDPadButtons && SettingsConverter.DPadCodes.Contains(ii.Code) ||
-				 ShowMainButtons && SettingsConverter.MainButtonCodes.Contains(ii.Code) ||
-				 ShowMenuButtons && SettingsConverter.MenuButtonCodes.Contains(ii.Code) ||
-				 ShowTriggerButtons && SettingsConverter.TriggerButtonCodes.Contains(ii.Code) ||
-				 ShowShoulderButtons && SettingsConverter.ShoulderButtonCodes.Contains(ii.Code)
-			)
-			{
-				var nit = on ? NavImageType.Active : NavImageType.Normal;
-				ImageControl.SetImage(ii.Code, nit, true);
-			}
-			else
-			{
-
-				var isAxisCode = SettingsConverter.AxisCodes.Contains(ii.Code);
-				// Axis status will be displayed as image therefore can hide active button indicator.
-				ImageControl.SetImage(ii.Code, NavImageType.Active, on && !isAxisCode);
 			}
 			if (ii.Label != null)
 				setLabelColor(on, ii.Label);

@@ -138,6 +138,39 @@ namespace x360ce.App.Controls
 			return chips;
 		}
 
+		/// <summary>
+		/// The payload of the chip a mapping reads: "IAxis 2" and "HAxis 2" read Axis 2's chip, "IButton 1" Button 1's and
+		/// "POV 1 Up" its own; null when the text names no single control, as an empty box or a formula does.
+		/// </summary>
+		/// <param name="mapping">A mapping box's text.</param>
+		public static string PayloadOf(string mapping)
+		{
+			MapType type;
+			int index;
+			if (!SettingsConverter.TryParseTextValue(mapping, out type, out index))
+				return null;
+			switch (type)
+			{
+				case MapType.IButton:
+					type = MapType.Button;
+					break;
+				case MapType.IAxis:
+				case MapType.HAxis:
+				case MapType.IHAxis:
+					type = MapType.Axis;
+					break;
+				case MapType.ISlider:
+				case MapType.HSlider:
+				case MapType.IHSlider:
+					type = MapType.Slider;
+					break;
+				case MapType.IPOV:
+					type = MapType.POV;
+					break;
+			}
+			return SettingsConverter.ToTextValue(type, index);
+		}
+
 		static InputChip New(InputChipKind kind, int index, int direction, string caption, string payload)
 		{
 			return new InputChip { Kind = kind, Index = index, Direction = direction, Caption = caption, Payload = payload, Value = kind == InputChipKind.Pov || kind == InputChipKind.PovDirection ? PovRest : 0 };

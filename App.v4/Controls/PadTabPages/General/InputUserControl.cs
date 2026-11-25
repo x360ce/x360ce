@@ -140,6 +140,19 @@ namespace x360ce.App.Controls
 			return group;
 		}
 
+		/// <summary>Whether the chip with this payload is lit: its control moving or pressed. False for null or a chip the device lacks.</summary>
+		/// <param name="payload">What maps the control, as <see cref="InputChips.PayloadOf"/> gives it.</param>
+		public bool IsLit(string payload)
+		{
+			if (payload == null)
+				return false;
+			foreach (var group in Groups)
+				foreach (var chip in group.Chips)
+					if (chip.Payload == payload)
+						return chip.Lit;
+			return false;
+		}
+
 		void Group_ChipClicked(object sender, EventArgs<InputChip> e)
 		{
 			var handler = ChipClicked;

@@ -26,6 +26,27 @@ namespace x360ce.Tests
 			return state;
 		}
 
+		[TestMethod, TestCategory("mapping")]
+		[Description("A mapping box lights with the chip of the control it reads, whichever way round or half it reads it; a formula or an empty box with none")]
+		public void A_mapping_reads_the_chip_of_its_control()
+		{
+			var chips = InputChips.Create(4, 0x3, 0x1, 1);
+			foreach (var pair in new[]
+			{
+				new[] { "Button 3", "Button 3" }, new[] { "IButton 3", "Button 3" },
+				new[] { "Axis 2", "Axis 2" }, new[] { "IAxis 2", "Axis 2" }, new[] { "HAxis 2", "Axis 2" }, new[] { "IHAxis 2", "Axis 2" },
+				new[] { "Slider 1", "Slider 1" }, new[] { "ISlider 1", "Slider 1" }, new[] { "HSlider 1", "Slider 1" }, new[] { "IHSlider 1", "Slider 1" },
+				new[] { "POV 1", "POV 1" }, new[] { "IPOV 1", "POV 1" }, new[] { "POV 1 Up", "POV 1 Up" }, new[] { "POV 1 Left", "POV 1 Left" },
+			})
+			{
+				var payload = InputChips.PayloadOf(pair[0]);
+				Assert.AreEqual(pair[1], payload, pair[0] + " reads the wrong chip.");
+				Assert.IsTrue(chips.Any(c => c.Payload == payload), pair[0] + " reads " + payload + ", which no chip carries.");
+			}
+			foreach (var text in new[] { null, "", "Axis 1 * 2", "Button" })
+				Assert.IsNull(InputChips.PayloadOf(text), "\"" + text + "\" names no single control, yet reads a chip.");
+		}
+
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
 		[Description("A stick with X, Y and RZ shows axes 1, 2 and 6, as the mapping list does")]
 		public void Axes_are_numbered_by_slot_not_by_count()

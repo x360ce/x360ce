@@ -110,7 +110,20 @@ namespace x360ce.App.Controls
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
 			_Imager.ImageControl = XboxImage;
+			_Imager.Infos = imageInfos;
+			_Imager.IsMoving = IsMoving;
 			XboxImage.InitializeImages(imageInfos, _Imager, controllerIndex);
+			// The pointer on a box lights the box and its mark on the picture, as the pointer on the mark does.
+			foreach (var ii in imageInfos)
+			{
+				var code = ii.Code;
+				ii.Control.MouseEnter += (sender, e) => PointBox(code);
+				ii.Control.MouseLeave += (sender, e) =>
+				{
+					if (_Imager.PointedBox == code)
+						PointBox(null);
+				};
+			}
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
 			FitValueLabels();
@@ -171,6 +184,7 @@ namespace x360ce.App.Controls
 				return;
 			UpdateControlFromDInput();
 			UpdateControlFromXInput();
+			_Imager.UpdateLights();
 			UpdateSpringNote();
 			UpdateForceSource();
 			UpdateWheelChart();
@@ -355,7 +369,7 @@ namespace x360ce.App.Controls
 					//_Imager.DrawController(e, MappedTo);
 					// Process all buttons and axis.
 					foreach (var ii in imageInfos)
-						_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
+						_Imager.DrawState(ii, newState.Gamepad);
 				}
 				// The numbers under the names, from the state the picture is drawn from.
 				foreach (var ii in imageInfos)
@@ -1269,7 +1283,7 @@ namespace x360ce.App.Controls
 
 		public PadControlImager _Imager;
 
-		ImageInfos imageInfos
+		internal ImageInfos imageInfos
 		{
 			get
 			{
@@ -1284,14 +1298,15 @@ namespace x360ce.App.Controls
 					_imageInfos.Add(1, MapCode.RightTrigger, 193, 27, RightTriggerLabel, RightTriggerComboBox);
 					_imageInfos.Add(1, MapCode.LeftShoulder, 43, 66, LeftShoulderLabel, LeftShoulderComboBox, GamepadButtonFlags.LeftShoulder);
 					_imageInfos.Add(1, MapCode.RightShoulder, 213, 66, RightShoulderLabel, RightShoulderComboBox, GamepadButtonFlags.RightShoulder);
-					// Configure Image 2.
-					_imageInfos.Add(2, MapCode.ButtonY, 196, 29, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
-					_imageInfos.Add(2, MapCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
-					_imageInfos.Add(2, MapCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
-					_imageInfos.Add(2, MapCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
-					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
-					_imageInfos.Add(2, MapCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
-					_imageInfos.Add(2, MapCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
+					// Configure Image 2. The face and menu buttons stand at the middles of the buttons as drawn, measured on the
+					// picture to a tenth of a unit (PadGeometryTest.Marks_are_centred_on_their_buttons).
+					_imageInfos.Add(2, MapCode.ButtonY, 196.6, 28.8, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
+					_imageInfos.Add(2, MapCode.ButtonX, 178.2, 47.3, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
+					_imageInfos.Add(2, MapCode.ButtonB, 214.9, 47.3, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
+					_imageInfos.Add(2, MapCode.ButtonA, 196.7, 65.7, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
+					_imageInfos.Add(2, MapCode.ButtonGuide, 128, 48.9, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
+					_imageInfos.Add(2, MapCode.ButtonBack, 102.9, 48.8, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
+					_imageInfos.Add(2, MapCode.ButtonStart, 152.9, 48.8, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
 					// D-Pad
 					_imageInfos.Add(2, MapCode.DPadUp, 92, 88 - 13, DPadUpLabel, DPadUpComboBox, GamepadButtonFlags.DPadUp);
 					_imageInfos.Add(2, MapCode.DPadLeft, 92 - 13, 88, DPadLeftLabel, DPadLeftComboBox, GamepadButtonFlags.DPadLeft);
@@ -1885,9 +1900,10 @@ namespace x360ce.App.Controls
 			var rest = default(State);
 			foreach (var ii in imageInfos)
 			{
-				_Imager.DrawState(ii, rest.Gamepad, CurrentCbx);
+				_Imager.DrawState(ii, rest.Gamepad);
 				ii.ShowValue(rest.Gamepad);
 			}
+			_Imager.UpdateLights();
 			foreach (var chart in _AxisCharts)
 			{
 				chart.SetExpression(null);
@@ -3727,13 +3743,23 @@ namespace x360ce.App.Controls
 		{
 			if (XboxImage == null)
 				return 0;
-			var count = 0;
-			foreach (var info in imageInfos)
-			{
-				XboxImage.SetImage(info.Code, NavImageType.Normal, show);
-				count++;
-			}
-			return count;
+			_Imager.ShowAllMarks = show;
+			_Imager.UpdateLights();
+			return imageInfos.Count;
+		}
+
+		/// <summary>Puts the pointer on a mapping's box, or takes it off with null, and lights the box and its mark at once.</summary>
+		void PointBox(MapCode? code)
+		{
+			_Imager.PointedBox = code;
+			_Imager.UpdateLights();
+		}
+
+		/// <summary>Whether the control a mapping's box names is lit in the Source Input panel, as moving or pressed.</summary>
+		/// <remarks>Read from the panel's chips, which the interface lit from the state the engine last published.</remarks>
+		bool IsMoving(ImageInfo ii)
+		{
+			return InputPanel.IsLit(InputChips.PayloadOf(ii.Control.Text));
 		}
 
 		private void LeftMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
