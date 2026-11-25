@@ -18,6 +18,10 @@ namespace x360ce.Tests
 	/// already gone and the program ended on a fault instead of closing (two reports against
 	/// 4.22.21.0: a disposed TabPage, a disposed GamesGridUserControl under RestoreFromTray).
 	///
+	/// The requests are the message a second launch broadcasts, posted to the window: broadcast every 5 ms, they would hold
+	/// up Windows' window manager for every program on the desktop, and the close timed here would run a hundred times
+	/// slower (Ui.PostRestoreRequest).
+	///
 	/// Drives the built program, so it needs no other copy running.
 	/// </remarks>
 	[TestClass]
@@ -38,14 +42,14 @@ namespace x360ce.Tests
 			var exe = Ui.FindApp("App.v4");
 			var started = DateTime.UtcNow;
 			_process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { UseShellExecute = false, WorkingDirectory = Path.GetDirectoryName(exe) });
-			Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(30));
+			var window = new IntPtr(Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(30)).Current.NativeWindowHandle);
 			// Requests keep coming for the whole of the close, a few hundred of them.
 			var asking = true;
 			var asker = new Thread(() =>
 			{
 				while (asking)
 				{
-					Ui.PostRestoreRequest();
+					Ui.PostRestoreRequest(window: window);
 					Thread.Sleep(5);
 				}
 			});

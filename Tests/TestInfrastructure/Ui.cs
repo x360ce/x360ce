@@ -499,12 +499,21 @@ namespace x360ce.Tests
 		/// <remarks>
 		/// BroadcastSystemMessage, as a second launch sends it, reaches the window while it is hidden in the tray. A copy started
 		/// with /Profile answers only the message named after its folder, as the program names it.
+		/// A broadcast visits every window on the desktop and holds Windows' window manager while it does, about 20 ms with 800
+		/// windows open, so broadcast many times a second it holds up every program on the desktop. A test that asks that often
+		/// posts the same message to the window it asks.
 		/// </remarks>
 		/// <param name="instanceName">The name the copy is found by (<see cref="InstanceNameOf"/>); the copy on the tests' own profile when not given.</param>
-		public static void PostRestoreRequest(string instanceName = null)
+		/// <param name="window">The window to post the message to; broadcast when not given.</param>
+		public static void PostRestoreRequest(string instanceName = null, IntPtr window = default(IntPtr))
 		{
 			Exception error;
 			var message = JocysCom.ClassLibrary.Win32.NativeMethods.RegisterWindowMessage(instanceName ?? x360ce.App.MainForm.InstanceName(TestRun.ProfileFolder), out error);
+			if (window != IntPtr.Zero)
+			{
+				NativeMethods.PostMessage(window, message, new IntPtr(x360ce.App.MainForm.wParam_Restore), IntPtr.Zero);
+				return;
+			}
 			var recipients = (int)JocysCom.ClassLibrary.Win32.BSM.BSM_APPLICATIONS;
 			var flags = JocysCom.ClassLibrary.Win32.BSF.BSF_IGNORECURRENTTASK | JocysCom.ClassLibrary.Win32.BSF.BSF_POSTMESSAGE;
 			JocysCom.ClassLibrary.Win32.NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, message, x360ce.App.MainForm.wParam_Restore, 0, out error);
@@ -583,6 +592,9 @@ namespace x360ce.Tests
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern IntPtr SendMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
+
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			public static extern bool PostMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern bool ShowWindow(IntPtr window, int command);
