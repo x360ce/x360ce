@@ -347,7 +347,7 @@ namespace x360ce.Engine
 					if (_restarted != 0 && now - _restarted > Frequency * 2 && Hint.StartsWith("Still"))
 						Hint = "";
 					if (elapsed >= Frequency * GetReadySeconds)
-						Begin(DeviceTestStep.Rest, now, "Measuring, don't touch.");
+						Begin(DeviceTestStep.Rest, now, "Measuring, don’t touch.");
 					else
 						Countdown = SecondsLeft(Frequency * GetReadySeconds - elapsed);
 					break;

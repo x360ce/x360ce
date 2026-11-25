@@ -1929,7 +1929,7 @@ namespace x360ce.Plugins.Samples
 				if (!pairing.CanPair)
 					return name + " asks to be paired, but Windows cannot pair with it.";
 				if (_owner.AskPerson == null)
-					return name + " asks to be paired: open this device's Connection page, which asks you.";
+					return name + " asks to be paired: open this device’s Connection page, which asks you.";
 				_owner.Note(name + " asks to be paired.");
 				var custom = pairing.Custom;
 				custom.PairingRequested += OnPairingRequested;

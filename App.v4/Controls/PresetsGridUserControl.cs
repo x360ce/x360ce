@@ -82,7 +82,7 @@ namespace x360ce.App.Controls
 					items.RaiseListChangedEvents = true;
 				}
 				items.ResetBindings();
-				_ParentForm.SetHeaderInfo("{0}", note ?? string.Format("The setting most people use for each of {0} controllers, from x360ce's controller database.", t.Result.Length));
+				_ParentForm.SetHeaderInfo("{0}", note ?? string.Format("The setting most people use for each of {0} controllers, from x360ce’s controller database.", t.Result.Length));
 			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 

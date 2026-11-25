@@ -18,7 +18,7 @@ namespace x360ce.Plugins.Samples
 		+ "valued as in formulas: {\"b1\":1,\"a1\":-0.5,\"s1\":0.25,\"p1\":90} presses button 1, holds axis 1 a quarter of the way "
 		+ "left, slider 1 a quarter of the way along and hat 1 right. A control the text does not name keeps its value; "
 		+ "{\"rest\":1} puts every control at rest first. A program or an AI assistant sets State over MCP with set_state, and "
-		+ "reads Now back with read: on the controller's own MCP server, which its tab opens, or through x360ce's door with "
+		+ "reads Now back with read: on the controller’s own MCP server, which its tab opens, or through x360ce’s door with "
 		+ "device_call. State is kept with the other settings, so after x360ce starts again the controller holds what it "
 		+ "held: send {\"rest\":1} to let go.")]
 	public class RemoteMcpController : IPluginDevice

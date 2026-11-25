@@ -42,7 +42,7 @@ namespace x360ce.App.UiTree
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowEnabledGamesMenuItem)] = new Text("Show: Enabled", null);
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowDisabledGamesMenuItem)] = new Text("Show: Disabled", null);
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.GameTabControl)] = new Text("Game pages",
-				"The selected game's pages: x360ce's own settings for it, then a page for each game plugin that is for it.");
+				"The selected game’s pages: x360ce’s own settings for it, then a page for each game plugin that is for it.");
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.GameSettingsTabPage)] = new Text("x360ce",
 				"How x360ce sets the selected game up: which libraries are replaced, and how.");
 		}
@@ -77,7 +77,7 @@ namespace x360ce.App.UiTree
 			d[nameof(GameDetailsUserControl) + "." + nameof(GameDetailsUserControl.TimeoutNumericUpDown)] = new Text("Timeout",
 				"How long to wait for the game before giving up.");
 			d[nameof(GameDetailsUserControl) + "." + nameof(GameDetailsUserControl.groupBox5)] = new Text("Help",
-				"Searches the web for other people's settings for this game.");
+				"Searches the web for other people’s settings for this game.");
 			d[nameof(GameDetailsUserControl) + "." + nameof(GameDetailsUserControl.GoogleSearchButton)] = new Text("Search on Google...",
 				"Searches the web for this game.");
 			d[nameof(GameDetailsUserControl) + "." + nameof(GameDetailsUserControl.button3)] = new Text("Search on NGemu...",
@@ -86,7 +86,7 @@ namespace x360ce.App.UiTree
 				"Opens the NGemu forum.");
 			d[nameof(GameDetailsUserControl) + "." + nameof(GameDetailsUserControl.ActionGroupBox)] = new Text("Action", null);
 			d[nameof(GameDetailsUserControl) + "." + nameof(GameDetailsUserControl.ResetToDefaultButton)] = new Text("Reset to Default",
-				"Puts this game's settings back the way they started.");
+				"Puts this game’s settings back the way they started.");
 			AddHookFlags(d);
 		}
 
@@ -123,7 +123,7 @@ namespace x360ce.App.UiTree
 			d[nameof(XInputDevicesUserControl) + "." + nameof(XInputDevicesUserControl.ApplyButton)] = new Text("Apply",
 				"Recreates the controllers in the order shown. Needs Administrator.");
 			d[nameof(XInputDevicesUserControl) + "." + nameof(XInputDevicesUserControl.AutoOrderButton)] = new Text("Auto-Order",
-				"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.");
+				"Orders the list so Controller N’s virtual controller takes XInput N and real controllers take the places left, then applies it.");
 			d[nameof(XInputDevicesUserControl) + "." + nameof(XInputDevicesUserControl.RefreshButton)] = new Text("Refresh",
 				"Reads the controllers again, for when one has arrived or left.");
 			d[nameof(XInputDevicesUserControl) + "." + nameof(XInputDevicesUserControl.PlanPanel)] = new Text("Order notice",
@@ -146,7 +146,7 @@ namespace x360ce.App.UiTree
 				"Opens the Test Device window for the one connected device selected: a guided test of its sticks, triggers and buttons, graded in plain words. "
 				+ "Controllers are paused while the test runs.");
 			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.InstructionLabel)] = new Text("Instruction",
-				"The one thing to do now. The step and its number are in the window's header.");
+				"The one thing to do now. The step and its number are in the window’s header.");
 			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.CountdownLabel)] = new Text("Countdown",
 				"The whole seconds left of a timed step, or of a step that waits without movement; empty without one.");
 			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.CountdownCaptionLabel)] = new Text("Countdown caption",
@@ -191,7 +191,7 @@ namespace x360ce.App.UiTree
 			d[nameof(UserDevicesUserControl) + "." + nameof(UserDevicesUserControl.SynchronizeToHidHideMenuItem)] = new Text("Synchronize To HID Hide",
 				"Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.");
 			d[nameof(UserDevicesUserControl) + "." + nameof(UserDevicesUserControl.OpenHidHideMenuItem)] = new Text("Open HID Hide",
-				"Opens HID Hide's own program, or its download page while it is not installed.");
+				"Opens HID Hide’s own program, or its download page while it is not installed.");
 		}
 
 		static void AddCloudAndIssues(Dictionary<string, Text> d)

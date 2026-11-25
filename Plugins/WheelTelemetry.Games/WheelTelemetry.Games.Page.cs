@@ -38,7 +38,7 @@ namespace x360ce.Plugins.Samples
 			// The page's name on the plugin's tab: the game's.
 			Text = _game == null ? "Game" : _game.GameName;
 			AccessibleName = Text;
-			AccessibleDescription = "What to do so the game sends its telemetry to x360ce's Wheel Telemetry plugin.";
+			AccessibleDescription = "What to do so the game sends its telemetry to x360ce’s Wheel Telemetry plugin.";
 			// As tall as x360ce's own page of the game: what does not fit scrolls.
 			AutoScroll = true;
 			SuspendLayout();
@@ -103,7 +103,7 @@ namespace x360ce.Plugins.Samples
 			Controls.Add(MainTableLayoutPanel);
 			if (_game == null)
 			{
-				AddWide(NewValue("MissingLabel", "No entry", "x360ce's telemetry data has no game for " + Path.GetFileName(_gamePath) + "."));
+				AddWide(NewValue("MissingLabel", "No entry", "x360ce’s telemetry data has no game for " + Path.GetFileName(_gamePath) + "."));
 				MainTableLayoutPanel.Controls[0].Text = MainTableLayoutPanel.Controls[0].AccessibleDescription;
 				Finish();
 				return;
@@ -115,14 +115,14 @@ namespace x360ce.Plugins.Samples
 				AddWide(NewNote("Warning" + (i + 1) + "Label", "Warning", warnings[i].Text));
 
 			GameValueLabel = NewValue(nameof(GameValueLabel), "Game", "The game, its file, and the telemetry it sends.");
-			OpenFolderButton = NewButton(nameof(OpenFolderButton), "Open game folder", "Opens the game's folder, where the downloads of the mods it needs are unzipped.");
+			OpenFolderButton = NewButton(nameof(OpenFolderButton), "Open game folder", "Opens the game’s folder, where the downloads of the mods it needs are unzipped.");
 			OpenFolderButton.Click += (s, e) => Process.Start(new ProcessStartInfo(_folder) { UseShellExecute = true });
 			AddRow("Game", "Game", GameValueLabel, OpenFolderButton);
 
 			// The telemetry it sends, named and linked from x360ce's list of formats.
 			var format = GameData.Format(_data, _game);
 			var spec = GameData.Spec(_data, _game);
-			FormatValueLabel = NewValue(nameof(FormatValueLabel), "Telemetry", "The telemetry the game sends, which x360ce's Wheel Telemetry plugin reads.");
+			FormatValueLabel = NewValue(nameof(FormatValueLabel), "Telemetry", "The telemetry the game sends, which x360ce’s Wheel Telemetry plugin reads.");
 			FormatValueLabel.Text = format == null
 				? _game.TelemetryFormatId + "."
 				: format.Name + (string.IsNullOrEmpty(format.Publisher) ? "" : ", from " + format.Publisher) + ".";
@@ -140,13 +140,13 @@ namespace x360ce.Plugins.Samples
 			for (var i = 0; i < mods.Length; i++)
 			{
 				var key = "Mod" + (i + 1);
-				var state = NewValue(key + "ValueLabel", mods[i].Name, "Whether " + mods[i].Name + " is in the game's folder: " + mods[i].DetectFile + ".");
+				var state = NewValue(key + "ValueLabel", mods[i].Name, "Whether " + mods[i].Name + " is in the game’s folder: " + mods[i].DetectFile + ".");
 				state.Tag = mods[i];
 				_mods.Add(state);
 				AddRow(key, mods[i].Name, state, NewLink(key + "LinkLabel", "Official page", mods[i].Url));
 			}
 
-			PortUpDown = NewNumber(nameof(PortUpDown), "Port", "The UDP port on this computer the game sends to: x360ce's Wheel Telemetry plugin listens on 37150.", 1, 65535);
+			PortUpDown = NewNumber(nameof(PortUpDown), "Port", "The UDP port on this computer the game sends to: x360ce’s Wheel Telemetry plugin listens on 37150.", 1, 65535);
 			PortUpDown.ValueChanged += (s, e) => SetPort((int)PortUpDown.Value);
 			AddRow("Port", "Port", PortUpDown, null);
 
@@ -156,9 +156,9 @@ namespace x360ce.Plugins.Samples
 				FilesValueLabel = NewValue(nameof(FilesValueLabel), "Installed files", "Whether the files the plugin installs into the game are there.");
 				AddRow("Files", "Files", FilesValueLabel, null);
 				var paths = string.Join(" and ", _files.Select(x => x.TargetPath));
-				InstallButton = NewButton(nameof(InstallButton), "Install", "Writes " + paths + " into the game's folder, and nothing else.");
+				InstallButton = NewButton(nameof(InstallButton), "Install", "Writes " + paths + " into the game’s folder, and nothing else.");
 				InstallButton.Click += (s, e) => Change(() => GameInstaller.Install(_data, _game, _gamePath, _port));
-				RemoveButton = NewButton(nameof(RemoveButton), "Remove", "Deletes " + paths + " from the game's folder, and nothing else.");
+				RemoveButton = NewButton(nameof(RemoveButton), "Remove", "Deletes " + paths + " from the game’s folder, and nothing else.");
 				RemoveButton.Click += (s, e) => Change(() => GameInstaller.Remove(_data, _game, _gamePath));
 				var actions = new FlowLayoutPanel
 				{
@@ -178,8 +178,8 @@ namespace x360ce.Plugins.Samples
 				AddRow("Actions", "", actions, null);
 			}
 
-			WheelTelemetryNoteLabel = NewValue(nameof(WheelTelemetryNoteLabel), "Wheel Telemetry", "What x360ce must have on to read the game's telemetry.");
-			WheelTelemetryNoteLabel.Text = "x360ce reads the game while its Wheel Telemetry plugin listens on the same port: on the wheel's controller "
+			WheelTelemetryNoteLabel = NewValue(nameof(WheelTelemetryNoteLabel), "Wheel Telemetry", "What x360ce must have on to read the game’s telemetry.");
+			WheelTelemetryNoteLabel.Text = "x360ce reads the game while its Wheel Telemetry plugin listens on the same port: on the wheel’s controller "
 				+ "tab, Game Telemetry, Telemetry, Enable live game telemetry ticked and Listen port. The wheel feels the game while "
 				+ "Centering spring is ticked on its Wheel tab.";
 			AddWide(WheelTelemetryNoteLabel);
@@ -330,7 +330,7 @@ namespace x360ce.Plugins.Samples
 			{
 				var found = GameInstaller.IsGame(_game, _gamePath);
 				SetText(GameValueLabel, (found ? _game.GameName + (_game.Edition.Length == 0 ? "" : " " + _game.Edition) + ", " + Path.GetFileName(_gamePath)
-					: "The game's file is not at " + _gamePath) + ".");
+					: "The game’s file is not at " + _gamePath) + ".");
 				OpenFolderButton.Enabled = found;
 				var port = _port.ToString(CultureInfo.InvariantCulture);
 				for (var i = 0; i < _steps.Count; i++)
@@ -385,7 +385,7 @@ namespace x360ce.Plugins.Samples
 			}
 			catch (IOException ex)
 			{
-				_problem = "x360ce could not change the game's folder: " + ex.Message;
+				_problem = "x360ce could not change the game’s folder: " + ex.Message;
 			}
 			ShowState();
 		}

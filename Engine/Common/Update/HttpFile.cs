@@ -182,33 +182,33 @@ namespace x360ce.Engine
 			outcome = DatabaseUpdateOutcome.Failed;
 			Uri uri;
 			if (!Uri.TryCreate((address ?? "").Trim(), UriKind.Absolute, out uri) || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
-				return "x360ce's controller database's address, \"" + address + "\", is not an http or https address, so nothing was fetched.";
+				return "x360ce’s controller database’s address, \"" + address + "\", is not an http or https address, so nothing was fetched.";
 			try
 			{
 				var answer = Transport(new UpdateRequest { Url = uri.AbsoluteUri, ETag = KeptETag(path), TimeoutMs = HttpFile.DownloadTimeoutMs });
 				if (answer.StatusCode == 304)
 				{
 					outcome = DatabaseUpdateOutcome.UpToDate;
-					return "x360ce's controller database is up to date.";
+					return "x360ce’s controller database is up to date.";
 				}
 				if (answer.StatusCode != 200 || answer.Body == null)
-					return uri.Host + " answered " + answer.StatusCode + " when asked for x360ce's controller database.";
+					return uri.Host + " answered " + answer.StatusCode + " when asked for x360ce’s controller database.";
 				var text = Encoding.UTF8.GetString(answer.Body).TrimStart('﻿').Replace("\r\n", "\n");
 				var rows = SdlSource.Parse(text, SdlSourceKind.Downloaded).Mappings.Count;
 				if (!text.StartsWith("# x360ce's controller database", StringComparison.Ordinal) || rows < MinimumRows)
-					return string.Format(CultureInfo.InvariantCulture, "The file {0} sent is not x360ce's controller database: {1} rows. Nothing was saved.", uri.Host, rows);
+					return string.Format(CultureInfo.InvariantCulture, "The file {0} sent is not x360ce’s controller database: {1} rows. Nothing was saved.", uri.Host, rows);
 				if (!string.IsNullOrEmpty(answer.ETag))
 					text = text.TrimEnd('\n') + "\n" + ETagPrefix + answer.ETag + "\n";
 				HttpFile.Save(path, text);
 				X360ceDatabase.Reload();
 				outcome = DatabaseUpdateOutcome.Saved;
 				var made = X360ceDatabase.MadeOn(text);
-				return string.Format(CultureInfo.InvariantCulture, "Saved x360ce's controller database{0}, {1} rows, from {2}.",
+				return string.Format(CultureInfo.InvariantCulture, "Saved x360ce’s controller database{0}, {1} rows, from {2}.",
 					made.HasValue ? " of " + made.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : "", rows, uri.Host);
 			}
 			catch (Exception ex)
 			{
-				return "x360ce's controller database could not be updated: " + ex.Message;
+				return "x360ce’s controller database could not be updated: " + ex.Message;
 			}
 		}
 

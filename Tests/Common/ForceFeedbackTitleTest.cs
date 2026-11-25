@@ -31,7 +31,7 @@ namespace x360ce.Tests
 				"Another tab's page does not name the tab whose settings shape the force.");
 			StringAssert.Contains(PadControl.ForceSourceNote(2, shared), "the strongest force of Controllers 2 and 3");
 			StringAssert.Contains(PadControl.ForceSourceNote(0, new DeviceForce(new PadSetting(), 0, new[] { 0, 1, 3 })), "Controllers 1, 2 and 4");
-			StringAssert.Contains(PadControl.ForceSourceNote(1, new DeviceForce(new PadSetting(), 0, new[] { 1 })), "It plays Controller 2's force.");
+			StringAssert.Contains(PadControl.ForceSourceNote(1, new DeviceForce(new PadSetting(), 0, new[] { 1 })), "It plays Controller 2’s force.");
 			var springOnly = new DeviceForce(new PadSetting { ForceSpringEnable = "1" }, 0, new int[0]);
 			StringAssert.Contains(PadControl.ForceSourceNote(0, springOnly), "Only the centering spring holds it.");
 			StringAssert.Contains(PadControl.ForceSourceNote(0, null), "No force reaches this device");

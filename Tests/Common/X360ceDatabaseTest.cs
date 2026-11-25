@@ -231,7 +231,7 @@ namespace x360ce.Tests
 			Assert.AreEqual("2", both.ButtonA, "SDL won over x360ce's database.");
 			Assert.AreEqual("2", both.ButtonB, "SDL did not fill a box the row leaves empty.");
 			Assert.AreEqual("1", both.ForceEnable);
-			StringAssert.Contains(note, "x360ce's controller database");
+			StringAssert.Contains(note, "x360ce’s controller database");
 			// A device only SDL knows: force feedback on at x360ce's defaults when it has motors.
 			var none = SdlDatabase.Merge();
 			var sdlOnly = X360ceDatabase.AutoSetting(device, true, true, out note, none, sdlDb);

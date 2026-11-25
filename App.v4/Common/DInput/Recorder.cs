@@ -226,7 +226,7 @@ namespace x360ce.App
 			var reading = SettingsConverter.IsHalf(type)
 				? (inverted ? "below the middle" : "above the middle")
 				: (inverted ? "low" : "high");
-			return string.Format("{0} recorded: pressed while reading {1}. Wrong way round? Choose [Adjust] > [Invert] in the box's menu.",
+			return string.Format("{0} recorded: pressed while reading {1}. Wrong way round? Choose [Adjust] > [Invert] in the box’s menu.",
 				action, reading);
 		}
 

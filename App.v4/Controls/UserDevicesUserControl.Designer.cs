@@ -274,7 +274,7 @@ namespace x360ce.App.Controls
 			this.TestButton.Name = "TestButton";
 			this.TestButton.Size = new System.Drawing.Size(58, 22);
 			this.TestButton.Text = "Test...";
-			this.TestButton.ToolTipText = "Measures how often the selected device reports, and each axis's range, noise and resolution.";
+			this.TestButton.ToolTipText = "Measures how often the selected device reports, and each axis’s range, noise and resolution.";
 			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
 			// 
 			// AddDemoDevice

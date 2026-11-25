@@ -790,7 +790,7 @@ namespace x360ce.Tests
 							Assert.IsNotNull(named("InstallButton"));
 							Assert.IsFalse(named("RemoveButton").Enabled, "Remove with nothing installed.");
 							var loader = exe == "GTA5.exe" ? "dinput8.dll" : "xinput1_4.dll";
-							Assert.AreEqual("Not found: " + loader + ". Unzip it into the game's folder from its official page.", named("Mod2ValueLabel").Text,
+							Assert.AreEqual("Not found: " + loader + ". Unzip it into the game’s folder from its official page.", named("Mod2ValueLabel").Text,
 								exe + " loads Script Hook V with " + loader + ".");
 							StringAssert.StartsWith(named("Mod1ValueLabel").Text, "Found ScriptHookV.dll");
 							if (exe == "GTA5.exe")

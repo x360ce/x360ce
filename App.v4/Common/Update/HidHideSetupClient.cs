@@ -69,7 +69,7 @@ namespace x360ce.App
 				// A tag such as "v1.5.230.0".
 				if (release == null || !JocysCom.ClassLibrary.Helper.TryParseVersion(release.Tag, out version))
 				{
-					error = "GitHub's answer names no HID Hide version.";
+					error = "GitHub’s answer names no HID Hide version.";
 					return null;
 				}
 				var assets = release.Assets ?? new UpdateClient.Asset[0];
@@ -162,10 +162,10 @@ namespace x360ce.App
 		public string Install(UpdateRelease release, Action<string> progress)
 		{
 			if (string.IsNullOrEmpty(release.Url))
-				return string.Format("HID Hide {0} has no setup for this computer's processor ({1}). Its release page lists what it has.",
+				return string.Format("HID Hide {0} has no setup for this computer’s processor ({1}). Its release page lists what it has.",
 					release.Version, MachineArchitecture().ToUpperInvariant());
 			if (Interlocked.CompareExchange(ref _Busy, 1, 0) != 0)
-				return "HID Hide's setup is already running.";
+				return "HID Hide’s setup is already running.";
 			var folder = Path.Combine(TempFolder, "x360ce-HidHide-" + Guid.NewGuid().ToString("N"));
 			try
 			{
@@ -177,13 +177,13 @@ namespace x360ce.App
 				}
 				catch (InvalidDataException ex)
 				{
-					return "HID Hide's setup was refused: " + ex.Message;
+					return "HID Hide’s setup was refused: " + ex.Message;
 				}
 				catch (Exception ex)
 				{
-					return "HID Hide's setup could not be downloaded: " + ex.Message;
+					return "HID Hide’s setup could not be downloaded: " + ex.Message;
 				}
-				Say(progress, "Windows asks for administrator rights, then HID Hide's setup opens. Follow it through to the end.");
+				Say(progress, "Windows asks for administrator rights, then HID Hide’s setup opens. Follow it through to the end.");
 				var exitCode = JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(path, null, true, true, ProcessWindowStyle.Normal);
 				return ExplainExit(exitCode);
 			}
@@ -208,7 +208,7 @@ namespace x360ce.App
 			var response = Transport(new UpdateRequest { Url = release.Url, TimeoutMs = UpdateClient.DownloadTimeoutMs });
 			if (response.StatusCode != 200 || response.Body == null)
 				throw new WebException("GitHub answered " + response.StatusCode + ".");
-			Say(progress, "Checking the setup's size, SHA-256 and signature...");
+			Say(progress, "Checking the setup’s size, SHA-256 and signature...");
 			var mismatch = release.Mismatch(response.Body);
 			if (mismatch != null)
 				throw new InvalidDataException(mismatch);
@@ -257,15 +257,15 @@ namespace x360ce.App
 				case 0:
 					return null;
 				case -1:
-					return "Windows was not allowed to run HID Hide's setup as administrator, so nothing changed.";
+					return "Windows was not allowed to run HID Hide’s setup as administrator, so nothing changed.";
 				case 1223:
 				case 1602:
-					return "HID Hide's setup was cancelled.";
+					return "HID Hide’s setup was cancelled.";
 				case 1641:
 				case 3010:
 					return "Restart Windows to finish installing HID Hide.";
 				default:
-					return string.Format("HID Hide's setup ended with code {0}.", exitCode);
+					return string.Format("HID Hide’s setup ended with code {0}.", exitCode);
 			}
 		}
 

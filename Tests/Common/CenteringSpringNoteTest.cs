@@ -53,7 +53,7 @@ namespace x360ce.Tests
 		{
 			// A MOZA R9 set to 270° on the Wheel page still steered its whole range (issue #1650).
 			var note = PadControl.RangeNote(270, LogitechWheel.SupportsRange(0x346E, 0x0004));
-			StringAssert.Contains(note, "cannot set this wheel's range");
+			StringAssert.Contains(note, "cannot set this wheel’s range");
 			StringAssert.Contains(note, "Set 270° there", "The note does not name the range chosen.");
 			var formula = System.Text.RegularExpressions.Regex.Match(note, @"=\S+").Value;
 			Assert.IsTrue(MapExpressionHelp.Examples.Any(x => x.Expression == formula), "The note's formula '" + formula + "' is not one Help shows.");

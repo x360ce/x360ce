@@ -2659,7 +2659,7 @@
             this.MouseNoteLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
             this.MouseNoteLabel.Name = "MouseNoteLabel";
             this.MouseNoteLabel.TabIndex = 0;
-            this.MouseNoteLabel.Text = "For a mouse, or any control that reports movement. Map its axes in the stick's boxes on the General page; this page sets how they move the stick.";
+            this.MouseNoteLabel.Text = "For a mouse, or any control that reports movement. Map its axes in the stick’s boxes on the General page; this page sets how they move the stick.";
             //
             // LeftMouseStickPanel
             //
@@ -3161,7 +3161,7 @@
             this.WheelDescriptionLabel.Size = new System.Drawing.Size(501, 27);
             this.WheelDescriptionLabel.TabIndex = 27;
             this.WheelDescriptionLabel.Text = "Auto measures Friction, the least force that turns this wheel; outside the centre t" +
-    "he spring never pushes less, so the wheel comes home from any angle. With the spring off, the wheel\'s own centering is left in charge.";
+    "he spring never pushes less, so the wheel comes home from any angle. With the spring off, the wheel’s own centering is left in charge.";
             // 
             // ForceDefaultsButton
             // 

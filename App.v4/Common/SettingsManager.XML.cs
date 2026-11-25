@@ -68,7 +68,7 @@ namespace x360ce.App
 		public const PresetFormat DefaultPresetFormat = PresetFormat.Yaml;
 
 		/// <summary>What a paste that holds no preset says.</summary>
-		public const string NotAPresetMessage = "The text is not a preset in YAML, XML or JSON, nor a row of SDL's controller database.";
+		public const string NotAPresetMessage = "The text is not a preset in YAML, XML or JSON, nor a row of SDL’s controller database.";
 
 		/// <summary>A controller's settings as text, in the notation asked for.</summary>
 		/// <remarks>
@@ -122,7 +122,7 @@ namespace x360ce.App
 			if (sdl != null)
 			{
 				var skipped = sdl.SkippedText();
-				note = "Pasted SDL's row for " + sdl.Mapping.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
+				note = "Pasted SDL’s row for " + sdl.Mapping.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
 				sdl.Setting.PadSettingChecksum = sdl.Setting.CleanAndGetCheckSum();
 				return sdl.Setting;
 			}
@@ -177,7 +177,7 @@ namespace x360ce.App
 					Tag = format,
 					Enabled = format != PresetFormat.Sdl || device != null,
 					ToolTipText = format == PresetFormat.Sdl
-						? "A row of SDL's controller database for the selected device: its buttons, axes and hats, without formulas or other settings."
+						? "A row of SDL’s controller database for the selected device: its buttons, axes and hats, without formulas or other settings."
 						: null,
 				});
 			PresetFormat? chosen = null;

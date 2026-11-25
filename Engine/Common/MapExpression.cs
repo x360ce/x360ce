@@ -600,7 +600,7 @@ namespace x360ce.Engine
 					_at++;
 				int device;
 				if (!int.TryParse(_text.Substring(deviceAt, _at - deviceAt), NumberStyles.None, CultureInfo.InvariantCulture, out device) || device < 1 || device > 255)
-					throw Fault("After the controller comes the device's number, as in c1.d1.b1.", deviceAt);
+					throw Fault("After the controller comes the device’s number, as in c1.d1.b1.", deviceAt);
 				if (Peek() != '.')
 					throw Fault("After the device comes the control, as in c1.d1.b1.", _at);
 				_at++;

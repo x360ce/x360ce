@@ -142,7 +142,7 @@
 				},
 				{
 					"Name":"AxisToDPadChart",
-					"Description":"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.",
+					"Description":"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device’s reading, and a side it presses is lit.",
 					"Role":"Control"
 				},
 				{
@@ -298,7 +298,7 @@
 				},
 				{
 					"Name":"InputChipGroup",
-					"Description":"The device's buttons, numbered as the mapping list numbers them.",
+					"Description":"The device’s buttons, numbered as the mapping list numbers them.",
 					"Role":"Control"
 				},
 				{
@@ -321,7 +321,7 @@
 							"Items":[
 								{
 									"Name":"Button chips",
-									"Description":"The device's buttons, numbered as the mapping list numbers them.",
+									"Description":"The device’s buttons, numbered as the mapping list numbers them.",
 									"Role":"Group",
 									"Id":"ButtonChips",
 									"Type":"InputChipGroup",
@@ -339,7 +339,7 @@
 							"Items":[
 								{
 									"Name":"Axis chips",
-									"Description":"The device's axes, numbered by the slot each answers to, as the mapping list numbers them.",
+									"Description":"The device’s axes, numbered by the slot each answers to, as the mapping list numbers them.",
 									"Role":"Group",
 									"Id":"AxisChips",
 									"Type":"InputChipGroup",
@@ -357,7 +357,7 @@
 							"Items":[
 								{
 									"Name":"Slider chips",
-									"Description":"The device's sliders, numbered as the mapping list numbers them.",
+									"Description":"The device’s sliders, numbered as the mapping list numbers them.",
 									"Role":"Group",
 									"Id":"SliderChips",
 									"Type":"InputChipGroup",
@@ -404,19 +404,19 @@
 						},
 						{
 							"Name":"Demo picture",
-							"Description":"A mouse walking on its pad, the ear on its button's side lit while the button is held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.",
+							"Description":"A mouse walking on its pad, the ear on its button’s side lit while the button is held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.",
 							"Role":"Picture",
 							"Id":"DemoPictureBox"
 						},
 						{
 							"Name":"Play demo",
-							"Description":"Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.",
+							"Description":"Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows’ Show animations is off.",
 							"Role":"Button",
 							"Id":"PlayButton"
 						},
 						{
 							"Name":"Demo style",
-							"Description":"What the style shown does, in the Style list's words.",
+							"Description":"What the style shown does, in the Style list’s words.",
 							"Role":"Label",
 							"Id":"DescriptionLabel"
 						},
@@ -428,7 +428,7 @@
 						},
 						{
 							"Name":"Demo note",
-							"Description":"Shown when the group's Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.",
+							"Description":"Shown when the group’s Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.",
 							"Role":"Label",
 							"Id":"NoteLabel",
 							"Hidden":true
@@ -454,7 +454,7 @@
 								},
 								{
 									"Name":"Sensitivity across",
-									"Description":"How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.",
+									"Description":"How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen’s height from the centre. Range is 1 to 400. Default is 100.",
 									"Role":"Slider",
 									"Id":"SensitivityXTrackBar",
 									"Min":1,
@@ -468,7 +468,7 @@
 								},
 								{
 									"Name":"Sensitivity up and down",
-									"Description":"How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.",
+									"Description":"How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen’s height from the centre. Range is 1 to 400. Default is 100.",
 									"Role":"Slider",
 									"Id":"SensitivityYTrackBar",
 									"Min":1,
@@ -482,7 +482,7 @@
 								},
 								{
 									"Name":"Smoothing",
-									"Description":"How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.",
+									"Description":"How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse’s uneven reports. Range is 0 to 500. Default is 30.",
 									"Role":"Slider",
 									"Id":"SmoothingTrackBar",
 									"Min":0,
@@ -759,7 +759,7 @@
 										},
 										{
 											"Name":"Left Thumb Up value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"LeftThumbUpValueLabel"
 										},
@@ -779,7 +779,7 @@
 										},
 										{
 											"Name":"Left Thumb Left value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"LeftThumbLeftValueLabel"
 										},
@@ -799,7 +799,7 @@
 										},
 										{
 											"Name":"Left Thumb Right value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"LeftThumbRightValueLabel"
 										},
@@ -819,7 +819,7 @@
 										},
 										{
 											"Name":"Left Thumb Down value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"LeftThumbDownValueLabel"
 										},
@@ -1107,7 +1107,7 @@
 										},
 										{
 											"Name":"Right Thumb Up value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"RightThumbUpValueLabel"
 										},
@@ -1127,7 +1127,7 @@
 										},
 										{
 											"Name":"Right Thumb Left value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"RightThumbLeftValueLabel"
 										},
@@ -1147,7 +1147,7 @@
 										},
 										{
 											"Name":"Right Thumb Right value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"RightThumbRightValueLabel"
 										},
@@ -1167,7 +1167,7 @@
 										},
 										{
 											"Name":"Right Thumb Down value",
-											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Description":"The stick’s position the game is being given while the stick points this way, otherwise 0.",
 											"Role":"Label",
 											"Id":"RightThumbDownValueLabel"
 										}
@@ -1175,7 +1175,7 @@
 								},
 								{
 									"Name":"Advanced",
-									"Description":"Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.",
+									"Description":"Settings only x360ce 3’s XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3’s settings in the cloud stay as they are.",
 									"Role":"Tab",
 									"Id":"AdvancedTabPage",
 									"Items":[
@@ -1201,7 +1201,7 @@
 										},
 										{
 											"Name":"Device",
-											"Description":"What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.",
+											"Description":"What x360ce 3’s library told a game about the device, and whether it passed the real controller straight through.",
 											"Role":"Section",
 											"Id":"DeviceGroupBox",
 											"Items":[
@@ -1355,19 +1355,19 @@
 								},
 								{
 									"Name":"D-Pad",
-									"Description":"Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.",
+									"Description":"Axis to D-Pad, which only x360ce 3’s XInput library reads. Greyed out, and kept with the settings.",
 									"Role":"Tab",
 									"Id":"DPadTabPage",
 									"Items":[
 										{
 											"Name":"Axis to D-Pad",
-											"Description":"Turns the device's X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: for a pad whose direction buttons report as a stick. The stick's own mappings stay as they are.",
+											"Description":"Turns the device’s X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: for a pad whose direction buttons report as a stick. The stick’s own mappings stay as they are.",
 											"Role":"Section",
 											"Id":"AxisToDPadGroupBox",
 											"Items":[
 												{
 													"Name":"Dead zone",
-													"Description":"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.",
+													"Description":"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad’s direction buttons put it even when it falls a little short.",
 													"Role":"Value",
 													"Id":"AxisToDPadDeadZoneTextBox"
 												},
@@ -1401,7 +1401,7 @@
 												},
 												{
 													"Name":"Axis to D-Pad chart",
-													"Description":"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.",
+													"Description":"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device’s reading, and a side it presses is lit.",
 													"Role":"Group",
 													"Id":"AxisToDPadChart",
 													"Type":"AxisToDPadChart",
@@ -1567,14 +1567,14 @@
 										},
 										{
 											"Name":"Force source",
-											"Description":"Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.",
+											"Description":"Where the selected controller’s force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.",
 											"Role":"Section",
 											"Id":"ForceSourceGroupBox",
 											"Hidden":true,
 											"Items":[
 												{
 													"Name":"Force source",
-													"Description":"Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.",
+													"Description":"Which controller tab’s settings shape the controller’s force, the lowest enabled tab it is on, and which controllers’ force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.",
 													"Role":"Label",
 													"Id":"ForceSourceLabel"
 												}
@@ -1702,13 +1702,13 @@
 								},
 								{
 									"Name":"Wheel",
-									"Description":"The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.",
+									"Description":"The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel’s steering range.",
 									"Role":"Tab",
 									"Id":"WheelTabPage",
 									"Items":[
 										{
 											"Name":null,
-											"Description":"The centering spring's force at every angle of the wheel, and the wheel's angle and force now.",
+											"Description":"The centering spring’s force at every angle of the wheel, and the wheel’s angle and force now.",
 											"Role":"Group",
 											"Id":"WheelChartUserControl",
 											"Type":"WheelChartUserControl",
@@ -1716,13 +1716,13 @@
 										},
 										{
 											"Name":"Centering spring",
-											"Description":"Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.",
+											"Description":"Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel’s own software can hold the centre instead.",
 											"Role":"CheckBox",
 											"Id":"ForceSpringEnableCheckBox"
 										},
 										{
 											"Name":"Car",
-											"Description":"Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range for road and sports cars. Friction and Strength are left as they are, and the car is not saved.",
+											"Description":"Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car’s values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range for road and sports cars. Friction and Strength are left as they are, and the car is not saved.",
 											"Role":"List",
 											"Id":"ForceSpringCarComboBox"
 										},
@@ -1742,13 +1742,13 @@
 										},
 										{
 											"Name":"Auto",
-											"Description":"Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.",
+											"Description":"Measures the wheel’s friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.",
 											"Role":"Button",
 											"Id":"ForceSpringAutoButton"
 										},
 										{
 											"Name":"Strength",
-											"Description":"Strength of the car's steering, which the always-on centering spring adds on top of the wheel's friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.",
+											"Description":"Strength of the car’s steering, which the always-on centering spring adds on top of the wheel’s friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.",
 											"Role":"Slider",
 											"Id":"ForceSpringStrengthTrackBar",
 											"Min":0,
@@ -1756,7 +1756,7 @@
 										},
 										{
 											"Name":"Strength",
-											"Description":"The car's steering force at Peak, in percent of the wheel's force, added to Friction. Nought is off.",
+											"Description":"The car’s steering force at Peak, in percent of the wheel’s force, added to Friction. Nought is off.",
 											"Role":"Value",
 											"Id":"ForceSpringStrengthTextBox"
 										},
@@ -1776,7 +1776,7 @@
 										},
 										{
 											"Name":"Peak",
-											"Description":"The steering angle in degrees of the centering spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.",
+											"Description":"The steering angle in degrees of the centering spring’s strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.",
 											"Role":"Slider",
 											"Id":"ForceSpringPeakTrackBar",
 											"Min":0,
@@ -1784,13 +1784,13 @@
 										},
 										{
 											"Name":"Peak",
-											"Description":"The steering angle in degrees of the spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.",
+											"Description":"The steering angle in degrees of the spring’s strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.",
 											"Role":"Value",
 											"Id":"ForceSpringPeakTextBox"
 										},
 										{
 											"Name":"Lightening",
-											"Description":"How much of the centering spring's strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.",
+											"Description":"How much of the centering spring’s strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.",
 											"Role":"Slider",
 											"Id":"ForceSpringLighteningTrackBar",
 											"Min":0,
@@ -1798,13 +1798,13 @@
 										},
 										{
 											"Name":"Lightening",
-											"Description":"How much of the spring's strongest force is left at the stop, in percent.",
+											"Description":"How much of the spring’s strongest force is left at the stop, in percent.",
 											"Role":"Value",
 											"Id":"ForceSpringLighteningTextBox"
 										},
 										{
 											"Name":"Damping",
-											"Description":"The centering spring's resistance to the wheel's speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.",
+											"Description":"The centering spring’s resistance to the wheel’s speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.",
 											"Role":"Slider",
 											"Id":"ForceSpringDampingTrackBar",
 											"Min":0,
@@ -1812,13 +1812,13 @@
 										},
 										{
 											"Name":"Damping",
-											"Description":"Resistance to the wheel's speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.",
+											"Description":"Resistance to the wheel’s speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.",
 											"Role":"Value",
 											"Id":"ForceSpringDampingTextBox"
 										},
 										{
 											"Name":"Speed",
-											"Description":"The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.",
+											"Description":"The car’s speed in km/h that the centering spring’s curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car’s speed can later set it live, without saving it. Range is 0 to 250. Default is 100.",
 											"Role":"Slider",
 											"Id":"ForceSpringSpeedTrackBar",
 											"Min":0,
@@ -1826,7 +1826,7 @@
 										},
 										{
 											"Name":"Speed",
-											"Description":"The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.",
+											"Description":"The car’s speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car’s speed, such as one reading a game’s own data, can later set it live, without saving it.",
 											"Role":"Value",
 											"Id":"ForceSpringSpeedTextBox"
 										},
@@ -1844,13 +1844,13 @@
 										},
 										{
 											"Name":"Wheel message",
-											"Description":"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.",
+											"Description":"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel’s range.",
 											"Role":"Label",
 											"Id":"WheelDescriptionLabel"
 										},
 										{
 											"Name":"RGB LED strip",
-											"Description":"Drive supported steering wheels' RGB/RPM shift LED strip from live game telemetry RPM.",
+											"Description":"Drive supported steering wheels’ RGB/RPM shift LED strip from live game telemetry RPM.",
 											"Role":"CheckBox",
 											"Id":"WheelRgbStripCheckBox"
 										},
@@ -1894,7 +1894,7 @@
 									"Items":[
 										{
 											"Name":"What the Mouse page sets",
-											"Description":"The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.",
+											"Description":"The mouse’s axes are chosen in the stick’s boxes on the General page; this page sets how they move the stick.",
 											"Role":"Label",
 											"Id":"MouseNoteLabel"
 										},
@@ -1942,13 +1942,13 @@
 								},
 								{
 									"Name":"SDL",
-									"Description":"The mapping Auto gives the selected device, place by place, from x360ce's controller database and SDL's, beside what this controller's boxes hold, and which copies of the databases are in use.",
+									"Description":"The mapping Auto gives the selected device, place by place, from x360ce’s controller database and SDL’s, beside what this controller’s boxes hold, and which copies of the databases are in use.",
 									"Role":"Tab",
 									"Id":"SdlTabPage",
 									"Items":[
 										{
 											"Name":null,
-											"Description":"The mapping Auto gives the selected device: x360ce's controller database row, and SDL's where it maps nothing.",
+											"Description":"The mapping Auto gives the selected device: x360ce’s controller database row, and SDL’s where it maps nothing.",
 											"Role":"Group",
 											"Id":"SdlPanel",
 											"Type":"SdlUserControl",
@@ -1990,7 +1990,7 @@
 								},
 								{
 									"Name":"Show XInput State",
-									"Description":"Shows on the General page the values read back from XInput - what the game actually receives - instead of the values worked out from your devices. A trigger's or stick's chart always shows the selected device's reading and what its mapping makes of it. The emulated controller works either way.",
+									"Description":"Shows on the General page the values read back from XInput - what the game actually receives - instead of the values worked out from your devices. A trigger’s or stick’s chart always shows the selected device’s reading and what its mapping makes of it. The emulated controller works either way.",
 									"Role":"CheckBox",
 									"Id":"GetXInputStatesCheckBox"
 								}
@@ -2010,13 +2010,13 @@
 						},
 						{
 							"Name":"Load Preset...",
-							"Description":"Replaces this controller's settings with a saved set.",
+							"Description":"Replaces this controller’s settings with a saved set.",
 							"Role":"Button",
 							"Id":"LoadPresetButton"
 						},
 						{
 							"Name":"Auto Preset",
-							"Description":"Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.",
+							"Description":"Fills the settings from x360ce’s controller database, and the mapping from SDL’s where it maps nothing, when either knows the selected device, otherwise from x360ce’s own guess. The status bar says which.",
 							"Role":"Button",
 							"Id":"AutoPresetButton"
 						},
@@ -2034,25 +2034,25 @@
 						},
 						{
 							"Name":"Save Preset...",
-							"Description":"Writes this controller's settings to a file, to load again or pass on.",
+							"Description":"Writes this controller’s settings to a file, to load again or pass on.",
 							"Role":"Button",
 							"Id":"SavePresetButton"
 						},
 						{
 							"Name":"Copy Preset",
-							"Description":"Copies this controller's settings to the clipboard as YAML, the easiest to read.",
+							"Description":"Copies this controller’s settings to the clipboard as YAML, the easiest to read.",
 							"Role":"Button",
 							"Id":"CopyPresetButton"
 						},
 						{
 							"Name":"Copy Preset as",
-							"Description":"Copies this controller's settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.",
+							"Description":"Copies this controller’s settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL’s controller database.",
 							"Role":"Button",
 							"Id":"CopyPresetFormatButton"
 						},
 						{
 							"Name":"Paste Preset",
-							"Description":"Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.",
+							"Description":"Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL’s controller database are recognised.",
 							"Role":"Button",
 							"Id":"PastePresetButton"
 						},
@@ -2066,30 +2066,30 @@
 				},
 				{
 					"Name":"SdlUserControl",
-					"Description":"The mapping Auto gives the selected device: x360ce's controller database row, and SDL's where it maps nothing.",
+					"Description":"The mapping Auto gives the selected device: x360ce’s controller database row, and SDL’s where it maps nothing.",
 					"Role":"Control",
 					"Items":[
 						{
-							"Name":"Databases and the device's rows",
-							"Description":"Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, how many Windows rows each holds, and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG. Whether they know the selected device, its name there and, when a database holds several copies, which copy the row is from; which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.",
+							"Name":"Databases and the device’s rows",
+							"Description":"Which copies of x360ce’s and SDL’s controller databases are in use: built in, or downloaded and from where, SDL’s date and commit, how many Windows rows each holds, and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG. Whether they know the selected device, its name there and, when a database holds several copies, which copy the row is from; which Auto takes first, how the pad labels its buttons, and what of SDL’s row x360ce has no place for.",
 							"Role":"Label",
 							"Id":"DeviceLabel"
 						},
 						{
 							"Name":"Places",
-							"Description":"Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the row's binding and the database it is from, x360ce or SDL, the device's control that binding names in x360ce's words, and what the box holds now, with Same or Differs beside it.",
+							"Description":"Each place on the Xbox controller: SDL’s name for it, the place in words, its label on this pad, the row’s binding and the database it is from, x360ce or SDL, the device’s control that binding names in x360ce’s words, and what the box holds now, with Same or Differs beside it.",
 							"Role":"Grid",
 							"Id":"PositionsDataGridView"
 						},
 						{
 							"Name":"Apply SDL Mapping",
-							"Description":"Fills every mapping box of this controller as the page shows it, from x360ce's row and SDL's, and empties those they leave out. Dead zones and the other settings stay as they are.",
+							"Description":"Fills every mapping box of this controller as the page shows it, from x360ce’s row and SDL’s, and empties those they leave out. Dead zones and the other settings stay as they are.",
 							"Role":"Button",
 							"Id":"ApplyButton"
 						},
 						{
 							"Name":"Copy as SDL",
-							"Description":"Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.",
+							"Description":"Copies this controller’s mapping to the clipboard as a row of SDL’s controller database for the device: its buttons, axes and hats, without formulas or other settings.",
 							"Role":"Button",
 							"Id":"CopyButton"
 						},
@@ -2101,7 +2101,7 @@
 						},
 						{
 							"Name":"SDL update status",
-							"Description":"How the last update of SDL's controller database went.",
+							"Description":"How the last update of SDL’s controller database went.",
 							"Role":"Label",
 							"Id":"StatusLabel",
 							"Hidden":true
@@ -2110,24 +2110,24 @@
 				},
 				{
 					"Name":"WheelChartUserControl",
-					"Description":"The centering spring's force at every angle of the wheel, and the wheel's angle and force now.",
+					"Description":"The centering spring’s force at every angle of the wheel, and the wheel’s angle and force now.",
 					"Role":"Control",
 					"Items":[
 						{
 							"Name":"Wheel angle",
-							"Description":"The wheel's angle now, in degrees from the centre; negative is to the left.",
+							"Description":"The wheel’s angle now, in degrees from the centre; negative is to the left.",
 							"Role":"Label",
 							"Id":"AngleValueLabel"
 						},
 						{
 							"Name":"Spring force",
-							"Description":"The spring's force at that angle, in percent of the wheel's force, and which way it pushes.",
+							"Description":"The spring’s force at that angle, in percent of the wheel’s force, and which way it pushes.",
 							"Role":"Label",
 							"Id":"ForceValueLabel"
 						},
 						{
 							"Name":"Centering chart",
-							"Description":"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel's angle and force now.",
+							"Description":"The red curve is the spring’s force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel’s angle and force now.",
 							"Role":"Picture",
 							"Id":"MainPictureBox"
 						}
@@ -2695,7 +2695,7 @@
 																		},
 																		{
 																			"Name":"Start with Windows",
-																			"Description":"Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.",
+																			"Description":"Starts this copy of the program when you sign in. The tick is Windows’ own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.",
 																			"Role":"CheckBox",
 																			"Id":"StartWithWindowsCheckBox"
 																		},
@@ -2873,7 +2873,7 @@
 																},
 																{
 																	"Name":"Appearance",
-																	"Description":"The program's colours, and the font and size its windows are drawn in.",
+																	"Description":"The program’s colours, and the font and size its windows are drawn in.",
 																	"Role":"Section",
 																	"Id":"AppearanceGroupBox",
 																	"Items":[
@@ -2885,13 +2885,13 @@
 																		},
 																		{
 																			"Name":"Font",
-																			"Description":"The font the program's windows are drawn in: the default, Windows' own; Selawik, built in; or an installed font. Takes effect when x360ce starts again.",
+																			"Description":"The font the program’s windows are drawn in: the default, Windows’ own; Selawik, built in; or an installed font. Takes effect when x360ce starts again.",
 																			"Role":"List",
 																			"Id":"FontComboBox"
 																		},
 																		{
 																			"Name":"Size",
-																			"Description":"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' own for its own font and Windows' text size for any other, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.",
+																			"Description":"The size the program’s text is drawn at, in points and in pixels on this screen: the default, Windows’ own for its own font and Windows’ text size for any other, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.",
 																			"Role":"List",
 																			"Id":"SizeComboBox"
 																		},
@@ -3019,19 +3019,19 @@
 																				},
 																				{
 																					"Name":"SDL database address",
-																					"Description":"Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.",
+																					"Description":"Address every [Update SDL Database] button downloads SDL’s controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.",
 																					"Role":"List",
 																					"Id":"SdlDatabaseUrlComboBox"
 																				},
 																				{
 																					"Name":"Update SDL Database",
-																					"Description":"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.",
+																					"Description":"Downloads SDL’s controller database from that address into the settings folder, as the button on each controller’s SDL tab does, and says in the header how it went.",
 																					"Role":"Button",
 																					"Id":"UpdateSdlDatabaseButton"
 																				},
 																				{
 																					"Name":"Update x360ce Database",
-																					"Description":"Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.",
+																					"Description":"Downloads x360ce’s controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.",
 																					"Role":"Button",
 																					"Id":"UpdateX360ceDatabaseButton"
 																				}
@@ -3261,7 +3261,7 @@
 																		},
 																		{
 																			"Name":"HID Hide releases",
-																			"Description":"Opens the page HID Hide's setups are downloaded from, to download one by hand.",
+																			"Description":"Opens the page HID Hide’s setups are downloaded from, to download one by hand.",
 																			"Role":"Link",
 																			"Id":"HidHideDownloadLinkLabel"
 																		},
@@ -3395,7 +3395,7 @@
 																		},
 																		{
 																			"Name":"What the check sends",
-																			"Description":"When the check runs and the one thing it sends: this program's version, to github.com.",
+																			"Description":"When the check runs and the one thing it sends: this program’s version, to github.com.",
 																			"Role":"Label",
 																			"Id":"PrivacyLabel"
 																		},
@@ -3951,7 +3951,7 @@
 												},
 												{
 													"Name":"Game pages",
-													"Description":"The selected game's pages: x360ce's own settings for it, then a page for each game plugin that is for it.",
+													"Description":"The selected game’s pages: x360ce’s own settings for it, then a page for each game plugin that is for it.",
 													"Role":"Tabs",
 													"Id":"GameTabControl",
 													"Type":"GameTabControl",
@@ -4153,7 +4153,7 @@
 																		},
 																		{
 																			"Name":"Help",
-																			"Description":"Searches the web for other people's settings for this game.",
+																			"Description":"Searches the web for other people’s settings for this game.",
 																			"Role":"Section",
 																			"Id":"groupBox5",
 																			"Items":[
@@ -4253,7 +4253,7 @@
 																			"Items":[
 																				{
 																					"Name":"Reset to Default",
-																					"Description":"Puts this game's settings back the way they started.",
+																					"Description":"Puts this game’s settings back the way they started.",
 																					"Role":"Button",
 																					"Id":"ResetToDefaultButton"
 																				}
@@ -4295,7 +4295,7 @@
 														},
 														{
 															"Name":"Auto-Order",
-															"Description":"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.",
+															"Description":"Orders the list so Controller N’s virtual controller takes XInput N and real controllers take the places left, then applies it.",
 															"Role":"Button",
 															"Id":"AutoOrderButton"
 														},
@@ -4442,7 +4442,7 @@
 																},
 																{
 																	"Name":"Open HID Hide",
-																	"Description":"Opens HID Hide's own program, or its download page while it is not installed.",
+																	"Description":"Opens HID Hide’s own program, or its download page while it is not installed.",
 																	"Role":"Button",
 																	"Id":"OpenHidHideMenuItem"
 																}
@@ -4705,7 +4705,7 @@
 														},
 														{
 															"Name":"Settings and devices",
-															"Description":"A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.",
+															"Description":"A recording for a bug report holds the options, the game’s settings, each controller’s mapping and every device.",
 															"Role":"CheckBox",
 															"Id":"SettingsCheckBox"
 														},

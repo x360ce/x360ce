@@ -95,7 +95,7 @@ namespace x360ce.App
 			outcome = SdlUpdateOutcome.Failed;
 			Uri uri;
 			if (!Uri.TryCreate((address ?? "").Trim(), UriKind.Absolute, out uri) || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
-				return "The SDL controller database's address, \"" + address + "\", is not an http or https address, so nothing was fetched. Options > Internet sets it.";
+				return "The SDL controller database’s address, \"" + address + "\", is not an http or https address, so nothing was fetched. Options > Internet sets it.";
 			try
 			{
 				var version = current == null ? null : current.Version;
@@ -117,7 +117,7 @@ namespace x360ce.App
 					if (commit == null || commit.Sha == null || commit.Sha.Length != 40 || !commit.Sha.All(Uri.IsHexDigit)
 						|| commit.Detail == null || commit.Detail.Committer == null
 						|| !DateTime.TryParse(commit.Detail.Committer.Date, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out date))
-						return "GitHub's answer names no commit of the SDL controller database.";
+						return "GitHub’s answer names no commit of the SDL controller database.";
 					sha = commit.Sha.ToLowerInvariant();
 					if (UpToDate(version, sha, date))
 					{
@@ -126,7 +126,7 @@ namespace x360ce.App
 					}
 					var answer = Transport(new UpdateRequest { Url = string.Format(CultureInfo.InvariantCulture, "https://{0}/{1}/{2}/{3}", GitHubRawHost, repository, sha, file), TimeoutMs = UpdateClient.DownloadTimeoutMs });
 					if (answer.StatusCode != 200 || answer.Body == null)
-						return "GitHub answered " + answer.StatusCode + " when asked for the SDL controller database's file.";
+						return "GitHub answered " + answer.StatusCode + " when asked for the SDL controller database’s file.";
 					body = answer.Body;
 				}
 				else

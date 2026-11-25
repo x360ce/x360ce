@@ -66,7 +66,7 @@ namespace x360ce.App
 		public bool TunnelEnabled { get { return _TunnelEnabled; } set { _TunnelEnabled = value; OnPropertyChanged(); } }
 		bool _TunnelEnabled;
 
-		[Description("The tunnel ChatGPT's Add custom MCP server asks for: tunnel_ and 32 characters.")]
+		[Description("The tunnel ChatGPT’s Add custom MCP server asks for: tunnel_ and 32 characters.")]
 		public string TunnelId { get { return _TunnelId; } set { _TunnelId = value; OnPropertyChanged(); } }
 		string _TunnelId;
 

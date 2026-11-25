@@ -66,7 +66,7 @@ namespace x360ce.App.UiTree
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.NoteLabel)] = new Text("What the recording leaves out",
 				"Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.");
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.SettingsCheckBox)] = new Text(null,
-				"The recording holds the options, the game's settings, each controller's mapping and every device.");
+				"The recording holds the options, the game’s settings, each controller’s mapping and every device.");
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.InputCheckBox)] = new Text(null,
 				"The recording holds what each device reports: buttons, axes, sliders and hats as they change, devices going offline, and failed reads.");
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.OutputCheckBox)] = new Text(null,
