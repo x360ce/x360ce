@@ -354,7 +354,13 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		static bool Has(string text, string query)
 		{
-			return text != null && text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
+			return text != null && Plain(text).IndexOf(Plain(query), StringComparison.OrdinalIgnoreCase) >= 0;
+		}
+
+		/// <summary>The words as a person types them: the typographic apostrophe a program writes is the straight one typed.</summary>
+		static string Plain(string text)
+		{
+			return text.Replace('’', '\'');
 		}
 
 		[McpTool(AiAccess.Read, "Runs a small script, one step per line, in order: 'show <path> | <words> | <seconds>' points at an element, and 0 seconds keeps it until the person acts; 'walk <path> | <words> | <seconds>' does the same after opening and pointing at each tab on the way; 'hide' takes the frame away; 'click <path>' presses a button; 'set <path> | <value>' sets an element; 'wait <seconds>' pauses. Lines starting with # are ignored. Stops at the first step that fails and says which. A click that opens a window goes on to the next line, which may answer it, and a window still waiting at the end is named with its buttons. show, walk, hide and wait need Read access; click and set need Configure.", OnUiThread = false, Changes = true)]
