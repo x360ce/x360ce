@@ -450,8 +450,11 @@ namespace x360ce.Tests
 			} },
 			// A control at rest and a control in use, as the controller picture marks them, as does the Mouse page's demo, its
 			// stick's dot and a held button's ear; and progress made.
-			{ "ColorNormal", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs" } },
-			{ "ColorActive", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "App.v4/Controls/MouseDemoUserControl.cs", "Engine/JocysCom/Controls/Themes/Default.Forms.cs" } },
+			{ "ColorNormal", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "App.v4/Controls/PadTabPages/General/PadControlImager.cs" } },
+			{ "ColorActive", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "App.v4/Controls/MouseDemoUserControl.cs", "App.v4/Controls/PadTabPages/General/PadControlImager.cs", "Engine/JocysCom/Controls/Themes/Default.Forms.cs" } },
+			// A mapping under the pointer and a mapping being recorded, on its box and on its mark on the controller picture.
+			{ "ColorOver", new[] { "App.v4/Controls/PadTabPages/General/PadControlImager.cs" } },
+			{ "ColorRecord", new[] { "App.v4/Controls/PadTabPages/General/PadControlImager.cs" } },
 			// The brand is the program's marks, which Windows Forms code does not draw.
 			{ "ColorBrand", new string[0] },
 			{ "ColorBrandCyan", new string[0] },

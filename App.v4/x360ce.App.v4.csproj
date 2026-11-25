@@ -711,56 +711,26 @@
     <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTopDark_512x210.png">
       <Link>Images\xboxControllerTopDark.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavActive.png">
-      <Link>Images\Nav\NavActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavAxisActive.png">
       <Link>Images\Nav\NavAxisActive.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownActive.png">
-      <Link>Images\Nav\NavDownActive.png</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownNormal.png">
       <Link>Images\Nav\NavDownNormal.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownRecord.png">
-      <Link>Images\Nav\NavDownRecord.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftActive.png">
-      <Link>Images\Nav\NavLeftActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftNormal.png">
       <Link>Images\Nav\NavLeftNormal.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftRecord.png">
-      <Link>Images\Nav\NavLeftRecord.png</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavNormal.png">
       <Link>Images\Nav\NavNormal.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRecord.png">
-      <Link>Images\Nav\NavRecord.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightActive.png">
-      <Link>Images\Nav\NavRightActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightNormal.png">
       <Link>Images\Nav\NavRightNormal.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightRecord.png">
-      <Link>Images\Nav\NavRightRecord.png</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavTriggerActive.png">
       <Link>Images\Nav\NavTriggerActive.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpActive.png">
-      <Link>Images\Nav\NavUpActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpNormal.png">
       <Link>Images\Nav\NavUpNormal.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpRecord.png">
-      <Link>Images\Nav\NavUpRecord.png</Link>
     </EmbeddedResource>
     <None Include="..\Resources\Images\shared\**;..\Resources\Images\v4\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>
