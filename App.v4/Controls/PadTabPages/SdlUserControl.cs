@@ -189,8 +189,8 @@ namespace x360ce.App.Controls
 			_database = database;
 			_x360ceDatabase = x360ceDatabase;
 			// Each database is named with the copies of it in use.
-			var x360ceNamed = "x360ce's database (" + x360ceDatabase.Describe() + ")";
-			var sdlNamed = "SDL's database (" + database.Describe() + ")";
+			var x360ceNamed = "x360ce’s database (" + x360ceDatabase.Describe() + ")";
+			var sdlNamed = "SDL’s database (" + database.Describe() + ")";
 			var device = SdlDevice.From(ud);
 			SdlMapping mapping = null;
 			string text;
@@ -214,7 +214,7 @@ namespace x360ce.App.Controls
 					sdlNamed, mapping.Name, mapping.Guid.Text, Where(database, mapping, ", {0}"));
 				if (Translation == null && mapping != null)
 					text = x360ceNamed + " has no row for this controller. " + sdlKnows
-						+ ", but its row maps none of this device's controls, so Auto Preset guesses its mapping.";
+						+ ", but its row maps none of this device’s controls, so Auto Preset guesses its mapping.";
 				else if (Translation == null)
 					text = string.Format(CultureInfo.InvariantCulture,
 						"Neither {0} nor {1} has a row for this controller ({2}), so Auto Preset guesses its mapping."
@@ -228,7 +228,7 @@ namespace x360ce.App.Controls
 						x360ceNamed, row.Name, Where(x360ceDatabase, row, " ({0})"), X360ceDatabase.Users(row));
 					text += mapping == null
 						? ", and Auto Preset fills it from that row. " + sdlNamed + " has no row for it."
-						: "; " + sdlKnows + ". Auto Preset fills from x360ce's row and takes SDL's where x360ce's maps nothing; From shows which.";
+						: "; " + sdlKnows + ". Auto Preset fills from x360ce’s row and takes SDL’s where x360ce’s maps nothing; From shows which.";
 				}
 			}
 			if (pad)

@@ -41,7 +41,7 @@ namespace x360ce.App
 			if (data.LongLength != Size)
 				return string.Format("the download is {0:N0} bytes, and the release says {1:N0}.", data.LongLength, Size);
 			if (Sha256 != null && Sha256Of(data) != Sha256)
-				return "the download's SHA-256 differs from the one GitHub publishes for it.";
+				return "the download’s SHA-256 differs from the one GitHub publishes for it.";
 			return null;
 		}
 

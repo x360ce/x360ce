@@ -293,7 +293,7 @@ namespace x360ce.Engine
 				foreach (var code in fromSdl.Sources.Keys)
 					fromSdl.From[code] = SdlTranslation.FromSdl;
 				var skipped = fromSdl.SkippedText();
-				fromSdl.Note = "Filled from SDL's controller database, as " + sdlRow.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
+				fromSdl.Note = "Filled from SDL’s controller database, as " + sdlRow.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
 				return fromSdl;
 			}
 			var fromRow = ToPadSetting(row);
@@ -301,7 +301,7 @@ namespace x360ce.Engine
 			{
 				Mapping = row,
 				X360ceRow = row,
-				Note = "Filled from x360ce's controller database, as " + row.Name + (fromSdl == null ? "." : ", and from SDL's where it maps nothing."),
+				Note = "Filled from x360ce’s controller database, as " + row.Name + (fromSdl == null ? "." : ", and from SDL’s where it maps nothing."),
 			};
 			foreach (var code in SdlConverter.MappingBoxes)
 			{

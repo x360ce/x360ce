@@ -310,7 +310,7 @@ namespace x360ce.App
 				return string.Format("The current game, {0}, is set to {1} on the Games tab, so no virtual controller is made. " +
 					"Choose Virtual there to make one.", game.FileName, type == EmulationType.None ? "no emulation" : type + " emulation");
 			return "This controller tab is switched off for the current game, so no virtual controller is made. " +
-				"Press Enable at the top of this tab's page to switch it on.";
+				"Press Enable at the top of this tab’s page to switch it on.";
 		}
 
 		/// <summary>What the light on a controller tab means, in words.</summary>
@@ -334,7 +334,7 @@ namespace x360ce.App
 		/// <param name="unticked">Whether devices are mapped here but every one is unticked, so the engine reads none of them.</param>
 		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true, VirtualError busError = VirtualError.None, string holder = null, bool keptHolds = false, string offReason = null, bool unticked = false)
 		{
-			const string untickedText = "every device mapped here is unticked, in this tab's list or on the Devices page";
+			const string untickedText = "every device mapped here is unticked, in this tab’s list or on the Devices page";
 			string state;
 			// The place a tab was given is not always the place of the same number: Windows hands them out
 			// and cannot be asked. Everything works, and a game reads this controller as a different player

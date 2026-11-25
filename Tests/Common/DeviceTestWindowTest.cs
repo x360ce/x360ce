@@ -57,7 +57,7 @@ namespace x360ce.Tests
 				StringAssert.StartsWith(form.Controls.Find("StepsView", true).Single().AccessibleName, "1. Get ready, now");
 				s.Run(10100);
 				Show(form, theme, "2-rest");
-				Assert.AreEqual("Measuring, don't touch.", form.InstructionLabel.Text);
+				Assert.AreEqual("Measuring, don’t touch.", form.InstructionLabel.Text);
 				s.Run(5000);
 				s.Run(5000);
 				s.Run(4000, s.Circle(0, 1));

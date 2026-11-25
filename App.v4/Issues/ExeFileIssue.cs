@@ -65,7 +65,7 @@ namespace x360ce.App.Issues
 			{
 				SetSeverity(
 					IssueSeverity.Important, FixRunElevated,
-					"The program's folder is protected, so settings beside it cannot be saved. " +
+					"The program’s folder is protected, so settings beside it cannot be saved. " +
 					"Run the program as administrator, or copy it somewhere you can write to."
 				);
 				return;

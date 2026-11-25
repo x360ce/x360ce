@@ -171,7 +171,7 @@ namespace x360ce.App.Controls
 			this.LegendLabel.Name = "LegendLabel";
 			this.LegendLabel.Size = new System.Drawing.Size(395, 27);
 			this.LegendLabel.TabIndex = 5;
-			this.LegendLabel.Text = "Red: the force towards the centre at each angle. Grey: the wheel\'s own friction, which Auto measures; the wheel rests where the red is inside it.";
+			this.LegendLabel.Text = "Red: the force towards the centre at each angle. Grey: the wheel’s own friction, which Auto measures; the wheel rests where the red is inside it.";
 			//
 			// WheelChartUserControl
 			//

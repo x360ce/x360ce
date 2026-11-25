@@ -14,7 +14,7 @@
       <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
       <StepOrder>2</StepOrder>
       <IsWarning>true</IsWarning>
-      <Text>Script Hook V works only with BattlEye switched off in the game's launcher.</Text>
+      <Text>Script Hook V works only with BattlEye switched off in the game’s launcher.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>5c692839-dc98-517e-a15c-f8d9c5969253</TelemetryGameStepId>
@@ -49,14 +49,14 @@
       <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
       <StepOrder>4</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Switch BattlEye off in the game's launcher.</Text>
+      <Text>Switch BattlEye off in the game’s launcher.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>1faa5de3-4d57-5e98-9c10-99439b9892c4</TelemetryGameStepId>
       <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
       <StepOrder>5</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Press Install. It writes the telemetry script and its settings into the game's scripts folder, and nothing else.</Text>
+      <Text>Press Install. It writes the telemetry script and its settings into the game’s scripts folder, and nothing else.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>536f3906-cdee-5bb6-b468-9723ac9eb2aa</TelemetryGameStepId>
@@ -77,7 +77,7 @@
       <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
       <StepOrder>2</StepOrder>
       <IsWarning>true</IsWarning>
-      <Text>Script Hook V works only with BattlEye switched off in the game's launcher.</Text>
+      <Text>Script Hook V works only with BattlEye switched off in the game’s launcher.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>2d8e2691-273e-5325-b645-b7bbef68c1b5</TelemetryGameStepId>
@@ -112,14 +112,14 @@
       <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
       <StepOrder>4</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Switch BattlEye off in the game's launcher.</Text>
+      <Text>Switch BattlEye off in the game’s launcher.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>5f7e932d-ebc8-541e-9ccb-510f53cd45c2</TelemetryGameStepId>
       <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
       <StepOrder>5</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Press Install. It writes the telemetry script and its settings into the game's scripts folder, and nothing else.</Text>
+      <Text>Press Install. It writes the telemetry script and its settings into the game’s scripts folder, and nothing else.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>68f09167-8f8e-54ca-9a62-0b23306c24f2</TelemetryGameStepId>
@@ -161,7 +161,7 @@
       <TelemetryGameId>1413cb68-c820-5d0a-bd97-0a097a692250</TelemetryGameId>
       <StepOrder>5</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Only for the copy from the Microsoft Store or the Xbox app: Windows stops it sending to this computer until you let it once. Open PowerShell as administrator, find the game's package family name with Get-AppxPackage *Forza*, and run CheckNetIsolation LoopbackExempt -a -n=&lt;that name&gt;. x360ce does not run it for you. The Steam copy needs nothing.</Text>
+      <Text>Only for the copy from the Microsoft Store or the Xbox app: Windows stops it sending to this computer until you let it once. Open PowerShell as administrator, find the game’s package family name with Get-AppxPackage *Forza*, and run CheckNetIsolation LoopbackExempt -a -n=&lt;that name&gt;. x360ce does not run it for you. The Steam copy needs nothing.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>60c69a0f-4409-537c-82bb-090f7c8677ce</TelemetryGameStepId>
@@ -217,7 +217,7 @@
       <TelemetryGameId>535713df-d44b-58e2-ab37-f012d1193470</TelemetryGameId>
       <StepOrder>7</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Set UDP Format to 2025. x360ce does not read the 2026 Season Pack's format, 2026, yet.</Text>
+      <Text>Set UDP Format to 2025. x360ce does not read the 2026 Season Pack’s format, 2026, yet.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>d231817c-333b-5c46-8345-6906bd24c9dc</TelemetryGameStepId>

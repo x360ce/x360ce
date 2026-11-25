@@ -500,14 +500,14 @@ namespace x360ce.Tests
 			StringAssert.Contains(text, "axes 6, sliders 2, hat switches 0, buttons 4");
 			StringAssert.Contains(text, "- Machine (Machine, text, starts empty): ");
 			Assert.IsFalse(text.Contains("Adds a page to the main window"), "The plugin claims a page of the main window.");
-			StringAssert.Contains(text, "- The plugin's own control, FitnessConnection, on the first page, before Properties.");
+			StringAssert.Contains(text, "- The plugin’s own control, FitnessConnection, on the first page, before Properties.");
 			StringAssert.Contains(text, "- Max speed (km/h) (Ranges, a number from 1 to 200, starts at 40): ");
 			StringAssert.Contains(text, "- Reverse gear (Reverse, a number from 0 to 100, starts at 0): ");
 			StringAssert.Contains(text, "- Force feedback to (Force feedback, one of: Off, Resistance, Road grade, starts at Resistance): ");
 			StringAssert.Contains(text, "- Heart rate limit (bpm) (Heart rate, a number from 0 to 240, starts at 0): ");
 			StringAssert.Contains(text, "- Connection (Status, read only): ");
 			StringAssert.Contains(text, "- Updates per second (Status, read only): ");
-			StringAssert.Contains(text, "in SDL's form: righttrigger:a0,lefttrigger:a1\n");
+			StringAssert.Contains(text, "in SDL’s form: righttrigger:a0,lefttrigger:a1\n");
 			Assert.IsFalse(text.Contains("- Mapping ("), "Its recommended mapping is listed as a setting.");
 		}
 
@@ -524,7 +524,7 @@ namespace x360ce.Tests
 			var ud = PluginDevices.NewUserDevice(Type());
 			string note;
 			var ps = x360ce.App.AutoMapHelper.GetAutoPreset(ud, out note);
-			Assert.AreEqual("Auto Preset filled from the plugin's recommended mapping.", note);
+			Assert.AreEqual("Auto Preset filled from the plugin’s recommended mapping.", note);
 			Assert.AreEqual("a1", ps.RightTrigger, "Right Trigger is not the whole of Axis 1.");
 			Assert.AreEqual("a2", ps.LeftTrigger, "Left Trigger is not the whole of Axis 2.");
 			foreach (var code in SdlConverter.MappingBoxes.Where(x => x != MapCode.RightTrigger && x != MapCode.LeftTrigger))

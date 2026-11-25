@@ -162,7 +162,7 @@ namespace x360ce.App.Plugins
 				{
 					file.Enabled = false;
 					file.State = PluginFileState.Disabled;
-					file.Reason = "Disabled on the Options tab's Plugins page.";
+					file.Reason = "Disabled on the Options tab’s Plugins page.";
 					Add(file);
 					continue;
 				}
@@ -220,7 +220,7 @@ namespace x360ce.App.Plugins
 				{
 					file.Enabled = false;
 					file.State = PluginFileState.Disabled;
-					file.Reason = "Disabled on the Options tab's Plugins page.";
+					file.Reason = "Disabled on the Options tab’s Plugins page.";
 					if (known == null)
 						Add(file);
 					else
@@ -268,7 +268,7 @@ namespace x360ce.App.Plugins
 					if (file.State != PluginFileState.Failed)
 					{
 						file.State = PluginFileState.Disabled;
-						file.Reason = "Disabled on the Options tab's Plugins page.";
+						file.Reason = "Disabled on the Options tab’s Plugins page.";
 					}
 					RebuildTypesLocked();
 				}
@@ -334,8 +334,8 @@ namespace x360ce.App.Plugins
 		static string PermissionReason(string signer)
 		{
 			return signer == null
-				? "Not signed. It loads once Allow third-party plugins is ticked on the Options tab's Plugins page."
-				: "Signed by " + signer + ", not by the publisher of x360ce. It loads once Allow third-party plugins is ticked on the Options tab's Plugins page.";
+				? "Not signed. It loads once Allow third-party plugins is ticked on the Options tab’s Plugins page."
+				: "Signed by " + signer + ", not by the publisher of x360ce. It loads once Allow third-party plugins is ticked on the Options tab’s Plugins page.";
 		}
 
 		#endregion

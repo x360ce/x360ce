@@ -60,10 +60,10 @@ namespace x360ce.App.Controls
 					Name = nameof(McpServerUserControl),
 					Dock = DockStyle.Fill,
 					AccessibleName = "MCP server",
-					AccessibleDescription = "The device's own MCP server, which a program or an AI assistant reaches this device alone through.",
+					AccessibleDescription = "The device’s own MCP server, which a program or an AI assistant reaches this device alone through.",
 				};
 				McpServerUserControl.Bind(door);
-				AddPage("McpServerTabPage", "MCP Server", "The device's own MCP server: whether it is open, its level, address, port and token.", McpServerUserControl);
+				AddPage("McpServerTabPage", "MCP Server", "The device’s own MCP server: whether it is open, its level, address, port and token.", McpServerUserControl);
 			}
 			if (type.Settings.Length > 0)
 			{
@@ -74,7 +74,7 @@ namespace x360ce.App.Controls
 					Dock = DockStyle.Fill,
 					PropertySort = PropertySort.Categorized,
 					AccessibleName = "Settings",
-					AccessibleDescription = "The device's settings, grouped. Each row's help shows under the grid; a value kept for the device is bold.",
+					AccessibleDescription = "The device’s settings, grouped. Each row’s help shows under the grid; a value kept for the device is bold.",
 					SelectedObject = View,
 				};
 				_statuses = View.Statuses();
@@ -100,7 +100,7 @@ namespace x360ce.App.Controls
 					properties.Controls.Add(ResetButton, 0, 1);
 				}
 				properties.RowCount = properties.RowStyles.Count;
-				AddPage("PropertiesTabPage", "Properties", "The device's settings, as a property grid.", properties);
+				AddPage("PropertiesTabPage", "Properties", "The device’s settings, as a property grid.", properties);
 			}
 			if (!string.IsNullOrWhiteSpace(type.Description))
 			{
@@ -113,10 +113,10 @@ namespace x360ce.App.Controls
 					BorderStyle = BorderStyle.None,
 					ReadOnly = true,
 					AccessibleName = "Help",
-					AccessibleDescription = "The device's help, from its plugin: what it is, its controls, and how to use it.",
+					AccessibleDescription = "The device’s help, from its plugin: what it is, its controls, and how to use it.",
 				};
 				AppHelper.ShowHelp(HelpRichTextBox, type.Description.Trim());
-				AddPage("HelpTabPage", "Help", "The device's help, from its plugin.", HelpRichTextBox);
+				AddPage("HelpTabPage", "Help", "The device’s help, from its plugin.", HelpRichTextBox);
 			}
 			Controls.Add(PluginTabControl);
 			_notifying = Shown as INotifyPropertyChanged;
@@ -292,7 +292,7 @@ namespace x360ce.App.Controls
 		void ShowFault(Exception ex)
 		{
 			var inner = ex is System.Reflection.TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
-			var text = "The plugin's own controls could not be made: " + inner.GetType().Name + ": " + inner.Message;
+			var text = "The plugin’s own controls could not be made: " + inner.GetType().Name + ": " + inner.Message;
 			NoteLabel.Text = text;
 			NoteLabel.AccessibleName = text;
 			NoteLabel.Visible = true;

@@ -16,15 +16,15 @@ namespace x360ce.App.UiTree
 			d[nameof(InputUserControl) + "." + nameof(InputUserControl.ButtonsGroupBox)] = new Text("Buttons",
 				"One chip per button, lit while it is held. Click or drag a chip into a mapping box.");
 			d[nameof(InputUserControl) + "." + nameof(InputUserControl.ButtonChips)] = new Text("Button chips",
-				"The device's buttons, numbered as the mapping list numbers them.");
+				"The device’s buttons, numbered as the mapping list numbers them.");
 			d["InputUserControl.AxesGroupBox"] = new Text("Axes",
 				"One chip per axis with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.");
 			d["InputUserControl.AxisChips"] = new Text("Axis chips",
-				"The device's axes, numbered by the slot each answers to, as the mapping list numbers them.");
+				"The device’s axes, numbered by the slot each answers to, as the mapping list numbers them.");
 			d["InputUserControl.SlidersGroupBox"] = new Text("Sliders",
 				"One chip per slider with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.");
 			d["InputUserControl.SliderChips"] = new Text("Slider chips",
-				"The device's sliders, numbered as the mapping list numbers them.");
+				"The device’s sliders, numbered as the mapping list numbers them.");
 			d["InputUserControl.PovsGroupBox"] = new Text("POVs",
 				"One chip per POV with its reading in degrees, then its four directions, lit while pressed. Click or drag a chip into a mapping box.");
 			d["InputUserControl.PovChips"] = new Text("POV chips",

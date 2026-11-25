@@ -121,15 +121,15 @@ namespace x360ce.Engine
 		public static readonly DeviceTestCriterion SteadyTiming = new DeviceTestCriterion("Steady timing",
 			"How evenly updates arrive: within 10 % of their usual interval. Uneven timing feels like stutter.", true, 1, " %", 99, 95, 90, 80);
 		public static readonly DeviceTestCriterion StepSize = new DeviceTestCriterion("Step size",
-			"An axis's smallest change, as a share of its travel: smaller is finer.", false, 3, " %", 0.025, 0.1, 0.4, 0.8);
+			"An axis’s smallest change, as a share of its travel: smaller is finer.", false, 3, " %", 0.025, 0.1, 0.4, 0.8);
 		public static readonly DeviceTestCriterion DeadZone = new DeviceTestCriterion("Dead zone needed",
 			"Drift and rest off centre: the dead zone that hides them.", false, 1, " %", 1, 3, 6, 10);
 		public static readonly DeviceTestCriterion CircleError = new DeviceTestCriterion("Circle error",
-			"How far a stick's edge is from a true circle.", false, 1, " %", 2, 5, 8, 12);
+			"How far a stick’s edge is from a true circle.", false, 1, " %", 2, 5, 8, 12);
 		public static readonly DeviceTestCriterion JumpFromCentre = new DeviceTestCriterion("Jump from centre",
 			"The first change as a stick leaves its centre, of the way to its edge.", false, 1, " %", 1, 3, 6, 10);
 		public static readonly DeviceTestCriterion FullRange = new DeviceTestCriterion("Full range",
-			"How much of each axis's travel was reached.", true, 1, " %", 100, 98, 95, 90);
+			"How much of each axis’s travel was reached.", true, 1, " %", 100, 98, 95, 90);
 
 		/// <summary>The grading table, in the order the results are shown.</summary>
 		public static readonly DeviceTestCriterion[] Criteria = { UpdatesPerSecond, SteadyTiming, StepSize, DeadZone, CircleError, JumpFromCentre, FullRange };

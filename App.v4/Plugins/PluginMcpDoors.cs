@@ -38,7 +38,7 @@ namespace x360ce.App.Plugins
 			};
 			Listener = new McpListener(tools, Subject + " door")
 			{
-				Unauthorised = "Send the token from " + Subject + "'s MCP server settings, " + SettingsPlace + ", as Authorization: Bearer <token>.",
+				Unauthorised = "Send the token from " + Subject + "’s MCP server settings, " + SettingsPlace + ", as Authorization: Bearer <token>.",
 			};
 		}
 

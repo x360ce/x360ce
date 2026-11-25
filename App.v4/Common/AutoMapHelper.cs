@@ -74,7 +74,7 @@ namespace x360ce.App
 				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 				return ps;
 			}
-			note = "Auto Preset filled by x360ce's own guess: neither x360ce's nor SDL's controller database has a row for this device.";
+			note = "Auto Preset filled by x360ce’s own guess: neither x360ce’s nor SDL’s controller database has a row for this device.";
 			return GetGuessedPreset(ud);
 		}
 
@@ -108,7 +108,7 @@ namespace x360ce.App
 			foreach (var code in translation.Sources.Keys)
 				translation.From[code] = SdlTranslation.FromPlugin;
 			var skipped = translation.SkippedText();
-			translation.Note = "Filled from the plugin's recommended mapping." + (skipped.Length == 0 ? "" : " " + skipped);
+			translation.Note = "Filled from the plugin’s recommended mapping." + (skipped.Length == 0 ? "" : " " + skipped);
 			return translation;
 		}
 

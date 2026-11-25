@@ -2065,7 +2065,7 @@ namespace x360ce.App.Controls
 			adjust.DropDownItems.Add(mi);
 			// [Round Dead Zone] gives the stick one dead zone for both of its axes, a circle round its middle.
 			mi = new ToolStripMenuItem(cRoundDeadZone);
-			mi.ToolTipText = "On a stick's X or Y box: the stick reads nothing inside a circle round its middle, in every direction.";
+			mi.ToolTipText = "On a stick’s X or Y box: the stick reads nothing inside a circle round its middle, in every direction.";
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			adjust.DropDownItems.Add(mi);
 			// [Turbo] makes the box's button press ten times a second while it is held.
@@ -2241,7 +2241,7 @@ namespace x360ce.App.Controls
 						SettingsManager.Current.SetComboBoxValue(stick.Item2, texts[1]);
 					}
 					MainForm.Current.StatusTimerLabel.Text = texts == null
-						? "[Round Dead Zone] works on a stick's X or Y box, with both boxes mapped to axes."
+						? "[Round Dead Zone] works on a stick’s X or Y box, with both boxes mapped to axes."
 						: string.Format("Round dead zone: the stick reads nothing within {0:0} % of its middle, in every direction.", size * 100);
 					CurrentCbx = null;
 				}
@@ -2736,7 +2736,7 @@ namespace x360ce.App.Controls
 			MainToolTip.SetToolTip(WheelSoftLockCheckBox,
 				"Enforce the chosen Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of.");
 			MainToolTip.SetToolTip(WheelRgbStripCheckBox,
-				"Drive supported steering wheels' RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.");
+				"Drive supported steering wheels’ RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.");
 			MainToolTip.SetToolTip(WheelRgbTestButton,
 				"Sweeps the RGB/RPM LED strip on screen and on a connected Logitech G27, G29 or G923 wheel.");
 		}
@@ -3000,7 +3000,7 @@ namespace x360ce.App.Controls
 				return new Label
 				{
 					AutoSize = true,
-					Text = "The plugin's controls could not be made: " + inner.GetType().Name + ": " + inner.Message,
+					Text = "The plugin’s controls could not be made: " + inner.GetType().Name + ": " + inner.Message,
 				};
 			}
 		}
@@ -3264,7 +3264,7 @@ namespace x360ce.App.Controls
 			// never end.
 			if (!SpringFromThisTab(ud))
 			{
-				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, this device ticked in its list and on the Devices page, and no other controller tab's settings driving it. Otherwise nothing drives the wheel.";
+				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, this device ticked in its list and on the Devices page, and no other controller tab’s settings driving it. Otherwise nothing drives the wheel.";
 				return;
 			}
 			WheelDescriptionLabel.Text = "Hands off the wheel.";
@@ -3323,7 +3323,7 @@ namespace x360ce.App.Controls
 		{
 			if (wheelRange <= 0 || takesRange)
 				return null;
-			return string.Format("x360ce cannot set this wheel's range: it turns what its own software sets. Set {0}° there, or shorten the steering with a formula in the steering box: =a1*900/270 steers as 270° on a wheel set to 900°.", wheelRange);
+			return string.Format("x360ce cannot set this wheel’s range: it turns what its own software sets. Set {0}° there, or shorten the steering with a formula in the steering box: =a1*900/270 steers as 270° on a wheel set to 900°.", wheelRange);
 		}
 
 		/// <summary>Whether the wheel whose motors the engine drives for this device takes a range from x360ce.</summary>
@@ -3398,7 +3398,7 @@ namespace x360ce.App.Controls
 				ud.SetForceSpringFriction(run.Result);
 				WheelDescriptionLabel.Text = string.Format(
 					"Friction set to {0} %: the wheel turns at {1} % and {2} % from the two stops, comes home within {3} s at {4} % and {5} %, and a tenth more starts it every time. "
-					+ "Outside the centre the spring never pushes less, so the wheel comes home from any angle, and Strength adds the car's steering on top.",
+					+ "Outside the centre the spring never pushes less, so the wheel comes home from any angle, and Strength adds the car’s steering on top.",
 					run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
 			}
 			else
@@ -3689,7 +3689,7 @@ namespace x360ce.App.Controls
 		void SdlPanel_CopyClicked(object sender, EventArgs e)
 		{
 			SettingsManager.CopyPresetToClipboard(GetSelectedPadSetting(), SettingsManager.PresetFormat.Sdl, GetSelectedDevice());
-			MainForm.Current.StatusTimerLabel.Text = "Copied this controller's mapping as a row of SDL's controller database.";
+			MainForm.Current.StatusTimerLabel.Text = "Copied this controller’s mapping as a row of SDL’s controller database.";
 		}
 
 		#endregion
@@ -3894,7 +3894,7 @@ namespace x360ce.App.Controls
 				.Select(x => string.IsNullOrEmpty(x.ProductName) ? x.InstanceName : x.ProductName).Distinct());
 			var answer = AskRawInput(string.Format("Add {0} through Raw Input instead?", names),
 				"Windows lets only the program in front read an Xbox controller through DirectInput, so it stops working once a game is in front. Raw Input keeps working." + Environment.NewLine
-				+ "Use Raw Input - add the controller's Raw Input row." + Environment.NewLine
+				+ "Use Raw Input - add the controller’s Raw Input row." + Environment.NewLine
 				+ "Add DirectInput - add the row picked, which works only while x360ce is in front.");
 			if (answer == DialogResult.Yes)
 				return devices.Select((x, i) => twins[i] ?? x).Distinct().ToArray();
@@ -4370,7 +4370,7 @@ namespace x360ce.App.Controls
 					? "No game force reaches it: Force Feedback Enable is off on every controller tab it is on. Only the centering spring holds it."
 					: "No game force reaches it: Force Feedback Enable is off on every controller tab it is on.");
 			else if (pads.Length == 1)
-				lines.Add(string.Format("It plays Controller {0}'s force.", pads[0]));
+				lines.Add(string.Format("It plays Controller {0}’s force.", pads[0]));
 			else
 				lines.Add(string.Format("It plays the strongest force of Controllers {0} and {1}: each motor at the highest value any of them asks for.",
 					string.Join(", ", pads, 0, pads.Length - 1), pads[pads.Length - 1]));

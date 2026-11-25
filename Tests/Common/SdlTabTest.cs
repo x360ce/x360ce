@@ -64,7 +64,7 @@ namespace x360ce.Tests
 					// Only x360ce's database knows it.
 					page.UpdateFrom(Wheel(), new PadSetting(), none, Database(X360ceRow));
 					Assert.IsNotNull(page.Translation, "The page shows no row for a controller x360ce's database knows: " + page.DeviceLabel.Text);
-					StringAssert.Contains(page.DeviceLabel.Text, "x360ce's database (built in, 1 Windows row) knows this controller as \"Test Wheel\"");
+					StringAssert.Contains(page.DeviceLabel.Text, "x360ce’s database (built in, 1 Windows row) knows this controller as \"Test Wheel\"");
 					var a = Place(page, MapCode.ButtonA);
 					Assert.AreEqual("Button 2", a.Control);
 					Assert.AreEqual("A:2", a.Binding);
@@ -84,7 +84,7 @@ namespace x360ce.Tests
 					a = Place(page, MapCode.ButtonA);
 					Assert.AreEqual("SDL", a.From);
 					Assert.AreEqual("Button 1", a.Control);
-					StringAssert.Contains(page.DeviceLabel.Text, "SDL's database (built in, 1 Windows row) knows it as \"Test Wheel SDL\"");
+					StringAssert.Contains(page.DeviceLabel.Text, "SDL’s database (built in, 1 Windows row) knows it as \"Test Wheel SDL\"");
 					// The G27 itself, with the databases the program carries: x360ce's knows it and SDL's does not.
 					var sdlBuiltIn = SdlDatabase.Merge(SdlSource.Parse(SdlDatabase.ReadBuiltIn(), SdlSourceKind.BuiltIn));
 					var x360ceBuiltIn = SdlDatabase.Merge(SdlSource.Parse(X360ceDatabase.ReadBuiltIn(), SdlSourceKind.BuiltIn));

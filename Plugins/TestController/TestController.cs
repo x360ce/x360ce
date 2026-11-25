@@ -36,7 +36,7 @@ namespace x360ce.Plugins.Samples
 		+ "Windows takes a controller x360ce makes for an Xbox controller, and sends what it does to the window in front as key "
 		+ "presses. Windows apps navigate with them: A selects, B goes back, Menu opens a menu, the D-pad and the left stick move "
 		+ "focus, and the triggers and bumpers turn pages. So, while this controller is mapped, it can act on the window in front too. "
-		+ "It starts with the hat still and buttons 1 to 8 released, because x360ce's own mapping makes them the D-pad, A, B, X, Y, "
+		+ "It starts with the hat still and buttons 1 to 8 released, because x360ce’s own mapping makes them the D-pad, A, B, X, Y, "
 		+ "the bumpers, View and Menu. The axes still move the sticks and the triggers; turn off Move the axes to keep them still too.")]
 	public class TestController : IPluginDevice
 	{
@@ -59,7 +59,7 @@ namespace x360ce.Plugins.Samples
 		public bool MoveAxes { get; set; } = true;
 
 		[Category("Movement"), DisplayName("Turn the hat")]
-		[Description("Turns the hat once round and back while the axes move. Off, it stays released. x360ce's own mapping makes the hat the D-pad, which moves focus in the window in front.")]
+		[Description("Turns the hat once round and back while the axes move. Off, it stays released. x360ce’s own mapping makes the hat the D-pad, which moves focus in the window in front.")]
 		public bool TurnHat { get; set; }
 
 		[Category("Movement"), DisplayName("Shape")]
@@ -81,7 +81,7 @@ namespace x360ce.Plugins.Samples
 		public bool PressButtons { get; set; } = true;
 
 		[Category("Buttons"), DisplayName("Press the navigation buttons")]
-		[Description("Presses buttons 1 to 8 too, which x360ce's own mapping makes A, B, X, Y, the bumpers, View and Menu. Windows sends them to the window in front, where A selects, B goes back and Menu opens a menu. Off, only buttons 9 and 10, the stick clicks, are pressed.")]
+		[Description("Presses buttons 1 to 8 too, which x360ce’s own mapping makes A, B, X, Y, the bumpers, View and Menu. Windows sends them to the window in front, where A selects, B goes back and Menu opens a menu. Off, only buttons 9 and 10, the stick clicks, are pressed.")]
 		public bool PressNavigationButtons { get; set; }
 
 		/// <summary>Buttons 1 to 8, the ones x360ce's own mapping makes A, B, X, Y, the bumpers, View and Menu.</summary>

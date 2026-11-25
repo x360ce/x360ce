@@ -99,12 +99,12 @@ namespace x360ce.App
 		ThemeType _Theme;
 
 		/// <summary>The font the windows are drawn in, as <see cref="AppFonts.InterfaceFamilyFor"/> reads it.</summary>
-		[DefaultValue(""), Description("The font the windows are drawn in: \"" + AppFonts.DefaultName + "\", Windows' own, when empty; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; otherwise an installed font's name. Takes effect when x360ce starts again.")]
+		[DefaultValue(""), Description("The font the windows are drawn in: \"" + AppFonts.DefaultName + "\", Windows’ own, when empty; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; otherwise an installed font’s name. Takes effect when x360ce starts again.")]
 		public string InterfaceFont { get { return _InterfaceFont; } set { _InterfaceFont = value; OnPropertyChanged(); } }
 		string _InterfaceFont;
 
 		/// <summary>The size the windows' text is drawn at, in points, as <see cref="AppFonts.SizeFor"/> reads it.</summary>
-		[DefaultValue(0f), Description("The size the windows' text is drawn at, in points, whatever the font. When 0: Windows' text size. Takes effect when x360ce starts again.")]
+		[DefaultValue(0f), Description("The size the windows’ text is drawn at, in points, whatever the font. When 0: Windows’ text size. Takes effect when x360ce starts again.")]
 		public float InterfaceFontSize { get { return _InterfaceFontSize; } set { _InterfaceFontSize = value; OnPropertyChanged(); } }
 		float _InterfaceFontSize;
 
@@ -199,11 +199,11 @@ namespace x360ce.App
 		bool _AllowThirdPartyPlugins;
 
 		/// <summary>Names of plugins switched off on the Options tab's Plugins page. Empty by default, so built-in plugins load automatically.</summary>
-		[Description("Names of plugins switched off on the Options tab's Plugins page.")]
+		[Description("Names of plugins switched off on the Options tab’s Plugins page.")]
 		public BindingList<string> DisabledPlugins { get; set; }
 
 		/// <summary>Names of plugins off by default that were switched on on the Options tab's Plugins page.</summary>
-		[Description("Names of plugins off by default that were switched on on the Options tab's Plugins page.")]
+		[Description("Names of plugins off by default that were switched on on the Options tab’s Plugins page.")]
 		public BindingList<string> EnabledPlugins { get; set; }
 
 		/// <summary>True unless the plugin was switched off on the Options tab's Plugins page. Built-in plugins are enabled by default, except those off by default until switched on.</summary>
@@ -290,7 +290,7 @@ namespace x360ce.App
 		#region Wheel telemetry and steering feel
 
 		/// <summary>True: read live vehicle telemetry over Shared Memory and x360ce's own port (37150) while a wheel centering spring is active.</summary>
-		[DefaultValue(true), Description("Automatically read live game telemetry over Shared Memory and x360ce's port (37150) for the wheel centering spring.")]
+		[DefaultValue(true), Description("Automatically read live game telemetry over Shared Memory and x360ce’s port (37150) for the wheel centering spring.")]
 		public bool WheelTelemetryEnabled
 		{
 			get { return _WheelTelemetryEnabled; }
@@ -362,7 +362,7 @@ namespace x360ce.App
 		bool _WheelSoftLockEnabled;
 
 		/// <summary>True: drive supported steering wheels' RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.</summary>
-		[DefaultValue(true), Description("Drive supported steering wheels' RGB/RPM shift LED strip from live game telemetry RPM.")]
+		[DefaultValue(true), Description("Drive supported steering wheels’ RGB/RPM shift LED strip from live game telemetry RPM.")]
 		public bool WheelRgbStripEnabled
 		{
 			get { return _WheelRgbStripEnabled; }
@@ -517,7 +517,7 @@ namespace x360ce.App
 		bool _DeviceChangeOverlay = true;
 
 		/// <summary>Whether a recording for a bug report holds the options, the game's settings, each controller's mapping and the devices.</summary>
-		[DefaultValue(true), Description("A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.")]
+		[DefaultValue(true), Description("A recording for a bug report holds the options, the game’s settings, each controller’s mapping and every device.")]
 		public bool RecordSettings { get { return _RecordSettings; } set { _RecordSettings = value; OnPropertyChanged(); } }
 		bool _RecordSettings = true;
 
@@ -551,7 +551,7 @@ namespace x360ce.App
 		public const string DefaultSdlDatabaseUrl = SdlUpdateClient.DefaultUrl;
 
 		/// <summary>Where the [Update SDL Database] buttons download SDL's controller database from, as <see cref="SdlUpdateClient.Update"/> reads it.</summary>
-		[DefaultValue(DefaultSdlDatabaseUrl), Description("Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.")]
+		[DefaultValue(DefaultSdlDatabaseUrl), Description("Address every [Update SDL Database] button downloads SDL’s controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.")]
 		public string SdlDatabaseUrl { get { return _SdlDatabaseUrl; } set { _SdlDatabaseUrl = value; OnPropertyChanged(); } }
 		string _SdlDatabaseUrl;
 

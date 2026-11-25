@@ -600,7 +600,7 @@ namespace x360ce.App.DInput
 				case HolderReal:
 					return "a real controller";
 				case HolderVirtual:
-					return "another of this program's own virtual controllers";
+					return "another of this program’s own virtual controllers";
 				case HolderLeftover:
 					return "a virtual controller this program did not make, such as one from DS4Windows or one left behind (the Devices page lists it as Leftover)";
 				default:

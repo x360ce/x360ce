@@ -74,7 +74,7 @@ namespace x360ce.App.Issues
 				case 1638:
 					description = "The same or a newer " + program + " is already registered, but it is not found. " +
 						"Remove every Microsoft Visual C++ v14 Redistributable in Windows Settings > Apps, restart Windows, " +
-						"then install again. More... opens Microsoft's troubleshooting guide.";
+						"then install again. More... opens Microsoft’s troubleshooting guide.";
 					troubleshoot = true;
 					return IssueSeverity.Moderate;
 				case 3010:
@@ -83,7 +83,7 @@ namespace x360ce.App.Issues
 				default:
 					// A result that is not a Windows error is read in hexadecimal, the form Microsoft's guide uses.
 					var shown = code < 0 ? "0x" + code.ToString("X8") : code.ToString();
-					description = string.Format("Installing {0} failed with code {1}. More... opens Microsoft's troubleshooting guide.", program, shown);
+					description = string.Format("Installing {0} failed with code {1}. More... opens Microsoft’s troubleshooting guide.", program, shown);
 					troubleshoot = true;
 					return IssueSeverity.Critical;
 			}

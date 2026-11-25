@@ -38,7 +38,7 @@ namespace x360ce.Tests
 			StringAssert.Contains(text, "- Shape (Movement, one of: Swing and ramp, Circle, starts at Swing and ramp): ");
 			StringAssert.Contains(text, "- Moving time (s) (Movement, a number from 0.5 to 20, starts at 4): ");
 			StringAssert.Contains(text, "- Reads per second (Status, read only): ");
-			StringAssert.Contains(text, "- The plugin's own control, TestControllerPad, on the first page, before Properties.");
+			StringAssert.Contains(text, "- The plugin’s own control, TestControllerPad, on the first page, before Properties.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]

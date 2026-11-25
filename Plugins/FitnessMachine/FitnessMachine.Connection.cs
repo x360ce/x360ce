@@ -182,7 +182,7 @@ namespace x360ce.Plugins.Samples
 				RowHeadersVisible = false,
 				SelectionMode = DataGridViewSelectionMode.FullRowSelect,
 				AccessibleName = "Fitness machines",
-				AccessibleDescription = "The machines heard: each one's name, what kind it is, and its signal. Selecting one chooses it for this device.",
+				AccessibleDescription = "The machines heard: each one’s name, what kind it is, and its signal. Selecting one chooses it for this device.",
 			};
 			NameColumn = NewMachineColumn(nameof(NameColumn), "Name", DataGridViewAutoSizeColumnMode.Fill);
 			TypeColumn = NewMachineColumn(nameof(TypeColumn), "Type", DataGridViewAutoSizeColumnMode.AllCells);
@@ -193,11 +193,11 @@ namespace x360ce.Plugins.Samples
 			Place(MachinesDataGridView, 0, 2);
 
 			// Left: commands.
-			StartButton = NewButton(nameof(StartButton), "Start", "Starts or resumes the machine's training.", 10);
+			StartButton = NewButton(nameof(StartButton), "Start", "Starts or resumes the machine’s training.", 10);
 			StartButton.Click += (s, e) => _session.Send(FitnessCommand.Start, 0);
-			PauseButton = NewButton(nameof(PauseButton), "Pause", "Pauses the machine's training.", 10);
+			PauseButton = NewButton(nameof(PauseButton), "Pause", "Pauses the machine’s training.", 10);
 			PauseButton.Click += (s, e) => _session.Send(FitnessCommand.Pause, 0);
-			StopButton = NewButton(nameof(StopButton), "Stop", "Stops the machine's training.", 10);
+			StopButton = NewButton(nameof(StopButton), "Stop", "Stops the machine’s training.", 10);
 			StopButton.Click += (s, e) => _session.Send(FitnessCommand.Stop, 0);
 			ResetButton = NewButton(nameof(ResetButton), "Reset", "Resets the machine.", 10);
 			ResetButton.Click += (s, e) => _session.Send(FitnessCommand.Reset, 0);
@@ -243,7 +243,7 @@ namespace x360ce.Plugins.Samples
 				AutoSize = true,
 				Anchor = AnchorStyles.Left | AnchorStyles.Right,
 				AccessibleName = "Status",
-				AccessibleDescription = "Where this device's connection stands and, when it is stuck, what to do next.",
+				AccessibleDescription = "Where this device’s connection stands and, when it is stuck, what to do next.",
 			};
 			FeaturesLabel = new Label
 			{

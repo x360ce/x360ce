@@ -627,7 +627,7 @@ namespace x360ce.App.Controls
 			catch (Exception ex)
 			{
 				var inner = ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
-				fault = "The plugin's page could not be made: " + inner.GetType().Name + ": " + inner.Message;
+				fault = "The plugin’s page could not be made: " + inner.GetType().Name + ": " + inner.Message;
 			}
 			var pages = new TabControl { Name = "PluginTabControl", Dock = DockStyle.Fill };
 			var content = page ?? new Label
@@ -651,10 +651,10 @@ namespace x360ce.App.Controls
 					BorderStyle = BorderStyle.None,
 					ReadOnly = true,
 					AccessibleName = "Help",
-					AccessibleDescription = "The game plugin's help, from its plugin: what it does for the game, and how to use it.",
+					AccessibleDescription = "The game plugin’s help, from its plugin: what it does for the game, and how to use it.",
 				};
 				AppHelper.ShowHelp(help, type.Description.Trim());
-				AddPluginPage(pages, "PluginHelpTabPage", "Help", "The game plugin's help, from its plugin.", help);
+				AddPluginPage(pages, "PluginHelpTabPage", "Help", "The game plugin’s help, from its plugin.", help);
 			}
 			var tab = new TabPage
 			{

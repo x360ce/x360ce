@@ -63,13 +63,13 @@ namespace x360ce.Plugins.Samples
 		public bool Reverse { get; set; }
 
 		[Category("Reverse"), DisplayName("Reverse gear")]
-		[Description("Drives in reverse while the resistance you set on the machine is at or below this level, so the machine's own gear or "
+		[Description("Drives in reverse while the resistance you set on the machine is at or below this level, so the machine’s own gear or "
 			+ "resistance lever puts it in reverse. 0 never does.")]
 		[Range(0, 100)]
 		public int ReverseGear { get; set; }
 
 		[Category("Force feedback"), DisplayName("Force feedback to")]
-		[Description("What the game's rumble does once Enable is ticked on the controller's Force Feedback page. Resistance: "
+		[Description("What the game’s rumble does once Enable is ticked on the controller’s Force Feedback page. Resistance: "
 			+ "the machine gets harder to pedal. Road grade: the road climbs, on a machine that simulates a road. Off: nothing.")]
 		public FitnessForce ForceTo
 		{
@@ -79,7 +79,7 @@ namespace x360ce.Plugins.Samples
 		volatile FitnessForce _forceTo = FitnessForce.Resistance;
 
 		[Category("Force feedback"), DisplayName("Extra resistance (levels)")]
-		[Description("The resistance levels the game's strongest rumble adds to the level you set on the machine; a lighter rumble adds less.")]
+		[Description("The resistance levels the game’s strongest rumble adds to the level you set on the machine; a lighter rumble adds less.")]
 		[Range(0.0, 100.0)]
 		public double ForceResistance
 		{
@@ -94,7 +94,7 @@ namespace x360ce.Plugins.Samples
 		volatile int _forceResistanceTenths = 100;
 
 		[Category("Force feedback"), DisplayName("Road grade (%)")]
-		[Description("The road grade, in percent, the game's strongest rumble climbs; a lighter rumble climbs less.")]
+		[Description("The road grade, in percent, the game’s strongest rumble climbs; a lighter rumble climbs less.")]
 		[Range(0.0, 20.0)]
 		public double ForceGrade
 		{
@@ -109,7 +109,7 @@ namespace x360ce.Plugins.Samples
 		volatile int _forceGradeHundredths = 800;
 
 		[Category("Heart rate"), DisplayName("Heart rate limit (bpm)")]
-		[Description("While your heart rate is at or above it, the game's rumble adds nothing and button 4 is held. 0 is off.")]
+		[Description("While your heart rate is at or above it, the game’s rumble adds nothing and button 4 is held. 0 is off.")]
 		[Range(0, 240)]
 		public int HeartRateLimit
 		{
@@ -123,7 +123,7 @@ namespace x360ce.Plugins.Samples
 		#region Status
 
 		[DisplayName("Connection")]
-		[Description("What the device's connection to its machine is doing: no machine chosen, waiting for the device to be ticked, "
+		[Description("What the device’s connection to its machine is doing: no machine chosen, waiting for the device to be ticked, "
 			+ "connecting, connected, or why it cannot.")]
 		public string Connection
 		{
@@ -135,7 +135,7 @@ namespace x360ce.Plugins.Samples
 						? "No machine chosen. Press Scan on the Connection page, then select the machine."
 						: "Machine holds no Bluetooth address. Select the machine on the Connection page.";
 				if (!Reading)
-					return chosen.Name + " is chosen. x360ce connects to it while this device is ticked, on the Devices tab and in its controller's list.";
+					return chosen.Name + " is chosen. x360ce connects to it while this device is ticked, on the Devices tab and in its controller’s list.";
 				return _session.StatusText ?? "Connecting to " + chosen.Name + "...";
 			}
 		}
@@ -157,11 +157,11 @@ namespace x360ce.Plugins.Samples
 		public string Power { get { return _session.Shown(_session.Power, 1, "0", " W"); } }
 
 		[DisplayName("Heart rate")]
-		[Description("Your heart rate now, from the machine's own heart rate sensor or a strap paired with it.")]
+		[Description("Your heart rate now, from the machine’s own heart rate sensor or a strap paired with it.")]
 		public string HeartRate { get { return _session.HeartRate > 0 ? _session.Shown(_session.HeartRate, 1, "0", " bpm") : ""; } }
 
 		[DisplayName("Resistance")]
-		[Description("The machine's resistance level now, and the range it goes over.")]
+		[Description("The machine’s resistance level now, and the range it goes over.")]
 		public string Resistance
 		{
 			get
@@ -193,7 +193,7 @@ namespace x360ce.Plugins.Samples
 		}
 
 		[DisplayName("Force")]
-		[Description("How strong the game's rumble is, and the target it sets on the machine.")]
+		[Description("How strong the game’s rumble is, and the target it sets on the machine.")]
 		public string Force { get { return DescribeForce(); } }
 
 		[DisplayName("Updates per second")]
