@@ -239,6 +239,91 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
 		}
 
+		/// <remarks>
+		/// The selected device brings the Wheel, Game Telemetry and Mouse tabs to the page and takes them away once the page is
+		/// shown, and names the Direct Input tab after itself. The strip shows its tabs in as many rows as they need, so a tab
+		/// that comes, goes or is renamed can take it to another row, and the pages then have a row's height more or less: the
+		/// General page stood a row lower, cut off at the bottom, until the window was resized.
+		/// </remarks>
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("In a window as wide as the tab strip needs for one row without a device's tabs and title and two with them, and at the smallest window width, as the selected device brings tabs to the Controller page, takes them away and renames the Direct Input tab, the device list, the tab strip and the General page stand where a 1 px resize puts them, in both themes")]
+		public void Tabs_the_device_brings_leave_the_page_as_a_resize_does()
+		{
+			var faults = new List<string>();
+			var report = new List<string>();
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(MapTo.Controller1), "Controller 1") }, (form, when) =>
+			{
+				var window = (Form)form;
+				window.MinimumSize = Size.Empty;
+				var page = Descendants(window).OfType<PadControl>().Single();
+				var tabs = page.PadTabControl;
+				var wheel = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Wheel", CapType = (int)SharpDX.DirectInput.DeviceType.Driving };
+				var mouse = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Mouse", CapType = (int)SharpDX.DirectInput.DeviceType.Mouse };
+				// A pad brings no tab and only renames the Direct Input tab.
+				var pad = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Pad", CapType = (int)SharpDX.DirectInput.DeviceType.Gamepad };
+				// For each device, the strip as wide as its tabs with half of what the device adds: one row without it, two with it.
+				window.Width = Screen.PrimaryScreen.WorkingArea.Width;
+				var widths = new List<int>();
+				foreach (var device in new[] { wheel, mouse, pad })
+				{
+					ShowDevice(page, null);
+					Application.DoEvents();
+					var without = TabsWidth(tabs);
+					ShowDevice(page, device);
+					Application.DoEvents();
+					widths.Add(window.Width - tabs.Width + (without + TabsWidth(tabs)) / 2);
+				}
+				ShowDevice(page, null);
+				widths.Add(MinimumWindowSize().Width);
+				// Taller than the smallest window, so the device list has room to give the strip's rows.
+				var height = MinimumWindowSize().Height + (int)Math.Round(300 * ControlsHelper.DpiScale);
+				foreach (var width in widths)
+				{
+					window.Size = new Size(width, height);
+					Application.DoEvents();
+					foreach (var device in new[] { wheel, null, mouse, null, pad, null, mouse, wheel, null })
+					{
+						ShowDevice(page, device);
+						Application.DoEvents();
+						var shown = LayoutOf(page);
+						window.Width += 1;
+						Application.DoEvents();
+						window.Width -= 1;
+						Application.DoEvents();
+						var resized = LayoutOf(page);
+						var line = string.Format("{0}, window {1}, {2}: {3}", when, window.Size, device == null ? "no device" : device.ProductName, shown);
+						report.Add(line);
+						if (shown != resized)
+							faults.Add(line + ", and after a 1 px resize: " + resized + ".");
+					}
+				}
+			});
+			foreach (var line in report)
+				TestContext.WriteLine(line);
+			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		/// <summary>Shows a device's tabs on the page and names the Direct Input tab after it, as the page does for the device selected.</summary>
+		static void ShowDevice(PadControl page, UserDevice device)
+		{
+			page.UpdateWheelTabs(device);
+			page.DirectInputTabPage.Text = PadControl.DirectInputTabTitle(device);
+		}
+
+		/// <summary>How wide the strip's tabs are together, in one row.</summary>
+		static int TabsWidth(TabControl tabs)
+		{
+			return Enumerable.Range(0, tabs.TabCount).Sum(i => tabs.GetTabRect(i).Width);
+		}
+
+		/// <summary>Where the device list, the tab strip and the General page stand, and how many rows of tabs the strip has.</summary>
+		static string LayoutOf(PadControl page)
+		{
+			var tabs = page.PadTabControl;
+			return string.Format("{0} row(s) of {1} tabs, device list {2} px tall, tab strip {3}, General page {4}",
+				tabs.RowCount, tabs.TabCount, page.MappedDevicesDataGridView.Height, tabs.Bounds, page.GeneralTabPage.Bounds);
+		}
+
 		/// <summary>The windows the Controller page is measured in.</summary>
 		internal enum WindowKind
 		{

@@ -90,8 +90,13 @@ namespace x360ce.App.Controls
 				}
 			};
 			PadTableLayoutPanel.Layout += PadTableLayoutPanel_Layout;
-			// The tab strip tells the room its pages have only once Windows has made it.
+			// The tab strip tells the room its pages have only once Windows has made it, and again each time it puts the page
+			// shown lower or higher (TabPage_LocationChanged).
 			PadTabControl.HandleCreated += (s, e) => PadTableLayoutPanel.PerformLayout();
+			foreach (TabPage tab in PadTabControl.TabPages)
+				tab.LocationChanged += TabPage_LocationChanged;
+			PadTabControl.ControlAdded += (s, e) => e.Control.LocationChanged += TabPage_LocationChanged;
+			PadTabControl.ControlRemoved += (s, e) => e.Control.LocationChanged -= TabPage_LocationChanged;
 			InputPanel.ChipClicked += InputPanel_ChipClicked;
 			InputPanel.DraggingChanged += InputPanel_DraggingChanged;
 			// Read only by the XInput library of x360ce 3, from the x360ce.ini file this version does not write. Shown and
@@ -248,6 +253,31 @@ namespace x360ce.App.Controls
 			var height = Math.Max(fewest, table.DisplayRectangle.Height - others - tabsHeight - grid.Margin.Vertical);
 			if (grid.Height != height)
 				grid.Height = height;
+		}
+
+		/// <summary>Whether the table's layout for the room the strip now leaves its pages is posted already.</summary>
+		bool _TabsLayoutPosted;
+
+		/// <summary>Lays the table out again when the strip puts the page shown lower or higher.</summary>
+		/// <remarks>
+		/// The strip shows its tabs in as many rows as they need, so a tab the selected device brings or takes away, or one
+		/// renamed, as the Direct Input tab is for each device and as the device comes online, can take it to another row or
+		/// back. The strip then puts its page a row lower or higher, and lays out nothing round it: without this the device
+		/// list keeps the height it had for the rows before, and the General page stands a row lower, cut off at the bottom,
+		/// until the window is resized. Posted, so the strip has finished with its pages, and once for the tabs one device
+		/// change brings, takes away and renames together.
+		/// </remarks>
+		void TabPage_LocationChanged(object sender, EventArgs e)
+		{
+			if (sender != PadTabControl.SelectedTab || _TabsLayoutPosted || !PadTabControl.IsHandleCreated)
+				return;
+			_TabsLayoutPosted = true;
+			PadTabControl.BeginInvoke((Action)(() =>
+			{
+				_TabsLayoutPosted = false;
+				if (!IsDisposed)
+					PadTableLayoutPanel.PerformLayout();
+			}));
 		}
 
 		/// <summary>Enables what needs a device, when the selected row has one.</summary>
