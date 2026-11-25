@@ -989,27 +989,17 @@ namespace x360ce.App.Controls
 				cb.DragEnter += MappingBox_DragEnter;
 				cb.DragDrop += MappingBox_DragDrop;
 			}
-			_MappingBoxes = comboBoxes.ToArray();
-			if (_MappingBoxes.Length > 0)
-				_MappingBoxColor = _MappingBoxes[0].BackColor;
 		}
 
 		/// <summary>The mapping box a clicked chip goes into: the one last focused on the General tab.</summary>
 		ComboBox _ChipTargetCbx;
 
-		/// <summary>Every mapping box on the General tab: where a dragged chip may land.</summary>
-		ComboBox[] _MappingBoxes = new ComboBox[0];
-		Color _MappingBoxColor;
-
-		/// <summary>Tints the drop targets while a chip is in the air, and puts their colour back when it lands.</summary>
+		/// <summary>Lights the boxes a chip may land in while it is in the air, and puts them back when it lands.</summary>
 		void InputPanel_DraggingChanged(object sender, EventArgs<bool> e)
 		{
-			foreach (var cb in _MappingBoxes)
-				cb.BackColor = e.Data ? DropTargetColor : _MappingBoxColor;
+			_Imager.Dropping = e.Data;
+			_Imager.UpdateLights();
 		}
-
-		/// <summary>The colour of a box a chip may be dropped into: the lit green of the chips themselves.</summary>
-		static readonly Color DropTargetColor = ColorTranslator.FromHtml(AppHelper.StatusGreen);
 
 		void MappingBox_Enter(object sender, EventArgs e)
 		{

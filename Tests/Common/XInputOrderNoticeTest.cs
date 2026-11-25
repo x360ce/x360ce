@@ -239,10 +239,14 @@ namespace x360ce.Tests
 						main.MainTabControl.SelectedTab = main.DevicesTabPage;
 						Application.DoEvents();
 						var control = main.XInputDevicesPanel;
+						// The page has read this machine by now, with or without a controller on it, and greyed its
+						// buttons to match: shown again with these entries, the list and its buttons are as reported.
 						var list = ListOf(control);
+						list.Clear();
 						list.Add(Entry("xbox", 0, false, 0));
 						list.Add(Entry("c2", 1, true, 2));
 						list.Add(Entry("c1", 2, true, 1));
+						control.Bind();
 						Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "RootLayoutPanel/HeaderLayoutPanel/DevicesToolStrip/AutoOrderButton")), "Auto-Order could not be pressed by path.");
 						Application.DoEvents();
 						Assert.IsTrue(control.PlanPanel.Visible, "The notice is not shown.");

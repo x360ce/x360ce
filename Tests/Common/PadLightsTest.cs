@@ -156,6 +156,37 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("pad-images"), TestCategory("ui")]
+		[Description("While a chip of the Source Input panel is dragged, the mapping boxes it may land in are drawn green and their marks stay off; when it lands they are drawn as before, in both themes")]
+		public void The_boxes_a_dragged_chip_may_land_in_turn_green()
+		{
+			OnGeneralPage((pad, picture, where) =>
+			{
+				var green = PadControlImager.LightColor(NavImageType.Active);
+				using (var bare = PadGeometryTest.Draw(picture))
+				{
+					pad._Imager.Dropping = true;
+					pad._Imager.UpdateLights();
+					foreach (var code in new[] { MapCode.ButtonA, MapCode.LeftTrigger })
+					{
+						var box = Box(pad, code);
+						Assert.AreEqual(green.ToArgb(), pad._Imager.GetBoxColor(box).ToArgb(), where + "the " + code + " box is not lit while a chip is dragged.");
+						using (var drawn = PadGeometryTest.Draw(box))
+						{
+							var face = drawn.GetPixel(box.Width - box.Height * 3 / 2, box.Height / 2);
+							Assert.AreEqual(green.ToArgb(), face.ToArgb(), where + "the " + code + " box is drawn " + ColorTranslator.ToHtml(face) + " while a chip is dragged.");
+						}
+						var middle = Point.Round(MarkMiddle(picture, code));
+						using (var drawn = PadGeometryTest.Draw(picture))
+							Assert.AreEqual(bare.GetPixel(middle.X, middle.Y).ToArgb(), drawn.GetPixel(middle.X, middle.Y).ToArgb(), where + "the " + code + " mark is drawn while a chip is dragged.");
+					}
+					pad._Imager.Dropping = false;
+					pad._Imager.UpdateLights();
+					AssertUnlit(where + "the chip landed", pad, picture, bare, MapCode.ButtonA);
+				}
+			});
+		}
+
 		/// <summary>Shows a controller page in each theme, off the screens, and hands over the page and its picture.</summary>
 		static void OnGeneralPage(Action<PadControl, XboxImageUserControl, string> check)
 		{

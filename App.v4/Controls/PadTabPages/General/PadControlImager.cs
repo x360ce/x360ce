@@ -84,6 +84,9 @@ namespace x360ce.App.Controls
 		/// <summary>Shows every mark on the picture, to check where they stand.</summary>
 		public bool ShowAllMarks;
 
+		/// <summary>A chip of the Source Input panel is being dragged: every box it may land in is lit green, as a moving one is.</summary>
+		public bool Dropping;
+
 		/// <summary>The mapping whose box the pointer is on, or null.</summary>
 		public MapCode? PointedBox;
 
@@ -171,7 +174,8 @@ namespace x360ce.App.Controls
 					PointedBox == ii.Code || PointedMark == mark,
 					IsMoving != null && IsMoving(ii),
 					ShowAllMarks || InShownGroup(ii.Code));
-				SetBoxColor(ii.Control as ComboBox, BoxColor(light));
+				var box = BoxColor(light);
+				SetBoxColor(ii.Control as ComboBox, box.IsEmpty && Dropping ? LightColor(NavImageType.Active) : box);
 				NavImageType? other;
 				if (!_Marks.TryGetValue(mark, out other) || light.HasValue && (!other.HasValue || light.Value > other.Value))
 					_Marks[mark] = light;

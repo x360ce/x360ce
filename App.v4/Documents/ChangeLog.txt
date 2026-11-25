@@ -1,4 +1,4 @@
-﻿## [4.31.29.0] - 2026-11-24
+﻿## [4.31.35.0] - 2026-11-25
 
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Fixed: A controller's SDL page shows its row from x360ce's database.
@@ -10,6 +10,10 @@
 - Fixed: A controller tab works when the tabs before it are not used.
 - Fixed: Scanning a game folder no longer stops with an error on odd folder names.
 - Fixed: The error count in the status bar has its colours as x360ce starts.
+- Fixed: The General page no longer opens shifted down until the window is resized.
+- Fixed: The controller picture's lights sit centred on their buttons.
+- Fixed: Mapping boxes turn green again while a chip is dragged to them.
+- Changed: A dragged chip keeps the hand cursor and turns yellow, not red.
 - Changed: The Mouse page's demo fills the space below the sticks, its mouse starts at the pad's centre, its stick is half the pad's size, and it is greyed out with the page's controls.
 - Changed: The Controller page's tool bar check boxes have a thin edge.
 - Changed: The record icon, as on Remap All, is a plain red dot.
@@ -20,6 +24,7 @@
 - Changed: Fitness Machine adopts the real machine's identity and disconnects on device switch.
 - Changed: The Mouse page shows only for a mouse or touchpad.
 - Changed: Hints say that inputs and the controller picture can be clicked to map.
+- Changed: Texts use the typographic apostrophe (’).
 - Added: AI assistant access lists and opens every page, and closes windows.
 - Added: The About page shows the licences of the parts x360ce uses.
 - Added: Fitness Machine device: an exercise bike drives a controller over Bluetooth. Experimental.
@@ -29,6 +34,7 @@
 - Added: Enable or disable individual plugins on Options > Plugins.
 - Added: Virtual Car simulator in x360ce Test Game to test wheel telemetry.
 - Added: Wheel Telemetry Games helps a game send its telemetry to the wheel. Off by default.
+- Added: A mapping box and its part of the picture light together: red recording, yellow pointed at, green moving.
 
 ## [4.30.63.0] - 2026-11-15
 
