@@ -512,6 +512,33 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Finding takes the straight apostrophe a person or an agent types for the typographic one the program writes, and the other way round")]
+		public void Finding_takes_either_apostrophe()
+		{
+			// The program's own words, which write the apostrophe as U+2019.
+			var purpose = UiCatalog.Build()[nameof(InputUserControl) + "." + nameof(InputUserControl.ButtonChips)].Purpose;
+			StringAssert.Contains(purpose, "device’s");
+			WithWindow(AiAccess.Read, form =>
+			{
+				form.Controls.Add(new Button { Name = "Chips", Text = "Button chips", AccessibleDescription = purpose });
+				// Words written with a straight apostrophe, as the shared library's own still are.
+				form.Controls.Add(new Button { Name = "Door", Text = "Door", AccessibleDescription = "The person's alone to change." });
+				form.Show();
+				var searches = new[]
+				{
+					new[] { "device's buttons", "Chips" }, new[] { "device’s buttons", "Chips" }, new[] { "DEVICE'S", "Chips" },
+					new[] { "person's", "Door" }, new[] { "person’s", "Door" },
+				};
+				foreach (var search in searches)
+				{
+					var hits = ((object[])McpUiTools.UiFind(search[0])).Cast<Dictionary<string, object>>().ToList();
+					Assert.AreEqual(1, hits.Count, "ui_find \"" + search[0] + "\" does not find " + search[1] + ".");
+					Assert.AreEqual(search[1], hits[0]["Path"]);
+				}
+			});
+		}
+
 		/// <summary>A row of the grids below, bound as the program's lists are.</summary>
 		public class Pad
 		{
