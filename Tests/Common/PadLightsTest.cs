@@ -188,6 +188,36 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("pad-images"), TestCategory("ui")]
+		[Description("While a dragged chip is over a mapping box, only that box is lit yellow; when it leaves the box, every box it may land in is lit again, in both themes")]
+		public void Only_the_box_a_dragged_chip_is_over_stays_yellow()
+		{
+			OnGeneralPage((pad, picture, where) =>
+			{
+				var yellow = PadControlImager.LightColor(NavImageType.Over).ToArgb();
+				var a = Box(pad, MapCode.ButtonA);
+				var trigger = Box(pad, MapCode.LeftTrigger);
+				try
+				{
+					pad._Imager.Dropping = true;
+					pad._Imager.DropTarget = MapCode.ButtonA;
+					pad._Imager.UpdateLights();
+					Assert.AreEqual(yellow, pad._Imager.GetBoxColor(a).ToArgb(), where + "the A box the chip is over is not lit.");
+					Assert.IsTrue(pad._Imager.GetBoxColor(trigger).IsEmpty, where + "the LeftTrigger box is lit while the chip is over the A box.");
+					pad._Imager.DropTarget = null;
+					pad._Imager.UpdateLights();
+					Assert.AreEqual(yellow, pad._Imager.GetBoxColor(a).ToArgb(), where + "the A box is not lit after the chip left it.");
+					Assert.AreEqual(yellow, pad._Imager.GetBoxColor(trigger).ToArgb(), where + "the LeftTrigger box is not lit after the chip left the A box.");
+				}
+				finally
+				{
+					pad._Imager.Dropping = false;
+					pad._Imager.DropTarget = null;
+					pad._Imager.UpdateLights();
+				}
+			});
+		}
+
 		/// <summary>Shows a controller page in each theme, off the screens, and hands over the page and its picture.</summary>
 		static void OnGeneralPage(Action<PadControl, XboxImageUserControl, string> check)
 		{

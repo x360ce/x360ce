@@ -326,6 +326,81 @@ namespace x360ce.Tests
 			Assert.AreEqual(100, ff.GameRumblePercent(s, 13230, false, 0), "Slowing down is no upshift.");
 		}
 
+		/// <summary>
+		/// Plays the game's large motor at <paramref name="pulse"/> from <paramref name="startMs"/> for <paramref name="lengthMs"/>
+		/// through <see cref="ForceFeedbackState.ShapeGameRumble"/>, one call a millisecond with a telemetry sample every 20 ms,
+		/// the gear going from 2 to 3 on the sample at <paramref name="gearMs"/> (or never when it is 0), and returns what the
+		/// large motor played each millisecond from <paramref name="fromMs"/> to <paramref name="toMs"/>.
+		/// </summary>
+		static byte[] PlayPulse(ForceFeedbackState ff, int gearChangePercent, long startMs, long lengthMs, byte pulse,
+			long gearMs, long fromMs, long toMs)
+		{
+			var played = new byte[toMs - fromMs];
+			var s = new WheelTelemetrySample { Active = true, SpeedKmh = 40f, RpmFraction = 0.9f, Gear = 2 };
+			for (var now = fromMs; now < toMs; now++)
+			{
+				var sampleMs = now - now % 20;
+				s.TimestampMs = sampleMs;
+				s.Gear = gearMs > 0 && sampleMs >= gearMs ? 3 : 2;
+				var large = now >= startMs && now < startMs + lengthMs ? pulse : (byte)0;
+				byte small = 0;
+				ff.ShapeGameRumble(s, now, false, gearChangePercent, ref large, ref small);
+				played[now - fromMs] = large;
+			}
+			return played;
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("From the owner's GTA V drive: a gear change kick that starts 40 ms before the telemetry sample showing the new gear is held, then silenced from its start at Gear change 0 %")]
+		public void Gear_change_kick_before_its_sample_is_silenced_at_gear_change_zero()
+		{
+			var ff = new ForceFeedbackState();
+			// The kick, 110 for 80 ms from 1020; the sample with the new gear arrives at 1060.
+			var played = PlayPulse(ff, 0, 1020, 80, 110, 1060, 1000, 1300);
+			Assert.AreEqual(1, ff.Counts.GearChanges, "The gear change is found.");
+			for (var i = 0; i < played.Length; i++)
+				Assert.AreEqual(0, played[i], "The kick played at " + (1000 + i) + " ms.");
+			// The slider's share plays the kick, from the end of the wait to its own end.
+			ff = new ForceFeedbackState();
+			played = PlayPulse(ff, 50, 1020, 80, 110, 1060, 1000, 1300);
+			Assert.AreEqual(0, played[1020 + ForceFeedbackState.GearChangeHoldMs - 1 - 1000], "Still held.");
+			Assert.AreEqual(55, played[1020 + ForceFeedbackState.GearChangeHoldMs - 1000], "Half the kick once the wait is over.");
+			Assert.AreEqual(0, played[1100 - 1000], "The kick's end plays at once.");
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("Without a gear change the game's rumble plays whole after the wait, falls at once, and is not held while gear changes play whole or the telemetry is stale")]
+		public void Game_rumble_without_a_gear_change_plays_after_the_wait()
+		{
+			var hold = ForceFeedbackState.GearChangeHoldMs;
+			var ff = new ForceFeedbackState();
+			var played = PlayPulse(ff, 0, 1020, 200, 110, 0, 1000, 1300);
+			Assert.AreEqual(0, ff.Counts.GearChanges);
+			Assert.AreEqual(0, played[1020 + hold - 1 - 1000], "Held for the wait.");
+			Assert.AreEqual(110, played[1020 + hold - 1000], "Whole once the wait is over.");
+			Assert.AreEqual(110, played[1219 - 1000], "Whole to its end.");
+			Assert.AreEqual(0, played[1220 - 1000], "Its fall plays at once.");
+			// What the motors play changes when the wait ends, though the game sent nothing new then.
+			ff = new ForceFeedbackState();
+			var s = new WheelTelemetrySample { Active = true, Gear = 2, TimestampMs = 1000 };
+			byte large = 110, small = 0;
+			Assert.IsFalse(ff.ShapeGameRumble(s, 1000, false, 0, ref large, ref small), "Held: nothing new plays.");
+			large = 110;
+			Assert.IsTrue(ff.ShapeGameRumble(s, 1000 + hold, false, 0, ref large, ref small), "The wait is over: the rise is new.");
+			Assert.AreEqual(110, large);
+			// Gear change at 100 % holds nothing.
+			played = PlayPulse(new ForceFeedbackState(), 100, 1020, 200, 110, 0, 1000, 1300);
+			Assert.AreEqual(110, played[1020 - 1000], "Gear changes whole: no wait.");
+			// Stale or no telemetry holds nothing.
+			ff = new ForceFeedbackState();
+			large = 110;
+			ff.ShapeGameRumble(s, 1000 + 2000, false, 0, ref large, ref small);
+			Assert.AreEqual(110, large, "Stale telemetry: no wait.");
+			large = 110;
+			ff.ShapeGameRumble(WheelTelemetrySample.Inactive, 0, false, 0, ref large, ref small);
+			Assert.AreEqual(110, large, "No telemetry: no wait.");
+		}
+
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
 		[Description("A jolt shakes the wheel, its push changing side every 50 ms, scaled by Curb bumps, only where the jolt is switched on")]
 		public void Jolt_shakes_the_wheel_both_ways()
@@ -670,6 +745,7 @@ namespace x360ce.Tests
 			curve.Set(60, 12, 60, 40, 900, 100, 20);
 			var sample = new WheelTelemetrySample { Active = true, SpeedKmh = 120f, AlignAngleDeg = 10f, FrontGrip = 0.8f, Impulse = 0.1f, DampingScale = 1.1f, TimestampMs = 1000 };
 			var lead = new SteeringLeadState();
+			var ff = new ForceFeedbackState();
 			var freq = Stopwatch.Frequency;
 			const int calls = 20000;
 			var allocated = Allocations.FewestBytes(5, () =>
@@ -679,6 +755,9 @@ namespace x360ce.Tests
 				{
 					WheelTelemetryMath.ComputeSpringForce(curve, SpringCalibration.Center + (i & 1023), 900, 20, 60, sample, 1010, 0.1, 270, out damp);
 					WheelAxisHelper.ProcessSteeringAxis((ushort)(32768 + (i & 1023)), 900.0 / 270.0, 20, freq + i * 1000L, freq, ref lead);
+					var large = (byte)(i & 255);
+					var small = (byte)(i >> 3 & 255);
+					ff.ShapeGameRumble(sample, 1010 + (i & 255), false, 30, ref large, ref small);
 				}
 			});
 			Assert.IsTrue(allocated < calls, "Hot path allocated " + allocated + " bytes over " + calls + " calls.");

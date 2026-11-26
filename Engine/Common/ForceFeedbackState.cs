@@ -445,8 +445,69 @@ namespace x360ce.Engine
             return 100;
         }
 
-        /// <summary>The share of the game's rumble, in percent, the motors last played, so a share that changes is sent though the game sent nothing new.</summary>
-        public int LastGameRumblePercent = 100;
+        /// <summary>How long a rise of the game's rumble waits before it plays while gear changes play quieter, in milliseconds.</summary>
+        /// <remarks>
+        /// A game can start its gear change kick before the telemetry sample showing the new gear arrives, one sample or
+        /// more later, so a kick played at once would play its start whole. Waiting lets the gear change found meanwhile
+        /// scale the kick from its start. A rise that ends before the wait is over does not play.
+        /// </remarks>
+        public const long GearChangeHoldMs = 60;
+
+        /// <summary>The game's motors as let through by the wait for a gear change, before the gear change's share.</summary>
+        byte heldLarge;
+        byte heldSmall;
+        /// <summary>True while a rise of the game's rumble waits, since <see cref="riseMs"/>.</summary>
+        bool rising;
+        long riseMs;
+        /// <summary>The motors as last played, so a value that changes is sent though the game sent nothing new.</summary>
+        byte playedLarge;
+        byte playedSmall;
+
+        /// <summary>
+        /// Shapes the game's rumble while live telemetry drives the centering spring: scales it by
+        /// <see cref="GameRumblePercent"/> and, while gear changes play quieter, holds each rise for
+        /// <see cref="GearChangeHoldMs"/>, so a gear change found during the wait scales the rise from its start. Falls play
+        /// at once. Engine thread only; makes nothing.
+        /// </summary>
+        /// <param name="telemetry">The pass's telemetry, or <see cref="WheelTelemetrySample.Inactive"/> while the spring or telemetry is off; the rumble then plays as the game sends it.</param>
+        /// <param name="nowMs">Monotonic clock in milliseconds.</param>
+        /// <param name="ignoreGame">True when the wheel's road and impact feel comes from telemetry alone.</param>
+        /// <param name="gearChangePercent">The share of the game's rumble that plays while the gear changes, 0 to 100; 100 leaves it whole and holds nothing.</param>
+        /// <param name="large">The game's large motor, 0 to 255, made what is to play.</param>
+        /// <param name="small">The game's small motor, 0 to 255, made what is to play.</param>
+        /// <returns>True when what is to play differs from what played on the last call.</returns>
+        public bool ShapeGameRumble(WheelTelemetrySample telemetry, long nowMs, bool ignoreGame, int gearChangePercent,
+            ref byte large, ref byte small)
+        {
+            var percent = GameRumblePercent(telemetry, nowMs, ignoreGame, gearChangePercent);
+            var hold = !ignoreGame && gearChangePercent < 100
+                && telemetry.Active && WheelTelemetryMath.Freshness(telemetry.TimestampMs, nowMs) > 0.0;
+            if (!hold || (large <= heldLarge && small <= heldSmall) || (rising && nowMs - riseMs >= GearChangeHoldMs))
+            {
+                heldLarge = large;
+                heldSmall = small;
+                rising = false;
+            }
+            else
+            {
+                if (!rising)
+                {
+                    rising = true;
+                    riseMs = nowMs;
+                }
+                // A motor that falls while the other rises plays its fall.
+                if (large < heldLarge)
+                    heldLarge = large;
+                if (small < heldSmall)
+                    heldSmall = small;
+            }
+            large = (byte)(heldLarge * percent / 100);
+            small = (byte)(heldSmall * percent / 100);
+            var changed = large != playedLarge || small != playedSmall;
+            playedLarge = large;
+            playedSmall = small;
+            return changed;
+        }
 
         #endregion
 

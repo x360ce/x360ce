@@ -405,7 +405,10 @@ namespace x360ce.App.DInput
 											var forceArrived = MergeForces(route.ForcePads, arrived, _lastLargeMotor, _lastSmallMotor, out large, out small);
 											// While live telemetry drives the centering spring, the game's rumble can be quieter
 											// for a moment while the gear changes, or left out for the telemetry's own feel.
-											var rumblePercent = 100;
+											var rumbleTelemetry = WheelTelemetrySample.Inactive;
+											var rumbleNowMs = 0L;
+											var ignoreGame = false;
+											var gearChangePercent = 100;
 											if (o.WheelTelemetryEnabled && ps.ForceSpringEnable == "1")
 											{
 												if (!telemetryPolled)
@@ -414,19 +417,14 @@ namespace x360ce.App.DInput
 													passTelemetry = ReadWheelTelemetry(o, out passRawTelemetry);
 												}
 												var source = o.WheelRumbleSource;
-												rumblePercent = ud.FFState.GameRumblePercent(passTelemetry, WheelTelemetryMath.MonotonicNowMs(),
-													source == x360ce.Plugins.WheelRumbleSource.Telemetry,
-													source == x360ce.Plugins.WheelRumbleSource.Game ? 100 : o.WheelGearChangeRumble);
+												rumbleTelemetry = passTelemetry;
+												rumbleNowMs = WheelTelemetryMath.MonotonicNowMs();
+												ignoreGame = source == x360ce.Plugins.WheelRumbleSource.Telemetry;
+												gearChangePercent = source == x360ce.Plugins.WheelRumbleSource.Game ? 100 : o.WheelGearChangeRumble;
 											}
-											if (rumblePercent < 100)
-											{
-												large = (byte)(large * rumblePercent / 100);
-												small = (byte)(small * rumblePercent / 100);
-											}
-											// A share that changed is a new force, though the game sent nothing new.
-											if (rumblePercent != ud.FFState.LastGameRumblePercent)
+											// A force that changed, by its share or its wait, is new, though the game sent nothing new.
+											if (ud.FFState.ShapeGameRumble(rumbleTelemetry, rumbleNowMs, ignoreGame, gearChangePercent, ref large, ref small))
 												forceArrived = true;
-											ud.FFState.LastGameRumblePercent = rumblePercent;
 											if (forceArrived || held || ud.ForceFailures > 0 || ud.FFState.Changed(ps))
 											{
 												var v = new Vibration();

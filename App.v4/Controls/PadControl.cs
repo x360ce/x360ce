@@ -987,6 +987,7 @@ namespace x360ce.App.Controls
 				cb.Enter += MappingBox_Enter;
 				cb.AllowDrop = true;
 				cb.DragEnter += MappingBox_DragEnter;
+				cb.DragLeave += MappingBox_DragLeave;
 				cb.DragDrop += MappingBox_DragDrop;
 			}
 		}
@@ -998,7 +999,23 @@ namespace x360ce.App.Controls
 		void InputPanel_DraggingChanged(object sender, EventArgs<bool> e)
 		{
 			_Imager.Dropping = e.Data;
+			if (!e.Data)
+				_Imager.DropTarget = null;
 			_Imager.UpdateLights();
+		}
+
+		/// <summary>Puts a dragged chip over a mapping's box, or takes it off with null, so only that box stays lit.</summary>
+		void DropOn(MapCode? code)
+		{
+			_Imager.DropTarget = code;
+			_Imager.UpdateLights();
+		}
+
+		/// <summary>The mapping a box on the General tab is for, or null for a box that is not a mapping's.</summary>
+		MapCode? MappingOf(object box)
+		{
+			var ii = imageInfos.FirstOrDefault(x => x.Control == box);
+			return ii == null ? (MapCode?)null : ii.Code;
 		}
 
 		void MappingBox_Enter(object sender, EventArgs e)
@@ -1021,13 +1038,25 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SetComboBoxValue(target, e.Data.Payload);
 		}
 
+		/// <summary>A dragged chip over a box: the box takes text, and is the only one left lit while the chip is over it.</summary>
 		void MappingBox_DragEnter(object sender, DragEventArgs e)
 		{
-			e.Effect = e.Data.GetDataPresent(DataFormats.Text) ? DragDropEffects.Copy : DragDropEffects.None;
+			var accepted = e.Data.GetDataPresent(DataFormats.Text);
+			e.Effect = accepted ? DragDropEffects.Copy : DragDropEffects.None;
+			if (accepted)
+				DropOn(MappingOf(sender));
+		}
+
+		/// <summary>The chip leaves the box: every box it may land in is lit again.</summary>
+		void MappingBox_DragLeave(object sender, EventArgs e)
+		{
+			if (_Imager.DropTarget.HasValue && _Imager.DropTarget == MappingOf(sender))
+				DropOn(null);
 		}
 
 		void MappingBox_DragDrop(object sender, DragEventArgs e)
 		{
+			DropOn(null);
 			if (!e.Data.GetDataPresent(DataFormats.Text))
 				return;
 			var text = (string)e.Data.GetData(DataFormats.Text);
@@ -3204,7 +3233,7 @@ namespace x360ce.App.Controls
 				o.WheelTelemetryCurbStrength = 100;
 				o.WheelTelemetryDampingStrength = 100;
 				o.WheelRumbleUndersteer = 0;
-				o.WheelRumbleSource = x360ce.Plugins.WheelRumbleSource.GameWithoutGearChanges;
+				o.WheelRumbleSource = x360ce.Plugins.WheelRumbleSource.Telemetry;
 				o.WheelGearChangeRumble = 0;
 				o.WheelSteeringLeadMs = 0;
 			}

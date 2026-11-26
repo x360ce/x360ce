@@ -84,8 +84,17 @@ namespace x360ce.App.Controls
 		/// <summary>Shows every mark on the picture, to check where they stand.</summary>
 		public bool ShowAllMarks;
 
-		/// <summary>A chip of the Source Input panel is being dragged: every box it may land in is lit yellow, as the box under the pointer is.</summary>
+		/// <summary>
+		/// A chip of the Source Input panel is being dragged: every box it may land in is lit yellow, as the box under the
+		/// pointer is, until the pointer is on one of them (<see cref="DropTarget"/>).
+		/// </summary>
 		public bool Dropping;
+
+		/// <summary>
+		/// The mapping whose box a dragged chip is over, or null. While it is set, only that box is lit yellow, so it is
+		/// clear where the chip lands; a box lit for its own state keeps its light.
+		/// </summary>
+		public MapCode? DropTarget;
 
 		/// <summary>The mapping whose box the pointer is on, or null.</summary>
 		public MapCode? PointedBox;
@@ -176,7 +185,8 @@ namespace x360ce.App.Controls
 					IsMoving != null && IsMoving(ii),
 					ShowAllMarks || InShownGroup(ii.Code));
 				var box = BoxColor(light);
-				SetBoxColor(ii.Control as ComboBox, box.IsEmpty && Dropping ? LightColor(NavImageType.Over) : box);
+				var dropOn = Dropping && (!DropTarget.HasValue || DropTarget.Value == ii.Code);
+				SetBoxColor(ii.Control as ComboBox, box.IsEmpty && dropOn ? LightColor(NavImageType.Over) : box);
 				NavImageType? other;
 				if (!_Marks.TryGetValue(mark, out other) || light.HasValue && (!other.HasValue || light.Value > other.Value))
 					_Marks[mark] = light;

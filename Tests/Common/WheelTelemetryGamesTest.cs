@@ -26,7 +26,7 @@ using x360ce.Plugins;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The Wheel Telemetry Games plugin, embedded in x360ce and off until the person ticks it: a game plugin, whose tab on
+	/// The Wheel Telemetry Games plugin, embedded in x360ce: a game plugin, whose tab on
 	/// the Games tab shows, after x360ce's own settings of the game, for each game x360ce's telemetry data names, and whose
 	/// page is made from that game's rows alone; the data itself, x360ce's TelemetryFormats and TelemetryGames settings,
 	/// made from the [x360ce] tables; and GTA V's game script, which ScriptHookVDotNet compiles in the game, and which sends
@@ -220,7 +220,7 @@ namespace x360ce.Tests
 		{
 			LoadDefaults();
 			var manager = TestControllerDevice.Manager;
-			// The plugin is off by default, and the manager a test before this one left may keep it so.
+			// A test before this one may have left the plugin unticked in the manager.
 			if (!manager.GameTypes.Any(x => x.File.Name == PluginName))
 				manager.SetEnabled(PluginName, true);
 			var type = manager.GameTypes.SingleOrDefault(x => x.File.Name == PluginName);
@@ -631,8 +631,8 @@ namespace x360ce.Tests
 		#region The plugin in x360ce
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
-		[Description("A fresh options file loads the Wheel Telemetry Games plugin disabled, the other built-in plugins enabled; ticking it loads it, its games come from x360ce's data, and the choice is kept")]
-		public void A_fresh_options_file_loads_the_plugin_disabled()
+		[Description("A fresh options file loads the Wheel Telemetry Games plugin enabled, as every built-in plugin, its games from x360ce's data; unticking it unloads it, and the choice is kept")]
+		public void A_fresh_options_file_loads_the_plugin_enabled()
 		{
 			LoadDefaults();
 			var options = new Options();
@@ -641,22 +641,23 @@ namespace x360ce.Tests
 			{
 				manager.LoadEmbedded();
 				var file = manager.Files.Single(x => x.Name == PluginName);
-				Assert.IsFalse(file.Enabled, "The plugin starts ticked.");
-				Assert.AreEqual(PluginFileState.Disabled, file.State, file.Reason);
-				Assert.IsFalse(manager.GameTypes.Any(x => x.File == file), "A plugin off by default offers its Games tab page.");
-				Assert.IsTrue(manager.Files.Where(x => x.Name != PluginName).All(x => x.Enabled && x.State == PluginFileState.Loaded),
-					"The other built-in plugins load by default.");
-				Assert.IsTrue(PluginManager.IsOffByDefault(PluginName));
-
-				options.SetPluginEnabled(PluginName, true);
-				manager.SetEnabled(PluginName, true);
+				Assert.IsTrue(file.Enabled, "The plugin starts unticked.");
 				Assert.AreEqual(PluginFileState.Loaded, file.State, file.Reason);
 				Assert.IsNull(file.Reason, "A game plugin is something the plugin offers.");
+				Assert.IsTrue(manager.Files.All(x => x.Enabled && x.State == PluginFileState.Loaded),
+					"The built-in plugins load by default.");
+				Assert.IsFalse(PluginManager.IsOffByDefault(PluginName), "The plugin is off by default.");
 				var type = manager.GameTypes.Single(x => x.File == file);
 				Assert.AreEqual("Wheel Telemetry Games", type.Name);
 				CollectionAssert.AreEquivalent(SettingsManager.TelemetryGames.Items.Select(x => x.FileName).ToArray(), type.FileNames,
 					"The games are x360ce's, from its TelemetryGames data.");
 				Assert.IsNotNull(type.ControlType, "The plugin has no page.");
+
+				options.SetPluginEnabled(PluginName, false);
+				manager.SetEnabled(PluginName, false);
+				Assert.IsFalse(file.Enabled, "Unticking left the plugin ticked.");
+				Assert.AreEqual(PluginFileState.Disabled, file.State, file.Reason);
+				Assert.IsFalse(manager.GameTypes.Any(x => x.File == file), "An unticked plugin offers its Games tab page.");
 			}
 			var serializer = new XmlSerializer(typeof(Options));
 			var text = new StringWriter();
@@ -665,7 +666,7 @@ namespace x360ce.Tests
 			using (var restarted = new PluginManager(null, null, () => false, app, saved.IsPluginEnabled))
 			{
 				restarted.LoadEmbedded();
-				Assert.AreEqual(PluginFileState.Loaded, restarted.Files.Single(x => x.Name == PluginName).State, "The choice to tick it was not kept.");
+				Assert.AreEqual(PluginFileState.Disabled, restarted.Files.Single(x => x.Name == PluginName).State, "The choice to untick it was not kept.");
 			}
 		}
 

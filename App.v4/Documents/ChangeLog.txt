@@ -1,4 +1,4 @@
-﻿## [4.31.55.0] - 2026-11-25
+﻿## [4.31.57.0] - 2026-11-25
 
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Fixed: A controller's SDL page shows its row from x360ce's database.
@@ -24,9 +24,11 @@
 - Fixed: A hit no longer pulls the wheel's centre aside; it kicks the wheel away from the hit.
 - Fixed: The wheel range is sent again when a game comes to the front.
 - Fixed: Always on Top and other saved options apply as x360ce starts.
+- Fixed: In Game without gear changes, a gear change's rumble no longer gets through before the shift is seen.
 - Changed: A dragged chip keeps the hand cursor and turns red.
 - Changed: Adding a device switches its controller on and shows its XInput state.
-- Changed: A wheel's automatic preset plays a game's vibration as a shake (Periodic Sine), not a push that jerks the wheel.
+- Changed: Road and impact feel come from telemetry by default; the game's own rumble plays when no telemetry arrives.
+- Changed: While a chip is dragged over a mapping box, only that box stays lit.
 - Changed: The General tab's red, yellow and green, and the charts' red and green lines, are as bright in the dark theme as in the light.
 - Changed: The Mouse page's demo fills the space below the sticks, its mouse starts at the pad's centre, its stick is half the pad's size, and it is greyed out with the page's controls.
 - Changed: The Controller page's tool bar check boxes have a thin edge.
@@ -47,7 +49,7 @@
 - Added: Soft lock and RGB/RPM LED strip support on the Wheel tab.
 - Added: Enable or disable individual plugins on Options > Plugins.
 - Added: Virtual Car simulator in x360ce Test Game to test wheel telemetry.
-- Added: Wheel Telemetry Games helps a game send its telemetry to the wheel. Off by default.
+- Added: Wheel Telemetry Games helps a game send its telemetry to the wheel.
 - Added: A mapping box and its part of the picture light together: red recording, yellow pointed at, green moving.
 - Added: A recording shows the game's telemetry, how the wheel's spring force is made of it, and each range, centring and LED report with whether the wheel took it.
 - Added: "Road and impact feel from" and "Gear change" on the Wheel Telemetry tab quiet the game's rumble while the gear changes.

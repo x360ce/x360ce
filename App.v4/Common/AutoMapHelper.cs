@@ -61,7 +61,7 @@ namespace x360ce.App
 				if (setting != null)
 				{
 					note = "Auto Preset f" + note.Substring(1);
-					return ShakeOnWheel(ud, setting);
+					return setting;
 				}
 			}
 			if (ud.DeviceObjects == null)
@@ -72,26 +72,10 @@ namespace x360ce.App
 				note = "Auto Preset f" + recommended.Note.Substring(1);
 				var ps = recommended.Setting;
 				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
-				return ShakeOnWheel(ud, ps);
+				return ps;
 			}
 			note = "Auto Preset filled by x360ce’s own guess: neither x360ce’s nor SDL’s controller database has a row for this device.";
-			return ShakeOnWheel(ud, GetGuessedPreset(ud));
-		}
-
-		/// <summary>Gives a wheel's preset the Periodic Sine force type where it names none.</summary>
-		/// <remarks>
-		/// A game's vibration played as the Constant type on a wheel is a push along the steering axis: each short buzz, such
-		/// as a game sends at every gear change, jerks the wheel to one side. Played as a sine it is a shake about where the
-		/// wheel stands. Stored in the preset rather than assumed, so the Force Feedback page shows the type in use.
-		/// </remarks>
-		static PadSetting ShakeOnWheel(UserDevice ud, PadSetting ps)
-		{
-			if (ud.CapType != (int)DeviceType.Driving || !string.IsNullOrEmpty(ps.ForceType))
-				return ps;
-			ps.ForceType = ((int)ForceEffectType.PeriodicSine).ToString(System.Globalization.CultureInfo.InvariantCulture);
-			if (ps.PadSettingChecksum != Guid.Empty)
-				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
-			return ps;
+			return GetGuessedPreset(ud);
 		}
 
 		/// <summary>The mapping a plugin device's plugin recommends for it, translated for the device; null for any other device, or one whose plugin recommends none.</summary>

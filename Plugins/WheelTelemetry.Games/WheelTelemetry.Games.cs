@@ -3,10 +3,6 @@
 #:include WheelTelemetry.Games.Help.cs
 using System.ComponentModel;
 using System.Linq;
-using x360ce.Plugins;
-
-// Off until the person ticks it on the Options tab's Plugins page: it can write into a game's folder.
-[assembly: PluginOffByDefault]
 
 namespace x360ce.Plugins.Samples
 {

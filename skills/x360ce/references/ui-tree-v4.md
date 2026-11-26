@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.31.55.0, built 2026-11-25.
+Version 4.31.57.0, built 2026-11-26.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -364,7 +364,7 @@ not shown in this state of the program.
 [Value]     │   │       │   │   ├── Rumble understeer value                             # Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).
 [Slider]    │   │       │   │   ├── Steering lead 0..80                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
 [Value]     │   │       │   │   ├── Steering lead value                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
-[List]      │   │       │   │   ├── Road and impact feel from                           # Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both.
+[List]      │   │       │   │   ├── Road and impact feel from                           # Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both. Telemetry is recommended for a wheel; the game's rumble plays unchanged while no telemetry arrives.
 [Slider]    │   │       │   │   ├── Gear change 0..100                                  # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
 [Value]     │   │       │   │   └── Gear change value                                   # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
 [Section]   │   │       │   ├── Live telemetry                                          # Connection state and newest vehicle physics values received from the running game.
@@ -518,7 +518,7 @@ not shown in this state of the program.
 [Tab]       │           │           ├── HID Guardian (obsolete)                         # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Section]   │           │           │   ├── HID Guardian                                # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Text]      │           │           │   │   ├── HID Guardian state                      # Whether HID Guardian is still installed.
-[Button]    │           │           │   │   ├── Install                                 # Installs HID Guardian. Use HID Hide instead.
+[Button]    │           │           │   │   ├── Install (hidden)                        # Installs HID Guardian. Use HID Hide instead.
 [Button]    │           │           │   │   ├── Uninstall                               # Removes HID Guardian. Needs Administrator.
 [Button]    │           │           │   │   └── Refresh                                 # Checks HID Guardian again.
 [Value]     │           │           │   └── HID Guardian notes                          # Explains why HID Guardian is no longer recommended.

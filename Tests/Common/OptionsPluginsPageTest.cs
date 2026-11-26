@@ -126,14 +126,16 @@ namespace x360ce.Tests
 		[Description("A click on the Enabled box of a plugin off by default, as a person makes it, switches the plugin on and keeps it on")]
 		public void A_click_on_Enabled_switches_on_a_plugin_off_by_default()
 		{
-			const string name = "WheelTelemetry.Games";
+			const string name = "OffByDefaultPlugin";
+			var folder = Path.Combine(Path.GetTempPath(), "x360ce.OptionsPluginsPageTest." + Guid.NewGuid().ToString("N"));
 			var before = PluginManager.Current;
 			var options = x360ce.App.SettingsManager.Options;
 			try
 			{
+				WriteOffByDefaultPlugin(folder, name);
 				options.SetPluginEnabled(name, false);
 				options.DisabledPlugins.Remove(name);
-				using (var manager = new PluginManager(null, null, () => false, typeof(PluginManager).Assembly, options.IsPluginEnabled))
+				using (var manager = new PluginManager(folder, null, () => true, null, options.IsPluginEnabled))
 				{
 					// As the program has it: a change updates the AI skill's plugin documents and the plugins' MCP doors.
 					manager.Changed += (s, e) =>
@@ -141,7 +143,7 @@ namespace x360ce.Tests
 						PluginDocs.UpdateReferences(manager);
 						PluginMcpDoors.Apply();
 					};
-					manager.LoadEmbedded();
+					manager.Scan();
 					PluginManager.Current = manager;
 					Ui.OnUiThread(() =>
 					{
@@ -162,7 +164,7 @@ namespace x360ce.Tests
 							Assert.IsTrue(options.IsPluginEnabled(name), "The tick was not kept in the options.");
 							var file = manager.Files.Single(x => x.Name == name);
 							Assert.AreEqual(PluginFileState.Loaded, file.State, file.Reason);
-							Assert.IsTrue(manager.GameTypes.Any(x => x.File == file), "Its Games tab page is not offered.");
+							Assert.IsTrue(manager.DeviceTypes.Any(x => x.File == file), "Its device is not offered.");
 							rows = (OptionsPluginsUserControl.PluginRow[])grid.DataSource;
 							index = Array.FindIndex(rows, r => r.Name == name);
 							Assert.IsTrue(rows[index].Enabled, "The box shows the plugin unticked.");
@@ -177,6 +179,33 @@ namespace x360ce.Tests
 				options.SetPluginEnabled(name, false);
 				options.DisabledPlugins.Remove(name);
 				PluginManager.Current = before;
+				if (Directory.Exists(folder))
+					Directory.Delete(folder, true);
+			}
+		}
+
+		/// <summary>Writes a plugin off by default into the plugins folder, in a folder of its own: one kind of device, compiled here so no built-in plugin has to be off by default.</summary>
+		static void WriteOffByDefaultPlugin(string folder, string name)
+		{
+			var sub = Path.Combine(folder, name);
+			Directory.CreateDirectory(sub);
+			var source = "[assembly: x360ce.Plugins.PluginOffByDefault]\n"
+				+ "public class OffByDefaultPluginDevice : x360ce.Plugins.IPluginDevice\n{\n"
+				+ "	public string Name { get { return \"Off By Default Plugin Device\"; } }\n"
+				+ "	public System.Guid ProductGuid { get { return new System.Guid(\"0e4f5a2b-7c1d-4b8e-9f3a-6d2c1b0a9e87\"); } }\n"
+				+ "	public int AxisCount { get { return 2; } }\n"
+				+ "	public int SliderCount { get { return 0; } }\n"
+				+ "	public int PovCount { get { return 0; } }\n"
+				+ "	public int ButtonCount { get { return 1; } }\n"
+				+ "	public void Read(x360ce.Plugins.PluginState state) { }\n}\n";
+			using (var compiler = new Microsoft.CSharp.CSharpCodeProvider())
+			{
+				var parameters = new System.CodeDom.Compiler.CompilerParameters(new[] { "System.dll", typeof(x360ce.Plugins.IPluginDevice).Assembly.Location })
+				{
+					OutputAssembly = Path.Combine(sub, name + ".dll"),
+				};
+				var results = compiler.CompileAssemblyFromSource(parameters, source);
+				Assert.IsFalse(results.Errors.HasErrors, "The plugin off by default does not compile: " + string.Join("; ", results.Errors.Cast<System.CodeDom.Compiler.CompilerError>().Select(x => x.ErrorText)));
 			}
 		}
 

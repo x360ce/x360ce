@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.31.55.0",
-	"Built":"2026-11-25",
+	"Version":"4.31.57.0",
+	"Built":"2026-11-26",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -2301,7 +2301,7 @@
 												},
 												{
 													"Name":"Road and impact feel from",
-													"Description":"Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both.",
+													"Description":"Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both. Telemetry is recommended for a wheel; the game's rumble plays unchanged while no telemetry arrives.",
 													"Role":"List",
 													"Id":"RumbleSourceComboBox"
 												},
@@ -3323,7 +3323,8 @@
 																			"Name":"Install",
 																			"Description":"Installs HID Guardian. Use HID Hide instead.",
 																			"Role":"Button",
-																			"Id":"HidGuardianInstallButton"
+																			"Id":"HidGuardianInstallButton",
+																			"Hidden":true
 																		},
 																		{
 																			"Name":"Uninstall",

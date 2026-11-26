@@ -439,7 +439,8 @@ namespace x360ce.Plugins.Samples
 			};
 
 			var rumbleSourceDescription = "Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: "
-				+ "the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both.";
+				+ "the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both. "
+				+ "Telemetry is recommended for a wheel; the game's rumble plays unchanged while no telemetry arrives.";
 			var rumbleSourceLabel = new Label
 			{
 				Name = "RumbleSourceLabel",
@@ -457,7 +458,7 @@ namespace x360ce.Plugins.Samples
 			};
 			// In the order of WheelRumbleSource's values.
 			RumbleSourceComboBox.Items.AddRange(new object[] { "Game", "Game without gear changes", "Telemetry", "Both" });
-			RumbleSourceComboBox.SelectedIndex = (int)WheelRumbleSource.GameWithoutGearChanges;
+			RumbleSourceComboBox.SelectedIndex = (int)WheelRumbleSource.Telemetry;
 			RumbleSourceComboBox.SelectedIndexChanged += (s, e) =>
 			{
 				if (!_syncing && RumbleSourceComboBox.SelectedIndex >= 0)
@@ -867,7 +868,7 @@ namespace x360ce.Plugins.Samples
 				var rumbleSource = (int)_host.RumbleSource;
 				RumbleSourceComboBox.SelectedIndex = rumbleSource >= 0 && rumbleSource < RumbleSourceComboBox.Items.Count
 					? rumbleSource
-					: (int)WheelRumbleSource.GameWithoutGearChanges;
+					: (int)WheelRumbleSource.Telemetry;
 				GearChangeRumbleTrackBar.Value = ClampInt(_host.GearChangeRumble, 0, 100);
 				GearChangeRumbleValueTextBox.Text = GearChangeRumbleTrackBar.Value + " %";
 				UpdateControlStates();

@@ -15,20 +15,19 @@ Helps a game send its telemetry to x360ce's Wheel Telemetry plugin, so your whee
 
 **Read the warnings first.** A game's page starts with them. GTA V needs mods: play story mode only, switch BattlEye off in the game's launcher, and remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.
 
-1. On the Options tab, open the Plugins page.
-2. Tick Enabled on the WheelTelemetry.Games row. It is off until you tick it.
-3. On the Games tab, press Add... and choose the game's program file, or press Scan.
-4. Select the game in the list.
-5. Under the list, open the Wheel Telemetry Games tab. Its first page is named after the game.
-6. Read the warnings at the top of the page.
-7. Do the page's steps in order. For a mod, press Official page, download it, press Open game folder, and unzip it there. Its line says Found when it is there. x360ce does not include or download mods.
-8. Where the page has Install, press it. It writes only the files it lists into the game's folder. Remove deletes them.
-9. Leave Port at 37150, where x360ce's Wheel Telemetry plugin listens. A game set in its own menus is given the port in its steps.
-10. Open the controller tab your wheel is mapped to, such as Controller 1. Its device list shows the wheel, ticked.
-11. On its Wheel tab, tick Centering spring. x360ce uses a game's telemetry only while the centering spring is on, for a wheel with force feedback.
-12. On its Game Telemetry tab, on the Telemetry page, keep Enable live game telemetry ticked and Listen port at 37150, the port the game sends to. Both are so at first.
-13. Start the game and drive.
-14. On the Game Telemetry tab, Live Telemetry shows the format, the speed and the packets a second, such as Forza Data Out - 72 km/h (60 Hz). It says Waiting for game telemetry... until packets arrive.
+1. On the Options tab's Plugins page, keep Enabled ticked on the WheelTelemetry.Games row. It is so at first.
+2. On the Games tab, press Add... and choose the game's program file, or press Scan.
+3. Select the game in the list.
+4. Under the list, open the Wheel Telemetry Games tab. Its first page is named after the game.
+5. Read the warnings at the top of the page.
+6. Do the page's steps in order. For a mod, press Official page, download it, press Open game folder, and unzip it there. Its line says Found when it is there. x360ce does not include or download mods.
+7. Where the page has Install, press it. It writes only the files it lists into the game's folder. Remove deletes them.
+8. Leave Port at 37150, where x360ce's Wheel Telemetry plugin listens. A game set in its own menus is given the port in its steps.
+9. Open the controller tab your wheel is mapped to, such as Controller 1. Its device list shows the wheel, ticked.
+10. On its Wheel tab, tick Centering spring. x360ce uses a game's telemetry only while the centering spring is on, for a wheel with force feedback.
+11. On its Game Telemetry tab, on the Telemetry page, keep Enable live game telemetry ticked and Listen port at 37150, the port the game sends to. Both are so at first.
+12. Start the game and drive.
+13. On the Game Telemetry tab, Live Telemetry shows the format, the speed and the packets a second, such as Forza Data Out - 72 km/h (60 Hz). It says Waiting for game telemetry... until packets arrive.
 
 **When nothing arrives**
 
