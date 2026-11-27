@@ -630,6 +630,10 @@ namespace x360ce.App
 			Global.DHelper.BeginDeviceListRead();
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
+			// Once the games are read and before any game's page is made, each game plugin puts its games right, such as
+			// mods taken out of a game's folder so that it starts clean. An export describes the pages and changes nothing.
+			if (Plugins.PluginManager.Current != null && Program.ExportUiFolder == null)
+				Plugins.PluginManager.Current.StartGames(SettingsManager.UserGames.ItemsToArraySynchronized().Select(x => x.FullPath));
 			Main.InitGameToCustomizeComboBox();
 			CleanStatusTimer = new System.Timers.Timer
 			{

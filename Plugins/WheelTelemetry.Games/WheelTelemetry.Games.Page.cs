@@ -11,9 +11,10 @@ namespace x360ce.Plugins.Samples
 {
 	/// <summary>
 	/// A game's page on the Games tab, made from its catalogue entry alone: across the top, Open game folder, Install and
-	/// Remove for a game the plugin installs files into, and the port; on the left the game and the telemetry it sends, each
-	/// mod it needs with whether it is there and its official page, the installed files, and what x360ce must have on to
-	/// read the game; on the right its warnings, then the numbered steps.
+	/// Remove for a game the plugin installs files into, Play story mode for a game with mods, and the port; on the left the
+	/// game and the telemetry it sends, each mod it needs with whether it is there and its official page, the installed
+	/// files, where the mods are, and what x360ce must have on to read the game; on the right its warnings, then the
+	/// numbered steps.
 	/// </summary>
 	/// <remarks>
 	/// One layout for every game: nothing here is about one game. x360ce makes it with the plugin's instance for the game
@@ -34,7 +35,14 @@ namespace x360ce.Plugins.Samples
 			_folder = Path.GetDirectoryName(_gamePath) ?? "";
 			_data = plugin.TelemetryData;
 			_game = GameData.Find(_data, _gamePath);
-			_port = _game == null ? GameData.DefaultPort : GameInstaller.ReadPort(_data, _game, _folder);
+			if (_game != null)
+			{
+				_parkPaths = GameParking.Paths(_data, _game);
+				_modPaths = GameData.Mods(_data, _game).Select(x => x.DetectFile).ToArray();
+				_unavailable = StoryMode.Unavailable(_data, _game, _gamePath, plugin.DataFolder);
+				_parked = StoryMode.ParkingFolder(_data, _game, _gamePath, plugin.DataFolder);
+			}
+			_port = _game == null ? GameData.DefaultPort : GameInstaller.ReadPort(_data, _game, _folder, _parked);
 			Name = "WheelTelemetryGamesPage";
 			// The page's name on the plugin's tab: the game's.
 			Text = _game == null ? "Game" : _game.GameName;
@@ -61,6 +69,18 @@ namespace x360ce.Plugins.Samples
 		readonly Timer _timer;
 		int _port;
 
+		/// <summary>The files parked while the game is not played with its mods: the mods' files and the installed files.</summary>
+		readonly string[] _parkPaths = new string[0];
+
+		/// <summary>The mods' own files, of those parked.</summary>
+		readonly string[] _modPaths = new string[0];
+
+		/// <summary>Where the game's files are parked, or null for a game that has no mods or is not a Steam copy.</summary>
+		readonly string _parked;
+
+		/// <summary>Why Play story mode cannot be used, or null when it can.</summary>
+		readonly string _unavailable;
+
 		/// <summary>What Install or Remove last said went wrong, shown in place of the files' state until the next press.</summary>
 		string _problem;
 
@@ -81,6 +101,12 @@ namespace x360ce.Plugins.Samples
 		internal Label FilesValueLabel;
 		internal Button InstallButton;
 		internal Button RemoveButton;
+		internal Button PlayStoryModeButton;
+		internal Label StoryModeValueLabel;
+		ToolTip _toolTip;
+
+		/// <summary>True while the reason Play story mode is greyed shows under the mouse.</summary>
+		bool _reasonShown;
 		internal Label WheelTelemetryNoteLabel;
 		readonly List<Label> _steps = new List<Label>();
 		readonly List<Label> _mods = new List<Label>();
@@ -126,12 +152,24 @@ namespace x360ce.Plugins.Samples
 			var paths = string.Join(" and ", _files.Select(x => x.TargetPath));
 			if (_files.Length > 0)
 			{
-				InstallButton = NewButton(nameof(InstallButton), PluginText.T("WheelTelemetry.Games.Install", "Install"), "Writes " + paths + " into the game’s folder, and nothing else.");
-				InstallButton.Click += (s, e) => Change(() => GameInstaller.Install(_data, _game, _gamePath, _port));
+				InstallButton = NewButton(nameof(InstallButton), PluginText.T("WheelTelemetry.Games.Install", "Install"), "Writes " + paths + " into the game’s folder, and nothing else. In a Steam copy of a game with mods, x360ce then parks them with the mods.");
+				InstallButton.Click += (s, e) => Change(() => GameInstaller.Install(_data, _game, _gamePath, _port) ?? ParkNow());
 				RemoveButton = NewButton(nameof(RemoveButton), PluginText.T("WheelTelemetry.Games.Remove", "Remove"), "Deletes " + paths + " from the game’s folder, and nothing else.");
-				RemoveButton.Click += (s, e) => Change(() => GameInstaller.Remove(_data, _game, _gamePath));
+				RemoveButton.Click += (s, e) => Change(() => GameInstaller.Remove(_data, _game, _gamePath, _parked));
 				ActionsFlowLayoutPanel.Controls.Add(InstallButton);
 				ActionsFlowLayoutPanel.Controls.Add(RemoveButton);
+			}
+			var mods = GameData.Mods(_data, _game);
+			if (mods.Length > 0)
+			{
+				// Greyed, with the reason under the mouse, where x360ce cannot start the game itself.
+				PlayStoryModeButton = NewButton(nameof(PlayStoryModeButton), PluginText.T("WheelTelemetry.Games.PlayStoryMode", "Play story mode"), PlayDescription());
+				PlayStoryModeButton.Click += (s, e) => Play();
+				ActionsFlowLayoutPanel.Controls.Add(PlayStoryModeButton);
+				_toolTip = new ToolTip();
+				// A greyed button gets no mouse messages; the row it is on does, so the reason shows from there.
+				ActionsFlowLayoutPanel.MouseMove += (s, e) => ShowReason(e.Location);
+				ActionsFlowLayoutPanel.MouseLeave += (s, e) => ShowReason(null);
 			}
 			var portLabel = new Label { Name = "PortLabel", Text = PluginText.T("WheelTelemetry.Games.Port", "Port"), AutoSize = true, Anchor = AnchorStyles.Left };
 			PortUpDown = NewNumber(nameof(PortUpDown), "Port", "The UDP port on this computer the game sends to: x360ce’s Wheel Telemetry plugin listens on 37150.", 1, 65535);
@@ -163,7 +201,6 @@ namespace x360ce.Plugins.Samples
 				? _game.TelemetryFormatId + "."
 				: format.Name + (string.IsNullOrEmpty(format.Publisher) ? "" : ", from " + format.Publisher) + ".";
 			AddRow(GameTableLayoutPanel, "Format", PluginText.T("WheelTelemetry.Games.Telemetry", "Telemetry"), FormatValueLabel, spec == null ? null : NewLink("FormatLinkLabel", PluginText.T("WheelTelemetry.Games.Specification", "Specification"), spec.Url));
-			var mods = GameData.Mods(_data, _game);
 			for (var i = 0; i < mods.Length; i++)
 			{
 				var key = "Mod" + (i + 1);
@@ -176,6 +213,11 @@ namespace x360ce.Plugins.Samples
 			{
 				FilesValueLabel = NewValue(nameof(FilesValueLabel), "Installed files", "Whether " + paths + ", which Install writes, are in the game’s folder.");
 				AddRow(GameTableLayoutPanel, "Files", PluginText.T("WheelTelemetry.Games.Files", "Files"), FilesValueLabel, null);
+			}
+			if (PlayStoryModeButton != null)
+			{
+				StoryModeValueLabel = NewValue(nameof(StoryModeValueLabel), "Story mode", "Where the mods are, and what Play story mode does now.");
+				AddRow(GameTableLayoutPanel, "StoryMode", PluginText.T("WheelTelemetry.Games.StoryMode", "Story mode"), StoryModeValueLabel, null);
 			}
 			WheelTelemetryNoteLabel = NewValue(nameof(WheelTelemetryNoteLabel), "Wheel Telemetry", "What x360ce must have on to read the game’s telemetry.");
 			WheelTelemetryNoteLabel.Text = PluginText.T("WheelTelemetry.Games.WheelTelemetryNote", "x360ce reads it on the wheel’s controller tab: Game Telemetry, Enable live game telemetry ticked and Listen port the same as Port here; Wheel, Centering spring ticked.");
@@ -362,18 +404,22 @@ namespace x360ce.Plugins.Samples
 				for (var i = 0; i < _steps.Count; i++)
 					SetText(_steps[i], _stepRows[i].Text.Replace(GameData.PortText, port));
 				foreach (var mod in _mods)
-					SetText(mod, found ? GameData.ModState((ITelemetryGameMod)mod.Tag, _folder) : PluginText.T("WheelTelemetry.Games.NoGameFolder", "No game folder."));
+					SetText(mod, found ? GameData.ModState((ITelemetryGameMod)mod.Tag, _folder, _parked) : PluginText.T("WheelTelemetry.Games.NoGameFolder", "No game folder."));
 				SetNumber(PortUpDown, _port);
 				if (FilesValueLabel != null)
 				{
 					var installed = found ? GameInstaller.Installed(_data, _game, _folder) : 0;
+					var parked = found && _parked != null ? GameParking.Count(_parked, GameParking.InstalledPaths(_data, _game)) : 0;
 					SetText(FilesValueLabel, _problem ?? (!found ? PluginText.T("WheelTelemetry.Games.NoGameFolder", "No game folder.")
+						: installed == 0 && parked == _files.Length ? PluginText.T("WheelTelemetry.Games.FilesParked", "Installed, and parked out of the game’s folder.")
 						: installed == 0 ? PluginText.T("WheelTelemetry.Games.NotInstalled", "Not installed.")
 						: installed == _files.Length ? "Installed: " + string.Join(", ", _files.Select(x => x.TargetPath)) + ". They send to port " + port + "."
 						: PluginText.T("WheelTelemetry.Games.PartlyInstalled", "Partly installed. Press Install again.")));
 					InstallButton.Enabled = found;
-					RemoveButton.Enabled = found && installed > 0;
+					RemoveButton.Enabled = found && installed + parked > 0;
 				}
+				if (PlayStoryModeButton != null)
+					ShowStoryMode();
 			}
 			finally
 			{
@@ -416,6 +462,79 @@ namespace x360ce.Plugins.Samples
 			ShowState();
 		}
 
+		/// <summary>Play story mode's purpose, as the header shows it under the mouse.</summary>
+		string PlayDescription()
+		{
+			return "Puts the mods back into the game’s folder, starts the game through Steam with " + (_game.LaunchArguments ?? "") + ", and parks the mods again once the game has closed.";
+		}
+
+		/// <summary>Play story mode, greyed with the reason under the mouse when it cannot be used now, and where the mods are.</summary>
+		void ShowStoryMode()
+		{
+			var running = _unavailable == null && GameParking.IsRunning(_gamePath);
+			var reason = _unavailable ?? (running ? PluginText.T("WheelTelemetry.Games.GameRuns", "The game runs. Close it first.") : null);
+			// Also while x360ce waits for the game to start: pressed again, such as after Steam's question was cancelled, it asks Steam again.
+			PlayStoryModeButton.Enabled = reason == null;
+			var tip = reason ?? PlayDescription();
+			if (_toolTip.GetToolTip(PlayStoryModeButton) != tip)
+				_toolTip.SetToolTip(PlayStoryModeButton, tip);
+			var state = StoryMode.State(_gamePath);
+			string text;
+			if (_unavailable != null)
+				text = _unavailable;
+			else if (state != null)
+				text = state;
+			else if (GameParking.Count(_parked, _modPaths) > 0)
+				text = string.Format(PluginText.T("WheelTelemetry.Games.Parked", "The mods are parked in {0}. Play story mode puts them back, and parks them again once the game has closed."), _parked);
+			else if (GameParking.Count(_folder, _modPaths) > 0)
+				text = PluginText.T("WheelTelemetry.Games.InGameFolder", "The mods are in the game’s folder. x360ce parks them after Install, and each time it starts.");
+			else
+				text = PluginText.T("WheelTelemetry.Games.NoModsFound", "No mods found in the game’s folder.");
+			SetText(StoryModeValueLabel, text);
+		}
+
+		/// <summary>Shows why Play story mode is greyed while the mouse is over it, and hides it once the mouse has left.</summary>
+		/// <param name="mouse">Where the mouse is on the row of actions, or null when it has left the row.</param>
+		void ShowReason(Point? mouse)
+		{
+			var over = mouse.HasValue && !PlayStoryModeButton.Enabled && PlayStoryModeButton.Bounds.Contains(mouse.Value);
+			if (over == _reasonShown)
+				return;
+			_reasonShown = over;
+			if (over)
+				_toolTip.Show(_toolTip.GetToolTip(PlayStoryModeButton), ActionsFlowLayoutPanel, mouse.Value.X, PlayStoryModeButton.Bottom);
+			else
+				_toolTip.Hide(ActionsFlowLayoutPanel);
+		}
+
+		/// <summary>Parks the game's files at once, after Install, unless the game runs or is played with them now.</summary>
+		/// <returns>Null when parked or nothing to do, or the files Windows did not let x360ce move.</returns>
+		string ParkNow()
+		{
+			if (_parked == null || StoryMode.IsWaiting(_gamePath) || GameParking.IsRunning(_gamePath))
+				return null;
+			StoryMode.Park(_gamePath, _parkPaths, _parked);
+			return StoryMode.State(_gamePath);
+		}
+
+		/// <summary>Plays story mode: the mods back, the installed files written with the port on the page, and the game started through Steam.</summary>
+		void Play()
+		{
+			_problem = null;
+			var url = SteamGame.RunUrl(SteamGame.AppId(_gamePath), _game.LaunchArguments);
+			StoryMode.Play(_gamePath, _parkPaths, _parked, () =>
+			{
+				if (_files.Length > 0 && GameInstaller.Installed(_data, _game, _folder) > 0 && GameInstaller.ReadPort(_data, _game, _folder, null) != _port)
+				{
+					var problem = GameInstaller.Install(_data, _game, _gamePath, _port);
+					if (problem != null)
+						throw new InvalidOperationException(problem);
+				}
+				Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+			});
+			ShowState();
+		}
+
 		/// <summary>Takes the port: the steps show it, and files already installed are written again with it.</summary>
 		void SetPort(int port)
 		{
@@ -434,6 +553,8 @@ namespace x360ce.Plugins.Samples
 		{
 			if (disposing && _timer != null)
 				_timer.Dispose();
+			if (disposing && _toolTip != null)
+				_toolTip.Dispose();
 			base.Dispose(disposing);
 		}
 	}

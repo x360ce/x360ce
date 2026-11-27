@@ -63,6 +63,8 @@ namespace x360ce.Plugins
 		string TelemetryFormatId { get; }
 		/// <summary>The edition this program file is, such as Legacy, or empty.</summary>
 		string Edition { get; }
+		/// <summary>What the game is started with so that its mods load, such as -nobattleye for GTA V, or empty.</summary>
+		string LaunchArguments { get; }
 		string Comment { get; }
 		bool IsEnabled { get; }
 	}

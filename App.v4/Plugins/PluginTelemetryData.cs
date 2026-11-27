@@ -66,6 +66,7 @@ namespace x360ce.App.Plugins
 			public string GameName { get { return _item.GameName; } }
 			public string TelemetryFormatId { get { return _item.TelemetryFormatId; } }
 			public string Edition { get { return _item.Edition; } }
+			public string LaunchArguments { get { return _item.LaunchArguments; } }
 			public string Comment { get { return _item.Comment; } }
 			public bool IsEnabled { get { return _item.IsEnabled; } }
 		}

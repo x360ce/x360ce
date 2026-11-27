@@ -14,14 +14,14 @@
       <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
       <StepOrder>2</StepOrder>
       <IsWarning>true</IsWarning>
-      <Text>Script Hook V works only with BattlEye switched off in the game’s launcher.</Text>
+      <Text>Play story mode starts the game through Steam with BattlEye off. Start GTA Online from Steam as usual: x360ce takes the mods out of the game’s folder first.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>5c692839-dc98-517e-a15c-f8d9c5969253</TelemetryGameStepId>
       <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
       <StepOrder>3</StepOrder>
       <IsWarning>true</IsWarning>
-      <Text>Remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.</Text>
+      <Text>Rockstar can ban a player for mods, and x360ce cannot promise it will not. In a copy from another launcher, switch BattlEye off there, and remove the mods before you play GTA Online.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>ceb3f386-6328-5fd3-bc81-543df18cf0ab</TelemetryGameStepId>
@@ -45,25 +45,18 @@
       <Text>Press Open game folder. Unzip there ScriptHookV.dll and dinput8.dll from Script Hook V, and the files of Community Script Hook V .NET 3.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
-      <TelemetryGameStepId>a61c15d9-e483-5fcf-981d-6c78c4d083a5</TelemetryGameStepId>
+      <TelemetryGameStepId>1faa5de3-4d57-5e98-9c10-99439b9892c4</TelemetryGameStepId>
       <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
       <StepOrder>4</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Switch BattlEye off in the game’s launcher.</Text>
-    </TelemetryGameStep>
-    <TelemetryGameStep>
-      <TelemetryGameStepId>1faa5de3-4d57-5e98-9c10-99439b9892c4</TelemetryGameStepId>
-      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
-      <StepOrder>5</StepOrder>
-      <IsWarning>false</IsWarning>
-      <Text>Press Install. It writes the telemetry script and its settings into the game’s scripts folder, and nothing else.</Text>
+      <Text>Press Install. It writes the telemetry script and its settings into the game’s scripts folder. In a Steam copy, x360ce then parks the mods and the script out of the game’s folder.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>536f3906-cdee-5bb6-b468-9723ac9eb2aa</TelemetryGameStepId>
       <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
-      <StepOrder>6</StepOrder>
+      <StepOrder>5</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Start the game and play story mode. The game sends its telemetry to port {Port}.</Text>
+      <Text>Press Play story mode. When Steam asks whether to launch the game with custom arguments, press Continue. The game sends its telemetry to port {Port}.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>75206964-a8c0-552a-b0db-195162e6fc5c</TelemetryGameStepId>
@@ -77,14 +70,14 @@
       <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
       <StepOrder>2</StepOrder>
       <IsWarning>true</IsWarning>
-      <Text>Script Hook V works only with BattlEye switched off in the game’s launcher.</Text>
+      <Text>Play story mode starts the game through Steam with BattlEye off. Start GTA Online from Steam as usual: x360ce takes the mods out of the game’s folder first.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>2d8e2691-273e-5325-b645-b7bbef68c1b5</TelemetryGameStepId>
       <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
       <StepOrder>3</StepOrder>
       <IsWarning>true</IsWarning>
-      <Text>Remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.</Text>
+      <Text>Rockstar can ban a player for mods, and x360ce cannot promise it will not. In a copy from another launcher, switch BattlEye off there, and remove the mods before you play GTA Online.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>ad45f335-b111-5c62-aacc-631eb32acd49</TelemetryGameStepId>
@@ -108,25 +101,18 @@
       <Text>Press Open game folder. Unzip there ScriptHookV.dll and xinput1_4.dll from Script Hook V, and the files of Script Hook V .NET Enhanced.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
-      <TelemetryGameStepId>bf897b9b-8e6a-5a2a-a6bb-83a71dc84f18</TelemetryGameStepId>
+      <TelemetryGameStepId>5f7e932d-ebc8-541e-9ccb-510f53cd45c2</TelemetryGameStepId>
       <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
       <StepOrder>4</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Switch BattlEye off in the game’s launcher.</Text>
-    </TelemetryGameStep>
-    <TelemetryGameStep>
-      <TelemetryGameStepId>5f7e932d-ebc8-541e-9ccb-510f53cd45c2</TelemetryGameStepId>
-      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
-      <StepOrder>5</StepOrder>
-      <IsWarning>false</IsWarning>
-      <Text>Press Install. It writes the telemetry script and its settings into the game’s scripts folder, and nothing else.</Text>
+      <Text>Press Install. It writes the telemetry script and its settings into the game’s scripts folder. In a Steam copy, x360ce then parks the mods and the script out of the game’s folder.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>68f09167-8f8e-54ca-9a62-0b23306c24f2</TelemetryGameStepId>
       <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
-      <StepOrder>6</StepOrder>
+      <StepOrder>5</StepOrder>
       <IsWarning>false</IsWarning>
-      <Text>Start the game and play story mode. The game sends its telemetry to port {Port}.</Text>
+      <Text>Press Play story mode. When Steam asks whether to launch the game with custom arguments, press Continue. The game sends its telemetry to port {Port}.</Text>
     </TelemetryGameStep>
     <TelemetryGameStep>
       <TelemetryGameStepId>7d29df27-76ff-55b1-9b97-563b61b36948</TelemetryGameStepId>

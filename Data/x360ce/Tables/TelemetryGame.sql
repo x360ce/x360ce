@@ -5,6 +5,7 @@ CREATE TABLE [x360ce].[TelemetryGame] (
     [GameName]          NVARCHAR (256)   CONSTRAINT [DF_TelemetryGame_GameName] DEFAULT ('') NOT NULL,
     [TelemetryFormatId] NVARCHAR (32)    NOT NULL,
     [Edition]           NVARCHAR (64)    CONSTRAINT [DF_TelemetryGame_Edition] DEFAULT ('') NOT NULL,
+    [LaunchArguments]   NVARCHAR (256)   CONSTRAINT [DF_TelemetryGame_LaunchArguments] DEFAULT ('') NOT NULL,
     [Comment]           NVARCHAR (1024)  CONSTRAINT [DF_TelemetryGame_Comment] DEFAULT ('') NOT NULL,
     [IsEnabled]         BIT              CONSTRAINT [DF_TelemetryGame_IsEnabled] DEFAULT ((1)) NOT NULL,
     [DateCreated]       DATETIME         CONSTRAINT [DF_TelemetryGame_DateCreated] DEFAULT (getdate()) NOT NULL,

@@ -1,9 +1,10 @@
-// @under-test: Engine/JocysCom/Mcp/McpUiTools.cs, Engine/JocysCom/Mcp/McpUiTools.Forms.cs, Engine/JocysCom/Mcp/McpServer.cs
+// @under-test: Engine/JocysCom/Mcp/McpUiTools.cs, Engine/JocysCom/Mcp/McpUiTools.Forms.cs, Engine/JocysCom/Mcp/McpServer.cs, Engine/JocysCom/Controls/UiTree/UiCallout.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -729,6 +730,103 @@ namespace x360ce.Tests
 					Assert.AreEqual("Nothing is pointed at.", McpUiTools.UiHide());
 					StringAssert.Contains(McpUiTools.UiScript("show Go | Here | 0\nhide"), "2 step(s)");
 					Assert.IsNull(UiCallout.Target, "The script's hide step left the frame.");
+				}
+				finally
+				{
+					UiCallout.Hide();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("The balloon goes below, above, right or left of the frame, the first side where it stays inside the window and hides nothing; else where it hides the least")]
+		public void The_balloon_takes_the_first_side_that_hides_nothing()
+		{
+			var bounds = new Rectangle(0, 0, 1000, 800);
+			var around = new Rectangle(400, 300, 100, 30);
+			var size = new Size(200, 40);
+			int side;
+			var below = UiCallout.PlaceBalloon(around, size, bounds, new Rectangle[0], out side);
+			Assert.AreEqual(0, side, "Nothing in the way: below.");
+			Assert.AreEqual(new Rectangle(400, 342, 200, 40), below);
+			var under = new Rectangle(395, 335, 110, 60);
+			UiCallout.PlaceBalloon(around, size, bounds, new[] { under }, out side);
+			Assert.AreEqual(1, side, "Words below: above.");
+			var over = new Rectangle(380, 230, 300, 60);
+			var right = UiCallout.PlaceBalloon(around, size, bounds, new[] { under, over }, out side);
+			Assert.AreEqual(2, side, "Words below and above: right.");
+			Assert.AreEqual(new Rectangle(512, 300, 200, 40), right);
+			UiCallout.PlaceBalloon(around, size, bounds, new[] { under, over, new Rectangle(505, 290, 300, 60) }, out side);
+			Assert.AreEqual(3, side, "Words below, above and right: left.");
+			// Words on every side: the side that hides the least, here a sliver above.
+			UiCallout.PlaceBalloon(around, size, bounds, new[] { under, new Rectangle(380, 230, 300, 20), new Rectangle(505, 290, 300, 60), new Rectangle(150, 290, 250, 60) }, out side);
+			Assert.AreEqual(1, side, "Not the side that hides the least.");
+			// No room below inside the window, and nothing in the way above.
+			UiCallout.PlaceBalloon(new Rectangle(400, 760, 100, 30), size, bounds, new Rectangle[0], out side);
+			Assert.AreEqual(1, side, "The balloon left the window below.");
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Pointed at in a window, the balloon leaves the words under the element in sight and stays inside the window")]
+		public void The_balloon_leaves_the_words_beside_the_element_in_sight()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				form.ClientSize = new Size(600, 400);
+				var go = new Button { Name = "Go", Text = "Go", Location = new Point(40, 40), Size = new Size(80, 24) };
+				var words = new Label { Name = "Words", Text = "Read these words first.", Location = new Point(40, 70), Size = new Size(80, 60) };
+				form.Controls.Add(go);
+				form.Controls.Add(words);
+				form.Show();
+				Application.DoEvents();
+				try
+				{
+					Assert.IsNull(McpUiTools.UiShow("Go", "1. Press Go.", 0));
+					var balloon = UiCallout.Balloon;
+					Assert.IsFalse(balloon.IntersectsWith(form.RectangleToScreen(words.Bounds)), "The balloon hides the words below the button.");
+					Assert.IsTrue(form.RectangleToScreen(form.ClientRectangle).Contains(balloon), "The balloon left the window.");
+				}
+				finally
+				{
+					UiCallout.Hide();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A button on a tool bar and a row of a list are framed by themselves, not by the whole bar or list, and stay framed until taken away")]
+		public void A_tool_bar_button_and_a_list_row_are_framed_by_themselves()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var bar = new ToolStrip { Name = "Bar" };
+				var scan = new ToolStripButton("Scan") { Name = "Scan" };
+				var add = new ToolStripButton("Add...") { Name = "Add" };
+				bar.Items.Add(scan);
+				bar.Items.Add(add);
+				var grid = new DataGridView { Name = "Grid", Dock = DockStyle.Bottom, AllowUserToAddRows = false };
+				grid.Columns.Add("File", "File");
+				grid.Rows.Add("x360ce.exe");
+				grid.Rows.Add("GTA5_Enhanced.exe");
+				form.Controls.Add(grid);
+				form.Controls.Add(bar);
+				form.Show();
+				Application.DoEvents();
+				try
+				{
+					Assert.IsNull(McpUiTools.UiShow("Bar/Add", "2. Press Add...", 0));
+					Assert.AreSame(add, UiCallout.Target, "The frame is not around the button.");
+					Assert.AreEqual(bar.RectangleToScreen(add.Bounds), UiCallout.Around, "The button is not framed by itself.");
+					var until = DateTime.Now.AddMilliseconds(500);
+					while (DateTime.Now < until)
+					{
+						Application.DoEvents();
+						Thread.Sleep(20);
+					}
+					Assert.AreSame(add, UiCallout.Target, "The frame round the button went before anyone acted.");
+					Assert.IsNull(McpUiTools.UiShow("Grid/rows/1", "4. Select the game", 0));
+					Assert.AreSame(grid.Rows[1], UiCallout.Target, "The frame is not around the row.");
+					Assert.AreEqual(grid.RectangleToScreen(grid.GetRowDisplayRectangle(1, true)), UiCallout.Around, "The row is not framed by itself.");
 				}
 				finally
 				{

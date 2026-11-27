@@ -27,6 +27,9 @@ namespace x360ce.App.Plugins
 		/// <summary>The folder name under the settings folder that plugins are loaded from.</summary>
 		public const string FolderName = "Plugins";
 
+		/// <summary>The folder name under the settings folder that holds each plugin's own files, apart from where plugins are loaded from.</summary>
+		public const string DataFolderName = "PluginData";
+
 		/// <summary>The start of the name of every plugin embedded in this program.</summary>
 		public const string EmbeddedPrefix = "x360ce.App.Resources.Plugins.";
 
@@ -107,6 +110,15 @@ namespace x360ce.App.Plugins
 		/// <summary>Every game plugin the loaded plugins add, faulted ones included.</summary>
 		public PluginGameType[] GameTypes { get { return _gameTypes; } }
 		volatile PluginGameType[] _gameTypes = new PluginGameType[0];
+
+		/// <summary>Lets every loaded game plugin put right the games on the Games tab it is for, once at start, on the interface thread.</summary>
+		/// <param name="gamePaths">The full path of each game's file on the Games tab.</param>
+		public void StartGames(IEnumerable<string> gamePaths)
+		{
+			var paths = gamePaths.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+			foreach (var type in _gameTypes)
+				type.Start(paths);
+		}
 
 		/// <summary>The kind of device with this product GUID, or null when no loaded plugin adds it.</summary>
 		public PluginDeviceType FindDeviceType(Guid productGuid)
@@ -777,12 +789,41 @@ namespace x360ce.App.Plugins
 			FaultReason = inner.GetType().Name + ": " + inner.Message;
 		}
 
-		/// <summary>A new instance of the plugin, given x360ce's telemetry data before anything else.</summary>
+		/// <summary>A new instance of the plugin, given x360ce's telemetry data before anything else, then its own folder.</summary>
 		public IPluginGame NewInstance()
 		{
 			var game = (IPluginGame)Activator.CreateInstance(Type);
 			game.TelemetryData = PluginTelemetryData.Current;
+			var start = game as IPluginGameStart;
+			var manager = PluginManager.Current;
+			if (start != null && manager != null && !string.IsNullOrEmpty(manager.Folder))
+				start.DataFolder = Path.Combine(Path.GetDirectoryName(manager.Folder.TrimEnd('\\')), PluginManager.DataFolderName, File.Name);
 			return game;
+		}
+
+		/// <summary>Lets the plugin put each game it is for right as x360ce starts, when it implements <see cref="IPluginGameStart"/>.</summary>
+		/// <remarks>An exception switches the plugin off until x360ce starts again, as one from any other member does.</remarks>
+		public void Start(IEnumerable<string> gamePaths)
+		{
+			if (Faulted || !typeof(IPluginGameStart).IsAssignableFrom(Type))
+				return;
+			foreach (var path in gamePaths.Where(x => IsFor(Path.GetFileName(x ?? ""))))
+			{
+				try
+				{
+					var game = NewInstance();
+					game.GamePath = path;
+					((IPluginGameStart)game).Start();
+					var disposable = game as IDisposable;
+					if (disposable != null)
+						disposable.Dispose();
+				}
+				catch (Exception ex)
+				{
+					Fault(ex);
+					return;
+				}
+			}
 		}
 	}
 

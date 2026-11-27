@@ -209,12 +209,15 @@ namespace JocysCom.ClassLibrary.Mcp
 			return text;
 		}
 
-		/// <summary>Frames an element for the person, or says it is hidden: a frame around nothing on screen points at nothing.</summary>
+		/// <summary>
+		/// Frames an element for the person, or says it is hidden: a frame around nothing on screen points at nothing. An entry
+		/// on a tool bar, or a row or a cell of a list, is framed by itself, so a numbered guide marks the button it names.
+		/// </summary>
 		static void PointAt(object element, string text, int seconds)
 		{
 			var pointed = false;
 			PointAtWpf(element, text, seconds, ref pointed);
-			if (!pointed)
+			if (!pointed && !UiCallout.ShowPart(element, text, seconds))
 				PointAt(UiTreeWalker.ControlOf(element), text, seconds);
 		}
 

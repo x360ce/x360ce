@@ -295,12 +295,14 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
-			TelemetryFormats.Load();
-			TelemetryFormatSpecs.Load();
-			TelemetryGames.Load();
-			TelemetryGameSteps.Load();
-			TelemetryGameMods.Load();
-			TelemetryGameFiles.Load();
+			// x360ce's own data, which no one edits: read from the copy this program carries each time, so a new version's games,
+			// steps and columns reach a person who ran an older one, whose settings folder may hold an older copy.
+			TelemetryFormats.ResetToDefault();
+			TelemetryFormatSpecs.ResetToDefault();
+			TelemetryGames.ResetToDefault();
+			TelemetryGameSteps.ResetToDefault();
+			TelemetryGameMods.ResetToDefault();
+			TelemetryGameFiles.ResetToDefault();
 			PadSettings.ValidateData = PadSettings_ValidateData;
 			PadSettings.Load();
 			UserDevices.Load();

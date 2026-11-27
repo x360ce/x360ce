@@ -9,6 +9,7 @@
       <GameName>GTA V</GameName>
       <TelemetryFormatId>Forza</TelemetryFormatId>
       <Edition>Legacy</Edition>
+      <LaunchArguments>-nobattleye</LaunchArguments>
       <Comment></Comment>
       <IsEnabled>true</IsEnabled>
       <DateCreated>2026-11-22T00:00:00</DateCreated>
@@ -21,6 +22,7 @@
       <GameName>GTA V</GameName>
       <TelemetryFormatId>Forza</TelemetryFormatId>
       <Edition>Enhanced</Edition>
+      <LaunchArguments>-nobattleye</LaunchArguments>
       <Comment></Comment>
       <IsEnabled>true</IsEnabled>
       <DateCreated>2026-11-22T00:00:00</DateCreated>
@@ -33,6 +35,7 @@
       <GameName>Forza Horizon 6</GameName>
       <TelemetryFormatId>Forza</TelemetryFormatId>
       <Edition></Edition>
+      <LaunchArguments></LaunchArguments>
       <Comment></Comment>
       <IsEnabled>true</IsEnabled>
       <DateCreated>2026-11-22T00:00:00</DateCreated>
@@ -45,6 +48,7 @@
       <GameName>F1 25</GameName>
       <TelemetryFormatId>EaF1</TelemetryFormatId>
       <Edition></Edition>
+      <LaunchArguments></LaunchArguments>
       <Comment></Comment>
       <IsEnabled>true</IsEnabled>
       <DateCreated>2026-11-22T00:00:00</DateCreated>

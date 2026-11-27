@@ -74,6 +74,16 @@ namespace x360ce.Engine.Data
 		}
 		private string _Edition;
 
+		/// <summary>Launch Arguments</summary>
+		[Required(AllowEmptyStrings = true)]
+		[DataMember]
+		[StringLength(256)]
+		public string LaunchArguments {
+			get => _LaunchArguments;
+			set => SetProperty(ref _LaunchArguments, value);
+		}
+		private string _LaunchArguments;
+
 		/// <summary>Comment</summary>
 		[Required(AllowEmptyStrings = true)]
 		[DataMember]

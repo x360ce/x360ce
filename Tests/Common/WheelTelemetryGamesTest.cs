@@ -1,4 +1,4 @@
-// @under-test: Plugins/WheelTelemetry.Games/WheelTelemetry.Games.cs, Plugins/WheelTelemetry.Games/WheelTelemetry.Games.Data.cs, Plugins/WheelTelemetry.Games/WheelTelemetry.Games.Page.cs, Plugins/WheelTelemetry.Games/WheelTelemetry.Games.Help.cs, Plugins/WheelTelemetry.Games/Resources/x360ce.Telemetry.3.cs, PluginApi/IPluginGame.cs, PluginApi/IPluginTelemetryData.cs, App.v4/Plugins/PluginManager.cs, App.v4/Plugins/PluginTelemetryData.cs, App.v4/Common/SettingsManager.cs, App.v4/Controls/PadTabPages/GamesControl.cs, App.v4/Resources/x360ce.Telemetry*.xml, Data/Change Scripts/20261122-01-Telemetry.sql, docs/Help.Plugins.md
+// @under-test: Plugins/WheelTelemetry.Games/WheelTelemetry.Games.cs, Plugins/WheelTelemetry.Games/WheelTelemetry.Games.Data.cs, Plugins/WheelTelemetry.Games/WheelTelemetry.Games.Page.cs, Plugins/WheelTelemetry.Games/WheelTelemetry.Games.Help.cs, Plugins/WheelTelemetry.Games/Resources/x360ce.Telemetry.3.cs, PluginApi/IPluginGame.cs, PluginApi/IPluginGameStart.cs, PluginApi/IPluginTelemetryData.cs, App.v4/Plugins/PluginManager.cs, App.v4/Plugins/PluginTelemetryData.cs, App.v4/Common/SettingsManager.cs, App.v4/Controls/PadTabPages/GamesControl.cs, App.v4/Resources/x360ce.Telemetry*.xml, Data/Change Scripts/20261122-01-Telemetry.sql, Data/Change Scripts/20261127-01-TelemetryGameLaunchArguments.sql, App.v4/MainForm.cs, docs/Help.Plugins.md
 // @area: plugins   @layer: unit
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Runtime;
@@ -176,13 +176,16 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins")]
-		[Description("The change script that makes the [x360ce] tables runs twice against the local x360ce database without an error")]
+		[Description("The change scripts that make the [x360ce] tables and add their columns run twice, in order, against the local x360ce database without an error")]
 		public void The_change_script_runs_twice()
 		{
-			var script = Path.Combine(Ui.RepoRoot.FullName, "Data", "Change Scripts", "20261122-01-Telemetry.sql");
-			Assert.IsTrue(File.Exists(script), script);
-			for (var i = 1; i <= 2; i++)
+			var scripts = new[] { "20261122-01-Telemetry.sql", "20261127-01-TelemetryGameLaunchArguments.sql" }
+				.Select(x => Path.Combine(Ui.RepoRoot.FullName, "Data", "Change Scripts", x)).ToArray();
+			foreach (var script in scripts)
+				Assert.IsTrue(File.Exists(script), script);
+			foreach (var script in scripts.Concat(scripts))
 			{
+				var i = Path.GetFileName(script);
 				var start = new ProcessStartInfo("sqlcmd", "-S localhost -E -C -f 65001 -d x360ce -b -l 5 -i \"" + script + "\"")
 				{
 					UseShellExecute = false,
@@ -608,9 +611,9 @@ namespace x360ce.Tests
 				Assert.AreEqual(ScriptSource(), File.ReadAllText(script), "The script installed is the one the plugin carries.");
 				CollectionAssert.AreEqual(new[] { "Port=5300", "Rate=60" }, File.ReadAllLines(settings).Where(x => !x.StartsWith(";")).ToArray(),
 					"The settings are the port and the rate, the keys the script reads.");
-				Assert.AreEqual(5300, (int)Internal("GameInstaller").GetMethod("ReadPort", Any).Invoke(null, new object[] { PluginTelemetryData.Current, Find(exe), game }),
+				Assert.AreEqual(5300, (int)Internal("GameInstaller").GetMethod("ReadPort", Any).Invoke(null, new object[] { PluginTelemetryData.Current, Find(exe), game, null }),
 					"The page reads the port back from the installed settings.");
-				Assert.IsNull(Installer("Remove", exe), "The files were not removed.");
+				Assert.IsNull(Installer("Remove", exe, (string)null), "The files were not removed.");
 				CollectionAssert.AreEquivalent(before, Files(game), "Remove takes away the game's files, and nothing else.");
 
 				// Forza Horizon 6 is set in its own menus: nothing to write.
@@ -623,6 +626,177 @@ namespace x360ce.Tests
 			finally
 			{
 				Directory.Delete(game, true);
+			}
+		}
+
+		/// <summary>The files GTA V Enhanced's rows name: its mods' files, then the files Install writes.</summary>
+		static readonly string[] EnhancedParkPaths = { "ScriptHookV.dll", "xinput1_4.dll", "ScriptHookVDotNet.asi", "scripts\\" + ScriptFileName, "scripts\\" + SettingsFileName };
+
+		/// <summary>A Steam library in a temporary folder, with Steam's record of each game installed in it, as Steam writes one.</summary>
+		/// <returns>The library's folder; each game is in steamapps\common\{folder}.</returns>
+		static string NewSteamLibrary(params Tuple<int, string, string[]>[] games)
+		{
+			var library = Path.Combine(Path.GetTempPath(), "x360ce.WheelTelemetrySteam." + Guid.NewGuid().ToString("N"));
+			foreach (var game in games)
+			{
+				var folder = Path.Combine(library, "steamapps", "common", game.Item2);
+				Directory.CreateDirectory(folder);
+				foreach (var file in game.Item3)
+				{
+					var path = Path.Combine(folder, file);
+					Directory.CreateDirectory(Path.GetDirectoryName(path));
+					File.WriteAllText(path, file);
+				}
+				File.WriteAllText(Path.Combine(library, "steamapps", "appmanifest_" + game.Item1 + ".acf"),
+					"\"AppState\"\n{\n\t\"appid\"\t\t\"" + game.Item1 + "\"\n\t\"name\"\t\t\"Grand Theft Auto V\"\n\t\"installdir\"\t\t\"" + game.Item2 + "\"\n}\n");
+			}
+			return library;
+		}
+
+		static string[] Park(string method, string[] paths, string game, string parked)
+		{
+			return (string[])Internal("GameParking").GetMethod(method, Any).Invoke(null, new object[] { paths, game, parked });
+		}
+
+		[TestMethod, TestCategory("plugins")]
+		[Description("The files parked are the mods' files the game's rows name and the files Install writes; parking and unparking move only those, keep their contents, keep a newer copy in the game's folder, and leave a file Windows holds open where it is, until it is moved again")]
+		public void Parking_moves_only_the_named_files_and_loses_none()
+		{
+			Type();
+			var game = NewGameFolder("GTA5_Enhanced.exe");
+			var parked = Path.Combine(Path.GetTempPath(), "x360ce.WheelTelemetryParked." + Guid.NewGuid().ToString("N"));
+			try
+			{
+				var exe = Path.Combine(game, "GTA5_Enhanced.exe");
+				var paths = (string[])Internal("GameParking").GetMethod("Paths", Any).Invoke(null, new object[] { PluginTelemetryData.Current, Find(exe) });
+				CollectionAssert.AreEqual(EnhancedParkPaths, paths, "The files parked are the mods' files, loader included, and the installed files.");
+				// A mod's other files, which the data does not name, and another mod's script stay.
+				var others = new[] { "ScriptHookVDotNet3.dll", "ScriptHookVDotNet.ini", "scripts\\Other.cs" };
+				foreach (var file in paths.Concat(others))
+				{
+					Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(game, file)));
+					File.WriteAllText(Path.Combine(game, file), "game " + file);
+				}
+				CollectionAssert.AreEqual(new string[0], Park("Park", paths, game, parked), "A file was not parked.");
+				foreach (var file in paths)
+				{
+					Assert.IsFalse(File.Exists(Path.Combine(game, file)), file + " is still in the game's folder.");
+					Assert.AreEqual("game " + file, File.ReadAllText(Path.Combine(parked, file)), file + " was not parked whole.");
+				}
+				foreach (var file in others.Concat(new[] { "GTA5_Enhanced.exe" }))
+					Assert.IsTrue(File.Exists(Path.Combine(game, file)), file + ", which the data does not name, was moved.");
+
+				// A newer copy put into the game's folder while the old one is parked stays on unpark, and replaces it on the next park.
+				File.WriteAllText(Path.Combine(game, "ScriptHookV.dll"), "newer");
+				CollectionAssert.AreEqual(new string[0], Park("Unpark", paths, game, parked), "A file was not put back.");
+				Assert.AreEqual("newer", File.ReadAllText(Path.Combine(game, "ScriptHookV.dll")), "Unpark replaced the newer copy.");
+				Assert.AreEqual("game xinput1_4.dll", File.ReadAllText(Path.Combine(game, "xinput1_4.dll")), "The loader did not come back whole.");
+				CollectionAssert.AreEqual(new string[0], Park("Park", paths, game, parked));
+				Assert.AreEqual("newer", File.ReadAllText(Path.Combine(parked, "ScriptHookV.dll")), "Park kept the older copy.");
+				Assert.IsFalse(Directory.GetFiles(parked, "*.x360ce-moving", SearchOption.AllDirectories).Any(), "A move left a file half way.");
+
+				// A file the game still holds open stays where it is, both copies whole, and moves once it is let go.
+				Park("Unpark", paths, game, parked);
+				File.WriteAllText(Path.Combine(parked, "ScriptHookV.dll"), "older");
+				var held = Path.Combine(game, "ScriptHookV.dll");
+				using (new FileStream(held, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+					CollectionAssert.AreEqual(new[] { "ScriptHookV.dll" }, Park("Park", paths, game, parked), "A file held open was reported moved.");
+				Assert.AreEqual("newer", File.ReadAllText(held), "The file held open was lost.");
+				Assert.AreEqual("older", File.ReadAllText(Path.Combine(parked, "ScriptHookV.dll")), "The parked copy was lost.");
+				Assert.IsFalse(File.Exists(Path.Combine(game, "xinput1_4.dll")), "The files not held were not parked.");
+				CollectionAssert.AreEqual(new string[0], Park("Park", paths, game, parked), "The file let go was not parked.");
+				Assert.AreEqual("newer", File.ReadAllText(Path.Combine(parked, "ScriptHookV.dll")));
+			}
+			finally
+			{
+				Directory.Delete(game, true);
+				if (Directory.Exists(parked))
+					Directory.Delete(parked, true);
+			}
+		}
+
+		[TestMethod, TestCategory("plugins")]
+		[Description("As x360ce starts, the plugin parks the mods of a Steam copy of a game only once Install was pressed for it, never of a copy from another launcher, and Remove puts parked mods back")]
+		public void Start_parks_the_mods_only_after_install_in_a_steam_copy()
+		{
+			Type();
+			var mods = new[] { "GTA5_Enhanced.exe", "ScriptHookV.dll", "xinput1_4.dll", "ScriptHookVDotNet.asi" };
+			var library = NewSteamLibrary(Tuple.Create(3240220, "Grand Theft Auto V Enhanced", mods));
+			var other = NewGameFolder(mods);
+			var data = Path.Combine(Path.GetTempPath(), "x360ce.WheelTelemetryData." + Guid.NewGuid().ToString("N"));
+			try
+			{
+				var steam = Path.Combine(library, "steamapps", "common", "Grand Theft Auto V Enhanced");
+				Func<string, IPluginGame> start = gamePath =>
+				{
+					var game = Type().NewInstance();
+					Assert.IsInstanceOfType(game, typeof(IPluginGameStart), "The plugin does not put its games right at start.");
+					((IPluginGameStart)game).DataFolder = data;
+					game.GamePath = gamePath;
+					((IPluginGameStart)game).Start();
+					return game;
+				};
+				var steamExe = Path.Combine(steam, "GTA5_Enhanced.exe");
+				var otherExe = Path.Combine(other, "GTA5_Enhanced.exe");
+				var before = Files(steam);
+				start(steamExe);
+				CollectionAssert.AreEquivalent(before, Files(steam), "Mods were moved before Install was pressed.");
+				Assert.IsFalse(Directory.Exists(data), "Something was written into the plugin's folder before Install.");
+
+				Assert.IsNull(Installer("Install", steamExe, 37150));
+				Assert.IsNull(Installer("Install", otherExe, 37150));
+				start(steamExe);
+				start(otherExe);
+				CollectionAssert.AreEquivalent(new[] { steamExe }, Files(steam), "The Steam copy still has files of its mods, or lost its own.");
+				var parked = (string)Internal("GameParking").GetMethod("Folder", Any).Invoke(null, new object[] { data, steam });
+				StringAssert.StartsWith(parked, Path.Combine(data, "Parked"), "The mods are not parked in the plugin's own folder.");
+				Assert.AreEqual(EnhancedParkPaths.Length, Directory.GetFiles(parked, "*", SearchOption.AllDirectories).Length, "Not every named file was parked.");
+				Assert.AreEqual(mods.Length + 2, Files(other).Length, "A copy from another launcher, which Play story mode cannot start, had its mods moved.");
+
+				// Remove deletes x360ce's own files, parked too, and puts the mods back where the person put them.
+				Assert.IsNull(Installer("Remove", steamExe, parked));
+				CollectionAssert.AreEquivalent(before, Files(steam), "Remove did not put the mods back, or left x360ce's files.");
+				start(steamExe);
+				CollectionAssert.AreEquivalent(before, Files(steam), "Mods were parked after Remove.");
+			}
+			finally
+			{
+				Directory.Delete(library, true);
+				Directory.Delete(other, true);
+				if (Directory.Exists(data))
+					Directory.Delete(data, true);
+			}
+		}
+
+		[TestMethod, TestCategory("plugins")]
+		[Description("Play story mode starts each edition of GTA V through Steam with BattlEye off: the app id comes from Steam's record of the copy, and the arguments from the game's row; a copy Steam did not install has none")]
+		public void Play_story_mode_starts_each_edition_through_steam_with_battleye_off()
+		{
+			Type();
+			var library = NewSteamLibrary(
+				Tuple.Create(3240220, "Grand Theft Auto V Enhanced", new[] { "GTA5_Enhanced.exe" }),
+				Tuple.Create(271590, "Grand Theft Auto V", new[] { "GTA5.exe" }));
+			var other = NewGameFolder("GTA5_Enhanced.exe");
+			try
+			{
+				var steam = Internal("SteamGame");
+				Func<string, string> url = gamePath =>
+				{
+					var id = (int)steam.GetMethod("AppId", Any).Invoke(null, new object[] { gamePath });
+					return (string)steam.GetMethod("RunUrl", Any).Invoke(null, new object[] { id, Find(gamePath).LaunchArguments });
+				};
+				var common = Path.Combine(library, "steamapps", "common");
+				Assert.AreEqual("steam://run/3240220//-nobattleye/", url(Path.Combine(common, "Grand Theft Auto V Enhanced", "GTA5_Enhanced.exe")), "GTA V Enhanced.");
+				Assert.AreEqual("steam://run/271590//-nobattleye/", url(Path.Combine(common, "Grand Theft Auto V", "GTA5.exe")), "GTA V Legacy.");
+				Assert.AreEqual(0, (int)steam.GetMethod("AppId", Any).Invoke(null, new object[] { Path.Combine(other, "GTA5_Enhanced.exe") }), "A copy Steam did not install has a Steam app id.");
+				Assert.AreEqual("steam://run/1551360", (string)steam.GetMethod("RunUrl", Any).Invoke(null, new object[] { 1551360, "" }), "A game without arguments.");
+				var reason = (string)Internal("StoryMode").GetMethod("Unavailable", Any).Invoke(null, new object[] { PluginTelemetryData.Current, Find(Path.Combine(other, "GTA5_Enhanced.exe")), Path.Combine(other, "GTA5_Enhanced.exe"), "C:\\Data" });
+				StringAssert.Contains(reason, "Steam", "A copy Steam did not install does not say why Play story mode is greyed.");
+			}
+			finally
+			{
+				Directory.Delete(library, true);
+				Directory.Delete(other, true);
 			}
 		}
 
@@ -780,6 +954,7 @@ namespace x360ce.Tests
 								Assert.IsNull(named("Warning1Label"), "Forza Horizon 6 has no warnings.");
 								Assert.IsNull(named("InstallButton"), "Install shows only for a game whose rows name files.");
 								Assert.IsNull(named("Mod1ValueLabel"), "Forza Horizon 6 needs no mods.");
+							Assert.IsNull(named("PlayStoryModeButton"), "Play story mode shows only for a game with mods.");
 								Assert.AreEqual("Set Data Out IP Port to 37150.", named("Step4Label").Text, "A step shows the port on the page.");
 								portBox.Value = 5301;
 								Application.DoEvents();
@@ -796,6 +971,10 @@ namespace x360ce.Tests
 							Assert.AreEqual("http://www.dev-c.com/gtav/scripthookv/", link("Mod1LinkLabel"));
 							Assert.IsNotNull(named("InstallButton"));
 							Assert.IsFalse(named("RemoveButton").Enabled, "Remove with nothing installed.");
+							var play = named("PlayStoryModeButton");
+							Assert.AreSame(actions, play.Parent, exe + ": Play story mode is with the actions.");
+							Assert.IsFalse(play.Enabled, exe + ": Play story mode for a copy Steam did not install.");
+							StringAssert.Contains(named("StoryModeValueLabel").Text, "Steam", exe + ": the page does not say why Play story mode is greyed.");
 							var loader = exe == "GTA5.exe" ? "dinput8.dll" : "xinput1_4.dll";
 							Assert.AreEqual("Not found: " + loader + ".", named("Mod2ValueLabel").Text,
 								exe + " loads Script Hook V with " + loader + ".");
