@@ -66,7 +66,7 @@
 - Added: Wheel telemetry reads the gear, forward-back and up-down G, distance and position, and Forza Horizon's 324-byte packets.
 - Added: GTA V's telemetry script sends the distance driven.
 - Added: Recordings show the gear, G forces, hits, distance and each gear change.
-- Added: The window in 11 languages, picked with the globe beside the Game list.
+- Added: The window in 11 languages, picked with the globe beside the Game list (Issue #1667, ravenli059).
 - Added: Play story mode starts GTA V with its mods, then parks them.
 
 ## [4.30.63.0] - 2026-11-15
