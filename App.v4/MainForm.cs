@@ -477,6 +477,7 @@ namespace x360ce.App
 			// Nothing is on the window yet for the header to name.
 			SetHeaderSubject("");
 			// The status bar shows its values from the start, rather than appearing later and pushing the pages up.
+			_statusTimerText = null;
 			StatusTimerLabel.Text = "";
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;
@@ -853,14 +854,21 @@ namespace x360ce.App
 			Main.OptionsPanel.UpdatePanel.UpdateSettingsMap();
 		}
 
+		Func<string> _statusTimerText;
+		int? _lastSaveCount;
+		int? _lastSuspendCount;
+
 		private void Current_ConfigSaved(object sender, SettingEventArgs e)
 		{
+			_lastSaveCount = e.Count;
 			StatusSaveLabel.Text = string.Format(UiLanguage.T("MainForm.SaveCountStatus", "S {0}"), e.Count);
 		}
 
 		private void Current_ConfigLoaded(object sender, SettingEventArgs e)
 		{
-			StatusTimerLabel.Text = string.Format(UiLanguage.T("MainForm.Loaded", "'{0}' loaded."), e.Name);
+			var name = e.Name;
+			_statusTimerText = () => string.Format(UiLanguage.T("MainForm.Loaded", "'{0}' loaded."), name);
+			StatusTimerLabel.Text = _statusTimerText();
 		}
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -881,6 +889,7 @@ namespace x360ce.App
 					};
 				}
 			}
+			_statusTimerText = null;
 			StatusTimerLabel.Text = "";
 		}
 
@@ -888,6 +897,7 @@ namespace x360ce.App
 		{
 			if (Program.IsClosing)
 				return;
+			_statusTimerText = null;
 			StatusTimerLabel.Text = "";
 		}
 
@@ -895,6 +905,7 @@ namespace x360ce.App
 
 		public void NotifySettingsStatus(int eventsSuspendCount)
 		{
+			_lastSuspendCount = eventsSuspendCount;
 			StatusEventsLabel.Text = string.Format(UiLanguage.T("MainForm.Suspend", "Suspend: {0}"), eventsSuspendCount);
 		}
 
@@ -1330,8 +1341,11 @@ namespace x360ce.App
 
 		public void UpdateStatus(string message = "")
 		{
-			ControlsHelper.SetText(StatusTimerLabel, UiLanguage.T("MainForm.ReloadAndErrorStatus", "Reloads: {0}, Errors: {1} {2}"),
-				Program.ReloadCount, Program.ErrorCount, message);
+			var reloads = Program.ReloadCount;
+			var errors = Program.ErrorCount;
+			_statusTimerText = () => string.Format(UiLanguage.T("MainForm.ReloadAndErrorStatus", "Reloads: {0}, Errors: {1} {2}"),
+				reloads, errors, message);
+			ControlsHelper.SetText(StatusTimerLabel, _statusTimerText());
 		}
 		#endregion
 
@@ -2057,9 +2071,18 @@ namespace x360ce.App
 			EngineHelper.ReserveWidth(InterfaceUpdatesButton, UiLanguage.T("MainForm.InterfaceRateOff", "UI Hz: OFF"));
 		}
 
-		/// <summary>Shows the rates in the language chosen at once, rather than at their next change.</summary>
+		/// <summary>Shows the rates, status bar texts and header subject in the language chosen at once, rather than at their next change.</summary>
 		private void UiLanguage_Changed(object sender, EventArgs e)
 		{
+			if (_statusTimerText != null)
+				ControlsHelper.SetText(StatusTimerLabel, _statusTimerText());
+			if (_lastSaveCount.HasValue)
+				StatusSaveLabel.Text = string.Format(UiLanguage.T("MainForm.SaveCountStatus", "S {0}"), _lastSaveCount.Value);
+			if (_lastSuspendCount.HasValue)
+				StatusEventsLabel.Text = string.Format(UiLanguage.T("MainForm.Suspend", "Suspend: {0}"), _lastSuspendCount.Value);
+			var tab = Main?.MainTabControl?.SelectedTab;
+			if (tab != null)
+				SetHeaderSubject(tab.Text);
 			UpdateStatusAdminLabel();
 			UpdateStatusAiAccessLabel();
 			UpdateStatusErrorsLabel();

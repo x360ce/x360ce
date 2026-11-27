@@ -36,6 +36,13 @@ namespace x360ce.App.Controls
 			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
 			UiLanguage.Register(this);
 			x360ce.App.UiTree.UiHelp.Attach(this);
+			EventHandler languageChanged = (s, e) =>
+			{
+				if (_filled)
+					Fill();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		void InitializeComponent()
@@ -111,6 +118,7 @@ namespace x360ce.App.Controls
 
 		/// <summary>The device the rows are for: its own come first, and the row chosen is translated for it.</summary>
 		UserDevice _device;
+		bool _filled;
 
 		void AddColumn(string name, string header, string property, DataGridViewAutoSizeColumnMode mode)
 		{
@@ -140,6 +148,7 @@ namespace x360ce.App.Controls
 		/// <summary>Lists the rows the filter lets through, the device's own first, and selects the first of those.</summary>
 		void Fill()
 		{
+			_filled = true;
 			var database = SdlDatabase.Current;
 			ControlsHelper.SetText(VersionLabel, string.Format(UiLanguage.T("SdlPresetsUserControl.DatabaseVersion", "SDL controller database: {0}."), database.Describe()));
 			var device = SdlDevice.From(_device);

@@ -220,6 +220,8 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			}
 		}
 
+		static readonly MethodInfo ComboUpdateText = typeof(ComboBox).GetMethod("UpdateText", BindingFlags.Instance | BindingFlags.NonPublic);
+
 		/// <summary>
 		/// Words the items of lists again, for lists that word them through <see cref="T"/> in their Format event, once the
 		/// language changed. The same item stays chosen, though each list raises its selection events again.
@@ -233,6 +235,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				// A list makes its items' words again whenever formatting is switched.
 				list.FormattingEnabled = false;
 				list.FormattingEnabled = true;
+				// A ComboBox whose handle is not created yet keeps the previous language's text in WindowText until UpdateText runs.
+				if (list is ComboBox && list.SelectedIndex >= 0)
+					ComboUpdateText?.Invoke(list, null);
 			}
 		}
 

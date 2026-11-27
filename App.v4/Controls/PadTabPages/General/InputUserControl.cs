@@ -47,6 +47,8 @@ namespace x360ce.App.Controls
 				Margin = new Padding(8, 8, 0, 0),
 				Text = JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceNone", SourceNone),
 			};
+			// Worded in code for the active language, so UiLanguage.Register must never capture a translation as English.
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Keep(SourceLabel);
 			table.Controls.Add(SourceLabel, 0, 0);
 			table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			ButtonsGroupBox = AddGroup(table, "ButtonsGroupBox", "BUTTON", "ButtonChips", out ButtonChips, false);
@@ -72,6 +74,9 @@ namespace x360ce.App.Controls
 				group.DragStarted += Group_DragStarted;
 				group.DragEnded += Group_DragEnded;
 			}
+			EventHandler languageChanged = (s, e) => UpdateSourceLabel();
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>The header names the device the chips belong to, the way the grid names it.</summary>
@@ -170,10 +175,19 @@ namespace x360ce.App.Controls
 
 		Guid _InstanceGuid;
 		int _ButtonCount, _AxisMask, _SliderMask, _PovCount;
+		string _sourceDeviceName;
 
 		static string SourceName(UserDevice ud)
 		{
 			return string.IsNullOrEmpty(ud.ProductName) ? ud.InstanceName : ud.ProductName;
+		}
+
+		void UpdateSourceLabel()
+		{
+			if (_sourceDeviceName == null)
+				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceNone", SourceNone));
+			else
+				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceDevice", SourcePrefix + "{0}"), _sourceDeviceName);
 		}
 
 		/// <summary>
@@ -216,11 +230,9 @@ namespace x360ce.App.Controls
 					group.Parent.Parent.Visible = shown;
 				}
 			}
-			// Set on every tick, so it follows a change of language too; the label is touched only when its words differ.
-			if (ud == null)
-				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceNone", SourceNone));
-			else
-				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceDevice", SourcePrefix + "{0}"), SourceName(ud));
+			// Set on every tick, and on language changes, so it follows a change of language even when updates are paused.
+			_sourceDeviceName = ud == null ? null : SourceName(ud);
+			UpdateSourceLabel();
 			var state = ud == null ? null : ud.SourceState;
 			var presses = ud == null ? null : ud.ButtonPresses;
 			foreach (var group in Groups)

@@ -120,6 +120,8 @@ namespace x360ce.App.Controls
 				UiLanguage.Relist(ForceTypeComboBox, LeftMotorDirectionComboBox, RightMotorDirectionComboBox, WheelRangeComboBox, ForceSpringCarComboBox);
 				// The texts written once, or only when what they say changes, are written again in the new words. The mapping
 				// menu is made again with the next update, and the Force Source box is worked out again.
+				if (_enableButtonUpdated)
+					UpdateEnableButtonText();
 				UpdateWheelTooltips();
 				UpdateForceFeedbackTitle();
 				UpdateEffectDescription();
@@ -1275,6 +1277,17 @@ namespace x360ce.App.Controls
 				if (grid.DataSource != null)
 					AnnounceSelection();
 			}
+			_enableButtonUpdated = true;
+			UpdateEnableButtonText();
+			// Another tab's list can change without this one's rows moving.
+			UpdateForceFeedbackTitle();
+		}
+
+		bool _enableButtonUpdated;
+
+		/// <summary>Updates the Enable button's caption with the mapped device count in the active language.</summary>
+		void UpdateEnableButtonText()
+		{
 			var visibleCount = mappedItems.Count();
 			var title = string.Format(visibleCount == 1
 				? UiLanguage.T("PadControl.EnableOneMappedDevice", "Enable {0} Mapped Device")
@@ -1284,8 +1297,6 @@ namespace x360ce.App.Controls
 				title += UiLanguage.T("PadControl.Combine", " (Combine)");
 			}
 			ControlsHelper.SetText(EnableButton, title);
-			// Another tab's list can change without this one's rows moving.
-			UpdateForceFeedbackTitle();
 		}
 
 		public void GetAllControls<T>(Control c, ref List<T> l) where T : Control
@@ -3111,14 +3122,22 @@ namespace x360ce.App.Controls
 				var title = !string.IsNullOrWhiteSpace(pageControl.Text)
 					? pageControl.Text
 					: (string.IsNullOrWhiteSpace(pageType.Name) ? "Game Telemetry" : pageType.Name);
+				var accessibleName = !string.IsNullOrWhiteSpace(pageControl.AccessibleName)
+					? pageControl.AccessibleName
+					: (string.IsNullOrWhiteSpace(pageType.Name) ? "Game Telemetry" : pageType.Name);
 				var tab = new TabPage
 				{
 					Name = nameof(WheelTelemetryTabPage),
 					Text = title,
-					AccessibleName = title,
+					AccessibleName = accessibleName,
 					AccessibleDescription = "Live game telemetry ports, force feel tuning, vehicle readings and protocol help.",
 					BackColor = System.Drawing.SystemColors.Control,
 					Padding = AppHelper.ScaledPadding(0, 0, 8, 8),
+				};
+				pageControl.TextChanged += (s, e) =>
+				{
+					if (!tab.IsDisposed && !string.IsNullOrWhiteSpace(pageControl.Text))
+						tab.Text = pageControl.Text;
 				};
 				tab.Controls.Add(pageControl);
 				// The pages are as tall as the plugin's page needs too, whose own tabs tell their room once Windows has made them.

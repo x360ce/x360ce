@@ -444,6 +444,130 @@ namespace x360ce.Tests
 			}));
 		}
 
+		[TestMethod, TestCategory("languages"), TestCategory("ui")]
+		[Description("Starting the interface in Chinese and switching back to English updates status bar, Enable button, header subject, Input source, and Game Telemetry tab with no Chinese left behind")]
+		public void Starting_in_Chinese_and_switching_to_English_leaves_no_Chinese_text()
+		{
+			Ui.OnUiThread(() => WithOwnTypes(() =>
+			{
+				var oldCloud = Global.CloudClient;
+				var oldManager = x360ce.App.Plugins.PluginManager.Current;
+				var oldGame = SettingsManager.CurrentGame;
+				var oldMainForm = MainForm.Current;
+				var addedSetting = (x360ce.Engine.Data.UserSetting)null;
+				if (Global.CloudClient == null)
+					Global.CloudClient = new CloudClient();
+				var zh = AppLanguages.All.First(x => x.Culture == "zh-Hans");
+				var en = AppLanguages.All.First(x => x.Culture == "en");
+				try
+				{
+					// Start in Chinese, as Program.cs does when the saved language option is zh-Hans.
+					AppLanguages.Use(zh);
+					var embedded = x360ce.App.Plugins.PluginDocs.EmbeddedManager();
+					x360ce.App.Plugins.PluginManager.Current = embedded;
+
+					var game = SettingsManager.CurrentGame;
+					if (game == null)
+					{
+						game = new x360ce.Engine.Data.UserGame { FileName = "x360ce.exe", FileProductName = "X360CE" };
+						SettingsManager.CurrentGame = game;
+					}
+					addedSetting = new x360ce.Engine.Data.UserSetting
+					{
+						InstanceGuid = Guid.NewGuid(),
+						MapTo = (int)x360ce.Engine.MapTo.Controller1,
+						FileName = game.FileName,
+						FileProductName = game.FileProductName,
+						IsEnabled = true,
+					};
+					SettingsManager.UserSettings.Items.Add(addedSetting);
+
+					using (var form = new MainForm())
+					using (var main = new MainControl { Dock = DockStyle.Fill })
+					{
+						MainForm.Current = form;
+						form.Main = main;
+						form.Controls.Add(main);
+						form.Controls.SetChildIndex(main, 0);
+						main.BuildPad();
+						var pad = main.BuiltPadControls[0];
+						pad.UpdateSettingsMap();
+						pad.InitPadData();
+						pad.UpdateWheelTelemetryPluginUi();
+						UiLanguage.Register(main);
+						form.SetHeaderSubject(main.MainTabControl.SelectedTab.Text);
+
+						// Simulate SettingsManager.Current.ConfigLoaded("PadSetting") during startup in Chinese.
+						var loaded = typeof(MainForm).GetMethod("Current_ConfigLoaded", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+						loaded.Invoke(form, new object[] { form, new SettingEventArgs("PadSetting", 1) });
+
+						// Confirm the texts are Chinese before switching.
+						StringAssert.Contains(form.StatusTimerLabel.Text, "已加载");
+						StringAssert.Contains(pad.EnableButton.Text, "已映射设备");
+						Assert.IsNotNull(pad.WheelTelemetryTabPage, "Embedded WheelTelemetry plugin tab should be loaded.");
+						Assert.AreEqual("游戏遥测", pad.WheelTelemetryTabPage.Text);
+						Assert.AreEqual("Game Telemetry", pad.WheelTelemetryTabPage.AccessibleName);
+						Assert.AreEqual("控制器 1", form.HelpSubjectLabel.Text);
+
+						// Switch back to English and verify nothing remains in Chinese.
+						AppLanguages.Use(en);
+						Application.DoEvents();
+
+						Assert.AreEqual("'PadSetting' loaded.", form.StatusTimerLabel.Text);
+						Assert.AreEqual("Enable 1 Mapped Device", pad.EnableButton.Text);
+						Assert.AreEqual("Game Telemetry", pad.WheelTelemetryTabPage.Text);
+						Assert.AreEqual("Controller 1", form.HelpSubjectLabel.Text);
+						Assert.AreEqual(x360ce.App.Controls.InputUserControl.SourceNone, pad.InputPanel.SourceLabel.Text);
+
+						var leftover = new List<string>();
+						CollectCjk(form, leftover);
+						Assert.AreEqual(0, leftover.Count, "Chinese text left after switching to English:\r\n" + string.Join(Environment.NewLine, leftover));
+					}
+				}
+				finally
+				{
+					AppLanguages.Use(en);
+					if (addedSetting != null)
+						SettingsManager.UserSettings.Items.Remove(addedSetting);
+					SettingsManager.CurrentGame = oldGame;
+					MainForm.Current = oldMainForm;
+					x360ce.App.Plugins.PluginManager.Current = oldManager;
+					Global.CloudClient = oldCloud;
+				}
+			}));
+		}
+
+		static void CollectCjk(Control root, List<string> found)
+		{
+			if (HasCjk(root.Text))
+				found.Add(root.GetType().Name + "." + root.Name + ".Text = " + root.Text);
+			var strip = root as ToolStrip;
+			if (strip != null)
+				CollectCjk(strip.Items, found);
+			foreach (Control child in root.Controls)
+				CollectCjk(child, found);
+		}
+
+		static void CollectCjk(ToolStripItemCollection items, List<string> found)
+		{
+			foreach (ToolStripItem item in items)
+			{
+				// Language menu entries keep their own name in every language (e.g. 中文).
+				if (item.Name != null && item.Name.StartsWith("Language_", StringComparison.Ordinal))
+					continue;
+				if (HasCjk(item.Text))
+					found.Add(item.GetType().Name + "." + item.Name + ".Text = " + item.Text);
+				var drop = item as ToolStripDropDownItem;
+				if (drop != null && drop.HasDropDownItems)
+					CollectCjk(drop.DropDownItems, found);
+			}
+		}
+
+		static bool HasCjk(string text)
+		{
+			return !string.IsNullOrEmpty(text) && text.Any(c => c >= '\u4E00' && c <= '\u9FFF');
+		}
+
 		static string[] Placeholders(string text)
 		{
 			return Regex.Matches(text, @"\{\d+[^}]*\}").Cast<Match>().Select(m => m.Value).OrderBy(x => x, StringComparer.Ordinal).ToArray();

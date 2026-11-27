@@ -40,6 +40,12 @@ namespace x360ce.App.Controls
 				// The reason the Start with Windows box is unticked, once its hint exists.
 				if (StartWithWindowsHint != null)
 					LoadWindowsStart();
+				if (_viGEmBusLoaded)
+					ShowViGEmBusStatus(_viGEmBusInstalled, _viGEmBusDescription, _viGEmBusVersion);
+				if (_hidHideStatusLoaded)
+					RefreshHidHideStatus();
+				if (_hidGuardianLoaded)
+					ShowHidGuardianStatus(_hidGuardianInstalled, _hidGuardianDescription, _hidGuardianVersion);
 			};
 			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed += languageChanged;
 			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed -= languageChanged;
@@ -841,6 +847,38 @@ namespace x360ce.App.Controls
 			RefreshViGEmBusStatus();
 		}
 
+		bool _viGEmBusLoaded;
+		bool _viGEmBusInstalled;
+		string _viGEmBusDescription;
+		Version _viGEmBusVersion;
+
+		void ShowViGEmBusStatus(bool installed, string description, Version version)
+		{
+			_viGEmBusLoaded = true;
+			_viGEmBusInstalled = installed;
+			_viGEmBusDescription = description;
+			_viGEmBusVersion = version;
+			// Both versions, because one on its own cannot be acted on. Somebody looking at a driver that
+			// misbehaves needs to know what is there and what this program would put on instead - which is
+			// exactly what was missing when a repair silently replaced a newer driver with an older one.
+			var supplied = DInput.VirtualDriverInstaller.EmbeddedViGEmBusVersion;
+			var busStatus = !installed
+				? string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusNotInstalled", "Not installed. Supplied with this program: {0}."), supplied)
+				: version > supplied
+					? string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusInstalledNewer", "{0} {1}   (supplied with this program: {2}, older - will not be installed over this)"),
+						description, version, supplied)
+					: string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusInstalled", "{0} {1}   (supplied with this program: {2})"),
+						description, version, supplied);
+			ControlsHelper.SetText(ViGEmBusTextBox, busStatus);
+			// Always available, because a bus that is present is exactly the one that might
+			// need putting right. The word changes so it is clear which of the two it will do.
+			ViGEmBusInstallButton.Enabled = true;
+			ViGEmBusInstallButton.Text = !installed
+				? UiLanguage.T("OptionsUserControl.Install", "Install")
+				: UiLanguage.T("OptionsUserControl.Repair", "Repair");
+			ViGEmBusUninstallButton.Enabled = installed;
+		}
+
 		void RefreshViGEmBusStatus()
 		{
 			ControlsHelper.SetText(ViGEmBusTextBox, UiLanguage.T("OptionsUserControl.PleaseWait", "Please wait..."));
@@ -851,26 +889,7 @@ namespace x360ce.App.Controls
 				var bus = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
 				ControlsHelper.BeginInvoke(() =>
 				{
-					// Update Bus status.
-					// Both versions, because one on its own cannot be acted on. Somebody looking at a driver that
-					// misbehaves needs to know what is there and what this program would put on instead - which is
-					// exactly what was missing when a repair silently replaced a newer driver with an older one.
-					var supplied = DInput.VirtualDriverInstaller.EmbeddedViGEmBusVersion;
-					var busStatus = bus.DriverVersion == 0
-						? string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusNotInstalled", "Not installed. Supplied with this program: {0}."), supplied)
-						: bus.GetVersion() > supplied
-							? string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusInstalledNewer", "{0} {1}   (supplied with this program: {2}, older - will not be installed over this)"),
-								bus.Description, bus.GetVersion(), supplied)
-							: string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusInstalled", "{0} {1}   (supplied with this program: {2})"),
-								bus.Description, bus.GetVersion(), supplied);
-					ControlsHelper.SetText(ViGEmBusTextBox, busStatus);
-					// Always available, because a bus that is present is exactly the one that might
-					// need putting right. The word changes so it is clear which of the two it will do.
-					ViGEmBusInstallButton.Enabled = true;
-					ViGEmBusInstallButton.Text = bus.DriverVersion == 0
-						? UiLanguage.T("OptionsUserControl.Install", "Install")
-						: UiLanguage.T("OptionsUserControl.Repair", "Repair");
-					ViGEmBusUninstallButton.Enabled = bus.DriverVersion != 0;
+					ShowViGEmBusStatus(bus.DriverVersion != 0, bus.Description, bus.GetVersion());
 				});
 			});
 			var t = new System.Threading.Thread(ts);
@@ -897,8 +916,11 @@ namespace x360ce.App.Controls
 		/// box here that hides a device while it is mapped. The button says what pressing it does: install,
 		/// ask GitHub for a newer version, or install the newer version an earlier press found.
 		/// </remarks>
+		bool _hidHideStatusLoaded;
+
 		void RefreshHidHideStatus()
 		{
+			_hidHideStatusLoaded = true;
 			var installed = DInput.VirtualDriverInstaller.IsHidHideDevicePresent();
 			HidHideConfigureAutomaticallyCheckBox.Enabled = installed;
 			var version = DInput.VirtualDriverInstaller.GetHidHideVersion();
@@ -1152,6 +1174,23 @@ namespace x360ce.App.Controls
 			return result == DialogResult.Yes;
 		}
 
+		bool _hidGuardianLoaded;
+		bool _hidGuardianInstalled;
+		string _hidGuardianDescription;
+		Version _hidGuardianVersion;
+
+		void ShowHidGuardianStatus(bool installed, string description, Version version)
+		{
+			_hidGuardianLoaded = true;
+			_hidGuardianInstalled = installed;
+			_hidGuardianDescription = description;
+			_hidGuardianVersion = version;
+			var hidStatus = !installed
+				? UiLanguage.T("OptionsUserControl.HidGuardianNotInstalled", "Not installed")
+				: string.Format("{0} {1}", description, version);
+			ControlsHelper.SetText(HidGuardianTextBox, hidStatus);
+		}
+
 		void RefreshHidGuardianStatus()
 		{
 			ControlsHelper.SetText(HidGuardianTextBox, UiLanguage.T("OptionsUserControl.PleaseWait", "Please wait..."));
@@ -1162,11 +1201,7 @@ namespace x360ce.App.Controls
 				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
 				ControlsHelper.BeginInvoke(() =>
 				{
-					// Update HID status.
-					var hidStatus = hid.DriverVersion == 0
-						? UiLanguage.T("OptionsUserControl.HidGuardianNotInstalled", "Not installed")
-						: string.Format("{0} {1}", hid.Description, hid.GetVersion());
-					ControlsHelper.SetText(HidGuardianTextBox, hidStatus);
+					ShowHidGuardianStatus(hid.DriverVersion != 0, hid.Description, hid.GetVersion());
 #if DEBUG
 					// Development builds can install, so that removal can be tested. The confirmation dialog states that
 					// this is a development build.
