@@ -406,21 +406,21 @@ not shown in this state of the program.
 [Group]     │   └── (MainControl)                                                       # The game being set up, and the tabs for the four controllers and everything else.
 [Toolbar]   │       ├── Game bar                                                        # Chooses the game being set up, and saves the settings.
 [List]      │       │   ├── Game                                                        # Which game the settings on every page below belong to.
-[Button]    │       │   ├── Language                                                    # The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.
-[CheckBox]  │       │   │   ├── English                                                 # Shows the window in English.
-[CheckBox]  │       │   │   ├── 中文                                                      # Shows the window in 中文.
-[CheckBox]  │       │   │   ├── Українська                                              # Shows the window in Українська.
-[CheckBox]  │       │   │   ├── Español                                                 # Shows the window in Español.
-[CheckBox]  │       │   │   ├── Português                                               # Shows the window in Português.
-[CheckBox]  │       │   │   ├── Deutsch                                                 # Shows the window in Deutsch.
-[CheckBox]  │       │   │   ├── 日本語                                                     # Shows the window in 日本語.
-[CheckBox]  │       │   │   ├── Français                                                # Shows the window in Français.
-[CheckBox]  │       │   │   ├── Polski                                                  # Shows the window in Polski.
-[CheckBox]  │       │   │   ├── 한국어                                                     # Shows the window in 한국어.
-[CheckBox]  │       │   │   └── Türkçe                                                  # Shows the window in Türkçe.
-[Button]    │       │   ├── Save All                                                    # Writes every setting to disk now.
+[Button]    │       │   ├── Add Game...                                                 # Sets this program up for another game.
 [Button]    │       │   ├── Test... (hidden)                                            # Opens a window for trying the emulated controller without a game.
-[Button]    │       │   └── Add Game...                                                 # Sets this program up for another game.
+[Button]    │       │   ├── Save All                                                    # Writes every setting to disk now.
+[Button]    │       │   └── Language                                                    # The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.
+[CheckBox]  │       │       ├── English                                                 # Shows the window in English.
+[CheckBox]  │       │       ├── 中文                                                      # Shows the window in 中文.
+[CheckBox]  │       │       ├── Українська                                              # Shows the window in Українська.
+[CheckBox]  │       │       ├── Español                                                 # Shows the window in Español.
+[CheckBox]  │       │       ├── Português                                               # Shows the window in Português.
+[CheckBox]  │       │       ├── Deutsch                                                 # Shows the window in Deutsch.
+[CheckBox]  │       │       ├── 日本語                                                     # Shows the window in 日本語.
+[CheckBox]  │       │       ├── Français                                                # Shows the window in Français.
+[CheckBox]  │       │       ├── Polski                                                  # Shows the window in Polski.
+[CheckBox]  │       │       ├── 한국어                                                     # Shows the window in 한국어.
+[CheckBox]  │       │       └── Türkçe                                                  # Shows the window in Türkçe.
 [Tabs]      │       └── Main                                                            # The four controllers, and the pages for everything else.
 [Tab]       │           ├── Controller 1                                                # Settings for the first emulated Xbox controller.
 [Group]     │           │   └── (ControlPad1) -> PadControl                             # Everything about one emulated Xbox controller: what works it, and how.

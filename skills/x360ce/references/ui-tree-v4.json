@@ -2574,6 +2574,25 @@
 									"Id":""
 								},
 								{
+									"Name":"Add Game...",
+									"Description":"Sets this program up for another game.",
+									"Role":"Button",
+									"Id":"AddGameButton"
+								},
+								{
+									"Name":"Test...",
+									"Description":"Opens a window for trying the emulated controller without a game.",
+									"Role":"Button",
+									"Id":"TestButton",
+									"Hidden":true
+								},
+								{
+									"Name":"Save All",
+									"Description":"Writes every setting to disk now.",
+									"Role":"Button",
+									"Id":"SaveAllButton"
+								},
+								{
 									"Name":"Language",
 									"Description":"The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.",
 									"Role":"Button",
@@ -2646,25 +2665,6 @@
 											"Id":"Language_tr"
 										}
 									]
-								},
-								{
-									"Name":"Save All",
-									"Description":"Writes every setting to disk now.",
-									"Role":"Button",
-									"Id":"SaveAllButton"
-								},
-								{
-									"Name":"Test...",
-									"Description":"Opens a window for trying the emulated controller without a game.",
-									"Role":"Button",
-									"Id":"TestButton",
-									"Hidden":true
-								},
-								{
-									"Name":"Add Game...",
-									"Description":"Sets this program up for another game.",
-									"Role":"Button",
-									"Id":"AddGameButton"
 								}
 							]
 						},

@@ -351,6 +351,99 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, problems.Count, string.Join(Environment.NewLine, problems));
 		}
 
+		[TestMethod, TestCategory("languages"), TestCategory("ui")]
+		[Description("Switching the main window's language never pushes Add Game or any other Game-bar item off the bar")]
+		public void Game_bar_keeps_every_item_on_the_bar_in_every_language()
+		{
+			Ui.OnUiThread(() => WithOwnTypes(() =>
+			{
+				var oldCloud = Global.CloudClient;
+				var oldTheme = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Theme;
+				var oldLook = JocysCom.ClassLibrary.Controls.ControlsHelper.LookFromTheme;
+				if (Global.CloudClient == null)
+					Global.CloudClient = new CloudClient();
+				var problems = new List<string>();
+				try
+				{
+					// Match startup: the theme is active before MainControl is built so the Game bar gets WPF toolbar styling.
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light);
+					using (var form = new x360ce.App.Controls.BaseFormWithHeader())
+					using (var main = new MainControl { Dock = DockStyle.Fill })
+					{
+						form.Size = new System.Drawing.Size(960, 720);
+						form.Controls.Add(main);
+						form.Controls.SetChildIndex(main, 0);
+						main.GameToCustomizeComboBox.Items.Add("Very Long Game Title That Should Never Push Buttons Off The Bar (C:\\Program Files\\Example\\Game.exe)");
+						main.GameToCustomizeComboBox.SelectedIndex = 0;
+						JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(form);
+						UiLanguage.Register(main);
+						form.Show();
+						Application.DoEvents();
+						var smallest = PadPageShortWindowTest.MinimumWindowSize();
+						var sizes = new[] { form.Size, smallest };
+						var bar = main.GamesToolStrip;
+						Assert.AreEqual(ToolStripLayoutStyle.Table, bar.LayoutStyle, "Game bar must use Table layout so items cannot disappear.");
+						Assert.IsFalse(bar.CanOverflow, "Game bar must not overflow items.");
+						Assert.AreEqual("WpfToolStripRenderer", bar.Renderer.GetType().Name, "Game bar should use the themed toolbar renderer.");
+						foreach (var theme in new[] { JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light, JocysCom.ClassLibrary.Controls.Themes.ThemeType.Dark })
+						{
+							JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(theme);
+							foreach (var showTest in new[] { false, true })
+							{
+								main.TestButton.Visible = showTest;
+								foreach (var size in sizes)
+								{
+									form.Size = size;
+									foreach (var language in AppLanguages.All)
+									{
+										AppLanguages.Use(language);
+										Application.DoEvents();
+										var visible = bar.Items.Cast<ToolStripItem>().Where(x => x.Available).ToList();
+										ToolStripItem prev = null;
+										foreach (var item in visible)
+										{
+											if (item.Placement != ToolStripItemPlacement.Main)
+												problems.Add(string.Format("{0} ({1}, {2}, Test={3}): {4} pushed off the bar ({5})", language.Culture, theme, size.Width, showTest, item.Name, item.Placement));
+											else if (item.Bounds.Width <= 0 || item.Bounds.Right > bar.ClientSize.Width + 1 || item.Bounds.Top < 0 || item.Bounds.Bottom > bar.ClientSize.Height + 1)
+												problems.Add(string.Format("{0} ({1}, {2}, Test={3}): {4} bounds {5} outside bar {6}", language.Culture, theme, size.Width, showTest, item.Name, item.Bounds, bar.ClientSize));
+											if (item != main.GameToCustomizeComboBox)
+											{
+												var preferred = item.GetPreferredSize(System.Drawing.Size.Empty).Width;
+												if (item.Bounds.Width < preferred - 1)
+													problems.Add(string.Format("{0} ({1}, {2}, Test={3}): {4} clipped ({5}px < preferred {6}px)", language.Culture, theme, size.Width, showTest, item.Name, item.Bounds.Width, preferred));
+											}
+											if (prev != null && item.Bounds.Left < prev.Bounds.Right)
+												problems.Add(string.Format("{0} ({1}, {2}, Test={3}): {4} overlaps {5} ({6} vs {7})", language.Culture, theme, size.Width, showTest, item.Name, prev.Name, item.Bounds, prev.Bounds));
+											prev = item;
+										}
+										if (main.GameToCustomizeComboBox.Bounds.Width < 100)
+											problems.Add(string.Format("{0} ({1}, {2}, Test={3}): GameToCustomizeComboBox too narrow ({4}px)", language.Culture, theme, size.Width, showTest, main.GameToCustomizeComboBox.Bounds.Width));
+										var gapToAdd = main.AddGameButton.Bounds.Left - main.GameToCustomizeComboBox.Bounds.Right;
+										if (gapToAdd > 20)
+											problems.Add(string.Format("{0} ({1}, {2}, Test={3}): GameToCustomizeComboBox did not fill column (gap={4}px)", language.Culture, theme, size.Width, showTest, gapToAdd));
+										if (!showTest)
+										{
+											var gapToSave = main.SaveAllButton.Bounds.Left - main.AddGameButton.Bounds.Right;
+											if (gapToSave > 20)
+												problems.Add(string.Format("{0} ({1}, {2}): hidden TestButton left a wide gap ({3}px)", language.Culture, theme, size.Width, gapToSave));
+										}
+									}
+								}
+							}
+						}
+						AppLanguages.Use(AppLanguages.All[0]);
+					}
+				}
+				finally
+				{
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(oldTheme);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.LookFromTheme = oldLook;
+					Global.CloudClient = oldCloud;
+				}
+				Assert.AreEqual(0, problems.Count, string.Join(Environment.NewLine, problems));
+			}));
+		}
+
 		static string[] Placeholders(string text)
 		{
 			return Regex.Matches(text, @"\{\d+[^}]*\}").Cast<Match>().Select(m => m.Value).OrderBy(x => x, StringComparer.Ordinal).ToArray();
