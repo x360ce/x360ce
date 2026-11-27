@@ -45,6 +45,7 @@ namespace x360ce.App
 			Pad2TabPage.Text = "Controller 2";
 			Pad3TabPage.Text = "Controller 3";
 			Pad4TabPage.Text = "Controller 4";
+			AppLanguages.FillMenu(LanguageButton, ChooseLanguage);
 			GamesToolStrip_Layout(null, null);
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 			// Other option.
@@ -53,6 +54,19 @@ namespace x360ce.App
 			foreach (var item in ControlPages)
 				item.ImageKey = "bullet_square_glass_grey.png";
 			BuiltPadControls = new PadControl[1];
+		}
+
+		/// <summary>Shows the interface in a language at once, and keeps the choice in the options.</summary>
+		void ChooseLanguage(AppLanguages.Language language)
+		{
+			if (language != AppLanguages.Current)
+				AppLanguages.Use(language);
+			// A click turns the entry over; the one shown stays the one ticked.
+			AppLanguages.TickMenu(LanguageButton);
+			if (SettingsManager.Options.Language == language.Culture)
+				return;
+			SettingsManager.Options.Language = language.Culture;
+			SettingsManager.OptionsData.Save();
 		}
 
 		List<TabPage> PadTabPages => new List<TabPage> { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
@@ -77,6 +91,7 @@ namespace x360ce.App
 			};
 			Program.StartupTrace.Mark("BuildPages: pad built");
 			ControlPages[0].Controls.Add(BuiltPadControls[0]);
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(BuiltPadControls[0]);
 			BuiltPadControls[0].HoldTables();
 			BuiltPadControls[0].InitPadControl();
 			BuiltPadControls[0].ReleaseTables();
@@ -179,6 +194,7 @@ namespace x360ce.App
 				Dock = DockStyle.Fill
 			};
 			AboutTabPage.Controls.Add(ControlAbout);
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(ControlAbout);
 			Program.StartupTrace.Mark("BuildPages: about built");
 		}
 

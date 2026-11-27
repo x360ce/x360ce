@@ -87,6 +87,7 @@ namespace x360ce.App.Controls
 			//
 			// CheckButton
 			//
+			this.CheckButton.AutoSize = true;
 			this.CheckButton.Location = new System.Drawing.Point(9, 52);
 			this.CheckButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CheckButton.Name = "CheckButton";

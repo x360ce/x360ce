@@ -2096,6 +2096,123 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("interface")]
+		[Description("A scroll bar's track is the colour of what it scrolls in both themes: a box that cannot be changed, with lines to scroll or none, a box to type in, a list, a grid and the list a drop-down list opens")]
+		public void Scroll_bars_stand_on_the_colour_of_what_they_scroll()
+		{
+			OnUiThread(() =>
+			{
+				using (var form = new Form { ClientSize = new Size(640, 200), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+				{
+					var lines = string.Join(Environment.NewLine, Enumerable.Range(1, 100).Select(i => "Line " + i));
+					// A log as a program makes one: read-only, its own colour the field's, which the theme replaces.
+					var log = new TextBox { Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, Dock = DockStyle.Left, Width = 120, Text = lines, BackColor = SystemColors.Window };
+					// With nothing to scroll its bar is shown disabled.
+					var still = new TextBox { Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, Dock = DockStyle.Left, Width = 120, Text = "Line" };
+					var typed = new TextBox { Multiline = true, ScrollBars = ScrollBars.Vertical, Dock = DockStyle.Left, Width = 120, Text = lines };
+					var list = new ListBox { Dock = DockStyle.Left, Width = 120 };
+					list.Items.AddRange(Enumerable.Range(1, 100).Select(i => (object)("Item " + i)).ToArray());
+					var grid = new DataGridView { Dock = DockStyle.Fill, ColumnCount = 1 };
+					var combo = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
+					combo.Items.AddRange(Enumerable.Range(1, 30).Select(i => (object)("Item " + i)).ToArray());
+					form.Controls.AddRange(new Control[] { grid, combo, list, typed, still, log });
+					for (var i = 0; i < 100; i++)
+						grid.Rows.Add("Row " + i);
+					form.Show();
+					var problems = new System.Collections.Generic.List<string>();
+					foreach (var theme in new[] { ThemeType.Light, ThemeType.Dark })
+					{
+						FormsTheme.SetTheme(theme);
+						FormsTheme.Apply(form);
+						Application.DoEvents();
+						var gridBar = grid.Controls.OfType<VScrollBar>().First();
+						using (var picture = WindowPicture(form.Handle))
+						{
+							CheckTrack(picture, form.Handle, log.Handle, OBJID_VSCROLL, FormsTheme.FrameFace(log), theme + ", read-only box", problems);
+							CheckTrack(picture, form.Handle, still.Handle, OBJID_VSCROLL, FormsTheme.FrameFace(still), theme + ", read-only box with nothing to scroll", problems);
+							CheckTrack(picture, form.Handle, typed.Handle, OBJID_VSCROLL, FormsTheme.FrameFace(typed), theme + ", box to type in", problems);
+							CheckTrack(picture, form.Handle, list.Handle, OBJID_VSCROLL, FormsTheme.FrameFace(list), theme + ", list", problems);
+							CheckTrack(picture, form.Handle, gridBar.Handle, OBJID_CLIENT, grid.BackgroundColor, theme + ", grid", problems);
+						}
+						var info = new COMBOBOXINFO { cbSize = Marshal.SizeOf(typeof(COMBOBOXINFO)) };
+						Assert.IsTrue(GetComboBoxInfo(combo.Handle, ref info));
+						combo.DroppedDown = true;
+						try
+						{
+							Application.DoEvents();
+							using (var picture = WindowPicture(info.hwndList))
+								CheckTrack(picture, info.hwndList, info.hwndList, OBJID_VSCROLL, FormsTheme.GetColor("BackgroundDark"), theme + ", drop-down list", problems);
+						}
+						finally { combo.DroppedDown = false; }
+						// The list is a window of its own, whose arrows and thumb are drawn in its own style.
+						if ((theme == ThemeType.Dark) != (StyleTrack(info.hwndList).GetBrightness() < 0.5f))
+							problems.Add(theme + ", drop-down list: its scroll bar is not in the " + theme + " style.");
+					}
+					Assert.AreEqual(0, problems.Count, string.Join(Environment.NewLine, problems));
+				}
+			});
+		}
+
+		/// <summary>The track of a scroll bar in the visual style a window draws its scroll bars in.</summary>
+		static Color StyleTrack(IntPtr handle)
+		{
+			var theme = OpenThemeData(handle, "ScrollBar");
+			Assert.AreNotEqual(IntPtr.Zero, theme, "The window has no visual style.");
+			try
+			{
+				using (var bitmap = new Bitmap(16, 16))
+				{
+					using (var g = Graphics.FromImage(bitmap))
+					{
+						var dc = g.GetHdc();
+						try
+						{
+							// The vertical track, normal.
+							var r = new RECT { Left = 0, Top = 0, Right = 16, Bottom = 16 };
+							DrawThemeBackground(theme, dc, 7, 1, ref r, IntPtr.Zero);
+						}
+						finally { g.ReleaseHdc(dc); }
+					}
+					return bitmap.GetPixel(8, 8);
+				}
+			}
+			finally { CloseThemeData(theme); }
+		}
+
+		[DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
+		static extern IntPtr OpenThemeData(IntPtr hwnd, string classList);
+
+		[DllImport("uxtheme.dll")]
+		static extern int CloseThemeData(IntPtr theme);
+
+		[DllImport("uxtheme.dll")]
+		static extern int DrawThemeBackground(IntPtr theme, IntPtr hdc, int part, int state, ref RECT rect, IntPtr clip);
+
+		/// <summary>Checks that the colour most of a scroll bar shows in a picture of the window given, its track, is the face colour given.</summary>
+		static void CheckTrack(Bitmap picture, IntPtr pictured, IntPtr handle, int bar, Color face, string which, System.Collections.Generic.List<string> problems)
+		{
+			var info = new SCROLLBARINFO { cbSize = Marshal.SizeOf(typeof(SCROLLBARINFO)) };
+			RECT window;
+			GetWindowRect(pictured, out window);
+			if (!GetScrollBarInfo(handle, bar, ref info) || (info.Bar & STATE_SYSTEM_INVISIBLE) != 0)
+			{
+				problems.Add(which + ": the scroll bar is not shown.");
+				return;
+			}
+			var counts = new System.Collections.Generic.Dictionary<int, int>();
+			for (var x = info.rcScrollBar.Left - window.Left; x < info.rcScrollBar.Right - window.Left; x++)
+				for (var y = info.rcScrollBar.Top - window.Top; y < info.rcScrollBar.Bottom - window.Top; y++)
+				{
+					var argb = picture.GetPixel(x, y).ToArgb();
+					int count;
+					counts.TryGetValue(argb, out count);
+					counts[argb] = count + 1;
+				}
+			var track = counts.OrderByDescending(x => x.Value).First().Key;
+			if (track != face.ToArgb())
+				problems.Add(which + ": the track is #" + (track & 0xFFFFFF).ToString("X6") + ", not #" + (face.ToArgb() & 0xFFFFFF).ToString("X6") + ", the colour of what it scrolls.");
+		}
+
 		/// <summary>A window as it shows itself, its edge and everything on it.</summary>
 		static Bitmap WindowPicture(IntPtr handle)
 		{

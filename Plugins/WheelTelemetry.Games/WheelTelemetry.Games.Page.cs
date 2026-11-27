@@ -10,9 +10,10 @@ using System.Windows.Forms;
 namespace x360ce.Plugins.Samples
 {
 	/// <summary>
-	/// A game's page on the Games tab, made from its catalogue entry alone: its warnings first, the game and the telemetry it
-	/// sends, the numbered steps, each mod it needs with whether it is there and its official page, the port, Install and
-	/// Remove for a game the plugin installs files into, and what x360ce must have on to read the game.
+	/// A game's page on the Games tab, made from its catalogue entry alone: across the top, Open game folder, Install and
+	/// Remove for a game the plugin installs files into, and the port; on the left the game and the telemetry it sends, each
+	/// mod it needs with whether it is there and its official page, the installed files, and what x360ce must have on to
+	/// read the game; on the right its warnings, then the numbered steps.
 	/// </summary>
 	/// <remarks>
 	/// One layout for every game: nothing here is about one game. x360ce makes it with the plugin's instance for the game
@@ -20,7 +21,7 @@ namespace x360ce.Plugins.Samples
 	/// the steps and written into files already installed. The page reads the game's folder once a second, so a mod unzipped
 	/// there shows at once, and draws only what changed.
 	///
-	/// One table: a caption, its value, and the action for it. Drawn in the system colours, so x360ce's theme applies, and
+	/// Tables of a caption, its value, and the action for it. Drawn in the system colours, so x360ce's theme applies, and
 	/// laid out by the table and automatic sizes, with the room between controls taken from the font, so it follows the font
 	/// and the zoom. Every control is named, so the AI door reaches it, and a control that cannot be used now is greyed, never
 	/// hidden.
@@ -69,6 +70,10 @@ namespace x360ce.Plugins.Samples
 		#region Controls
 
 		internal TableLayoutPanel MainTableLayoutPanel;
+		internal FlowLayoutPanel ActionsFlowLayoutPanel;
+		internal TableLayoutPanel GameTableLayoutPanel;
+		internal TableLayoutPanel StepsTableLayoutPanel;
+		internal TableLayoutPanel WarningsTableLayoutPanel;
 		internal Label GameValueLabel;
 		internal Button OpenFolderButton;
 		internal Label FormatValueLabel;
@@ -83,42 +88,73 @@ namespace x360ce.Plugins.Samples
 		/// <summary>Gives each control its room from the font: run again when the font changes.</summary>
 		readonly List<Action<int>> _spacing = new List<Action<int>>();
 
-		int _row;
-
+		/// <summary>
+		/// The actions across the top, as on x360ce's own pages; under them, on the left, the game and what it needs, each with
+		/// whether it is there, and on the right the warnings and the steps.
+		/// </summary>
 		void Build()
 		{
-			MainTableLayoutPanel = new TableLayoutPanel
-			{
-				Name = nameof(MainTableLayoutPanel),
-				Dock = DockStyle.Top,
-				AutoSize = true,
-				AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				ColumnCount = 3,
-			};
-			// Captions as wide as the widest; values take the rest; actions as wide as they are.
-			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			MainTableLayoutPanel = NewTable(nameof(MainTableLayoutPanel), 2);
+			MainTableLayoutPanel.Dock = DockStyle.Top;
+			// Two halves: the game's state and the steps side by side.
+			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
 			_spacing.Add(g => MainTableLayoutPanel.Padding = new Padding(g, g, g, 0));
 			Controls.Add(MainTableLayoutPanel);
 			if (_game == null)
 			{
-				AddWide(NewValue("MissingLabel", "No entry", "x360ce’s telemetry data has no game for " + Path.GetFileName(_gamePath) + "."));
-				MainTableLayoutPanel.Controls[0].Text = MainTableLayoutPanel.Controls[0].AccessibleDescription;
-				Finish();
+				var missing = NewValue("MissingLabel", "No entry", "x360ce’s telemetry data has no game for " + Path.GetFileName(_gamePath) + ".");
+				missing.Text = missing.AccessibleDescription;
+				AddWide(MainTableLayoutPanel, missing, 2);
+				ApplyFont();
 				return;
 			}
 
-			// The warnings first, across the table, in the colours of a tip.
-			var warnings = GameData.Warnings(_data, _game);
-			for (var i = 0; i < warnings.Length; i++)
-				AddWide(NewNote("Warning" + (i + 1) + "Label", "Warning", warnings[i].Text));
-
-			GameValueLabel = NewValue(nameof(GameValueLabel), "Game", "The game, its file, and the telemetry it sends.");
-			OpenFolderButton = NewButton(nameof(OpenFolderButton), "Open game folder", "Opens the game’s folder, where the downloads of the mods it needs are unzipped.");
+			// The actions: what the page does to the game's folder, and the port the game sends to.
+			ActionsFlowLayoutPanel = new FlowLayoutPanel
+			{
+				Name = nameof(ActionsFlowLayoutPanel),
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				Anchor = AnchorStyles.Left,
+				WrapContents = true,
+			};
+			OpenFolderButton = NewButton(nameof(OpenFolderButton), PluginText.T("WheelTelemetry.Games.OpenGameFolder", "Open game folder"), "Opens the game’s folder, where the downloads of the mods it needs are unzipped.");
 			OpenFolderButton.Click += (s, e) => Process.Start(new ProcessStartInfo(_folder) { UseShellExecute = true });
-			AddRow("Game", "Game", GameValueLabel, OpenFolderButton);
+			ActionsFlowLayoutPanel.Controls.Add(OpenFolderButton);
+			_files = GameData.Files(_data, _game);
+			var paths = string.Join(" and ", _files.Select(x => x.TargetPath));
+			if (_files.Length > 0)
+			{
+				InstallButton = NewButton(nameof(InstallButton), PluginText.T("WheelTelemetry.Games.Install", "Install"), "Writes " + paths + " into the game’s folder, and nothing else.");
+				InstallButton.Click += (s, e) => Change(() => GameInstaller.Install(_data, _game, _gamePath, _port));
+				RemoveButton = NewButton(nameof(RemoveButton), PluginText.T("WheelTelemetry.Games.Remove", "Remove"), "Deletes " + paths + " from the game’s folder, and nothing else.");
+				RemoveButton.Click += (s, e) => Change(() => GameInstaller.Remove(_data, _game, _gamePath));
+				ActionsFlowLayoutPanel.Controls.Add(InstallButton);
+				ActionsFlowLayoutPanel.Controls.Add(RemoveButton);
+			}
+			var portLabel = new Label { Name = "PortLabel", Text = PluginText.T("WheelTelemetry.Games.Port", "Port"), AutoSize = true, Anchor = AnchorStyles.Left };
+			PortUpDown = NewNumber(nameof(PortUpDown), "Port", "The UDP port on this computer the game sends to: x360ce’s Wheel Telemetry plugin listens on 37150.", 1, 65535);
+			PortUpDown.ValueChanged += (s, e) => SetPort((int)PortUpDown.Value);
+			ActionsFlowLayoutPanel.Controls.Add(portLabel);
+			ActionsFlowLayoutPanel.Controls.Add(PortUpDown);
+			_spacing.Add(g =>
+			{
+				foreach (Control control in ActionsFlowLayoutPanel.Controls)
+					control.Margin = new Padding(0, 0, g, 0);
+				PortUpDown.Margin = Padding.Empty;
+			});
+			AddWide(MainTableLayoutPanel, ActionsFlowLayoutPanel, 2);
 
+			// Left: the game, the telemetry it sends, the mods it needs and the files the plugin installs, each as it is now.
+			GameTableLayoutPanel = NewTable(nameof(GameTableLayoutPanel), 3);
+			// Captions as wide as the widest; values take the rest; links as wide as they are.
+			GameTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			GameTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			GameTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			_spacing.Add(g => GameTableLayoutPanel.Margin = new Padding(0, 0, g, 0));
+			GameValueLabel = NewValue(nameof(GameValueLabel), "Game", "The game, its file, and the telemetry it sends.");
+			AddRow(GameTableLayoutPanel, "Game", PluginText.T("WheelTelemetry.Games.Game", "Game"), GameValueLabel, null);
 			// The telemetry it sends, named and linked from x360ce's list of formats.
 			var format = GameData.Format(_data, _game);
 			var spec = GameData.Spec(_data, _game);
@@ -126,16 +162,7 @@ namespace x360ce.Plugins.Samples
 			FormatValueLabel.Text = format == null
 				? _game.TelemetryFormatId + "."
 				: format.Name + (string.IsNullOrEmpty(format.Publisher) ? "" : ", from " + format.Publisher) + ".";
-			AddRow("Format", "Telemetry", FormatValueLabel, spec == null ? null : NewLink("FormatLinkLabel", "Specification", spec.Url));
-
-			_stepRows = GameData.Steps(_data, _game);
-			for (var i = 0; i < _stepRows.Length; i++)
-			{
-				var step = NewValue("Step" + (i + 1) + "Label", "Step " + (i + 1), "Step " + (i + 1) + " of what to do.");
-				_steps.Add(step);
-				AddRow("Step" + (i + 1) + "Number", (i + 1).ToString(CultureInfo.CurrentCulture) + ".", step, null);
-			}
-
+			AddRow(GameTableLayoutPanel, "Format", PluginText.T("WheelTelemetry.Games.Telemetry", "Telemetry"), FormatValueLabel, spec == null ? null : NewLink("FormatLinkLabel", PluginText.T("WheelTelemetry.Games.Specification", "Specification"), spec.Url));
 			var mods = GameData.Mods(_data, _game);
 			for (var i = 0; i < mods.Length; i++)
 			{
@@ -143,102 +170,101 @@ namespace x360ce.Plugins.Samples
 				var state = NewValue(key + "ValueLabel", mods[i].Name, "Whether " + mods[i].Name + " is in the game’s folder: " + mods[i].DetectFile + ".");
 				state.Tag = mods[i];
 				_mods.Add(state);
-				AddRow(key, mods[i].Name, state, NewLink(key + "LinkLabel", "Official page", mods[i].Url));
+				AddRow(GameTableLayoutPanel, key, mods[i].Name, state, NewLink(key + "LinkLabel", PluginText.T("WheelTelemetry.Games.OfficialPage", "Official page"), mods[i].Url));
 			}
-
-			PortUpDown = NewNumber(nameof(PortUpDown), "Port", "The UDP port on this computer the game sends to: x360ce’s Wheel Telemetry plugin listens on 37150.", 1, 65535);
-			PortUpDown.ValueChanged += (s, e) => SetPort((int)PortUpDown.Value);
-			AddRow("Port", "Port", PortUpDown, null);
-
-			_files = GameData.Files(_data, _game);
 			if (_files.Length > 0)
 			{
-				FilesValueLabel = NewValue(nameof(FilesValueLabel), "Installed files", "Whether the files the plugin installs into the game are there.");
-				AddRow("Files", "Files", FilesValueLabel, null);
-				var paths = string.Join(" and ", _files.Select(x => x.TargetPath));
-				InstallButton = NewButton(nameof(InstallButton), "Install", "Writes " + paths + " into the game’s folder, and nothing else.");
-				InstallButton.Click += (s, e) => Change(() => GameInstaller.Install(_data, _game, _gamePath, _port));
-				RemoveButton = NewButton(nameof(RemoveButton), "Remove", "Deletes " + paths + " from the game’s folder, and nothing else.");
-				RemoveButton.Click += (s, e) => Change(() => GameInstaller.Remove(_data, _game, _gamePath));
-				var actions = new FlowLayoutPanel
+				FilesValueLabel = NewValue(nameof(FilesValueLabel), "Installed files", "Whether " + paths + ", which Install writes, are in the game’s folder.");
+				AddRow(GameTableLayoutPanel, "Files", PluginText.T("WheelTelemetry.Games.Files", "Files"), FilesValueLabel, null);
+			}
+			WheelTelemetryNoteLabel = NewValue(nameof(WheelTelemetryNoteLabel), "Wheel Telemetry", "What x360ce must have on to read the game’s telemetry.");
+			WheelTelemetryNoteLabel.Text = PluginText.T("WheelTelemetry.Games.WheelTelemetryNote", "x360ce reads it on the wheel’s controller tab: Game Telemetry, Enable live game telemetry ticked and Listen port the same as Port here; Wheel, Centering spring ticked.");
+			AddWide(GameTableLayoutPanel, WheelTelemetryNoteLabel, 3);
+
+			// Right: the warnings, together in the colours of a tip, then the numbered steps.
+			StepsTableLayoutPanel = NewTable(nameof(StepsTableLayoutPanel), 2);
+			StepsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			StepsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			var warnings = GameData.Warnings(_data, _game);
+			if (warnings.Length > 0)
+			{
+				WarningsTableLayoutPanel = NewTable(nameof(WarningsTableLayoutPanel), 1);
+				WarningsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+				WarningsTableLayoutPanel.BackColor = SystemColors.Info;
+				WarningsTableLayoutPanel.ForeColor = SystemColors.InfoText;
+				_spacing.Add(g => WarningsTableLayoutPanel.Padding = new Padding(g / 2));
+				for (var i = 0; i < warnings.Length; i++)
 				{
-					Name = "ActionsFlowLayoutPanel",
-					AutoSize = true,
-					AutoSizeMode = AutoSizeMode.GrowAndShrink,
-					Anchor = AnchorStyles.Left,
-					WrapContents = true,
-				};
-				actions.Controls.Add(InstallButton);
-				actions.Controls.Add(RemoveButton);
-				_spacing.Add(g =>
-				{
-					InstallButton.Margin = new Padding(0, 0, g, 0);
-					RemoveButton.Margin = new Padding(0);
-				});
-				AddRow("Actions", "", actions, null);
+					var warning = NewValue("Warning" + (i + 1) + "Label", "Warning", warnings[i].Text);
+					warning.Text = warnings[i].Text;
+					warning.Margin = Padding.Empty;
+					WarningsTableLayoutPanel.RowStyles.Add(new RowStyle());
+					WarningsTableLayoutPanel.RowCount = i + 1;
+					WarningsTableLayoutPanel.Controls.Add(warning, 0, i);
+				}
+				AddWide(StepsTableLayoutPanel, WarningsTableLayoutPanel, 2);
+			}
+			_stepRows = GameData.Steps(_data, _game);
+			for (var i = 0; i < _stepRows.Length; i++)
+			{
+				var step = NewValue("Step" + (i + 1) + "Label", "Step " + (i + 1), "Step " + (i + 1) + " of what to do.");
+				_steps.Add(step);
+				AddRow(StepsTableLayoutPanel, "Step" + (i + 1) + "Number", (i + 1).ToString(CultureInfo.CurrentCulture) + ".", step, null);
 			}
 
-			WheelTelemetryNoteLabel = NewValue(nameof(WheelTelemetryNoteLabel), "Wheel Telemetry", "What x360ce must have on to read the game’s telemetry.");
-			WheelTelemetryNoteLabel.Text = "x360ce reads the game while its Wheel Telemetry plugin listens on the same port: on the wheel’s controller "
-				+ "tab, Game Telemetry, Telemetry, Enable live game telemetry ticked and Listen port. The wheel feels the game while "
-				+ "Centering spring is ticked on its Wheel tab.";
-			AddWide(WheelTelemetryNoteLabel);
-			Finish();
-		}
-
-		void Finish()
-		{
-			MainTableLayoutPanel.RowCount = _row;
+			MainTableLayoutPanel.RowStyles.Add(new RowStyle());
+			MainTableLayoutPanel.RowCount = MainTableLayoutPanel.RowStyles.Count;
+			MainTableLayoutPanel.Controls.Add(GameTableLayoutPanel, 0, MainTableLayoutPanel.RowStyles.Count - 1);
+			MainTableLayoutPanel.Controls.Add(StepsTableLayoutPanel, 1, MainTableLayoutPanel.RowStyles.Count - 1);
 			ApplyFont();
 		}
 
+		/// <summary>A table as tall as its rows and as wide as its column gives it.</summary>
+		static TableLayoutPanel NewTable(string name, int columns)
+		{
+			return new TableLayoutPanel
+			{
+				Name = name,
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
+				ColumnCount = columns,
+				Margin = Padding.Empty,
+			};
+		}
+
 		/// <summary>Adds a row: its caption, its value and its action, each with the room the font gives after it.</summary>
-		/// <remarks>A value without an action spans the action's column too, but for a number box, whose width is its own.</remarks>
-		void AddRow(string key, string caption, Control value, Control action)
+		/// <remarks>A value without an action spans the columns after it.</remarks>
+		void AddRow(TableLayoutPanel table, string key, string caption, Control value, Control action)
 		{
 			var label = new Label { Name = key + "Label", Text = caption, AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Top };
 			_spacing.Add(g =>
 			{
 				label.Margin = new Padding(0, 0, g, g);
-				value.Margin = new Padding(0, 0, g, g);
+				value.Margin = new Padding(0, 0, action == null ? 0 : g, g);
 				if (action != null)
 					action.Margin = new Padding(0, 0, 0, g);
 			});
-			MainTableLayoutPanel.RowStyles.Add(new RowStyle());
-			MainTableLayoutPanel.Controls.Add(label, 0, _row);
-			MainTableLayoutPanel.Controls.Add(value, 1, _row);
+			var row = table.RowStyles.Count;
+			table.RowStyles.Add(new RowStyle());
+			table.RowCount = row + 1;
+			table.Controls.Add(label, 0, row);
+			table.Controls.Add(value, 1, row);
 			if (action != null)
-				MainTableLayoutPanel.Controls.Add(action, 2, _row);
-			else if (!(value is UpDownBase))
-				MainTableLayoutPanel.SetColumnSpan(value, 2);
-			_row++;
+				table.Controls.Add(action, 2, row);
+			else if (table.ColumnCount > 2)
+				table.SetColumnSpan(value, table.ColumnCount - 1);
 		}
 
-		/// <summary>Adds a row of one control across the table.</summary>
-		void AddWide(Control control)
+		/// <summary>Adds a row of one control across a table.</summary>
+		void AddWide(TableLayoutPanel table, Control control, int columns)
 		{
 			_spacing.Add(g => control.Margin = new Padding(0, 0, 0, g));
-			MainTableLayoutPanel.RowStyles.Add(new RowStyle());
-			MainTableLayoutPanel.Controls.Add(control, 0, _row);
-			MainTableLayoutPanel.SetColumnSpan(control, 3);
-			_row++;
-		}
-
-		Label NewNote(string name, string accessibleName, string text)
-		{
-			var note = new Label
-			{
-				Name = name,
-				Text = text,
-				AutoSize = true,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				BackColor = SystemColors.Info,
-				ForeColor = SystemColors.InfoText,
-				AccessibleName = accessibleName,
-				AccessibleDescription = text,
-			};
-			_spacing.Add(g => note.Padding = new Padding(g / 2));
-			return note;
+			var row = table.RowStyles.Count;
+			table.RowStyles.Add(new RowStyle());
+			table.RowCount = row + 1;
+			table.Controls.Add(control, 0, row);
+			table.SetColumnSpan(control, columns);
 		}
 
 		static Label NewValue(string name, string accessibleName, string description)
@@ -336,15 +362,15 @@ namespace x360ce.Plugins.Samples
 				for (var i = 0; i < _steps.Count; i++)
 					SetText(_steps[i], _stepRows[i].Text.Replace(GameData.PortText, port));
 				foreach (var mod in _mods)
-					SetText(mod, found ? GameData.ModState((ITelemetryGameMod)mod.Tag, _folder) : "No game folder.");
+					SetText(mod, found ? GameData.ModState((ITelemetryGameMod)mod.Tag, _folder) : PluginText.T("WheelTelemetry.Games.NoGameFolder", "No game folder."));
 				SetNumber(PortUpDown, _port);
 				if (FilesValueLabel != null)
 				{
 					var installed = found ? GameInstaller.Installed(_data, _game, _folder) : 0;
-					SetText(FilesValueLabel, _problem ?? (!found ? "No game folder."
-						: installed == 0 ? "Not installed."
+					SetText(FilesValueLabel, _problem ?? (!found ? PluginText.T("WheelTelemetry.Games.NoGameFolder", "No game folder.")
+						: installed == 0 ? PluginText.T("WheelTelemetry.Games.NotInstalled", "Not installed.")
 						: installed == _files.Length ? "Installed: " + string.Join(", ", _files.Select(x => x.TargetPath)) + ". They send to port " + port + "."
-						: "Partly installed. Press Install again."));
+						: PluginText.T("WheelTelemetry.Games.PartlyInstalled", "Partly installed. Press Install again.")));
 					InstallButton.Enabled = found;
 					RemoveButton.Enabled = found && installed > 0;
 				}

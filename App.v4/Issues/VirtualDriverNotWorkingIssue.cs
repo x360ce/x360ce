@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using x360ce.App.DInput;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -84,7 +85,7 @@ namespace x360ce.App.Issues
 		public VirtualDriverNotWorkingIssue() : base()
 		{
 			Name = Title(IssueSeverity.Moderate);
-			FixName = "Repair";
+			FixName = UiLanguage.T("VirtualDriverNotWorkingIssue.Repair", "Repair");
 			// Removing and putting back the driver is an Administrator action.
 			FixNeedsAdmin = true;
 		}
@@ -97,8 +98,8 @@ namespace x360ce.App.Issues
 		public static string Title(IssueSeverity severity)
 		{
 			return severity == IssueSeverity.Low
-				? "Virtual controller has no vibration"
-				: "Virtual driver is installed but not working";
+				? UiLanguage.T("VirtualDriverNotWorkingIssue.VirtualControllerHasNoVibration", "Virtual controller has no vibration")
+				: UiLanguage.T("VirtualDriverNotWorkingIssue.VirtualDriverIsInstalledButNot", "Virtual driver is installed but not working");
 		}
 
 		/// <summary>What the input thread has recorded about one controller's use of the bus.</summary>
@@ -218,8 +219,7 @@ namespace x360ce.App.Issues
 			if (health.ConnectError != VIGEM_ERROR.VIGEM_ERROR_NONE
 				&& DInputHelper.IsRecent(health.ConnectTick, health.Now, ConnectErrorFreshMs))
 				lines.Add(string.Format(
-					"x360ce cannot connect to the virtual controller driver (driver answer: {0}), so no " +
-					"virtual controller can be made.", BusAnswers.Name(health.ConnectError)));
+					UiLanguage.T("VirtualDriverNotWorkingIssue.X360ceCannotConnectToTheVirtual", "x360ce cannot connect to the virtual controller driver (driver answer: {0}), so no virtual controller can be made."), BusAnswers.Name(health.ConnectError)));
 			var pads = health.Pads ?? new PadHealth[0];
 			// Lines about controllers that work and have no vibration.
 			var quiet = 0;
@@ -234,7 +234,7 @@ namespace x360ce.App.Issues
 				// the failed plugs counted before it, whose kind its last result no longer tells.
 				if (pad.LastResult == VirtualError.RemovalRefused)
 					lines.Add(string.Format(
-						"Controller {0}: the driver would not remove its virtual controller, so no other is made for it.",
+						UiLanguage.T("VirtualDriverNotWorkingIssue.ControllerTheDriverWouldNotRemove", "Controller {0}: the driver would not remove its virtual controller, so no other is made for it."),
 						number));
 				// A pad held back is not tried again while the places stay the same, so its count cannot grow. When the attempt
 				// that held it back never saw its controller, it is said at once, in the words of what that attempt found. One
@@ -242,33 +242,29 @@ namespace x360ce.App.Issues
 				// that no passing moment explains.
 				else if (pad.HeldAs == VirtualError.NotAnswering)
 					lines.Add(string.Format(
-						"Controller {0}: XInput did not answer while its virtual controller was being made, so it was taken " +
-						"away again. It is tried again when a controller arrives or leaves.", number));
+						UiLanguage.T("VirtualDriverNotWorkingIssue.ControllerXInputDidNotAnswerWhile", "Controller {0}: XInput did not answer while its virtual controller was being made, so it was taken away again. It is tried again when a controller arrives or leaves."), number));
 				else if (pad.HeldAs == VirtualError.PlaceNotGiven || pad.PlugFailures >= PlugFailuresToReport)
 					lines.Add(pad.HeldAs == VirtualError.PlaceNotGiven || pad.LastResult == VirtualError.PlaceNotGiven
 						? pad.PlugFailures <= 1
 							? string.Format(
-								"Controller {0}: the driver accepted its virtual controller, but Windows never finished building it.",
+								UiLanguage.T("VirtualDriverNotWorkingIssue.ControllerTheDriverAcceptedItsVirtual", "Controller {0}: the driver accepted its virtual controller, but Windows never finished building it."),
 								number)
 							: string.Format(
-								"Controller {0}: the driver accepted its virtual controller {1} times in a row, " +
-								"but Windows never finished building it.", number, pad.PlugFailures)
+								UiLanguage.T("VirtualDriverNotWorkingIssue.ControllerTheDriverAcceptedItsVirtual2", "Controller {0}: the driver accepted its virtual controller {1} times in a row, but Windows never finished building it."), number, pad.PlugFailures)
 						: string.Format(
-							"Controller {0}: the driver refused to make its virtual controller {1} times in a " +
-							"row while XInput {0} was free (driver answer: {2}).",
+							UiLanguage.T("VirtualDriverNotWorkingIssue.ControllerTheDriverRefusedToMake", "Controller {0}: the driver refused to make its virtual controller {1} times in a row while XInput {0} was free (driver answer: {2})."),
 							number, pad.PlugFailures, BusAnswers.Name(pad.LastError)));
 				if (pad.FeedDrops >= FeedDropsToReport
 					&& DInputHelper.IsRecent(pad.LastFeedDropTick, health.Now, DInputHelper.FeedDropWindowMs))
 					lines.Add(string.Format(
-						"Controller {0}: the driver stopped taking its input {1} times in a row (driver " +
-						"answer: {2}), so its virtual controller had to be made again each time.",
+						UiLanguage.T("VirtualDriverNotWorkingIssue.ControllerTheDriverStoppedTakingIts", "Controller {0}: the driver stopped taking its input {1} times in a row (driver answer: {2}), so its virtual controller had to be made again each time."),
 						number, pad.FeedDrops, BusAnswers.Name(pad.LastError)));
 				// Said of a controller that was made, and only when nothing worse is said of it.
 				if (lines.Count == said && pad.LastResult == VirtualError.None
 					&& pad.RumbleError != VIGEM_ERROR.VIGEM_ERROR_NONE)
 				{
 					lines.Add(string.Format(
-						"Controller {0} works, but the driver refused its vibration (driver answer: {1}).",
+						UiLanguage.T("VirtualDriverNotWorkingIssue.ControllerWorksButTheDriverRefused", "Controller {0} works, but the driver refused its vibration (driver answer: {1})."),
 						number, BusAnswers.Name(pad.RumbleError)));
 					quiet++;
 				}
@@ -280,8 +276,7 @@ namespace x360ce.App.Issues
 			// own setup decides, and on older Windows a driver of another version is left alone.
 			lines.Add(
 				"Repair installs the driver again" + (quiet > 0 ? ", which may restore what the driver refused" : "") +
-				"; if its own setup opens, choose Repair there. If this message comes back afterwards, close " +
-				"and reopen x360ce, then restart Windows if it is still here.");
+				"; if its own setup opens, choose Repair there. If this message comes back afterwards, close and reopen x360ce, then restart Windows if it is still here.");
 			message = string.Join(Environment.NewLine + Environment.NewLine, lines.ToArray());
 			return severity;
 		}

@@ -55,7 +55,7 @@ above.
 
 | Game | Steering preset | Pedals: anti-dead zone | Wheel range |
 | --- | --- | --- | --- |
-| Grand Theft Auto V | `1% DeadZone, 100% Controller Anti-DeadZone` | 12% (30 in the box) | 900° |
+| Grand Theft Auto V | `1% DeadZone, 100% Controller Anti-DeadZone` | 24% (61 in the box) | 900° |
 
 The whole setup for GTA V, road feel included: [GTA V Enhanced with a wheel and road feel](Help.GtaV.md).
 For force feedback that follows the road in Forza Horizon 6 and F1 25, see

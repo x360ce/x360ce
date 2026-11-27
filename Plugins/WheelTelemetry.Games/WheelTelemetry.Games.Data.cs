@@ -79,7 +79,7 @@ namespace x360ce.Plugins.Samples
 		{
 			var path = Path.Combine(folder, mod.DetectFile);
 			if (!File.Exists(path))
-				return "Not found: " + mod.DetectFile + ". Unzip it into the game’s folder from its official page.";
+				return "Not found: " + mod.DetectFile + ".";
 			var info = FileVersionInfo.GetVersionInfo(path);
 			var product = (info.ProductName ?? "").Trim();
 			if (!string.IsNullOrEmpty(mod.DetectProduct) && product.IndexOf(mod.DetectProduct, StringComparison.OrdinalIgnoreCase) < 0)

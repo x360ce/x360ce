@@ -205,7 +205,7 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelSoftLockCheckBox)] = new Text("Soft lock",
 				"Enforces the chosen Wheel range with a software bump stop and scales the steering axis on wheels x360ce cannot set the hardware range of.");
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbStripCheckBox)] = new Text("RGB LED strip",
-				"Drives supported steering wheels’ RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.");
+				"Shows the engine's revs from live game telemetry on the shift lights of a Logitech G27, G29 or G923: off below half revs, then pairs from green at the ends to red in the middle, all flashing at the rev limit to shift up.");
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbStripBar)] = Live("RGB LED strip preview",
 				"Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.");
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbTestButton)] = new Text("Test RGB LEDs",

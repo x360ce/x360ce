@@ -152,7 +152,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianTextBox)] = new Text("HID Guardian state",
 				"Whether HID Guardian is still installed.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianInstallButton)] = new Text("Install",
-				"Installs HID Guardian. Use HID Hide instead.");
+				"Installs HID Guardian. Only development builds install it, so its removal can be tested: use HID Hide instead.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianUninstallButton)] = new Text("Uninstall",
 				"Removes HID Guardian. Needs Administrator.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianRefreshButton)] = new Text("Refresh",

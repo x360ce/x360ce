@@ -7,6 +7,7 @@ using System.Linq;
 using x360ce.App.DInput;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -38,8 +39,8 @@ namespace x360ce.App.Issues
 
 		public HidHideIssue() : base()
 		{
-			Name = "Game Sees Two Controllers";
-			FixName = "Open HID Hide";
+			Name = UiLanguage.T("HidHideIssue.GameSeesTwoControllers", "Game Sees Two Controllers");
+			FixName = UiLanguage.T("HidHideIssue.OpenHIDHide", "Open HID Hide");
 		}
 
 		/// <summary>Why the last install did not finish; null when it ran to its end or has not run.</summary>
@@ -68,7 +69,7 @@ namespace x360ce.App.Issues
 				return;
 			}
 			var install = fixType == FixInstall;
-			var fixName = install ? "Install HID Hide" : "Open HID Hide";
+			var fixName = install ? UiLanguage.T("HidHideIssue.InstallHIDHide", "Install HID Hide") : UiLanguage.T("HidHideIssue.OpenHIDHide", "Open HID Hide");
 			if (FixName != fixName)
 				FixName = fixName;
 			// Its setup asks Windows for administrator rights; More... is the release page, to download it by hand.
@@ -137,7 +138,7 @@ namespace x360ce.App.Issues
 					return null;
 				fixType = FixInstall;
 				var install = new List<string>();
-				AddSeenTwice(install, xbox, "Install HID Hide to hide {0} from games.");
+				AddSeenTwice(install, xbox, UiLanguage.T("HidHideIssue.InstallHIDHideToHideFrom", "Install HID Hide to hide {0} from games."));
 				return string.Join(Environment.NewLine, install.ToArray());
 			}
 			// Installed but its program did not answer: nothing can be said about its settings.
@@ -157,9 +158,9 @@ namespace x360ce.App.Issues
 					state.HiddenDevices.Length == 1 ? "a device" : state.HiddenDevices.Length + " devices",
 					state.HiddenDevices.Length == 1 ? "it is" : "they are", allow));
 			if (!state.CloakOn)
-				AddSeenTwice(lines, xbox, "HID Hide is installed, but hiding is off: turn hiding on in HID Hide to hide {0} from games.");
+				AddSeenTwice(lines, xbox, UiLanguage.T("HidHideIssue.HIDHideIsInstalledButHiding", "HID Hide is installed, but hiding is off: turn hiding on in HID Hide to hide {0} from games."));
 			var shown = state.CloakOn ? xbox.Where(x => !IsHidden(state, x)).ToArray() : new UserDevice[0];
-			AddSeenTwice(lines, shown, "HID Hide does not hide {0} yet: tick {0} under Devices in HID Hide to hide {0} from games.");
+			AddSeenTwice(lines, shown, UiLanguage.T("HidHideIssue.HIDHideDoesNotHideYet", "HID Hide does not hide {0} yet: tick {0} under Devices in HID Hide to hide {0} from games."));
 			if (lines.Count == 0)
 				return null;
 			fixType = FixConfigure;

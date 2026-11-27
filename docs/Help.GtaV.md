@@ -4,15 +4,23 @@ This guide sets up a Logitech G27, or a wheel like it, for GTA V Enhanced (`GTA5
 wheel feel the road from the game's telemetry. GTA V Legacy (`GTA5.exe`) works the same way. Do the steps in
 order. They take about 15 minutes.
 
-GTA V sends its telemetry through two mods. **Play story mode only.** Switch BattlEye off in the game's launcher,
+Steps 5 to 7 are optional. They give the wheel the feel of the road and the hits from the game's telemetry. Without
+them, the wheel plays the game's own rumble.
+
+GTA V sends its telemetry through two mods. If you install them, **play story mode only.** Switch BattlEye off in the game's launcher,
 and remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it
 will not.
+
+Unzip x360ce into a folder of its own, such as `C:\Program Files\Jocys.com\x360ce`, and start `x360ce.exe` from there.
+The steps name the folder of the Steam copy of the game, `c:\SteamLibrary\steamapps\common\Grand Theft Auto V Enhanced`.
+Yours may be elsewhere.
 
 ## 1. Add the game
 
 1. Open the **Games** tab.
 2. Press **Add...**.
-3. Choose `GTA5_Enhanced.exe` in the game's folder.
+3. Choose `GTA5_Enhanced.exe` in the game's folder, such as
+   `c:\SteamLibrary\steamapps\common\Grand Theft Auto V Enhanced`.
 4. Select the game in the list.
 
    ![The Games tab with GTA5_Enhanced.exe selected, Grand Theft Auto V in the Game box at the top](.attachments/x360ce-v4-gta5-games-list.png)
@@ -46,19 +54,20 @@ GTA V ignores the first part of a trigger's travel. **Anti-Dead Zone** skips tha
 lightest press.
 
 1. Open the **Triggers** page.
-2. In **Left Trigger** (the brake), type `30` in the box beside **Anti-Dead Zone**. The slider shows 12 %.
-3. In **Right Trigger** (the gas), type `30` too.
+2. In **Left Trigger** (the brake), set **Anti-Dead Zone** to 24 %: move the slider, or type `61` in the box beside
+   it.
+3. In **Right Trigger** (the gas), set it to 24 % too.
 
-   ![The Triggers page: Anti-Dead Zone 30, shown as 12 %, for both triggers](.attachments/x360ce-v4-gta5-triggers.png)
+   ![The Triggers page: Anti-Dead Zone 24 %, 61 in the box, for both triggers](.attachments/x360ce-v4-gta5-triggers.png)
 
 4. Later, in the game, stop the car and press the gas as lightly as you can.
-   - The car does not move: raise **Anti-Dead Zone** by 5 and try again.
-   - The car jumps forward at the first touch: lower it by 5.
+   - The car does not move: raise **Anti-Dead Zone** by 2 % and try again.
+   - The car jumps forward at the first touch: lower it by 2 %.
 5. Do the same for the brake.
 6. If the car creeps with both pedals released, raise **Dead Zone** to 1 %.
 
-30 of 255 is the value Microsoft names for a pressed trigger. No exact figure for GTA V has been published, so
-check it with step 4.
+24 % is a starting value that is easy to remember. No exact figure for GTA V has been published, so check it with
+step 4.
 
 ## 3. Set the wheel's range and centre
 
@@ -83,23 +92,24 @@ How the centering spring works: [How a real car centres its steering wheel](Help
 While telemetry arrives, the road and the hits come from telemetry, and the game's own rumble is not played. When no
 telemetry arrives, the game's rumble plays. If it is too strong then, lower **Strength** under **Left Motor**.
 
-## 5. Install the telemetry script
+## 5. Install the telemetry script (Optional)
 
 1. Open the **Games** tab and select the game.
 2. Under the list, open the **Wheel Telemetry Games** tab, then its **GTA V** page.
-3. Read the three warnings at the top.
+3. Read the three warnings, in yellow above the page's steps.
 
-   ![The Wheel Telemetry Games tab's GTA V page: the warnings, the game, the telemetry format and the first steps](.attachments/x360ce-v4-gta5-wheel-telemetry-games.png)
+   ![The Wheel Telemetry Games tab's GTA V page: Open game folder, Install, Remove and Port at the top; the game, its mods and files on the left; the warnings and the steps on the right](.attachments/x360ce-v4-gta5-wheel-telemetry-games.png)
 
 4. Press **Official page** beside **Script Hook V**. Download Script Hook V from
    [its official page](http://www.dev-c.com/gtav/scripthookv/).
 5. Press **Official page** beside **Script Hook V .NET Enhanced**. Download it from
    [its official page](https://www.gta5-mods.com/tools/script-hook-v-net-enhanced).
-6. Press **Open game folder**.
+6. Press **Open game folder**, at the top of the page. It opens the game's folder, such as
+   `c:\SteamLibrary\steamapps\common\Grand Theft Auto V Enhanced`.
 7. Unzip `ScriptHookV.dll` and `xinput1_4.dll` from Script Hook V into that folder.
 8. Unzip the files of Script Hook V .NET Enhanced into the same folder.
 9. Check that each mod's line on the page says **Found**.
-10. Leave **Port** at `37150`.
+10. Leave **Port**, beside the buttons, at `37150`.
 11. Press **Install**. It writes the telemetry script and its settings into the game's `scripts` folder, and nothing
     else.
 
@@ -111,7 +121,7 @@ If the **Wheel Telemetry Games** tab is missing, open **Options**, then **Plugin
 
 ![Options, Plugins: WheelTelemetry.Games ticked and Loaded](.attachments/x360ce-v4-gta5-options-plugins.png)
 
-## 6. Set the road feel
+## 6. Set the road feel (Optional)
 
 1. Open **Controller 1**, then the **Game Telemetry** page.
 2. Keep **Enable live game telemetry** ticked.
@@ -120,17 +130,26 @@ If the **Wheel Telemetry Games** tab is missing, open **Options**, then **Plugin
 5. To feel kerbs harder or softer, move **Curb bumps**.
 6. Press **Save All** at the top.
 
-## 7. Check that telemetry arrives
+## 7. Check that telemetry arrives (Optional)
 
 1. Start the game and load story mode.
 2. Drive a car.
 3. Look at **Live Telemetry** on the **Game Telemetry** page.
 
-   ![The Game Telemetry page while a car drives: Forza Data Out - 91 km/h (52 Hz), with speed, grip, lateral G and engine RPM](.attachments/x360ce-v4-gta5-game-telemetry.png)
+   ![The Game Telemetry page while a car drives: Forza Data Out - 97 km/h (49 Hz), with speed, grip, lateral G and engine RPM under Live Telemetry, and Force Feel Tuning beside it down to Gear change](.attachments/x360ce-v4-gta5-game-telemetry.png)
 
-The first line names the format, the speed and the packets a second, such as `Forza Data Out - 91 km/h (52 Hz)`.
+The first line names the format, the speed and the packets a second, such as `Forza Data Out - 97 km/h (49 Hz)`.
 GTA V's script sends its telemetry in Forza's format. **Waiting for game telemetry...** means nothing arrives yet:
 see [Troubleshooting](#troubleshooting).
+
+The lights on the wheel show the engine's revs:
+
+- Below half revs, they are off.
+- As the revs rise, the lights come on in pairs, from green at both ends to red in the middle.
+- All the lights flash at the rev limit: time to shift up.
+
+GTA V shifts gears by itself, at about the moment every light is lit. The lights show only the revs. They do not
+say whether the gear is the best one.
 
 ## 8. Record a report
 

@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.31.57.0"
+  version: "4.31.65.0"
 ---
 
 # X360CE
@@ -198,6 +198,9 @@ again before calling it a fault.
   of each controller and Auto-Order. **Issues**: problems the program found, each with what to do and often a Fix
   button.
 - **Help**: the full help. Call `help` for it as Markdown; it is the authority on how a feature works.
+- **The globe** at the right end of the Game row (`LanguageButton`): the language of the window, in 11 languages. Names,
+  paths and `ui_find` stay in English whatever language is shown, so search in English; a value read from the screen,
+  such as a label's text, may be in the person's language, and so are the words they see.
 
 ## When a game does not respond
 

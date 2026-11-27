@@ -103,6 +103,7 @@
     <Compile Include="Common\AdminCommand.cs" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\AppFonts.cs" />
+    <Compile Include="Common\AppLanguages.cs" />
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudClient.cs" />
@@ -735,6 +736,18 @@
     <None Include="..\Resources\Images\shared\**;..\Resources\Images\v4\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>
   <ItemGroup>
+    <!--
+      The languages the interface is offered in besides English (Common\AppLanguages.cs), one document each. en.json lists
+      the English the sync found, for translators, and each {culture}.todo.json what one language lacks: the program needs
+      neither.
+    -->
+    <LanguageFile Include="Languages\*.json" Exclude="Languages\en.json;Languages\*.todo.json" />
+    <EmbeddedResource Include="@(LanguageFile)">
+      <LogicalName>x360ce.App.Languages.%(Filename).json</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <!-- The fonts the program carries (Common\AppFonts.cs). Their licences are with the others, below. -->
     <EmbeddedResource Include="..\Resources\Fonts\Selawik\selawk.ttf">
       <Link>Resources\Fonts\Selawik\selawk.ttf</Link>
@@ -848,6 +861,22 @@
     that is already right keeps its time, so the build this starts from its own sources does not start another.
   -->
   <Target Name="WriteSkill" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
-    <Exec Command="&quot;$(TargetPath)&quot; -Skill=&quot;$(MSBuildProjectDirectory)\..\skills&quot;" ContinueOnError="true" />
+    <!-- Its own settings folder: a build never reads or writes the person's. -->
+    <Exec Command="&quot;$(TargetPath)&quot; -Skill=&quot;$(MSBuildProjectDirectory)\..\skills&quot; &quot;-Profile=$(MSBuildProjectDirectory)\$(IntermediateOutputPath)Skill.Profile&quot;" ContinueOnError="true" />
+  </Target>
+  <!--
+    What each language lacks against the English, as a build warning per language document: the program builds its pages
+    without showing them, records the English of every text, writes Languages\en.json, and a {culture}.todo.json beside
+    each document that lacks something (-Languages, Common\AppLanguages.cs). Never an error, as a text without a
+    translation shows in English. It runs when the program or a document changed, and again on every build while a
+    language lacks something, so the warnings stay until they are fixed. Its own settings folder keeps the person's out.
+    It shows no window: what stops it is a warning too (XLANG000), and a run that hangs is ended after two minutes.
+  -->
+  <Target Name="SyncLanguages" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'" Inputs="$(TargetPath);@(LanguageFile)" Outputs="$(IntermediateOutputPath)Languages.synced">
+    <Exec Command="&quot;$(TargetPath)&quot; -Languages=&quot;$(MSBuildProjectDirectory)\Languages&quot; &quot;-Profile=$(MSBuildProjectDirectory)\$(IntermediateOutputPath)Languages.Profile&quot;" IgnoreExitCode="true" ContinueOnError="true" Timeout="120000">
+      <Output TaskParameter="ExitCode" PropertyName="LanguagesExitCode" />
+    </Exec>
+    <Touch Files="$(IntermediateOutputPath)Languages.synced" AlwaysCreate="true" Condition="'$(LanguagesExitCode)' == '0'" />
+    <Delete Files="$(IntermediateOutputPath)Languages.synced" Condition="'$(LanguagesExitCode)' != '0'" />
   </Target>
 </Project>

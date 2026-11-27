@@ -79,7 +79,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var number = control as NumericUpDown;
 			if (number != null) return number.Value.ToString();
 			var list = control as ComboBox;
-			if (list != null) return list.DropDownStyle != ComboBoxStyle.DropDownList ? list.Text : list.SelectedItem == null ? "" : list.GetItemText(list.SelectedItem);
+			if (list != null) return list.DropDownStyle != ComboBoxStyle.DropDownList ? list.Text : list.SelectedItem == null ? "" : ItemText(list, list.SelectedItem);
 			var tabs = control as TabControl;
 			if (tabs != null) return tabs.SelectedTab == null ? "" : tabs.SelectedTab.Name;
 			// A tab's hint can say what its colour cannot, such as what is connected and what is missing.
@@ -94,6 +94,12 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var label = control as Label;
 			if (label != null) return label.Text;
 			return null;
+		}
+
+		/// <summary>An item as a list words it, in English whatever language is shown, so a value reads and sets the same in every language.</summary>
+		static string ItemText(ListControl list, object item)
+		{
+			return UiLanguage.InSource(() => list.GetItemText(item));
 		}
 
 		/// <summary>The index of the item named by <paramref name="value"/>: by the words the list shows, else by the item's own name; -1 when none.</summary>
@@ -126,17 +132,17 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var list = control as ComboBox;
 			if (list != null)
 			{
-				var index = ItemIndex(list.Items, list.GetItemText, value);
+				var index = ItemIndex(list.Items, x => ItemText(list, x), value);
 				if (index >= 0) { list.SelectedIndex = index; return null; }
 				// A list that takes typing takes any words, as a person may type a value not in it.
 				if (list.DropDownStyle != ComboBoxStyle.DropDownList) { list.Text = value; return null; }
-				return "No such item. Items: " + string.Join(", ", list.Items.Cast<object>().Select(x => list.GetItemText(x)));
+				return "No such item. Items: " + string.Join(", ", list.Items.Cast<object>().Select(x => ItemText(list, x)));
 			}
 			var tabs = control as TabControl;
 			if (tabs != null)
 			{
 				foreach (TabPage page in tabs.TabPages)
-					if (page.Name == value || page.Text == value) { tabs.SelectedTab = page; return null; }
+					if (page.Name == value || page.Text == value || UiLanguage.SourceOf(page, "Text", page.Text) == value) { tabs.SelectedTab = page; return null; }
 				return "No such tab.";
 			}
 			var grid = control as DataGridView;
@@ -156,6 +162,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		}
 
 		/// <summary>Brings the pages above a control to the front, so the control is the one on screen; a page itself comes to the front too.</summary>
+		/// <remarks>Then each panel above it that scrolls, nearest first, scrolls the control into sight, as a person would scroll to it.</remarks>
 		static void Reveal(Control control)
 		{
 			for (var c = control; c != null; c = c.Parent)
@@ -164,6 +171,12 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				var tabs = page == null ? null : page.Parent as TabControl;
 				if (tabs != null)
 					tabs.SelectedTab = page;
+			}
+			for (var c = control.Parent; c != null; c = c.Parent)
+			{
+				var scrolling = c as ScrollableControl;
+				if (scrolling != null && scrolling.AutoScroll)
+					scrolling.ScrollControlIntoView(control);
 			}
 		}
 
@@ -244,11 +257,18 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return sb.ToString();
 		}
 
+		/// <summary>The caption as a person reads it, in English whatever language is shown, so a search and the document do not depend on it.</summary>
+		static string CaptionOf(Control control)
+		{
+			var text = UiLanguage.SourceOf(control, "Text", control.Text);
+			return ShowsAccessKey(control) ? WithoutAccessKey(text) : text;
+		}
+
 		static UiNode Describe(Control control)
 		{
 			var node = new UiNode
 			{
-				Name = NameOf(control.AccessibleName, UiText.NameFor(control), ShowsAccessKey(control) ? WithoutAccessKey(control.Text) : control.Text, HoldsValue(control)),
+				Name = NameOf(control.AccessibleName, UiText.NameFor(control), CaptionOf(control), HoldsValue(control)),
 				Description = Clean(control.AccessibleDescription),
 				Role = RoleOf(control),
 				Id = control.Name,

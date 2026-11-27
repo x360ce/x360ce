@@ -2,6 +2,7 @@ using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.Mcp;
 using System;
 using System.Collections.Generic;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -15,8 +16,8 @@ namespace x360ce.App.Issues
 	{
 		public AiSkillIssue() : base()
 		{
-			Name = "AI skill";
-			FixName = "Update";
+			Name = UiLanguage.T("AiSkillIssue.AISkill", "AI skill");
+			FixName = UiLanguage.T("AiSkillIssue.Update", "Update");
 		}
 
 		static bool IsOlder(string folder)

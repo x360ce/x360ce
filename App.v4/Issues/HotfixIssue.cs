@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -13,8 +14,8 @@ namespace x360ce.App.Issues
     {
         public HotfixIssue() : base()
         {
-            Name = "HotFix";
-            FixName = "Download";
+            Name = UiLanguage.T("HotfixIssue.HotFix", "HotFix");
+            FixName = UiLanguage.T("HotfixIssue.Download", "Download");
         }
 
         // This will be used to stop check on success.

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -35,9 +36,9 @@ namespace x360ce.App.Controls
 				return;
 			MoveModeComboBox.Items.AddRange(new object[]
 			{
-				"Move them here, once every file is checked",
-				"Copy them, and leave the originals",
-				"Move them here and point the old folder at this one",
+				UiLanguage.T("OptionsSettingsUserControl.MoveThemHereOnceEveryFile", "Move them here, once every file is checked"),
+				UiLanguage.T("OptionsSettingsUserControl.CopyThemAndLeaveTheOriginals", "Copy them, and leave the originals"),
+				UiLanguage.T("OptionsSettingsUserControl.MoveThemHereAndPointThe", "Move them here and point the old folder at this one"),
 			});
 			MoveModeComboBox.SelectedIndex = 0;
 			// A drop-down list sizes to the width it was given, not to what is in it, so
@@ -50,7 +51,13 @@ namespace x360ce.App.Controls
 				box.FontChanged += (s, e) => FitToContent((ComboBox)s);
 			}
 			FitToContent(MoveModeComboBox);
-			Refresh2();
+			// Each folder is checked by writing a file into it, so only once the page is shown: a start that never opens the
+			// page, such as one with /Profile, leaves the other folders as they were.
+			VisibleChanged += (s, e) =>
+			{
+				if (Visible && _locations == null)
+					Refresh2();
+			};
 		}
 
 		internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
@@ -94,7 +101,7 @@ namespace x360ce.App.Controls
 				: holds + " Cannot be written: " + problem;
 			var inUse = string.Equals(location.Path, EngineHelper.AppDataPath, StringComparison.OrdinalIgnoreCase);
 			ApplyButton.Enabled = !inUse && problem == null;
-			ApplyButton.Text = inUse ? "In use" : "&Keep settings here";
+			ApplyButton.Text = inUse ? UiLanguage.T("OptionsSettingsUserControl.InUse", "In use") : UiLanguage.T("OptionsSettingsUserControl.KeepSettingsHere", "&Keep settings here");
 		}
 
 		private SettingsLocation Selected()

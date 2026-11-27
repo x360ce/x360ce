@@ -318,12 +318,19 @@ namespace x360ce.App.Controls
 
 		/// <summary>The artwork's width at the screen's scale, and no height of its own.</summary>
 		/// <remarks>
-		/// On the General page the picture stands beside the rows of boxes and is drawn to fit the height they make, so it
-		/// never pushes them apart.
+		/// On the General page the picture has a column of its own between the two columns of boxes and names, which take
+		/// the width their words need in every language, and it is drawn to fit the height the rows make, in the middle of
+		/// the room it is given, so it never pushes the boxes apart or lies under a name.
 		/// </remarks>
 		public override Size GetPreferredSize(Size proposedSize)
 		{
 			return new Size((int)Math.Round(CanvasWidth * ControlsHelper.DpiScale), 0);
+		}
+
+		/// <summary>How far right the artwork is drawn, so it stands in the middle of the room it is given.</summary>
+		int OffsetX
+		{
+			get { return Math.Max(0, (Width - (int)Math.Round(CanvasWidth * CanvasScale)) / 2); }
 		}
 
 		/// <summary>Canvas units to control pixels, keeping the artwork's proportions.</summary>
@@ -343,7 +350,7 @@ namespace x360ce.App.Controls
 			get
 			{
 				var scale = CanvasScale;
-				return new Rectangle(0, 0, (int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale));
+				return new Rectangle(OffsetX, 0, (int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale));
 			}
 		}
 
@@ -353,7 +360,7 @@ namespace x360ce.App.Controls
 			get
 			{
 				var scale = CanvasScale;
-				return new Rectangle(0, (int)Math.Round((TopImageHeight + ImageGap) * scale),
+				return new Rectangle(OffsetX, (int)Math.Round((TopImageHeight + ImageGap) * scale),
 					(int)Math.Round(CanvasWidth * scale), (int)Math.Round(FrontImageHeight * scale));
 			}
 		}
@@ -541,7 +548,7 @@ namespace x360ce.App.Controls
 			if (_Imager == null || ControlsHelper.IsDesignMode(this))
 				return;
 			var scale = CanvasScale;
-			var point = new PointF(e.X / scale, e.Y / scale);
+			var point = new PointF((e.X - OffsetX) / scale, e.Y / scale);
 			var before = HoverSignature();
 			_Imager.ShowLeftThumbButtons = InGroup(nameof(SettingsConverter.LeftThumbCodes), point);
 			_Imager.ShowRightThumbButtons = InGroup(nameof(SettingsConverter.RightThumbCodes), point);

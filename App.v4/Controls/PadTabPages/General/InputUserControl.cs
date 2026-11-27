@@ -45,7 +45,7 @@ namespace x360ce.App.Controls
 				Dock = DockStyle.Top,
 				AutoEllipsis = true,
 				Margin = new Padding(8, 8, 0, 0),
-				Text = SourceNone,
+				Text = JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceNone", SourceNone),
 			};
 			table.Controls.Add(SourceLabel, 0, 0);
 			table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -55,6 +55,14 @@ namespace x360ce.App.Controls
 			PovsGroupBox = AddGroup(table, "PovsGroupBox", "POV", "PovChips", out PovChips, true);
 			table.RowCount = table.RowStyles.Count;
 			Controls.Add(table);
+			// The column is as wide as the room the General page leaves, so a wider window makes the chips take fewer rows:
+			// the scroll bar is then weighed again, once the layout that changed the table is over, against the table as
+			// tall as it has become.
+			table.SizeChanged += (sender, e) =>
+			{
+				if (IsHandleCreated)
+					BeginInvoke((Action)PerformLayout);
+			};
 			ResumeLayout(false);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -207,8 +215,12 @@ namespace x360ce.App.Controls
 					// The chips' box, round the table that holds them.
 					group.Parent.Parent.Visible = shown;
 				}
-				ControlsHelper.SetText(SourceLabel, ud == null ? SourceNone : SourcePrefix + SourceName(ud));
 			}
+			// Set on every tick, so it follows a change of language too; the label is touched only when its words differ.
+			if (ud == null)
+				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceNone", SourceNone));
+			else
+				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceDevice", SourcePrefix + "{0}"), SourceName(ud));
 			var state = ud == null ? null : ud.SourceState;
 			var presses = ud == null ? null : ud.ButtonPresses;
 			foreach (var group in Groups)

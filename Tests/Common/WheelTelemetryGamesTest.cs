@@ -736,7 +736,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
-		[Description("One page made from a game's rows: GTA V puts its warnings first and shows its mods, with the loader and Script Hook V .NET each edition needs, and Install; Forza Horizon 6 shows its steps with the port and no Install; every control is named and none hidden")]
+		[Description("One page made from a game's rows: the actions and the port across the top; GTA V puts its warnings before its steps and shows its mods, with the loader and Script Hook V .NET each edition needs, and Install; Forza Horizon 6 shows its steps with the port and no Install; every control is named and none hidden")]
 		public void The_page_is_made_from_the_games_rows()
 		{
 			Type();
@@ -764,8 +764,12 @@ namespace x360ce.Tests
 							}
 							Func<string, Control> named = name => controls.SingleOrDefault(x => x.Name == name);
 							Func<string, string> link = name => (string)((LinkLabel)named(name)).Links[0].LinkData;
-							var table = controls.OfType<TableLayoutPanel>().First();
+							var table = (TableLayoutPanel)named("MainTableLayoutPanel");
+							var actions = named("ActionsFlowLayoutPanel");
+							Assert.AreEqual(0, table.GetRow(actions), exe + ": the actions come first, across the top.");
 							var portBox = (NumericUpDown)named("PortUpDown");
+							Assert.AreSame(actions, portBox.Parent, exe + ": the port is beside the actions.");
+							Assert.AreSame(actions, named("OpenFolderButton").Parent, exe + ": Open game folder is with the actions.");
 							Assert.AreEqual(37150, (int)portBox.Value, exe + ": the game sends to the Wheel Telemetry plugin's port.");
 							Assert.IsNotNull(named("OpenFolderButton"), exe + ": no Open game folder.");
 							Assert.AreEqual("Forza Data Out, from Turn 10 Studios and Playground Games.", named("FormatValueLabel").Text, exe + ": the format, from x360ce's list.");
@@ -783,7 +787,9 @@ namespace x360ce.Tests
 								continue;
 							}
 							Assert.AreEqual("GTA V", page.Text);
-							Assert.AreEqual(0, table.GetRow(named("Warning1Label")), exe + ": the warnings come first.");
+							var steps = (TableLayoutPanel)named("StepsTableLayoutPanel");
+							Assert.AreEqual(0, steps.GetRow(named("WarningsTableLayoutPanel")), exe + ": the warnings come before the steps.");
+							Assert.AreSame(actions, named("InstallButton").Parent, exe + ": Install is with the actions.");
 							var warnings = string.Join(" ", controls.Where(x => x.Name.StartsWith("Warning")).Select(x => x.Text));
 							foreach (var words in new[] { "Story mode only", "BattlEye", "GTA Online", "ban" })
 								StringAssert.Contains(warnings, words);
@@ -791,7 +797,7 @@ namespace x360ce.Tests
 							Assert.IsNotNull(named("InstallButton"));
 							Assert.IsFalse(named("RemoveButton").Enabled, "Remove with nothing installed.");
 							var loader = exe == "GTA5.exe" ? "dinput8.dll" : "xinput1_4.dll";
-							Assert.AreEqual("Not found: " + loader + ". Unzip it into the game’s folder from its official page.", named("Mod2ValueLabel").Text,
+							Assert.AreEqual("Not found: " + loader + ".", named("Mod2ValueLabel").Text,
 								exe + " loads Script Hook V with " + loader + ".");
 							StringAssert.StartsWith(named("Mod1ValueLabel").Text, "Found ScriptHookV.dll");
 							if (exe == "GTA5.exe")

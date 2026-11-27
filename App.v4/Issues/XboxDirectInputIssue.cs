@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -20,8 +21,8 @@ namespace x360ce.App.Issues
 	{
 		public XboxDirectInputIssue() : base()
 		{
-			Name = "Xbox Controller Through DirectInput";
-			FixName = "Use Raw Input";
+			Name = UiLanguage.T("XboxDirectInputIssue.XboxControllerThroughDirectInput", "Xbox Controller Through DirectInput");
+			FixName = UiLanguage.T("XboxDirectInputIssue.UseRawInput", "Use Raw Input");
 		}
 
 		/// <summary>A mapping to move: its game, its DirectInput row and the controller's Raw Input row.</summary>

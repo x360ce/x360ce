@@ -78,6 +78,7 @@ ICONS = {
     "fix_off_16x16": ("v4", "@off:sign_warning"),
     "hardware_16x16": ("v4", "toolbox"),
     "information_16x16": ("v4", "information"),
+    "language_16x16": ("v4", "earth"),
     "nav_down_16x16": ("v4", "nav_down"),
     "nav_up_16x16": ("v4", "nav_up"),
     "ok_16x16": ("v4", "ok"),

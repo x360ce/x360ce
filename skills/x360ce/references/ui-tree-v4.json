@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.31.57.0",
-	"Built":"2026-11-26",
+	"Version":"4.31.65.0",
+	"Built":"2026-11-27",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -2210,6 +2210,98 @@
 											]
 										},
 										{
+											"Name":"Live telemetry",
+											"Description":"Connection state and newest vehicle physics values received from the running game.",
+											"Role":"Section",
+											"Id":"ReadingsGroupBox",
+											"Items":[
+												{
+													"Name":"Telemetry connection status",
+													"Description":"Current telemetry state and detected game or protocol.",
+													"Role":"Label",
+													"Id":"StatusLabel"
+												},
+												{
+													"Name":"Listener ports",
+													"Description":"Currently bound UDP ports and any skipped port conflicts.",
+													"Role":"Label",
+													"Id":"PortStatusLabel"
+												},
+												{
+													"Name":"Speed",
+													"Description":"Vehicle speed in km/h.",
+													"Role":"Label",
+													"Id":"SpeedValueLabel"
+												},
+												{
+													"Name":"Speed meter",
+													"Description":"Vehicle speed in km/h.",
+													"Role":"Progress",
+													"Id":"SpeedBar"
+												},
+												{
+													"Name":"Aligning angle",
+													"Description":"Self-aligning / counter-steer equilibrium shift in degrees.",
+													"Role":"Label",
+													"Id":"AligningangleValueLabel"
+												},
+												{
+													"Name":"Aligning angle meter",
+													"Description":"Self-aligning / counter-steer equilibrium shift in degrees.",
+													"Role":"Progress",
+													"Id":"AligningangleBar"
+												},
+												{
+													"Name":"Front grip",
+													"Description":"Estimated front-tire grip (100 % full grip, lower = understeer).",
+													"Role":"Label",
+													"Id":"FrontgripValueLabel"
+												},
+												{
+													"Name":"Front grip meter",
+													"Description":"Estimated front-tire grip (100 % full grip, lower = understeer).",
+													"Role":"Progress",
+													"Id":"FrontgripBar"
+												},
+												{
+													"Name":"Lateral G",
+													"Description":"Sideways cornering acceleration in G.",
+													"Role":"Label",
+													"Id":"LateralGValueLabel"
+												},
+												{
+													"Name":"Lateral G meter",
+													"Description":"Sideways cornering acceleration in G.",
+													"Role":"Progress",
+													"Id":"LateralGBar"
+												},
+												{
+													"Name":"Road pitch",
+													"Description":"Vehicle pitch angle in degrees and road grade in percent (nose up positive).",
+													"Role":"Label",
+													"Id":"RoadpitchValueLabel"
+												},
+												{
+													"Name":"Road pitch meter",
+													"Description":"Vehicle pitch angle in degrees and road grade in percent (nose up positive).",
+													"Role":"Progress",
+													"Id":"RoadpitchBar"
+												},
+												{
+													"Name":"Engine RPM",
+													"Description":"Normalized engine RPM for steering wheel RGB/RPM shift LEDs.",
+													"Role":"Label",
+													"Id":"EngineRPMValueLabel"
+												},
+												{
+													"Name":"Engine RPM meter",
+													"Description":"Normalized engine RPM for steering wheel RGB/RPM shift LEDs.",
+													"Role":"Progress",
+													"Id":"EngineRPMBar"
+												}
+											]
+										},
+										{
 											"Name":"Force Feel Tuning",
 											"Description":"Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer, steering lead, and where road and impact feel comes from.",
 											"Role":"Section",
@@ -2318,98 +2410,6 @@
 													"Description":"How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).",
 													"Role":"Value",
 													"Id":"GearChangeRumbleTextBox"
-												}
-											]
-										},
-										{
-											"Name":"Live telemetry",
-											"Description":"Connection state and newest vehicle physics values received from the running game.",
-											"Role":"Section",
-											"Id":"ReadingsGroupBox",
-											"Items":[
-												{
-													"Name":"Telemetry connection status",
-													"Description":"Current telemetry state and detected game or protocol.",
-													"Role":"Label",
-													"Id":"StatusLabel"
-												},
-												{
-													"Name":"Listener ports",
-													"Description":"Currently bound UDP ports and any skipped port conflicts.",
-													"Role":"Label",
-													"Id":"PortStatusLabel"
-												},
-												{
-													"Name":"Speed",
-													"Description":"Vehicle speed in km/h.",
-													"Role":"Label",
-													"Id":"SpeedValueLabel"
-												},
-												{
-													"Name":"Speed meter",
-													"Description":"Vehicle speed in km/h.",
-													"Role":"Progress",
-													"Id":"SpeedBar"
-												},
-												{
-													"Name":"Aligning angle",
-													"Description":"Self-aligning / counter-steer equilibrium shift in degrees.",
-													"Role":"Label",
-													"Id":"AligningangleValueLabel"
-												},
-												{
-													"Name":"Aligning angle meter",
-													"Description":"Self-aligning / counter-steer equilibrium shift in degrees.",
-													"Role":"Progress",
-													"Id":"AligningangleBar"
-												},
-												{
-													"Name":"Front grip",
-													"Description":"Estimated front-tire grip (100 % full grip, lower = understeer).",
-													"Role":"Label",
-													"Id":"FrontgripValueLabel"
-												},
-												{
-													"Name":"Front grip meter",
-													"Description":"Estimated front-tire grip (100 % full grip, lower = understeer).",
-													"Role":"Progress",
-													"Id":"FrontgripBar"
-												},
-												{
-													"Name":"Lateral G",
-													"Description":"Sideways cornering acceleration in G.",
-													"Role":"Label",
-													"Id":"LateralGValueLabel"
-												},
-												{
-													"Name":"Lateral G meter",
-													"Description":"Sideways cornering acceleration in G.",
-													"Role":"Progress",
-													"Id":"LateralGBar"
-												},
-												{
-													"Name":"Road pitch",
-													"Description":"Vehicle pitch angle in degrees and road grade in percent (nose up positive).",
-													"Role":"Label",
-													"Id":"RoadpitchValueLabel"
-												},
-												{
-													"Name":"Road pitch meter",
-													"Description":"Vehicle pitch angle in degrees and road grade in percent (nose up positive).",
-													"Role":"Progress",
-													"Id":"RoadpitchBar"
-												},
-												{
-													"Name":"Engine RPM",
-													"Description":"Normalized engine RPM for steering wheel RGB/RPM shift LEDs.",
-													"Role":"Label",
-													"Id":"EngineRPMValueLabel"
-												},
-												{
-													"Name":"Engine RPM meter",
-													"Description":"Normalized engine RPM for steering wheel RGB/RPM shift LEDs.",
-													"Role":"Progress",
-													"Id":"EngineRPMBar"
 												}
 											]
 										},
@@ -2572,6 +2572,69 @@
 									"Description":"Which game the settings on every page below belong to.",
 									"Role":"List",
 									"Id":""
+								},
+								{
+									"Name":"Language",
+									"Description":"The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.",
+									"Role":"Button",
+									"Id":"LanguageButton",
+									"Items":[
+										{
+											"Name":"English",
+											"Role":"CheckBox",
+											"Id":"Language_en"
+										},
+										{
+											"Name":"中文",
+											"Role":"CheckBox",
+											"Id":"Language_zh_Hans"
+										},
+										{
+											"Name":"Українська",
+											"Role":"CheckBox",
+											"Id":"Language_uk"
+										},
+										{
+											"Name":"Español",
+											"Role":"CheckBox",
+											"Id":"Language_es"
+										},
+										{
+											"Name":"Português",
+											"Role":"CheckBox",
+											"Id":"Language_pt_BR"
+										},
+										{
+											"Name":"Deutsch",
+											"Role":"CheckBox",
+											"Id":"Language_de"
+										},
+										{
+											"Name":"日本語",
+											"Role":"CheckBox",
+											"Id":"Language_ja"
+										},
+										{
+											"Name":"Français",
+											"Role":"CheckBox",
+											"Id":"Language_fr"
+										},
+										{
+											"Name":"Polski",
+											"Role":"CheckBox",
+											"Id":"Language_pl"
+										},
+										{
+											"Name":"한국어",
+											"Role":"CheckBox",
+											"Id":"Language_ko"
+										},
+										{
+											"Name":"Türkçe",
+											"Role":"CheckBox",
+											"Id":"Language_tr"
+										}
+									]
 								},
 								{
 									"Name":"Save All",
@@ -3321,10 +3384,9 @@
 																		},
 																		{
 																			"Name":"Install",
-																			"Description":"Installs HID Guardian. Use HID Hide instead.",
+																			"Description":"Installs HID Guardian. Only development builds install it, so its removal can be tested: use HID Hide instead.",
 																			"Role":"Button",
-																			"Id":"HidGuardianInstallButton",
-																			"Hidden":true
+																			"Id":"HidGuardianInstallButton"
 																		},
 																		{
 																			"Name":"Uninstall",

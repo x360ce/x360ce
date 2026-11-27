@@ -63,6 +63,30 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("accessibility"), TestCategory("critical")]
+		[Description("Shown through the door, a control below the fold of a page that scrolls is scrolled into sight, on a page not selected too, as a person would scroll to it")]
+		public void Reveal_scrolls_a_control_into_sight()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var form = Build())
+				{
+					var page = (TabPage)UiTreeWalker.Find(form, "Tabs/Page2");
+					var scrolling = new Panel { Name = "Scrolling", Dock = DockStyle.Fill, AutoScroll = true };
+					var far = new Button { Name = "Far", Text = "Far", Top = 2000 };
+					scrolling.Controls.Add(far);
+					page.Controls.Add(scrolling);
+					form.ClientSize = new System.Drawing.Size(300, 200);
+					form.Show();
+					Application.DoEvents();
+					UiTreeWalker.Reveal(UiTreeWalker.Find(form, "Tabs/Page2/Scrolling/Far"));
+					Application.DoEvents();
+					Assert.AreSame(page, ((TabControl)UiTreeWalker.Find(form, "Tabs")).SelectedTab, "The page above the control did not come to the front.");
+					Assert.IsTrue(scrolling.ClientRectangle.Contains(far.Bounds), "The control stays out of sight below the fold: " + far.Bounds + " in " + scrolling.ClientRectangle + ".");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("accessibility"), TestCategory("critical")]
 		[Description("A path resolves to its control, sets it, and presses a button on another page; a list takes typed words only where a person can type")]
 		public void A_path_finds_sets_and_presses()
 		{

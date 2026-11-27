@@ -5,6 +5,7 @@ using System.Linq;
 using x360ce.App.DInput;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -29,8 +30,8 @@ namespace x360ce.App.Issues
 	{
 		public RawInputMissingIssue() : base()
 		{
-			Name = "Games Cannot See Controller";
-			FixName = "Restart Controller";
+			Name = UiLanguage.T("RawInputMissingIssue.GamesCannotSeeController", "Games Cannot See Controller");
+			FixName = UiLanguage.T("RawInputMissingIssue.RestartController", "Restart Controller");
 			FixNeedsAdmin = true;
 		}
 
@@ -69,8 +70,8 @@ namespace x360ce.App.Issues
 			_restart = named.SelectMany(VirtualDriverInstaller.GetHidHidePaths).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 			var names = string.Join(", ", named.Select(x => string.IsNullOrEmpty(x.ProductName) ? x.InstanceName : x.ProductName).Distinct().ToArray());
 			var text = string.Format(named.Length == 1
-				? "Windows has {0}, but a game that reads controllers through Raw Input cannot see it until it starts again, as after HID Hide stops hiding it. Restart it here, or unplug it and plug it in again."
-				: "Windows has {0}, but a game that reads controllers through Raw Input cannot see them until they start again, as after HID Hide stops hiding them. Restart them here, or unplug them and plug them in again.",
+				? UiLanguage.T("RawInputMissingIssue.WindowsHasButAGameThat", "Windows has {0}, but a game that reads controllers through Raw Input cannot see it until it starts again, as after HID Hide stops hiding it. Restart it here, or unplug it and plug it in again.")
+				: UiLanguage.T("RawInputMissingIssue.WindowsHasButAGameThat2", "Windows has {0}, but a game that reads controllers through Raw Input cannot see them until they start again, as after HID Hide stops hiding them. Restart them here, or unplug them and plug them in again."),
 				names);
 			if (_lastFixResult != null)
 				text += Environment.NewLine + _lastFixResult;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using x360ce.App.Plugins;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -16,7 +17,7 @@ namespace x360ce.App.Issues
 	{
 		public PluginIssue() : base()
 		{
-			Name = "Plugins";
+			Name = UiLanguage.T("PluginIssue.Plugins", "Plugins");
 			FixName = null;
 		}
 

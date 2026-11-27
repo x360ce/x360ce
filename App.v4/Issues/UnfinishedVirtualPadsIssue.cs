@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -19,8 +20,8 @@ namespace x360ce.App.Issues
 	{
 		public UnfinishedVirtualPadsIssue() : base()
 		{
-			Name = "Virtual Controller Not Finished";
-			FixName = "Repair Bus";
+			Name = UiLanguage.T("UnfinishedVirtualPadsIssue.VirtualControllerNotFinished", "Virtual Controller Not Finished");
+			FixName = UiLanguage.T("UnfinishedVirtualPadsIssue.RepairBus", "Repair Bus");
 			// Removing and putting back the bus is an Administrator action.
 			FixNeedsAdmin = true;
 		}
@@ -41,13 +42,9 @@ namespace x360ce.App.Issues
 			// Said as what the person is seeing, because what they are seeing is a controller that does
 			// nothing while everything claims to be working.
 			var text = pads.Length == 1
-				? "A virtual controller was created but Windows did not finish building it, so it is " +
-				  "missing from Windows Game Controllers and no game can read it. Repairing the virtual " +
-				  "bus usually rebuilds it; restart Windows if it does not."
+				? UiLanguage.T("UnfinishedVirtualPadsIssue.AVirtualControllerWasCreatedBut", "A virtual controller was created but Windows did not finish building it, so it is missing from Windows Game Controllers and no game can read it. Repairing the virtual bus usually rebuilds it; restart Windows if it does not.")
 				: string.Format(
-					"{0} virtual controllers were created but Windows did not finish building them, so " +
-					"they are missing from Windows Game Controllers and no game can read them. " +
-					"Repairing the virtual bus usually rebuilds them; restart Windows if it does not.",
+					UiLanguage.T("UnfinishedVirtualPadsIssue.VirtualControllersWereCreatedButWindows", "{0} virtual controllers were created but Windows did not finish building them, so they are missing from Windows Game Controllers and no game can read them. Repairing the virtual bus usually rebuilds them; restart Windows if it does not."),
 					pads.Length);
 			SetSeverity(IssueSeverity.Critical, 0, text);
 		}

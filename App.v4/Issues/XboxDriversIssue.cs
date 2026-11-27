@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using System.IO;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -14,8 +15,8 @@ namespace x360ce.App.Issues
 
         public XboxDriversIssue() : base()
         {
-            Name = "Drivers";
-            FixName = "Download";
+            Name = UiLanguage.T("XboxDriversIssue.Drivers", "Drivers");
+            FixName = UiLanguage.T("XboxDriversIssue.Download", "Download");
         }
 
         string program1 = "Microsoft Xbox 360 Accessories";
@@ -69,7 +70,7 @@ namespace x360ce.App.Issues
             {
                 SetSeverity(
                     IssueSeverity.Critical, 1,
-                    string.Format("Please install {0} ({1}) drivers and software.{2}",
+                    string.Format(UiLanguage.T("XboxDriversIssue.PleaseInstallDriversAndSoftware", "Please install {0} ({1}) drivers and software.{2}"),
                     program1, Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit", extra)
                 );
                 return;

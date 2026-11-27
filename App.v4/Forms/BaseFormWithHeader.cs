@@ -12,7 +12,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-			defaultBody = HelpBodyLabel.Text;
+			HelpBodyLabel.Text = DefaultBody;
 			// What the header goes back to before anything has set a subject of its own.
 			restingSubject = HelpSubjectLabel.Text;
 			InitLoadingCircle();
@@ -151,7 +151,11 @@ namespace x360ce.App.Controls
 
 		#region Help Header
 
-		private readonly string defaultBody;
+		/// <summary>What the header says when there is nothing else to say, in the language chosen.</summary>
+		static string DefaultBody
+		{
+			get { return JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("BaseFormWithHeader.UsefulTip", "Useful Tip: Minimize X360CE Application during gameplay to reduce its load on CPU and GPU. Minimized application automatically turns off CPU heavy tasks like Interface updates or state requests from XInput."); }
+		}
 
 		/// <summary>What the header says when the mouse is over nothing in particular.</summary>
 		private string restingSubject;
@@ -188,7 +192,7 @@ namespace x360ce.App.Controls
 		{
 			// Apply format.
 			if (body == null)
-				body = defaultBody;
+				body = DefaultBody;
 			else if (args.Length > 0)
 				body = string.Format(body, args);
 			// Set info with time.
@@ -199,7 +203,7 @@ namespace x360ce.App.Controls
 		{
 			// Apply format.
 			if (body == null)
-				body = defaultBody;
+				body = DefaultBody;
 			else if (args.Length > 0)
 				body = string.Format(body, args);
 			// Set info with time.
@@ -209,7 +213,7 @@ namespace x360ce.App.Controls
 		public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)
 		{
 			if (body == null)
-				body = defaultBody;
+				body = DefaultBody;
 			else if (args.Length > 0)
 				body = string.Format(body, args);
 			HelpBodyLabel.Text = body;

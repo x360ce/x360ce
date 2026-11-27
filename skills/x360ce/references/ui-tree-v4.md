@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.31.57.0, built 2026-11-26.
+Version 4.31.65.0, built 2026-11-27.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -351,6 +351,21 @@ not shown in this state of the program.
 [CheckBox]  │   │       │   │   ├── Enable forward telemetry                            # Relays received UDP telemetry datagrams to Forward IP and Port (for example, SimHub on 127.0.0.1 or a dashboard on another PC/tablet).
 [Text]      │   │       │   │   ├── Forward IP address                                  # Destination IP address to relay received UDP telemetry to (127.0.0.1 for local apps like SimHub, or a LAN PC/tablet IP).
 [Number]    │   │       │   │   └── Forward UDP port 0..65535                           # Destination UDP port to relay received telemetry packets to (0 = forwarding off).
+[Section]   │   │       │   ├── Live telemetry                                          # Connection state and newest vehicle physics values received from the running game.
+[Label]     │   │       │   │   ├── Telemetry connection status                         # Current telemetry state and detected game or protocol.
+[Label]     │   │       │   │   ├── Listener ports                                      # Currently bound UDP ports and any skipped port conflicts.
+[Label]     │   │       │   │   ├── Speed                                               # Vehicle speed in km/h.
+[Progress]  │   │       │   │   ├── Speed meter                                         # Vehicle speed in km/h.
+[Label]     │   │       │   │   ├── Aligning angle                                      # Self-aligning / counter-steer equilibrium shift in degrees.
+[Progress]  │   │       │   │   ├── Aligning angle meter                                # Self-aligning / counter-steer equilibrium shift in degrees.
+[Label]     │   │       │   │   ├── Front grip                                          # Estimated front-tire grip (100 % full grip, lower = understeer).
+[Progress]  │   │       │   │   ├── Front grip meter                                    # Estimated front-tire grip (100 % full grip, lower = understeer).
+[Label]     │   │       │   │   ├── Lateral G                                           # Sideways cornering acceleration in G.
+[Progress]  │   │       │   │   ├── Lateral G meter                                     # Sideways cornering acceleration in G.
+[Label]     │   │       │   │   ├── Road pitch                                          # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
+[Progress]  │   │       │   │   ├── Road pitch meter                                    # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
+[Label]     │   │       │   │   ├── Engine RPM                                          # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
+[Progress]  │   │       │   │   └── Engine RPM meter                                    # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
 [Section]   │   │       │   ├── Force Feel Tuning                                       # Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer, steering lead, and where road and impact feel comes from.
 [Slider]    │   │       │   │   ├── Aligning torque 0..200                              # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
 [Value]     │   │       │   │   ├── Aligning torque value                               # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
@@ -367,21 +382,6 @@ not shown in this state of the program.
 [List]      │   │       │   │   ├── Road and impact feel from                           # Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both. Telemetry is recommended for a wheel; the game's rumble plays unchanged while no telemetry arrives.
 [Slider]    │   │       │   │   ├── Gear change 0..100                                  # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
 [Value]     │   │       │   │   └── Gear change value                                   # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
-[Section]   │   │       │   ├── Live telemetry                                          # Connection state and newest vehicle physics values received from the running game.
-[Label]     │   │       │   │   ├── Telemetry connection status                         # Current telemetry state and detected game or protocol.
-[Label]     │   │       │   │   ├── Listener ports                                      # Currently bound UDP ports and any skipped port conflicts.
-[Label]     │   │       │   │   ├── Speed                                               # Vehicle speed in km/h.
-[Progress]  │   │       │   │   ├── Speed meter                                         # Vehicle speed in km/h.
-[Label]     │   │       │   │   ├── Aligning angle                                      # Self-aligning / counter-steer equilibrium shift in degrees.
-[Progress]  │   │       │   │   ├── Aligning angle meter                                # Self-aligning / counter-steer equilibrium shift in degrees.
-[Label]     │   │       │   │   ├── Front grip                                          # Estimated front-tire grip (100 % full grip, lower = understeer).
-[Progress]  │   │       │   │   ├── Front grip meter                                    # Estimated front-tire grip (100 % full grip, lower = understeer).
-[Label]     │   │       │   │   ├── Lateral G                                           # Sideways cornering acceleration in G.
-[Progress]  │   │       │   │   ├── Lateral G meter                                     # Sideways cornering acceleration in G.
-[Label]     │   │       │   │   ├── Road pitch                                          # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
-[Progress]  │   │       │   │   ├── Road pitch meter                                    # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
-[Label]     │   │       │   │   ├── Engine RPM                                          # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
-[Progress]  │   │       │   │   └── Engine RPM meter                                    # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
 [Section]   │   │       │   └── Telemetry activity                                      # Recent telemetry port binds, protocol switches and setup hints, newest first.
 [Value]     │   │       │       └── Telemetry activity log                              # Recent telemetry port binds, protocol switches and setup hints, newest first.
 [Tab]       │   │       └── Help                                                        # Supported games, standard telemetry protocols, port coexistence and testing instructions.
@@ -406,6 +406,18 @@ not shown in this state of the program.
 [Group]     │   └── (MainControl)                                                       # The game being set up, and the tabs for the four controllers and everything else.
 [Toolbar]   │       ├── Game bar                                                        # Chooses the game being set up, and saves the settings.
 [List]      │       │   ├── Game                                                        # Which game the settings on every page below belong to.
+[Button]    │       │   ├── Language                                                    # The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.
+[CheckBox]  │       │   │   ├── English
+[CheckBox]  │       │   │   ├── 中文
+[CheckBox]  │       │   │   ├── Українська
+[CheckBox]  │       │   │   ├── Español
+[CheckBox]  │       │   │   ├── Português
+[CheckBox]  │       │   │   ├── Deutsch
+[CheckBox]  │       │   │   ├── 日本語
+[CheckBox]  │       │   │   ├── Français
+[CheckBox]  │       │   │   ├── Polski
+[CheckBox]  │       │   │   ├── 한국어
+[CheckBox]  │       │   │   └── Türkçe
 [Button]    │       │   ├── Save All                                                    # Writes every setting to disk now.
 [Button]    │       │   ├── Test... (hidden)                                            # Opens a window for trying the emulated controller without a game.
 [Button]    │       │   └── Add Game...                                                 # Sets this program up for another game.
@@ -518,7 +530,7 @@ not shown in this state of the program.
 [Tab]       │           │           ├── HID Guardian (obsolete)                         # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Section]   │           │           │   ├── HID Guardian                                # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Text]      │           │           │   │   ├── HID Guardian state                      # Whether HID Guardian is still installed.
-[Button]    │           │           │   │   ├── Install (hidden)                        # Installs HID Guardian. Use HID Hide instead.
+[Button]    │           │           │   │   ├── Install                                 # Installs HID Guardian. Only development builds install it, so its removal can be tested: use HID Hide instead.
 [Button]    │           │           │   │   ├── Uninstall                               # Removes HID Guardian. Needs Administrator.
 [Button]    │           │           │   │   └── Refresh                                 # Checks HID Guardian again.
 [Value]     │           │           │   └── HID Guardian notes                          # Explains why HID Guardian is no longer recommended.

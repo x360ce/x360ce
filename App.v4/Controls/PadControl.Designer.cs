@@ -790,8 +790,8 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 263F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.InputPanel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.GeneralTableLayoutPanel, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -831,7 +831,7 @@
             this.GeneralTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.GeneralTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftLabel, 2, 0);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RemapTableLayoutPanel, 4, 0);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RemapTableLayoutPanel, 3, 0);
             this.GeneralTableLayoutPanel.Controls.Add(this.RightLabel, 8, 0);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftTriggerComboBox, 1, 1);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftTriggerNamePanel, 2, 1);
@@ -859,7 +859,7 @@
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbRightNamePanel, 2, 15);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbDownComboBox, 1, 16);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbDownNamePanel, 2, 16);
-            this.GeneralTableLayoutPanel.Controls.Add(this.XboxImage, 4, 1);
+            this.GeneralTableLayoutPanel.Controls.Add(this.XboxImage, 3, 1);
             this.GeneralTableLayoutPanel.Controls.Add(this.DPadUpComboBox, 5, 13);
             this.GeneralTableLayoutPanel.Controls.Add(this.DPadUpNamePanel, 6, 13);
             this.GeneralTableLayoutPanel.Controls.Add(this.DPadLeftComboBox, 5, 14);
@@ -915,8 +915,8 @@
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.GeneralTableLayoutPanel.SetColumnSpan(this.RemapTableLayoutPanel, 3);
-            this.GeneralTableLayoutPanel.SetColumnSpan(this.XboxImage, 3);
+            this.GeneralTableLayoutPanel.SetColumnSpan(this.RemapTableLayoutPanel, 5);
+            this.GeneralTableLayoutPanel.SetColumnSpan(this.XboxImage, 5);
             this.GeneralTableLayoutPanel.SetRowSpan(this.XboxImage, 12);
             this.GeneralTableLayoutPanel.Size = new System.Drawing.Size(671, 460);
             this.GeneralTableLayoutPanel.TabIndex = 1;
@@ -1238,9 +1238,9 @@
             // 
             // XboxImage
             // 
-            this.XboxImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.XboxImage.AutoSize = true;
             this.XboxImage.BackColor = System.Drawing.SystemColors.Control;
+            this.XboxImage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.XboxImage.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
             this.XboxImage.Name = "XboxImage";
             this.XboxImage.Size = new System.Drawing.Size(256, 297);

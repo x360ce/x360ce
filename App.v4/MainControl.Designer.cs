@@ -65,6 +65,7 @@ namespace x360ce.App
 			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
+			this.LanguageButton = new System.Windows.Forms.ToolStripDropDownButton();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.HelpLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.DevicesLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -424,6 +425,7 @@ namespace x360ce.App
 			// 
 			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.LanguageButton,
             this.SaveAllButton,
             this.TestButton,
             this.MappedDevicesLabel,
@@ -490,7 +492,20 @@ namespace x360ce.App
 			this.AddGameButton.Size = new System.Drawing.Size(86, 22);
 			this.AddGameButton.Text = "Add Game...";
 			this.AddGameButton.Click += new System.EventHandler(this.AddGameButton_Click);
-			// 
+			//
+			// LanguageButton
+			//
+			this.LanguageButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.LanguageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.LanguageButton.Image = global::x360ce.App.Properties.Resources.language_32x32;
+			this.LanguageButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this.LanguageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.LanguageButton.Margin = new System.Windows.Forms.Padding(1);
+			this.LanguageButton.Name = "LanguageButton";
+			this.LanguageButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
+			this.LanguageButton.Size = new System.Drawing.Size(29, 22);
+			this.LanguageButton.Text = "Language";
+			//
 			// panel1
 			// 
 			this.panel1.Controls.Add(this.MainTabControl);
@@ -588,6 +603,7 @@ namespace x360ce.App
 		public x360ce.App.Controls.RecorderUserControl RecorderPanel;
 		internal ToolStripButton TestButton;
 		internal ToolStripButton AddGameButton;
+		internal ToolStripDropDownButton LanguageButton;
 		internal Panel panel1;
 		public TabPage OptionsTabPage;
 		private System.Windows.Forms.TableLayoutPanel HelpLayoutPanel;

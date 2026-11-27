@@ -93,6 +93,8 @@ namespace x360ce.App.UiTree
 				"Writes every setting to disk now.");
 			d[nameof(MainControl) + "." + nameof(MainControl.AddGameButton)] = new Text("Add Game...",
 				"Sets this program up for another game.");
+			d[nameof(MainControl) + "." + nameof(MainControl.LanguageButton)] = new Text("Language",
+				"The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.");
 			d[nameof(MainControl) + "." + nameof(MainControl.TestButton)] = new Text("Test...",
 				"Opens a window for trying the emulated controller without a game.");
 

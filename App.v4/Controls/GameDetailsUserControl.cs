@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -304,7 +305,7 @@ namespace x360ce.App.Controls
 				return;
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Reset current settings to default?", "Reset", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			var result = form.ShowForm(UiLanguage.T("GameDetailsUserControl.ResetCurrentSettingsToDefault", "Reset current settings to default?"), "Reset", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result != DialogResult.OK)
 				return;
 			// Reset to default all properties which affects checksum.

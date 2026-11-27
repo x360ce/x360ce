@@ -44,16 +44,16 @@ load. The **Issues** tab says so too for plugins that failed or wait for permiss
 
 Helps a game send its telemetry to x360ce's Wheel Telemetry plugin, so your wheel feels the road. Its games: GTA V (Legacy and Enhanced), Forza Horizon 6 and F1 25. Each game's own steps are on its page; these are the steps for every game.
 
-**Read the warnings first.** A game's page starts with them. GTA V needs mods: play story mode only, switch BattlEye off in the game's launcher, and remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.
+**Read the warnings first.** A game's page shows them in yellow, above its steps. GTA V needs mods: play story mode only, switch BattlEye off in the game's launcher, and remove the mods before you play GTA Online. Rockstar can ban a player for mods, and x360ce cannot promise it will not.
 
 1. On the Options tab's Plugins page, keep Enabled ticked on the WheelTelemetry.Games row. It is so at first.
 2. On the Games tab, press Add... and choose the game's program file, or press Scan.
 3. Select the game in the list.
 4. Under the list, open the Wheel Telemetry Games tab. Its first page is named after the game.
-5. Read the warnings at the top of the page.
-6. Do the page's steps in order. For a mod, press Official page, download it, press Open game folder, and unzip it there. Its line says Found when it is there. x360ce does not include or download mods.
-7. Where the page has Install, press it. It writes only the files it lists into the game's folder. Remove deletes them.
-8. Leave Port at 37150, where x360ce's Wheel Telemetry plugin listens. A game set in its own menus is given the port in its steps.
+5. Read the warnings, in yellow above the page's steps.
+6. Do the page's steps in order. For a mod, press Official page, download it, press Open game folder at the top of the page, and unzip it there. Its line says Found when it is there. x360ce does not include or download mods.
+7. Where the page has Install, beside Open game folder, press it. It writes only the files it lists into the game's folder. Remove deletes them.
+8. Leave Port, beside the buttons, at 37150, where x360ce's Wheel Telemetry plugin listens. A game set in its own menus is given the port in its steps.
 9. Open the controller tab your wheel is mapped to, such as Controller 1. Its device list shows the wheel, ticked.
 10. On its Wheel tab, tick Centering spring. x360ce uses a game's telemetry only while the centering spring is on, for a wheel with force feedback.
 11. On its Game Telemetry tab, on the Telemetry page, keep Enable live game telemetry ticked and Listen port at 37150, the port the game sends to. Both are so at first.
@@ -320,6 +320,16 @@ Machine shows `FitnessConnection`, its **Connection** page, which finds the mach
 `Machine` setting, and statuses that show what the machine sends. Draw a control of your own in the system colours
 and lay it out with tables and automatic sizes, so it follows the theme, the font and the zoom, and give every
 control a name: AI assistant access reaches a control by its name.
+
+### Words in other languages
+
+Write each text a person reads on your control as `PluginText.T("MyDevice.Key", "English words")`, the key starting
+with the plugin's name and both written as literals. x360ce shows the translation in the language the person picked
+with the globe beside the Game list, and the English where there is none. When x360ce lists the texts to translate it
+finds every such call in the plugin's DLL, so the embedded plugins are translated with x360ce's own texts
+([Languages](Help.Languages.md)). Build the words in a method and call it again on `PluginText.Changed`, raised on the
+interface thread after the person picks another language, so the page follows at once. Names of controls stay in
+English: AI assistant access reaches a control by its name in every language.
 
 ### Sign a plugin
 

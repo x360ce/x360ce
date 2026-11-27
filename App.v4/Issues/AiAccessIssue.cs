@@ -1,4 +1,5 @@
 using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -7,8 +8,8 @@ namespace x360ce.App.Issues
 	{
 		public AiAccessIssue() : base()
 		{
-			Name = "AI assistant access";
-			FixName = "Fix";
+			Name = UiLanguage.T("AiAccessIssue.AIAssistantAccess", "AI assistant access");
+			FixName = UiLanguage.T("AiAccessIssue.Fix", "Fix");
 			// Making the reservation asks Windows for elevation. Marked, so the prompt is expected.
 			FixNeedsAdmin = true;
 		}

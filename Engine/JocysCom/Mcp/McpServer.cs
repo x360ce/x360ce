@@ -74,7 +74,8 @@ namespace JocysCom.ClassLibrary.Mcp
 			var required = new List<string>();
 			foreach (var p in Parameters)
 			{
-				var property = new Dictionary<string, object> { { "type", p.ParameterType == typeof(int) ? "integer" : p.ParameterType == typeof(bool) ? "boolean" : "string" } };
+				var type = ValueType(p);
+				var property = new Dictionary<string, object> { { "type", type == typeof(int) ? "integer" : type == typeof(bool) ? "boolean" : "string" } };
 				var description = p.GetCustomAttribute<DescriptionAttribute>();
 				if (description != null)
 					property["description"] = description.Description;
@@ -105,7 +106,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				object raw;
 				if (byName.TryGetValue(p.Name, out raw) && raw != null)
 				{
-					try { values[i] = System.Convert.ChangeType(raw, p.ParameterType, System.Globalization.CultureInfo.InvariantCulture); }
+					try { values[i] = System.Convert.ChangeType(raw, ValueType(p), System.Globalization.CultureInfo.InvariantCulture); }
 					catch (Exception ex) { throw new ArgumentException("Argument " + p.Name + ": " + ex.Message); }
 				}
 				else if (p.HasDefaultValue)
@@ -114,6 +115,12 @@ namespace JocysCom.ClassLibrary.Mcp
 					throw new ArgumentException("Missing argument: " + p.Name + ".");
 			}
 			return values;
+		}
+
+		/// <summary>The type a parameter's value is given as: an optional one, such as bool?, takes its value as the type it holds.</summary>
+		static Type ValueType(ParameterInfo p)
+		{
+			return Nullable.GetUnderlyingType(p.ParameterType) ?? p.ParameterType;
 		}
 
 		/// <summary>

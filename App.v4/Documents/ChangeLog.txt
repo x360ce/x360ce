@@ -1,4 +1,4 @@
-﻿## [4.31.57.0] - 2026-11-25
+﻿## [4.31.65.0] - 2026-11-26
 
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Fixed: A controller's SDL page shows its row from x360ce's database.
@@ -25,6 +25,10 @@
 - Fixed: The wheel range is sent again when a game comes to the front.
 - Fixed: Always on Top and other saved options apply as x360ce starts.
 - Fixed: In Game without gear changes, a gear change's rumble no longer gets through before the shift is seen.
+- Fixed: The Force Feedback page recommends the Constant effect type for wheels.
+- Fixed: The Game Telemetry page shows Gear change whole.
+- Fixed: AI assistant access scrolls to the control it shows.
+- Fixed: x360ce Test Game's AI assistant access takes yes or no values.
 - Changed: A dragged chip keeps the hand cursor and turns red.
 - Changed: Adding a device switches its controller on and shows its XInput state.
 - Changed: Road and impact feel come from telemetry by default; the game's own rumble plays when no telemetry arrives.
@@ -41,6 +45,9 @@
 - Changed: The Mouse page shows only for a mouse or touchpad.
 - Changed: Hints say that inputs and the controller picture can be clicked to map.
 - Changed: Texts use the typographic apostrophe (’).
+- Changed: HID Guardian's Install button is greyed out, not hidden.
+- Changed: The Wheel Telemetry Games page has its buttons at the top and fits without scrolling.
+- Changed: The GTA V guide starts the pedals at 24 % Anti-Dead Zone.
 - Added: AI assistant access lists and opens every page, and closes windows.
 - Added: The About page shows the licences of the parts x360ce uses.
 - Added: Fitness Machine device: an exercise bike drives a controller over Bluetooth. Experimental.
@@ -57,6 +64,7 @@
 - Added: Wheel telemetry reads the gear, forward-back and up-down G, distance and position, and Forza Horizon's 324-byte packets.
 - Added: GTA V's telemetry script sends the distance driven.
 - Added: Recordings show the gear, G forces, hits, distance and each gear change.
+- Added: The window in 11 languages, picked with the globe beside the Game list.
 
 ## [4.30.63.0] - 2026-11-15
 

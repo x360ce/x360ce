@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -79,7 +80,7 @@ namespace x360ce.App.Controls
 			var userSettings = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserSetting)x.DataBoundItem).ToArray();
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Do you want to delete selected settings?", "X360CE - Delete Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+			var result = form.ShowForm(UiLanguage.T("SettingsGridUserControl.DoYouWantToDeleteSelected", "Do you want to delete selected settings?"), "X360CE - Delete Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
 				// Remove from local settings.

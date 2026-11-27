@@ -31,7 +31,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 	/// The light theme is the Windows colours. In both themes, push buttons, tool bars, tab strips, check boxes, group boxes
 	/// and drop-down lists are drawn as the WPF programs draw them with Default.xaml: buttons and lists flat, filled and
 	/// rounded, tabs rounded and apart, frames rounded, and a disabled control at half strength. Scroll bars are drawn whole,
-	/// with their arrows, where Windows 11 draws them thin until the mouse is over them. High contrast keeps the Windows look.
+	/// with their arrows, where Windows 11 draws them thin until the mouse is over them, on the colour of what they scroll.
+	/// High contrast keeps the Windows look.
 	/// <para>
 	/// The colours are read as XML from Default_DarkTheme.xaml, embedded in the program as a resource, and no
 	/// WPF type is named here: loading WPF makes a Windows Forms process DPI aware mid-run.
@@ -1275,6 +1276,13 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				: edit || control is ComboBox ? "DarkMode_CFD"
 				: "DarkMode_Explorer";
 			NativeMethods.SetWindowTheme(control.Handle, IsDark ? style : null, null);
+			// The list a drop-down list opens is a window of its own, which keeps the light style, and its scroll bar with it.
+			if (control is ComboBox)
+			{
+				var info = new NativeMethods.COMBOBOXINFO { cbSize = Marshal.SizeOf(typeof(NativeMethods.COMBOBOXINFO)) };
+				if (NativeMethods.GetComboBoxInfo(control.Handle, ref info) && info.hwndList != IntPtr.Zero)
+					NativeMethods.SetWindowTheme(info.hwndList, IsDark ? "DarkMode_Explorer" : null, null);
+			}
 		}
 
 		/// <summary>True when Windows has the dark theme style, which gives an edit box a dark frame and dark scrollbars.</summary>
@@ -4880,22 +4888,22 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (!HidesScrollBarArrows())
 				return;
 			if (Scrolls(control))
-				AttachScrollBars(ref state.ScrollBars, control.Handle, control is ScrollBar);
+				AttachScrollBars(ref state.ScrollBars, control, control.Handle, control is ScrollBar);
 			if (control is ComboBox)
 			{
 				var info = new NativeMethods.COMBOBOXINFO { cbSize = Marshal.SizeOf(typeof(NativeMethods.COMBOBOXINFO)) };
 				if (NativeMethods.GetComboBoxInfo(control.Handle, ref info))
-					AttachScrollBars(ref state.ListScrollBars, info.hwndList, false);
+					AttachScrollBars(ref state.ListScrollBars, control, info.hwndList, false);
 			}
 		}
 
-		/// <summary>Draws the bars of the window given whole, from now on and at once.</summary>
-		static void AttachScrollBars(ref WholeScrollBars bars, IntPtr handle, bool isScrollBar)
+		/// <summary>Draws the bars of the window given, the control's own or its drop-down list's, whole, from now on and at once.</summary>
+		static void AttachScrollBars(ref WholeScrollBars bars, Control control, IntPtr handle, bool isScrollBar)
 		{
 			if (handle == IntPtr.Zero)
 				return;
 			if (bars == null)
-				bars = new WholeScrollBars(isScrollBar);
+				bars = new WholeScrollBars(control, isScrollBar);
 			if (bars.Handle == handle)
 				return;
 			if (bars.Handle != IntPtr.Zero)
@@ -4907,7 +4915,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// <summary>
 		/// The window of a control that can scroll, or of a scroll bar, whose scroll bars are drawn here whole whenever they are
 		/// shown: both arrows and a thumb as wide as the bar, in the window's own visual style, light or dark, as Windows draws
-		/// them while the mouse is over them; the part under the mouse lit, and the part held down pressed.
+		/// them while the mouse is over them, on the colour of what they scroll (<see cref="ScrollBarFace"/>); the part under
+		/// the mouse lit, and the part held down pressed.
 		/// </summary>
 		/// <remarks>
 		/// Windows draws a bar again as it scrolls or changes, when its window is painted, and as the mouse comes and goes, so
@@ -4917,6 +4926,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// </remarks>
 		class WholeScrollBars : NativeWindow
 		{
+			/// <summary>The control whose bars these are, or the drop-down list whose list window they are in.</summary>
+			readonly Control Owner;
 			/// <summary>Whether the window is a scroll bar itself, rather than a window with scroll bars in its edge.</summary>
 			readonly bool IsScrollBar;
 			/// <summary>The bars last drawn, and their parts under the mouse: a window's vertical and horizontal bar, or a scroll bar.</summary>
@@ -4928,8 +4939,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			ScrollBarFades _fades;
 			IntPtr _registered;
 
-			public WholeScrollBars(bool isScrollBar)
+			public WholeScrollBars(Control owner, bool isScrollBar)
 			{
+				Owner = owner;
 				IsScrollBar = isScrollBar;
 			}
 
@@ -5019,10 +5031,12 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 						NativeMethods.RECT window;
 						if (hdc == IntPtr.Zero || !NativeMethods.GetWindowRect(Handle, out window))
 							return;
+						// High contrast keeps the track Windows draws.
+						var face = SystemInformation.HighContrast ? Color.Empty : ScrollBarFace(Owner);
 						if (first.cbSize != 0)
-							DrawScrollBar(theme, hdc, window, first, firstVertical, firstHot);
+							DrawScrollBar(theme, hdc, window, first, firstVertical, firstHot, face);
 						if (second.cbSize != 0)
-							DrawScrollBar(theme, hdc, window, second, false, secondHot);
+							DrawScrollBar(theme, hdc, window, second, false, secondHot, face);
 					}
 					finally
 					{
@@ -5080,10 +5094,31 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Draws a bar whole in a visual style, as Windows draws it under the mouse: its arrows and thumb in their hover state,
-		/// the part under the mouse lit, a part held down pressed and a disabled one disabled.
+		/// The colour of what a bar scrolls, which its track takes, so the bar stands on the box, list or page it belongs to, as
+		/// the bars of Windows 11's own controls do, and not as a strip of the visual style's track colour: the colour of the
+		/// list a drop-down list opens, of the grid a grid's scroll bar stands in, or of the control, or of what it stands on
+		/// while it is see-through.
 		/// </summary>
-		static void DrawScrollBar(IntPtr theme, IntPtr hdc, NativeMethods.RECT window, NativeMethods.SCROLLBARINFO info, bool vertical, int hot)
+		static Color ScrollBarFace(Control owner)
+		{
+			if (owner is ComboBox combo && PaintsComboBox(combo))
+				return Themed("BackgroundDark", SystemColors.Control);
+			var control = owner is ScrollBar && owner.Parent != null ? owner.Parent : owner;
+			var color = control is DataGridView grid ? grid.BackgroundColor : control.BackColor;
+			while (color.A < 255 && control.Parent != null)
+			{
+				control = control.Parent;
+				color = control.BackColor;
+			}
+			return color;
+		}
+
+		/// <summary>
+		/// Draws a bar whole in a visual style, as Windows draws it under the mouse: its arrows and thumb in their hover state,
+		/// the part under the mouse lit, a part held down pressed and a disabled one disabled; the track, and every part's
+		/// ground of the track's colour, in the face colour given, or as the visual style draws it with none.
+		/// </summary>
+		static void DrawScrollBar(IntPtr theme, IntPtr hdc, NativeMethods.RECT window, NativeMethods.SCROLLBARINFO info, bool vertical, int hot, Color face)
 		{
 			var r = info.rcScrollBar;
 			var bar = Rectangle.FromLTRB(r.Left - window.Left, r.Top - window.Top, r.Right - window.Left, r.Bottom - window.Top);
@@ -5101,6 +5136,19 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 						// The track under every part, as some are drawn partly see-through.
 						DrawThemePart(theme, dc, vertical ? SBP_UPPERTRACKVERT : SBP_UPPERTRACKHORZ, disabled ? SCRBS_DISABLED : SCRBS_HOVER,
 							new Rectangle(Point.Empty, bar.Size));
+					}
+					finally
+					{
+						g.ReleaseHdc(dc);
+					}
+				}
+				// Its colour in the middle, before any part is drawn over it.
+				var track = bitmap.GetPixel(bar.Width / 2, bar.Height / 2);
+				using (var g = Graphics.FromImage(bitmap))
+				{
+					var dc = g.GetHdc();
+					try
+					{
 						for (var i = 0; i < parts.Length; i++)
 						{
 							if (parts[i].Width <= 0 || parts[i].Height <= 0)
@@ -5128,16 +5176,25 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 						g.ReleaseHdc(dc);
 					}
 					// The visual style draws the bar's edge that faces the content as a lighter line, which stood out as a white
-					// border in the light theme: the edge takes the track's colour, two pixels in, where no part reaches.
-					if (bar.Width > 4 && bar.Height > 4)
-					{
-						var track = vertical ? bitmap.GetPixel(2, bar.Height / 2) : bitmap.GetPixel(bar.Width / 2, 2);
-						using (var brush = new SolidBrush(track))
-							g.FillRectangle(brush, vertical ? new Rectangle(0, 0, 1, bar.Height) : new Rectangle(0, 0, bar.Width, 1));
-					}
+					// border in the light theme: the edge takes the track's colour.
+					using (var brush = new SolidBrush(track))
+						g.FillRectangle(brush, vertical ? new Rectangle(0, 0, 1, bar.Height) : new Rectangle(0, 0, bar.Width, 1));
 				}
 				using (var g = Graphics.FromHdc(hdc))
-					g.DrawImageUnscaled(bitmap, bar.X, bar.Y);
+				{
+					if (face.IsEmpty || face.ToArgb() == track.ToArgb())
+					{
+						g.DrawImageUnscaled(bitmap, bar.X, bar.Y);
+						return;
+					}
+					// The visual style fills each part's ground with the track's colour, so that one colour, and only it, turns
+					// into the face colour.
+					using (var attributes = new ImageAttributes())
+					{
+						attributes.SetRemapTable(new[] { new ColorMap { OldColor = track, NewColor = Color.FromArgb(255, face) } });
+						g.DrawImage(bitmap, bar, 0, 0, bar.Width, bar.Height, GraphicsUnit.Pixel, attributes);
+					}
+				}
 			}
 		}
 

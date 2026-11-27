@@ -157,6 +157,14 @@ The emulated controllers can be switched off without closing the program, so a g
 5. A font removed from Windows is forgotten when x360ce starts, and the default is used.
 6. The scroll bars follow Windows. To always see their arrows and a full-size thumb, turn on Windows `Settings` → `Accessibility` → `Visual effects` → `Always show scroll bars`.
 
+## Language
+
+1. The globe at the right end of the `[Game]` row lists the languages x360ce is shown in, each in its own words with its flag: English, 中文, Українська, Español, Português, Deutsch, 日本語, Français, Polski, 한국어 and Türkçe.
+2. Pick one, and the window changes at once. The choice is kept in the settings. Until one is picked, x360ce follows the display language of Windows when it offers it, and English otherwise.
+3. A text not yet translated shows in English. A few texts change only when x360ce starts again: the names of the problems on the `[Issues]` tab, and the pages a plugin built before the change.
+4. An AI assistant reads the pages in English whatever language is shown, so its searches and paths do not change.
+5. To correct a translation or add the missing ones, see [Languages](https://github.com/x360ce/x360ce/wiki/Help.Languages).
+
 ## Saving and loading a preset as a file
 
 1. `[Controller #]` tab → `[Save Preset...]` writes the controller's settings to an `XML` file.
@@ -359,6 +367,10 @@ Do not calibrate the emulated controller in Windows or with a tool such as DXTwe
 `[Wheel range]` on the `[Wheel]` page sets the range of a Logitech G25, G27, G29 or Driving Force GT. Any other wheel turns the range its own software sets, and the page says so: set the range there.
 
 To leave the wheel at its range and steer as a shorter one, put a formula in the box that steers, usually `Left Thumb Axis X`: `=a1*900/270` steers as 270° on a wheel set to 900°, so the game reaches full lock at 135° each way. Past that the wheel turns on and nothing more happens. Write the wheel's range in place of 900, the range you want in place of 270, and keep the axis the box held: `=a1*900/270` for `Axis 1`. See "Expressions" below.
+
+## Shift lights
+
+`[RGB strip]` on the `[Wheel]` page shows the engine's revs on the shift lights of a Logitech G27, G29 or G923, while a game sends telemetry. Below half revs the lights are off. As the revs rise, they come on in pairs, from green at both ends to red in the middle. All of them flash at the rev limit: time to shift up. The lights show only the revs, not whether the gear is the best one. `[Test]` sweeps them without a game.
 
 ## Wheel centering spring
 

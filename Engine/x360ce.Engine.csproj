@@ -323,6 +323,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="JocysCom\Controls\UiTree\UiCallout.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiLanguage.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiLanguage.Forms.cs" />
     <Compile Include="JocysCom\Controls\UiTree\UiNode.cs" />
     <Compile Include="JocysCom\Controls\UiTree\UiText.cs" />
     <Compile Include="JocysCom\Controls\UiTree\UiText.Forms.cs" />

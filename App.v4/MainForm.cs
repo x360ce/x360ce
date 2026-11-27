@@ -21,6 +21,7 @@ using x360ce.App.Issues;
 using x360ce.App.Properties;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App
 {
@@ -78,6 +79,11 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("MainForm: after InitializeComponent");
 			if (IsDesignMode)
 				return;
+			// The designer's words, recorded in English and shown in the language chosen, before the program writes its own.
+			// The window's title is the product's name and version, the same in every language.
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Keep(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(TrayContextMenuStrip.Items, typeof(MainForm));
 			Text = EngineHelper.GetProductFullName();
 			InitMinimize();
 			InitiInterfaceUpdate();
@@ -138,6 +144,8 @@ namespace x360ce.App
 			// The tray menu hangs off the notification icon rather than off the window, so it is
 			// not reached by walking the window.
 			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			// What loading built is recorded and shown in the language chosen too; what was recorded before keeps its English.
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(Main);
 			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
 			// too, now that every panel that shows one exists.
 			ControlsHelper.ScaleImages(Main);
@@ -460,7 +468,7 @@ namespace x360ce.App
 			StatusEventsLabel.Visible = false;
 			StatusDllLabel.Text = "";
 			StatusIsAdminLabel.Text = WinAPI.IsVista
-				? string.Format("Elevated: {0}", WinAPI.IsElevated())
+				? string.Format(UiLanguage.T("MainForm.Elevated", "Elevated: {0}"), WinAPI.IsElevated())
 				: "";
 			UpdateStatusAiAccessLabel();
 			UpdateStatusErrorsLabel();
@@ -502,7 +510,7 @@ namespace x360ce.App
 			TabWindowsTimer?.Dispose();
 			TabWindowsTimer = null;
 			RemoveTask(TaskName.Loading);
-			LoadingLabel.Text = "Loading failed: " + ex.Message;
+			LoadingLabel.Text = UiLanguage.T("MainForm.LoadingFailed", "Loading failed: ") + ex.Message;
 			Program.StartupTrace.Mark("loading failed");
 		}
 
@@ -516,21 +524,42 @@ namespace x360ce.App
 		/// </remarks>
 		IEnumerable<object> BuildMainControl()
 		{
-			Program.StartupTrace.Mark("MainControl: before InitializeComponent");
-			// At the size it will have on the window, as its pages keep what they were last laid out at.
-			Main = new MainControl { Dock = DockStyle.Fill, Bounds = LoadingLabel.Bounds };
-			Program.StartupTrace.Mark("MainControl: after InitializeComponent");
-			yield return null;
-			Main.BuildPad();
-			yield return null;
-			Main.BuildAbout();
-			yield return null;
+			foreach (var step in ConstructMainControl())
+				yield return step;
 			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(Main);
 			Program.StartupTrace.Mark("MainControl: themed");
 			yield return null;
 			foreach (var step in LoadMainControl())
 				yield return step;
+		}
+
+		/// <summary>Builds the Game row, the tabs, the controller page and the About page, with their words recorded in English and shown in the language chosen.</summary>
+		IEnumerable<object> ConstructMainControl()
+		{
+			Program.StartupTrace.Mark("MainControl: before InitializeComponent");
+			// At the size it will have on the window, as its pages keep what they were last laid out at.
+			Main = new MainControl { Dock = DockStyle.Fill, Bounds = LoadingLabel.Bounds };
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(Main);
+			Program.StartupTrace.Mark("MainControl: after InitializeComponent");
+			yield return null;
+			Main.BuildPad();
+			yield return null;
+			Main.BuildAbout();
+			yield return null;
+		}
+
+		/// <summary>
+		/// Builds what <see cref="ConstructMainControl"/> builds, without the window being shown or given settings, for the
+		/// language sync, which reads the English of every text it records.
+		/// </summary>
+		internal void ConstructForLanguages()
+		{
+			foreach (var step in ConstructMainControl()) { }
+			// The names and purposes, which the sync gives the translator beside each text.
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(Main);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 		}
 
 		/// <summary>Reads the settings, gives the control its data, puts it on the window and starts what waited for it.</summary>
@@ -559,9 +588,9 @@ namespace x360ce.App
 			string[] stillOff;
 			var restored = DInput.XInputReorderRunner.RestoreAnythingLeftOff(out stillOff);
 			if (stillOff.Length > 0)
-				SetHeaderError("A controller an earlier run switched off is still off. Switch it on in Device Manager, or start this program as Administrator.");
+				SetHeaderError(UiLanguage.T("MainForm.AControllerAnEarlierRunSwitched", "A controller an earlier run switched off is still off. Switch it on in Device Manager, or start this program as Administrator."));
 			else if (restored.Length > 0)
-				SetHeaderInfo("Switched {0} controller(s) back on, left off by an earlier run.", restored.Length);
+				SetHeaderInfo(UiLanguage.T("MainForm.SwitchedControllerSBackOnLeft", "Switched {0} controller(s) back on, left off by an earlier run."), restored.Length);
 			AppHelper.InitializeHidGuardian();
 			// A controller arriving is only reported to a window which asked about that interface class.
 			// Without asking, the sole word of it is the machine-wide node change, which says nothing
@@ -815,7 +844,7 @@ namespace x360ce.App
 
 		private void Current_ConfigLoaded(object sender, SettingEventArgs e)
 		{
-			StatusTimerLabel.Text = string.Format("'{0}' loaded.", e.Name);
+			StatusTimerLabel.Text = string.Format(UiLanguage.T("MainForm.Loaded", "'{0}' loaded."), e.Name);
 		}
 
 		public void CopyElevated(string source, string dest)
@@ -902,7 +931,7 @@ namespace x360ce.App
 
 		public void NotifySettingsStatus(int eventsSuspendCount)
 		{
-			StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
+			StatusEventsLabel.Text = string.Format(UiLanguage.T("MainForm.Suspend", "Suspend: {0}"), eventsSuspendCount);
 		}
 
 		#endregion
@@ -1098,8 +1127,8 @@ namespace x360ce.App
 			var moderateCount = Main.IssuesPanel.ModerateIssuesCount;
 			var criticalCount = Main.IssuesPanel.CriticalIssuesCount ?? 0;
 			var text = (moderateCount ?? 0) == 0
-				? "Issues"
-				: string.Format("{0} Issue{1}", moderateCount, moderateCount == 1 ? "" : "s");
+				? UiLanguage.T("MainForm.IssuesTab", "Issues")
+				: string.Format(moderateCount == 1 ? UiLanguage.T("MainForm.OneIssue", "{0} Issue") : UiLanguage.T("MainForm.SeveralIssues", "{0} Issues"), moderateCount);
 			// If unknown then...
 			if (!moderateCount.HasValue)
 			{
@@ -2224,7 +2253,7 @@ namespace x360ce.App
 						StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
 					};
 					ControlsHelper.CheckTopMost(form);
-					var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?",
+					var result = form.ShowForm(UiLanguage.T("MainForm.DoYouWantToClearAll", "Do you want to clear all errors?"), UiLanguage.T("MainForm.ClearErrors", "Clear Errors?"),
 						System.Windows.Forms.MessageBoxButtons.YesNo,
 						System.Windows.Forms.MessageBoxIcon.Error,
 						System.Windows.Forms.MessageBoxDefaultButton.Button2
@@ -2302,12 +2331,25 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>The AI door's level in the status bar's words, in the language chosen; null for off.</summary>
+		static string AiLevelText(string level)
+		{
+			switch (level)
+			{
+				case null: return UiLanguage.T("MainForm.AiOff", "off");
+				case "Read": return UiLanguage.T("MainForm.AiRead", "read");
+				case "Configure": return UiLanguage.T("MainForm.AiConfigure", "configure");
+				case "Administer": return UiLanguage.T("MainForm.AiAdminister", "administer");
+				default: return level.ToLowerInvariant();
+			}
+		}
+
 		/// <summary>The level in the status bar. The name and purpose come from UiText; only what changes with the level is set here.</summary>
 		void UpdateStatusAiAccessLabel()
 		{
 			var o = SettingsManager.AiOptions;
 			var word = o.AiAccessEnabled ? o.AiAccess.ToString().ToLowerInvariant() : "off";
-			StatusAiAccessLabel.Text = "AI: " + word;
+			StatusAiAccessLabel.Text = string.Format(UiLanguage.T("MainForm.AiStatus", "AI: {0}"), AiLevelText(o.AiAccessEnabled ? o.AiAccess.ToString() : null));
 			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.GrayText;
 			StatusAiAccessLabel.ForeColor = colour;
 			StatusAiAccessLabel.LinkColor = colour;
@@ -2327,7 +2369,7 @@ namespace x360ce.App
 
 		private void UpdateStatusErrorsLabel()
 		{
-			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
+			StatusErrorsLabel.Text = string.Format(UiLanguage.T("MainForm.ErrorsStatus", "Errors: {0} | {1}"), ErrorFilesCount, LogHelper.Current.ExceptionsCount);
 			var colour = ErrorFilesCount > 0
 				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning")
 				: System.Drawing.SystemColors.GrayText;

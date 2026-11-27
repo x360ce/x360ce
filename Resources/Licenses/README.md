@@ -32,6 +32,13 @@ release at the version x360ce carries, add its row, and embed the file in each p
 in this repository (`<EmbeddedResource Include="..\{path}"><Link>{path}</Link></EmbeddedResource>`).
 `Tests/Common/ThirdPartyLicenceTest.cs` checks every row against the files and both programs.
 
+## Public domain
+
+The flags of the language menu (`Resources/Images/v4/flags`), drawn once from the SVG flags of flagcdn.com
+(https://flagcdn.com/, made from Wikimedia Commons' vector files), are in the public domain: flagpedia.net, which
+publishes them, says "Flag images are in the public domain (exempt from copyright)" (https://flagpedia.net/about,
+read 2026-11-26). There is no licence to carry, so the About page does not list them.
+
 ## Not yet confirmed
 
 x360ce carries these too, but no licence for them is confirmed yet, so the About page does not list them.

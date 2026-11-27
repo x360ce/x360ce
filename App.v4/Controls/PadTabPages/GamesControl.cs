@@ -13,6 +13,7 @@ using x360ce.App.Plugins;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 using x360ce.Plugins;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -70,7 +71,7 @@ namespace x360ce.App.Controls
 		{
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Scan for games on your computer?", "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			var result = form.ShowForm(UiLanguage.T("GamesControl.ScanForGamesOnYourComputer", "Scan for games on your computer?"), "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK)
 			{
 				ScanStarted = DateTime.Now;
@@ -630,6 +631,8 @@ namespace x360ce.App.Controls
 				fault = "The plugin’s page could not be made: " + inner.GetType().Name + ": " + inner.Message;
 			}
 			var pages = new TabControl { Name = "PluginTabControl", Dock = DockStyle.Fill };
+			// The room its tabs take is known once Windows has made them, as the plugin's tab is first shown.
+			pages.HandleCreated += (s, e) => RootLayoutPanel.PerformLayout();
 			var content = page ?? new Label
 			{
 				Name = "PluginNoteLabel",
@@ -782,12 +785,13 @@ namespace x360ce.App.Controls
 		#endregion
 	}
 
-	/// <summary>Tabs as tall as their first page needs, so a table row sized to what it holds gives the rest of the height to the rows beside it.</summary>
+	/// <summary>Tabs as tall as their tallest page needs, so a table row sized to what it holds gives the rest of the height to the rows beside it.</summary>
 	/// <remarks>
 	/// A table row sized to what it holds asks each control for its preferred size, and a tab control otherwise answers with
-	/// the size it was given. This one answers with its tabs and frame, and its first page: the page's padding and the
-	/// preferred height of what it holds, at the page's width. On the Games tab the first page is x360ce's own settings of
-	/// the game, so a game without a plugin looks as it always has; a plugin's longer page scrolls in the same room.
+	/// the size it was given. This one answers with its tabs and frame, and its tallest page as <see cref="AppHelper.ContentHeight"/>
+	/// measures it: the page's padding and what it holds, at the page's width. On the Games tab the first page is x360ce's
+	/// own settings of the game, so a game without a plugin looks as it always has; a plugin's page takes the room it needs
+	/// from the list above, and scrolls only when the window has none to give.
 	///
 	/// The room the tabs leave their pages is known only once the tabs' window exists, and asking for it makes the window,
 	/// with every window round it, before the control that holds the tabs is ready. So until then it answers with its own
@@ -817,14 +821,12 @@ namespace x360ce.App.Controls
 			if (!IsHandleCreated || TabPages.Count == 0)
 				return base.GetPreferredSize(proposedSize);
 			var display = DisplayRectangle;
-			var page = TabPages[0];
-			var width = display.Width - page.Padding.Horizontal;
 			// A minimized window leaves the page no width, and what it holds, measured a word to a line, would stand
 			// thousands of pixels tall: the tabs keep their size until there is room again.
-			if (width <= 0)
+			if (TabPages.Cast<TabPage>().Any(x => display.Width - x.Padding.Horizontal <= 0))
 				return Size;
-			var content = page.Controls.Cast<Control>().Select(x => x.GetPreferredSize(new Size(width, 0)).Height).DefaultIfEmpty(0).Max();
-			return new Size(Width, Height - display.Height + page.Padding.Vertical + content);
+			var content = TabPages.Cast<TabPage>().Max(x => AppHelper.ContentHeight(x, display.Width));
+			return new Size(Width, Height - display.Height + content);
 		}
 	}
 }

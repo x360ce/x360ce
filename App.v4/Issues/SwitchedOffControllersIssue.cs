@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.IO;
 using System.Linq;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -20,7 +21,7 @@ namespace x360ce.App.Issues
 	{
 		public SwitchedOffControllersIssue() : base()
 		{
-			Name = "Controllers Switched Off";
+			Name = UiLanguage.T("SwitchedOffControllersIssue.ControllersSwitchedOff", "Controllers Switched Off");
 			FixName = null;
 		}
 

@@ -845,14 +845,16 @@ namespace x360ce.App
 
 		/// <summary>
 		/// The height a control needs to show what it holds whole, at a width: one that sizes itself, the height it asks for; a
-		/// table, its rows, a control stretched to its row as tall as it needs in turn; a panel or a page, what is docked in it,
-		/// one docked to fill it as tall as it needs; any other, such as a list, a drawing or a control of its own, which takes
-		/// the room it is given, its smallest height. What is hidden needs none.
+		/// table, its rows, a control stretched to its row as tall as it needs in turn; a tab strip, its tabs and its tallest
+		/// page; a panel, a page or a control made of others, such as a plugin's page, what is docked in it, one docked to fill
+		/// it as tall as it needs; any other, such as a list, a drawing or a control of its own, which takes the room it is
+		/// given, its smallest height. What is hidden needs none.
 		/// </summary>
 		/// <remarks>
 		/// For the room pages that share it need, as a tab strip's pages do, read from what they hold rather than from the
 		/// height they were given. A page the strip does not show is hidden itself, so the control asked about is measured
-		/// whether it is shown or not, and what it holds by whether it is.
+		/// whether it is shown or not, and what it holds by whether it is. A tab strip tells the room its tabs take only once
+		/// Windows has made it; until then its pages alone are counted, and whoever shows it lays out again once it is made.
 		/// </remarks>
 		public static int ContentHeight(System.Windows.Forms.Control control, int width)
 		{
@@ -861,7 +863,17 @@ namespace x360ce.App
 			var table = control as System.Windows.Forms.TableLayoutPanel;
 			if (table != null)
 				return table.Padding.Vertical + RowsHeight(table, width - table.Padding.Horizontal, true);
-			if (control.GetType() != typeof(System.Windows.Forms.Panel) && !(control is System.Windows.Forms.TabPage))
+			var tabs = control as System.Windows.Forms.TabControl;
+			if (tabs != null)
+			{
+				var display = tabs.IsHandleCreated ? tabs.DisplayRectangle : tabs.ClientRectangle;
+				var pages = 0;
+				foreach (System.Windows.Forms.TabPage page in tabs.TabPages)
+					pages = Math.Max(pages, ContentHeight(page, width - (tabs.Width - display.Width)));
+				return tabs.Height - display.Height + pages;
+			}
+			if (control.GetType() != typeof(System.Windows.Forms.Panel) && !(control is System.Windows.Forms.TabPage)
+				&& !(control is System.Windows.Forms.UserControl))
 				return control.MinimumSize.Height;
 			var inside = width - control.Padding.Horizontal;
 			var docked = 0;
@@ -875,7 +887,7 @@ namespace x360ce.App
 				else if (child.Dock != System.Windows.Forms.DockStyle.None)
 					filled = Math.Max(filled, ContentHeight(child, inside));
 			}
-			return control.Padding.Vertical + docked + filled;
+			return Math.Max(control.MinimumSize.Height, control.Padding.Vertical + docked + filled);
 		}
 
 		/// <summary>

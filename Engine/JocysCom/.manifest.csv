@@ -86,6 +86,8 @@ Controls\Themes\ThemeType.cs,9F66FCA90C6F7F363302A270183BB96EF5B33B18300A9116101
 Controls\ToolStripBorderlessRenderer.cs,EE0569422B2DC172FBF037342C0716B1E9E24589216AA89ECE74D53893E01AD3,581
 Controls\UiTree\OverlayForm.cs,,1551
 Controls\UiTree\UiCallout.cs,,10894
+Controls\UiTree\UiLanguage.cs,,16571
+Controls\UiTree\UiLanguage.Forms.cs,,14293
 Controls\UiTree\UiNode.cs,,3820
 Controls\UiTree\UiText.cs,,3308
 Controls\UiTree\UiText.Forms.cs,,4391

@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -9,8 +10,8 @@ namespace x360ce.App.Issues
 
 		public CppX86RuntimeInstallIssue() : base()
 		{
-			Name = "Software";
-			FixName = "Download and Install";
+			Name = UiLanguage.T("CppRuntimeInstallIssue.Software", "Software");
+			FixName = UiLanguage.T("CppRuntimeInstallIssue.DownloadAndInstall", "Download and Install");
 			MoreInfo = new Uri(CppRuntimeDetector.LatestUrl);
 			// Microsoft's installer changes the whole machine, so Windows asks for Administrator first.
 			FixNeedsAdmin = true;

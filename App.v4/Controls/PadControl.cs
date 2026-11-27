@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using x360ce.App.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -110,8 +111,18 @@ namespace x360ce.App.Controls
 			_ChartReadings = _AxisCharts.Select(x => new ChartReading()).ToArray();
 
 			RemapName = RemapAllButton.Text;
-			// Remap All reads STOP while it runs, and stays as wide as the longer text so the list beside it stays put.
-			RemapAllButton.Texts = new[] { RemapName, RemapStopName };
+			// Remap All reads STOP while it runs, and stays as wide as the longer text so the list beside it stays put, in
+			// the language shown.
+			RemapAllButton.Texts = RemapTexts();
+			EventHandler languageChanged = (s, e) =>
+			{
+				RemapAllButton.Texts = RemapTexts();
+				UiLanguage.Relist(ForceTypeComboBox, LeftMotorDirectionComboBox, RightMotorDirectionComboBox);
+				// The pages and the buttons below them ask for other heights in other words: the device list takes what is left again.
+				PadTableLayoutPanel.PerformLayout();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
 			_Imager.ImageControl = XboxImage;
@@ -342,7 +353,7 @@ namespace x360ce.App.Controls
 								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
 								XboxImage.SetHelpText("");
-							RemapAllButton.Text = RemapName;
+							UiLanguage.SetText(RemapAllButton, "Text", RemapName);
 							return;
 						}
 						// The next control from the list after a pause, so the person sees what was recorded and which control is
@@ -690,10 +701,37 @@ namespace x360ce.App.Controls
 		}
 
 
+		/// <summary>An effect type as its list shows it, in the language chosen.</summary>
+		static string EffectText(ForceEffectType type)
+		{
+			switch (type)
+			{
+				case ForceEffectType.Constant: return UiLanguage.T("PadControl.EffectConstant", "Constant");
+				case ForceEffectType.PeriodicSine: return UiLanguage.T("PadControl.EffectPeriodicSine", "PeriodicSine");
+				case ForceEffectType.PeriodicSawtooth: return UiLanguage.T("PadControl.EffectPeriodicSawtooth", "PeriodicSawtooth");
+				case ForceEffectType.Constant2: return UiLanguage.T("PadControl.EffectConstant2", "Constant2");
+				case ForceEffectType.PeriodicSine2: return UiLanguage.T("PadControl.EffectPeriodicSine2", "PeriodicSine2");
+				case ForceEffectType.PeriodicSawtooth2: return UiLanguage.T("PadControl.EffectPeriodicSawtooth2", "PeriodicSawtooth2");
+				default: return type.ToString();
+			}
+		}
+
+		/// <summary>A motor's direction as its list shows it, in the language chosen.</summary>
+		static string DirectionText(ForceEffectDirection direction)
+		{
+			switch (direction)
+			{
+				case ForceEffectDirection.NoDirection: return UiLanguage.T("PadControl.DirectionNone", "NoDirection");
+				case ForceEffectDirection.Positive: return UiLanguage.T("PadControl.DirectionPositive", "Positive");
+				case ForceEffectDirection.Negative: return UiLanguage.T("PadControl.DirectionNegative", "Negative");
+				default: return direction.ToString();
+			}
+		}
+
 		public bool StopRecording()
 		{
 			RecordAllMaps.Clear();
-			RemapAllButton.Text = RemapName;
+			UiLanguage.SetText(RemapAllButton, "Text", RemapName);
 			return _Imager.Recorder.StopRecording();
 		}
 
@@ -733,7 +771,7 @@ namespace x360ce.App.Controls
 					? "Move Axis"
 					: "Press Button";
 			XboxImage.SetHelpText(helpText);
-			RemapAllButton.Text = RemapStopName;
+			RemapAllButton.Text = RemapStopText;
 		}
 
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
@@ -924,6 +962,10 @@ namespace x360ce.App.Controls
 			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
 			foreach (var item in effectsTypes)
 				ForceTypeComboBox.Items.Add(item);
+			// Each effect and direction in words in the language chosen; the lists keep the names the settings hold.
+			ForceTypeComboBox.Format += (s, e) => e.Value = EffectText((ForceEffectType)e.ListItem);
+			LeftMotorDirectionComboBox.Format += (s, e) => e.Value = DirectionText((ForceEffectDirection)e.ListItem);
+			RightMotorDirectionComboBox.Format += (s, e) => e.Value = DirectionText((ForceEffectDirection)e.ListItem);
 			InitMotorPeriodPresets();
 
 			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
@@ -1209,10 +1251,12 @@ namespace x360ce.App.Controls
 					AnnounceSelection();
 			}
 			var visibleCount = mappedItems.Count();
-			var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
+			var title = string.Format(visibleCount == 1
+				? UiLanguage.T("PadControl.EnableOneMappedDevice", "Enable {0} Mapped Device")
+				: UiLanguage.T("PadControl.EnableMappedDevices", "Enable {0} Mapped Devices"), visibleCount);
 			if (mappedItems.Count(x => x.IsEnabled) > 1)
 			{
-				title += " (Combine)";
+				title += UiLanguage.T("PadControl.Combine", " (Combine)");
 			}
 			ControlsHelper.SetText(EnableButton, title);
 			// Another tab's list can change without this one's rows moving.
@@ -3046,6 +3090,9 @@ namespace x360ce.App.Controls
 					Padding = AppHelper.ScaledPadding(0, 0, 8, 8),
 				};
 				tab.Controls.Add(pageControl);
+				// The pages are as tall as the plugin's page needs too, whose own tabs tell their room once Windows has made them.
+				foreach (var inner in pageControl.Controls.OfType<TabControl>())
+					inner.HandleCreated += (s, e) => PadTableLayoutPanel.PerformLayout();
 				UiTree.UiHelp.Attach(tab);
 				WheelTelemetryTabPage = tab;
 			}
@@ -3704,10 +3751,10 @@ namespace x360ce.App.Controls
 		bool ClearAll()
 		{
 			var description = Attributes.GetDescription(MappedTo);
-			var text = string.Format("Do you want to clear all {0} settings?", description);
+			var text = string.Format(UiLanguage.T("PadControl.DoYouWantToClearAll", "Do you want to clear all {0} settings?"), description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			var result = form.ShowForm(text, UiLanguage.T("PadControl.ClearControllerSettings", "Clear Controller Settings"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result != DialogResult.Yes)
 				return false;
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), null);
@@ -3717,10 +3764,10 @@ namespace x360ce.App.Controls
 		void ResetPresetButton_Click(object sender, EventArgs e)
 		{
 			var description = Attributes.GetDescription(MappedTo);
-			var text = string.Format("Do you really want to reset all {0} settings?", description);
+			var text = string.Format(UiLanguage.T("PadControl.DoYouReallyWantToReset", "Do you really want to reset all {0} settings?"), description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm(text, "Reset Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			var result = form.ShowForm(text, UiLanguage.T("PadControl.ResetControllerSettings", "Reset Controller Settings"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
 				//MainForm.Current.ReloadXinputSettings();
@@ -3736,13 +3783,13 @@ namespace x360ce.App.Controls
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var buttons = MessageBoxButtons.YesNo;
-			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
+			var text = string.Format(UiLanguage.T("PadControl.DoYouWantToFillAll", "Do you want to fill all {0} settings automatically?"), description);
 			if (!AutoMapHelper.CanGetAutoPreset(ud))
 			{
-				text = string.Format("Device is offline. Please connect device to fill all {0} settings automatically.", description);
+				text = string.Format(UiLanguage.T("PadControl.DeviceIsOfflinePleaseConnectDevice", "Device is offline. Please connect device to fill all {0} settings automatically."), description);
 				buttons = MessageBoxButtons.OK;
 			}
-			var result = form.ShowForm(text, "Auto Controller Settings", buttons, MessageBoxIcon.Question);
+			var result = form.ShowForm(text, UiLanguage.T("PadControl.AutoControllerSettings", "Auto Controller Settings"), buttons, MessageBoxIcon.Question);
 			if (result != DialogResult.Yes)
 				return;
 			string note;
@@ -3928,10 +3975,10 @@ namespace x360ce.App.Controls
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			ControlsHelper.CheckTopMost(form);
-			var answer = form.ShowForm(text, "Device already on a controller",
+			var answer = form.ShowForm(text, UiLanguage.T("PadControl.DeviceAlreadyOnAController", "Device already on a controller"),
 				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
 				MessageBoxDefaultButton.Button1,
-				new[] { "&Move", "&Copy" }, heading);
+				new[] { UiLanguage.T("PadControl.Move", "&Move"), UiLanguage.T("PadControl.Copy", "&Copy") }, heading);
 			form.Dispose();
 			return answer;
 		}
@@ -3956,7 +4003,7 @@ namespace x360ce.App.Controls
 		public static string SharedDeviceHeading(UserGame game, MapTo mappedTo, UserDevice[] devices)
 		{
 			var shared = SharedDevices(game, mappedTo, devices);
-			return shared.Count == 0 ? null : string.Format("Move or Copy {0}?", string.Join(", ", shared.Select(x => x.Key)));
+			return shared.Count == 0 ? null : string.Format(UiLanguage.T("PadControl.MoveOrCopy", "Move or Copy {0}?"), string.Join(", ", shared.Select(x => x.Key)));
 		}
 
 		/// <summary>What Add says under the question: what each answer does. Null when no device is on another tab.</summary>
@@ -3967,8 +4014,8 @@ namespace x360ce.App.Controls
 				return null;
 			var from = string.Join(", ", shared.SelectMany(x => x.Value).Distinct().OrderBy(x => x)
 				.Select(x => Attributes.GetDescription(x)));
-			return string.Format("Move - add here and remove from {0}.", from) + Environment.NewLine
-				+ "Copy - add here and leave others.";
+			return string.Format(UiLanguage.T("PadControl.MoveAddHereAndRemoveFrom", "Move - add here and remove from {0}."), from) + Environment.NewLine
+				+ UiLanguage.T("PadControl.CopyAddHereAndLeaveOthers", "Copy - add here and leave others.");
 		}
 
 		/// <summary>Asks whether Xbox controllers picked through DirectInput are added through Raw Input instead: Yes uses Raw Input, No adds the rows picked, anything else adds nothing.</summary>
@@ -3980,10 +4027,10 @@ namespace x360ce.App.Controls
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			ControlsHelper.CheckTopMost(form);
-			var answer = form.ShowForm(text, "Xbox controller through DirectInput",
+			var answer = form.ShowForm(text, UiLanguage.T("PadControl.XboxControllerThroughDirectInput", "Xbox controller through DirectInput"),
 				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
 				MessageBoxDefaultButton.Button1,
-				new[] { "Use &Raw Input", "Add &DirectInput" }, heading);
+				new[] { UiLanguage.T("PadControl.UseRawInput", "Use &Raw Input"), UiLanguage.T("PadControl.AddDirectInput", "Add &DirectInput") }, heading);
 			form.Dispose();
 			return answer;
 		}
@@ -4356,36 +4403,36 @@ namespace x360ce.App.Controls
 		private void MapNameComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var item = (Layout)MapNameComboBox.SelectedItem;
-			ButtonALabel.Text = item.ButtonA;
-			ButtonBLabel.Text = item.ButtonB;
-			ButtonBackLabel.Text = item.ButtonBack;
-			ButtonGuideLabel.Text = item.ButtonGuide;
-			ButtonStartLabel.Text = item.ButtonStart;
-			ButtonXLabel.Text = item.ButtonX;
-			ButtonYLabel.Text = item.ButtonY;
-			DPadLabel.Text = item.DPad;
-			DPadDownLabel.Text = item.DPadDown;
-			DPadLeftLabel.Text = item.DPadLeft;
-			DPadRightLabel.Text = item.DPadRight;
-			DPadUpLabel.Text = item.DPadUp;
-			LeftShoulderLabel.Text = item.LeftShoulder;
-			LeftThumbAxisXLabel.Text = item.LeftThumbAxisX;
-			LeftThumbAxisYLabel.Text = item.LeftThumbAxisY;
-			LeftThumbButtonLabel.Text = item.LeftThumbButton;
-			LeftThumbDownLabel.Text = item.LeftThumbDown;
-			LeftThumbLeftLabel.Text = item.LeftThumbLeft;
-			LeftThumbRightLabel.Text = item.LeftThumbRight;
-			LeftThumbUpLabel.Text = item.LeftThumbUp;
-			LeftTriggerLabel.Text = item.LeftTrigger;
-			RightShoulderLabel.Text = item.RightShoulder;
-			RightThumbAxisXLabel.Text = item.RightThumbAxisX;
-			RightThumbAxisYLabel.Text = item.RightThumbAxisY;
-			RightThumbButtonLabel.Text = item.RightThumbButton;
-			RightThumbDownLabel.Text = item.RightThumbDown;
-			RightThumbLeftLabel.Text = item.RightThumbLeft;
-			RightThumbRightLabel.Text = item.RightThumbRight;
-			RightThumbUpLabel.Text = item.RightThumbUp;
-			RightTriggerLabel.Text = item.RightTrigger;
+			UiLanguage.SetText(ButtonALabel, "Text", item.ButtonA);
+			UiLanguage.SetText(ButtonBLabel, "Text", item.ButtonB);
+			UiLanguage.SetText(ButtonBackLabel, "Text", item.ButtonBack);
+			UiLanguage.SetText(ButtonGuideLabel, "Text", item.ButtonGuide);
+			UiLanguage.SetText(ButtonStartLabel, "Text", item.ButtonStart);
+			UiLanguage.SetText(ButtonXLabel, "Text", item.ButtonX);
+			UiLanguage.SetText(ButtonYLabel, "Text", item.ButtonY);
+			UiLanguage.SetText(DPadLabel, "Text", item.DPad);
+			UiLanguage.SetText(DPadDownLabel, "Text", item.DPadDown);
+			UiLanguage.SetText(DPadLeftLabel, "Text", item.DPadLeft);
+			UiLanguage.SetText(DPadRightLabel, "Text", item.DPadRight);
+			UiLanguage.SetText(DPadUpLabel, "Text", item.DPadUp);
+			UiLanguage.SetText(LeftShoulderLabel, "Text", item.LeftShoulder);
+			UiLanguage.SetText(LeftThumbAxisXLabel, "Text", item.LeftThumbAxisX);
+			UiLanguage.SetText(LeftThumbAxisYLabel, "Text", item.LeftThumbAxisY);
+			UiLanguage.SetText(LeftThumbButtonLabel, "Text", item.LeftThumbButton);
+			UiLanguage.SetText(LeftThumbDownLabel, "Text", item.LeftThumbDown);
+			UiLanguage.SetText(LeftThumbLeftLabel, "Text", item.LeftThumbLeft);
+			UiLanguage.SetText(LeftThumbRightLabel, "Text", item.LeftThumbRight);
+			UiLanguage.SetText(LeftThumbUpLabel, "Text", item.LeftThumbUp);
+			UiLanguage.SetText(LeftTriggerLabel, "Text", item.LeftTrigger);
+			UiLanguage.SetText(RightShoulderLabel, "Text", item.RightShoulder);
+			UiLanguage.SetText(RightThumbAxisXLabel, "Text", item.RightThumbAxisX);
+			UiLanguage.SetText(RightThumbAxisYLabel, "Text", item.RightThumbAxisY);
+			UiLanguage.SetText(RightThumbButtonLabel, "Text", item.RightThumbButton);
+			UiLanguage.SetText(RightThumbDownLabel, "Text", item.RightThumbDown);
+			UiLanguage.SetText(RightThumbLeftLabel, "Text", item.RightThumbLeft);
+			UiLanguage.SetText(RightThumbRightLabel, "Text", item.RightThumbRight);
+			UiLanguage.SetText(RightThumbUpLabel, "Text", item.RightThumbUp);
+			UiLanguage.SetText(RightTriggerLabel, "Text", item.RightTrigger);
 		}
 
 		private void ForceTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -4521,11 +4568,11 @@ namespace x360ce.App.Controls
 			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
 			var list = new List<string>();
 			if (type == ForceEffectType.Constant || type == ForceEffectType._Type2)
-				list.Add("Constant force type. Good for vibrating motors on game pads.");
+				list.Add("Constant force type. Good for vibrating motors on game pads, and for wheels.");
 			if (type.HasFlag(ForceEffectType.PeriodicSine))
-				list.Add("Periodic 'Sine Wave' force type. Good for car/plane engine vibration. Good for torque motors on wheels.");
+				list.Add("Periodic 'Sine Wave' force type. Good for car/plane engine vibration.");
 			if (type.HasFlag(ForceEffectType.PeriodicSawtooth))
-				list.Add("Periodic 'Sawtooth Down Wave' force type. Good for gun recoil. Good for torque motors on wheels.");
+				list.Add("Periodic 'Sawtooth Down Wave' force type. Good for gun recoil.");
 			if (type.HasFlag(ForceEffectType._Type2))
 				list.Add("Alternative implementation - two motors / actuators per effect.");
 			EffectDescriptionLabel.Text = string.Format("{0} ({1}) - {2}", type, (int)type, string.Join(" ", list));
@@ -4616,12 +4663,22 @@ namespace x360ce.App.Controls
 		public static TimeSpan RemapAllPause = TimeSpan.FromMilliseconds(500);
 
 		public string RemapName = "Remap All";
-		public string RemapStopName = "STOP";
+
+		/// <summary>What Remap All reads while it runs, in the language shown.</summary>
+		public string RemapStopName { get { return RemapStopText; } }
+
+		static string RemapStopText { get { return UiLanguage.T("PadControl.RemapStop", "STOP"); } }
+
+		/// <summary>The two texts Remap All shows in turn, in the language shown.</summary>
+		string[] RemapTexts()
+		{
+			return new[] { UiLanguage.Find("PadControl.RemapAllButton.Text", RemapName) ?? RemapName, RemapStopText };
+		}
 
 		private void RemapAllButton_Click(object sender, EventArgs e)
 		{
 			// If stop mode then...
-			if (RemapAllButton.Text != RemapName)
+			if (RemapAllButton.Text == RemapStopText)
 			{
 				StopRecording();
 				return;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -27,8 +28,8 @@ namespace x360ce.App.Issues
 	{
 		public LeftoverVirtualPadsIssue() : base()
 		{
-			Name = "Leftover Virtual Controllers";
-			FixName = "Remove";
+			Name = UiLanguage.T("LeftoverVirtualPadsIssue.LeftoverVirtualControllers", "Leftover Virtual Controllers");
+			FixName = UiLanguage.T("LeftoverVirtualPadsIssue.Remove", "Remove");
 			// Windows does not let an ordinary program remove a device, so pressing this raises a
 			// prompt. Marked, so the prompt is expected.
 			FixNeedsAdmin = true;

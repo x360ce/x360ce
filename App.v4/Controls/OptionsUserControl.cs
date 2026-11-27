@@ -26,7 +26,18 @@ namespace x360ce.App.Controls
 			// Each folder stands with 4 device-independent pixels of room round its name.
 			FormsTheme.SetItemRoom(GameScanLocationsListBox, 4);
 			// The theme that follows Windows is named the way Windows names it.
-			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
+			ThemeComboBox.Format += (s, e) => e.Value = ThemeText((ThemeType)e.ListItem);
+			// How the window starts with Windows, in words; the list keeps the names the command line takes.
+			StartWithWindowsStateComboBox.Format += (s, e) => e.Value = WindowStateText((string)e.ListItem);
+			EventHandler languageChanged = (s, e) =>
+			{
+				// The window-start list shows the same choice again, so Windows' record is not written.
+				_LoadingWindowsStart = true;
+				JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Relist(ThemeComboBox, FontComboBox, SizeComboBox, StartWithWindowsStateComboBox);
+				_LoadingWindowsStart = false;
+			};
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed -= languageChanged;
 			// The lists hold the choices as the options keep them, and show each by what it is.
 			FontComboBox.Format += (s, e) => e.Value = AppFonts.ChoiceText((string)e.ListItem);
 			SizeComboBox.Format += (s, e) => e.Value = AppFonts.SizeText((float)e.ListItem);
@@ -54,14 +65,6 @@ namespace x360ce.App.Controls
 			EmulationHotkeyCheckBox.CheckedChanged += (s, e) => UpdateDependentControls();
 			EmulationButtonsCheckBox.CheckedChanged += (s, e) => UpdateDependentControls();
 			UpdateDependentControls();
-#if DEBUG
-			// Install stays available in development builds so that the removal path can
-			// be tested. The confirmation dialog states that this is a development build.
-#else
-			// HID Guardian install is not supported: a misconfigured HID filter driver
-			// can lock the user out of keyboard and mouse. Only uninstall is available.
-			HidGuardianInstallButton.Visible = false;
-#endif
 		}
 
 		/// <summary>
@@ -96,6 +99,30 @@ namespace x360ce.App.Controls
 				RefreshHidGuardianStatus();
 			else if (tab == HidHideTabPage)
 				RefreshHidHideStatus();
+		}
+
+		/// <summary>A theme as the list shows it, in the language chosen.</summary>
+		static string ThemeText(ThemeType theme)
+		{
+			switch (theme)
+			{
+				case ThemeType.Auto: return JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("OptionsUserControl.ThemeSystem", "System");
+				case ThemeType.Dark: return JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("OptionsUserControl.ThemeDark", "Dark");
+				case ThemeType.Light: return JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("OptionsUserControl.ThemeLight", "Light");
+				default: return theme.ToString();
+			}
+		}
+
+		/// <summary>A window state as the start-with-Windows list shows it, in the language chosen.</summary>
+		static string WindowStateText(string state)
+		{
+			switch (state)
+			{
+				case "Maximized": return JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("OptionsUserControl.WindowMaximized", "Maximized");
+				case "Normal": return JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("OptionsUserControl.WindowNormal", "Normal");
+				case "Minimized": return JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("OptionsUserControl.WindowMinimized", "Minimized");
+				default: return state;
+			}
 		}
 
 		public void InitOptions()
@@ -1073,9 +1100,12 @@ namespace x360ce.App.Controls
 						: string.Format("{0} {1}", hid.Description, hid.GetVersion());
 					ControlsHelper.SetText(HidGuardianTextBox, hidStatus);
 #if DEBUG
-					// Development builds can install, so that removal can be tested.
+					// Development builds can install, so that removal can be tested. The confirmation dialog states that
+					// this is a development build.
 					HidGuardianInstallButton.Enabled = hid.DriverVersion == 0;
 #else
+					// HID Guardian install is not supported: a misconfigured HID filter driver can lock the user out of
+					// keyboard and mouse. Install stays on the page, greyed, and only uninstall is available.
 					HidGuardianInstallButton.Enabled = false;
 #endif
 					// Offer removal while either the driver or the class filter is present.

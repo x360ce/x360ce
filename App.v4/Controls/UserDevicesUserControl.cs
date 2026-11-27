@@ -13,6 +13,7 @@ using x360ce.App.DInput;
 using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -381,8 +382,8 @@ namespace x360ce.App.Controls
 			var types = manager == null ? new Plugins.PluginDeviceType[0] : manager.DeviceTypes.Where(x => !x.Faulted).ToArray();
 			if (types.Length == 0)
 			{
-				MessageBox.Show("No plugin offers a device. The Plugins page on the Options tab lists the plugins found and why any did not load.",
-					"Add Plugin Device", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(UiLanguage.T("UserDevicesUserControl.NoPluginOffersADeviceThe", "No plugin offers a device. The Plugins page on the Options tab lists the plugins found and why any did not load."),
+					UiLanguage.T("UserDevicesUserControl.AddPluginDevice", "Add Plugin Device"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 			if (types.Length == 1)
@@ -507,10 +508,10 @@ namespace x360ce.App.Controls
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			if (!DInput.VirtualDriverInstaller.IsHidHideDevicePresent())
-				form.ShowForm("HID Hide is not installed, so x360ce cannot hide devices.\r\nThe HID Hide page on the Options tab downloads it.",
+				form.ShowForm(UiLanguage.T("UserDevicesUserControl.HIDHideIsNotInstalledSo", "HID Hide is not installed, so x360ce cannot hide devices.\r\nThe HID Hide page on the Options tab downloads it."),
 					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			else
-				form.ShowForm("HID Hide did not accept the change.\r\nOpen HID Hide from this menu and make it there.",
+				form.ShowForm(UiLanguage.T("UserDevicesUserControl.HIDHideDidNotAcceptThe", "HID Hide did not accept the change.\r\nOpen HID Hide from this menu and make it there."),
 					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 

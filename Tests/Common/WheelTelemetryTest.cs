@@ -895,6 +895,79 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("ui"), TestCategory("plugins"), TestCategory("critical")]
+		[Description("In the main window at its default and its smallest size, every control of the Game Telemetry page shows whole inside its group and the page, Gear change at the bottom of Force Feel Tuning included")]
+		public void Game_telemetry_page_shows_every_control_at_the_default_size()
+		{
+			var before = PluginManager.Current;
+			try
+			{
+				using (var manager = new PluginManager(null, null, () => false, typeof(PluginManager).Assembly))
+				{
+					manager.LoadEmbedded();
+					PluginManager.Current = manager;
+					Ui.OnUiThread(() =>
+					{
+						var pad = new x360ce.App.Controls.PadControl(MapTo.Controller1);
+						using (var form = OptionsLayoutTest.MainWindowAtDefaultSize(pad, "Controller 1"))
+						{
+							var wheel = new x360ce.Engine.Data.UserDevice { ProductName = "Logitech G29 Driving Force", CapType = (int)SharpDX.DirectInput.DeviceType.Driving };
+							form.Show();
+							System.Windows.Forms.Application.DoEvents();
+							pad.UpdateWheelTabs(wheel);
+							var page = pad.WheelTelemetryTabPage;
+							Assert.IsTrue(pad.PadTabControl.TabPages.Contains(page), "The Game Telemetry tab does not show for a wheel.");
+							pad.PadTabControl.SelectedTab = page;
+							System.Windows.Forms.Application.DoEvents();
+							Assert.AreSame(page, pad.PadTabControl.SelectedTab, "The Game Telemetry page is not the one shown.");
+							Assert.IsTrue(page.Visible && pad.Visible && form.Visible, "The Game Telemetry page is not shown: page " + page.Visible + ", controller page " + pad.Visible + ", window " + form.Visible + ".");
+							var gear = page.Controls.Find("GearChangeRumbleTrackBar", true).Single();
+							var cut = new System.Collections.Generic.List<string>();
+							// The default size, then the smallest the window can be made.
+							foreach (var size in new[] { form.Size, PadPageShortWindowTest.MinimumWindowSize() })
+							{
+								form.Size = size;
+								System.Windows.Forms.Application.DoEvents();
+								var pageArea = page.RectangleToScreen(page.ClientRectangle);
+								foreach (var group in page.Controls.Find("TuningGroupBox", true).Concat(page.Controls.Find("ConnectionGroupBox", true))
+									.Concat(page.Controls.Find("ReadingsGroupBox", true)))
+								{
+									var groupArea = group.RectangleToScreen(group.DisplayRectangle);
+									foreach (var control in Leaves(group))
+									{
+										var area = control.Parent.RectangleToScreen(control.Bounds);
+										if (!groupArea.Contains(area) || !pageArea.Contains(area))
+											cut.Add("window " + form.Size + ": " + group.Name + "/" + control.Name + " " + area + " outside " + groupArea + " in " + pageArea);
+									}
+								}
+							}
+							Assert.IsTrue(Leaves(page.Controls.Find("TuningGroupBox", true).Single()).Contains(gear), "Gear change is not in Force Feel Tuning.");
+							Assert.AreEqual(0, cut.Count, "Cut off: " + string.Join("; ", cut));
+						}
+					});
+				}
+			}
+			finally
+			{
+				PluginManager.Current = before;
+			}
+		}
+
+		/// <summary>The visible controls a group holds that hold no others: the ones a person reads or sets.</summary>
+		static System.Collections.Generic.IEnumerable<System.Windows.Forms.Control> Leaves(System.Windows.Forms.Control parent)
+		{
+			foreach (System.Windows.Forms.Control child in parent.Controls)
+			{
+				if (!child.Visible)
+					continue;
+				if (child.Controls.Count == 0 || child is System.Windows.Forms.UpDownBase)
+					yield return child;
+				else
+					foreach (var leaf in Leaves(child))
+						yield return leaf;
+			}
+		}
+
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
 		[Description("WheelTelemetryTuning scales aligning torque, understeer lightening, curb impulses and dynamic damping cleanly")]
 		public void Wheel_telemetry_tuning_scales_each_physics_channel()

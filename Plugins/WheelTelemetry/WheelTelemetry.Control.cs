@@ -9,7 +9,7 @@ namespace x360ce.Plugins.Samples
 {
 	/// <summary>
 	/// Dedicated "Game Telemetry" plugin tab on controller pages (wheels and telemetry-consuming devices):
-	/// Connection &amp; Ports and Force Feel Tuning on the left; Live Telemetry and Activity on the right;
+	/// Connection &amp; Ports and Live Telemetry on the left; Force Feel Tuning and Activity on the right;
 	/// plus a Help sub-tab matching x360ce's native plugin pages.
 	/// Strictly follows x360ce's shared Light/Dark theme and 8 px (4 px scaled grid) one-gap spacing rule:
 	/// every item carries Margin(g, g, 0, 0) and every container carries Padding(0, 0, g, g).
@@ -358,22 +358,25 @@ namespace x360ce.Plugins.Samples
 				ForwardPortUpDown.Width = g * 10;
 			});
 
-			// Left bottom: Force Feel Tuning group (matching Wheel & Force Feedback slider rows).
+			// Right top: Force Feel Tuning group (matching Wheel & Force Feedback slider rows), as tall as its rows, so none is cut off.
 			var tuningGroup = new GroupBox
 			{
 				Name = "TuningGroupBox",
 				Text = "Force Feel Tuning",
 				AccessibleName = "Force Feel Tuning",
 				AccessibleDescription = "Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer, steering lead, and where road and impact feel comes from.",
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Fill,
-				MinimumSize = new Size(120, 64),
 			};
 			var tuningTable = new TableLayoutPanel
 			{
 				Name = "TuningTableLayoutPanel",
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Fill,
 				ColumnCount = 3,
-				RowCount = 9,
+				RowCount = 8,
 				Margin = Padding.Empty,
 				Padding = Padding.Empty,
 			};
@@ -382,7 +385,6 @@ namespace x360ce.Plugins.Samples
 			tuningTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
 			for (var i = 0; i < 8; i++)
 				tuningTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-			tuningTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
 
 			AlignStrengthTrackBar = AddTuningRow(tuningTable, 0, "AlignStrength", "Aligning torque",
 				"Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).",
@@ -493,7 +495,7 @@ namespace x360ce.Plugins.Samples
 				tuningGroup.Margin = itemMargin;
 			});
 
-			// Right top: Live Telemetry GroupBox (replaces custom border/color panel with native themed GroupBox + ProgressBars).
+			// Left bottom: Live Telemetry GroupBox (native themed GroupBox + ProgressBars), taking the column's remaining height.
 			ReadingsGroupBox = new GroupBox
 			{
 				Name = nameof(ReadingsGroupBox),
@@ -508,7 +510,8 @@ namespace x360ce.Plugins.Samples
 			ReadingsPanel = new TableLayoutPanel
 			{
 				Name = nameof(ReadingsPanel),
-				Dock = DockStyle.Fill,
+				// At the top of its group, as tall as its rows: the group takes the column's remaining height, the rows keep theirs.
+				Dock = DockStyle.Top,
 				AutoSize = true,
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				ColumnCount = 3,
@@ -565,7 +568,7 @@ namespace x360ce.Plugins.Samples
 				PortStatusLabel.Margin = itemMargin;
 			});
 
-			// Right bottom: Activity Log GroupBox.
+			// Right bottom: Activity Log GroupBox, taking the column's remaining height.
 			var logGroup = new GroupBox
 			{
 				Name = "ActivityGroupBox",
@@ -608,8 +611,8 @@ namespace x360ce.Plugins.Samples
 			});
 
 			leftCol.Controls.Add(portsGroup, 0, 0);
-			leftCol.Controls.Add(tuningGroup, 0, 1);
-			rightCol.Controls.Add(ReadingsGroupBox, 0, 0);
+			leftCol.Controls.Add(ReadingsGroupBox, 0, 1);
+			rightCol.Controls.Add(tuningGroup, 0, 0);
 			rightCol.Controls.Add(logGroup, 0, 1);
 			main.Controls.Add(leftCol, 0, 0);
 			main.Controls.Add(rightCol, 1, 0);

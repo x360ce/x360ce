@@ -98,6 +98,11 @@ namespace x360ce.App
 		public ThemeType Theme { get { return _Theme; } set { _Theme = value; OnPropertyChanged(); } }
 		ThemeType _Theme;
 
+		/// <summary>The culture of the language the interface is shown in, as <see cref="AppLanguages.For(string)"/> reads it.</summary>
+		[DefaultValue(""), Description("The language the interface is shown in, such as de or zh-Hans. When empty: Windows' display language when it is offered, otherwise English.")]
+		public string Language { get { return _Language; } set { _Language = value; OnPropertyChanged(); } }
+		string _Language;
+
 		/// <summary>The font the windows are drawn in, as <see cref="AppFonts.InterfaceFamilyFor"/> reads it.</summary>
 		[DefaultValue(""), Description("The font the windows are drawn in: \"" + AppFonts.DefaultName + "\", Windows’ own, when empty; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; otherwise an installed font’s name. Takes effect when x360ce starts again.")]
 		public string InterfaceFont { get { return _InterfaceFont; } set { _InterfaceFont = value; OnPropertyChanged(); } }

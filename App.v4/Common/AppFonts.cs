@@ -216,8 +216,8 @@ namespace x360ce.App
 		public static string ChoiceText(string choice)
 		{
 			if (string.IsNullOrEmpty(choice))
-				return string.Format("Default ({0})", DefaultName);
-			return choice == BuiltInName ? BuiltInName + " (built in)" : choice;
+				return string.Format(JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("AppFonts.DefaultFont", "Default ({0})"), DefaultName);
+			return choice == BuiltInName ? string.Format(JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("AppFonts.BuiltIn", "{0} (built in)"), BuiltInName) : choice;
 		}
 
 		/// <summary>
@@ -280,13 +280,13 @@ namespace x360ce.App
 		{
 			return size > 0
 				? string.Format("{0:0.##} pt ({1} px)", size, Pixels(size))
-				: string.Format("Default ({0:0.##} pt)", DefaultSize());
+				: string.Format(JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("AppFonts.DefaultSize", "Default ({0:0.##} pt)"), DefaultSize());
 		}
 
 		/// <summary>What the Options page says while the font or size chosen is not the one in use: what x360ce uses when it starts again.</summary>
 		public static string RestartNote(string choice, float size)
 		{
-			return string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", ChoiceText(choice), SizeFor(size));
+			return string.Format(JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("AppFonts.RestartNote", "{0} at {1:0.##} pt is used when x360ce starts again."), ChoiceText(choice), SizeFor(size));
 		}
 
 		/// <summary>Letters and digits every family the interface is drawn in must draw itself.</summary>

@@ -281,3 +281,6 @@ App.v4/Resources/x360ce.Engine*.dll
 # scratch file each configuration writes first.
 Native/x360ce/svnrev.h
 Native/x360ce/svnrev.h.*.new
+
+# What each language lacks against the English, written by every build (App.v4\Common\AppLanguages.cs).
+App.v4/Languages/*.todo.json

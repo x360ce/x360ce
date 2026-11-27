@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -15,8 +16,8 @@ namespace x360ce.App.Issues
 	{
 		public ArchitectureIssue() : base()
 		{
-			Name = "Architecture";
-			FixName = "Download";
+			Name = UiLanguage.T("ArchitectureIssue.Architecture", "Architecture");
+			FixName = UiLanguage.T("ArchitectureIssue.Download", "Download");
 		}
 
 		// Check file only once.
