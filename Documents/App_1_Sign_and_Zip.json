@@ -198,6 +198,12 @@
         },
         {
           "Target": "../PluginApi/bin/Release/Plugins/FitnessMachine/FitnessMachine.dll"
+        },
+        {
+          "Target": "../PluginApi/bin/Release/Plugins/WheelTelemetry/WheelTelemetry.dll"
+        },
+        {
+          "Target": "../PluginApi/bin/Release/Plugins/WheelTelemetry.Games/WheelTelemetry.Games.dll"
         }
       ]
     },
