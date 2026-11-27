@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.31.67.0, built 2026-11-27.
+Version 4.31.68.0, built 2026-11-27.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -407,17 +407,17 @@ not shown in this state of the program.
 [Toolbar]   │       ├── Game bar                                                        # Chooses the game being set up, and saves the settings.
 [List]      │       │   ├── Game                                                        # Which game the settings on every page below belong to.
 [Button]    │       │   ├── Language                                                    # The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.
-[CheckBox]  │       │   │   ├── English
-[CheckBox]  │       │   │   ├── 中文
-[CheckBox]  │       │   │   ├── Українська
-[CheckBox]  │       │   │   ├── Español
-[CheckBox]  │       │   │   ├── Português
-[CheckBox]  │       │   │   ├── Deutsch
-[CheckBox]  │       │   │   ├── 日本語
-[CheckBox]  │       │   │   ├── Français
-[CheckBox]  │       │   │   ├── Polski
-[CheckBox]  │       │   │   ├── 한국어
-[CheckBox]  │       │   │   └── Türkçe
+[CheckBox]  │       │   │   ├── English                                                 # Shows the window in English.
+[CheckBox]  │       │   │   ├── 中文                                                      # Shows the window in 中文.
+[CheckBox]  │       │   │   ├── Українська                                              # Shows the window in Українська.
+[CheckBox]  │       │   │   ├── Español                                                 # Shows the window in Español.
+[CheckBox]  │       │   │   ├── Português                                               # Shows the window in Português.
+[CheckBox]  │       │   │   ├── Deutsch                                                 # Shows the window in Deutsch.
+[CheckBox]  │       │   │   ├── 日本語                                                     # Shows the window in 日本語.
+[CheckBox]  │       │   │   ├── Français                                                # Shows the window in Français.
+[CheckBox]  │       │   │   ├── Polski                                                  # Shows the window in Polski.
+[CheckBox]  │       │   │   ├── 한국어                                                     # Shows the window in 한국어.
+[CheckBox]  │       │   │   └── Türkçe                                                  # Shows the window in Türkçe.
 [Button]    │       │   ├── Save All                                                    # Writes every setting to disk now.
 [Button]    │       │   ├── Test... (hidden)                                            # Opens a window for trying the emulated controller without a game.
 [Button]    │       │   └── Add Game...                                                 # Sets this program up for another game.

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -11,7 +12,14 @@ namespace x360ce.App
 	{
 
 		/// <summary>The file types offered when a preset is saved or opened.</summary>
-		public const string PresetFileFilter = "Controller preset (*.xml)|*.xml|All files (*.*)|*.*";
+		public static string PresetFileFilter
+		{
+			get
+			{
+				return UiLanguage.T("SettingsManager.ControllerPresetFileType", "Controller preset (*.xml)") + "|*.xml|"
+					+ UiLanguage.T("SettingsManager.AllFilesType", "All files (*.*)") + "|*.*";
+			}
+		}
 
 		/// <summary>Writes one controller's settings to a file, in the form the clipboard carries them.</summary>
 		public static void SavePadSetting(string path, PadSetting padSetting)

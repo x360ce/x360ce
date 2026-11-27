@@ -294,8 +294,14 @@ namespace x360ce.App
 					}
 		}
 
-		const string EmulationSwitchedOff = "Emulation is switched off, so no virtual controller is made and a game sees " +
-			"only real controllers. Turn on Enable XInput on the Options page, in the tray menu, or with the hotkey.";
+		static string EmulationSwitchedOff
+		{
+			get
+			{
+				return UiLanguage.T("MainForm.EmulationSwitchedOff", "Emulation is switched off, so no virtual controller is made and a game sees " +
+					"only real controllers. Turn on Enable XInput on the Options page, in the tray menu, or with the hotkey.");
+			}
+		}
 
 		/// <summary>
 		/// Why a controller tab has no emulated controller by choice, or null when it is to have one. Asks what the engine
@@ -310,13 +316,17 @@ namespace x360ce.App
 			if (!SettingsManager.Options.XInputEnabled)
 				return EmulationSwitchedOff;
 			if (game == null)
-				return "No game is current, so no virtual controller is made.";
+				return UiLanguage.T("MainForm.NoGameIsCurrent", "No game is current, so no virtual controller is made.");
 			var type = (EmulationType)game.EmulationType;
+			// Without Virtual, a game's emulation is None or Library.
+			if (type == EmulationType.None)
+				return string.Format(UiLanguage.T("MainForm.GameSetToNoEmulation", "The current game, {0}, is set to no emulation " +
+					"on the Games tab, so no virtual controller is made. Choose Virtual there to make one."), game.FileName);
 			if (!type.HasFlag(EmulationType.Virtual))
-				return string.Format("The current game, {0}, is set to {1} on the Games tab, so no virtual controller is made. " +
-					"Choose Virtual there to make one.", game.FileName, type == EmulationType.None ? "no emulation" : type + " emulation");
-			return "This controller tab is switched off for the current game, so no virtual controller is made. " +
-				"Press Enable at the top of this tab’s page to switch it on.";
+				return string.Format(UiLanguage.T("MainForm.GameSetToLibraryEmulation", "The current game, {0}, is set to Library " +
+					"emulation on the Games tab, so no virtual controller is made. Choose Virtual there to make one."), game.FileName);
+			return UiLanguage.T("MainForm.TabSwitchedOffForGame", "This controller tab is switched off for the current game, so no " +
+				"virtual controller is made. Press Enable at the top of this tab’s page to switch it on.");
 		}
 
 		/// <summary>What the light on a controller tab means, in words.</summary>
@@ -340,15 +350,14 @@ namespace x360ce.App
 		/// <param name="unticked">Whether devices are mapped here but every one is unticked, so the engine reads none of them.</param>
 		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true, VirtualError busError = VirtualError.None, string holder = null, bool keptHolds = false, string offReason = null, bool unticked = false)
 		{
-			const string untickedText = "every device mapped here is unticked, in this tab’s list or on the Devices page";
 			string state;
 			// The place a tab was given is not always the place of the same number: Windows hands them out
 			// and cannot be asked. Everything works, and a game reads this controller as a different player
 			// than the tab number suggests, so it is said first and plainly.
 			var elsewhere = xiOurs && ourPlace >= 0 && ourPlace != place - 1
-				? string.Format("This controller is in XInput place {0}, not {1}, so a game reads it as "
+				? string.Format(UiLanguage.T("MainForm.ControllerInOtherPlace", "This controller is in XInput place {0}, not {1}, so a game reads it as "
 					+ "player {0}. Windows gives out the places and cannot be asked for one; use Devices "
-					+ "to put them in the order you want. ", ourPlace + 1, place)
+					+ "to put them in the order you want. "), ourPlace + 1, place)
 				: string.Empty;
 			// Named from the last reading of the machine. Not known is said as not known rather than as a
 			// real controller, so nobody goes looking for a pad that is not there.
@@ -356,13 +365,13 @@ namespace x360ce.App
 			// and a virtual controller cannot be unplugged.
 			var kept = keptHolds && holder == x360ce.App.DInput.XInputPlaces.HolderVirtual;
 			var heldBy = kept
-				? "a virtual controller the driver would not remove"
+				? UiLanguage.T("MainForm.HolderRemovalRefused", "a virtual controller the driver would not remove")
 				: x360ce.App.DInput.XInputPlaces.HolderWords(holder);
 			// Auto-Order refuses a leftover and there is nothing to unplug, so removing it is the one way
 			// to free the place; Repair is the one way for a controller the driver would not remove.
 			var onlyWay = holder == x360ce.App.DInput.XInputPlaces.HolderLeftover
-				? "Remove it with [Remove Leftover Pads] on the Devices page."
-				: kept ? "Repair the driver on the Issues tab, or restart x360ce." : null;
+				? UiLanguage.T("MainForm.RemoveLeftoverOnDevicesPage", "Remove it with [Remove Leftover Pads] on the Devices page.")
+				: kept ? UiLanguage.T("MainForm.RepairDriverOrRestart", "Repair the driver on the Issues tab, or restart x360ce.") : null;
 			// The bus's reason names what holds the place, or the controller the driver would not remove, and what
 			// to do about it, so the state line says neither again.
 			var taken = busError == VirtualError.PlaceTaken || busError == VirtualError.RemovalRefused;
@@ -370,53 +379,58 @@ namespace x360ce.App
 				// Off on purpose, so the missing controller is the thing that was asked for.
 				state = offReason ?? EmulationSwitchedOff;
 			else if (diOn && xiOn && xiOurs)
-				state = "A mapped device is connected and Windows hands back a virtual controller.";
+				state = UiLanguage.T("MainForm.DeviceAndVirtualConnected", "A mapped device is connected and Windows hands back a virtual controller.");
 			else if (diOn && !checking)
 				// Not the same as knowing it is missing, and it must not be said as if it were.
-				state = "A mapped device is connected and the emulated controller is running. " +
+				state = UiLanguage.T("MainForm.DeviceConnectedNotChecked", "A mapped device is connected and the emulated controller is running. " +
 					"Whether Windows hands one back has not been checked: turn on Show XInput State " +
-					"to find out.";
+					"to find out.");
 			else if (diOn && xiOn)
 				// The worst state there is, and the one that looks most like working. A game finds a
 				// controller here and reads it, so nothing appears wrong, while every mapping on this
 				// tab goes nowhere at all.
 				state = taken
-					? "A game reads the controller holding this place instead, and nothing mapped on " +
-						"this tab reaches it."
-					: string.Format("This place is held by {0}, so the emulated one could not be " +
+					? UiLanguage.T("MainForm.GameReadsHolderInstead", "A game reads the controller holding this place instead, and nothing mapped on " +
+						"this tab reaches it.")
+					: string.Format(UiLanguage.T("MainForm.PlaceHeldEmulatedNotMade", "This place is held by {0}, so the emulated one could not be " +
 						"made. A game reads that controller instead, and nothing mapped on this tab " +
-						"reaches it. {1}", heldBy,
-						onlyWay ?? "Unplug it, or map this device on a tab whose place is free.");
+						"reaches it. {1}"), heldBy,
+						onlyWay ?? UiLanguage.T("MainForm.UnplugOrMapOnFreeTab", "Unplug it, or map this device on a tab whose place is free."));
 			else if (diOn)
-				state = "A mapped device is connected, but XInput hands back no virtual controller, " +
+				state = UiLanguage.T("MainForm.DeviceConnectedNoVirtual", "A mapped device is connected, but XInput hands back no virtual controller, " +
 					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
-					"not listed there, it was never finished being built.";
+					"not listed there, it was never finished being built.");
 			else if (xiOn && xiOurs)
-				state = "A virtual controller exists, but " + (unticked ? untickedText : "no mapped device is connected") +
-					", so it reports nothing.";
+				state = unticked
+					? UiLanguage.T("MainForm.VirtualExistsAllUnticked", "A virtual controller exists, but every device mapped here is unticked, " +
+						"in this tab’s list or on the Devices page, so it reports nothing.")
+					: UiLanguage.T("MainForm.VirtualExistsNoDevice", "A virtual controller exists, but no mapped device is connected, so it reports nothing.");
 			else if (xiOn)
 				state = taken
-					? "A game already reads the controller holding this place directly, and this " +
-						"program is not emulating anything here."
-					: string.Format("This place is held by {0}. A game already reads it directly, " +
-						"and this program is not emulating anything here. {1}", heldBy,
-						onlyWay ?? "Map a device on this tab only once that controller is unplugged.");
+					? UiLanguage.T("MainForm.GameReadsHolderDirectly", "A game already reads the controller holding this place directly, and this " +
+						"program is not emulating anything here.")
+					: string.Format(UiLanguage.T("MainForm.PlaceHeldNotEmulating", "This place is held by {0}. A game already reads it directly, " +
+						"and this program is not emulating anything here. {1}"), heldBy,
+						onlyWay ?? UiLanguage.T("MainForm.MapOnceUnplugged", "Map a device on this tab only once that controller is unplugged."));
 			else if (!checking)
-				state = (unticked ? "Nothing is read here: " + untickedText + "." : "No mapped device.") +
-					" Whether a virtual controller exists has not been checked.";
+				state = unticked
+					? UiLanguage.T("MainForm.AllUntickedNotChecked", "Nothing is read here: every device mapped here is unticked, in this tab’s list " +
+						"or on the Devices page. Whether a virtual controller exists has not been checked.")
+					: UiLanguage.T("MainForm.NoDeviceNotChecked", "No mapped device. Whether a virtual controller exists has not been checked.");
 			else
 				state = unticked
-					? "Nothing is read here: " + untickedText + ". There is no virtual controller."
-					: "No mapped device and no virtual controller.";
-			var text = string.Format("Controller {0}: {1}{2}", place, elsewhere, state);
+					? UiLanguage.T("MainForm.AllUntickedNoVirtual", "Nothing is read here: every device mapped here is unticked, in this tab’s list " +
+						"or on the Devices page. There is no virtual controller.")
+					: UiLanguage.T("MainForm.NoDeviceNoVirtual", "No mapped device and no virtual controller.");
+			var text = string.Format(UiLanguage.T("MainForm.ControllerHint", "Controller {0}: {1}{2}"), place, elsewhere, state);
 			// What the bus said, when it said anything. Without this the missing half is named and the
 			// reason for it is not, which leaves nowhere to go. A place taken by a leftover, or by a controller the
 			// driver would not remove, is PlaceTaken's reason with that one's own way out in place of Auto-Order.
 			if (busError != VirtualError.None)
-				text += "\r\n" + string.Format(busError == VirtualError.PlaceTaken && onlyWay != null
-					? "XInput {0} is held by {1}, so Controller {0} makes no virtual controller until it is " +
-						"free. " + onlyWay
-					: JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(busError), place, heldBy);
+				text += "\r\n" + (busError == VirtualError.PlaceTaken && onlyWay != null
+					? string.Format(UiLanguage.T("MainForm.PlaceHeldUntilFree", "XInput {0} is held by {1}, so Controller {0} makes no virtual " +
+						"controller until it is free. {2}"), place, heldBy, onlyWay)
+					: string.Format(JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(busError), place, heldBy));
 			return text;
 		}
 
@@ -467,9 +481,7 @@ namespace x360ce.App
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;
 			StatusDllLabel.Text = "";
-			StatusIsAdminLabel.Text = WinAPI.IsVista
-				? string.Format(UiLanguage.T("MainForm.Elevated", "Elevated: {0}"), WinAPI.IsElevated())
-				: "";
+			UpdateStatusAdminLabel();
 			UpdateStatusAiAccessLabel();
 			UpdateStatusErrorsLabel();
 			LoadSteps =BuildMainControl().GetEnumerator();
@@ -843,64 +855,12 @@ namespace x360ce.App
 
 		private void Current_ConfigSaved(object sender, SettingEventArgs e)
 		{
-			StatusSaveLabel.Text = string.Format("S {0}", e.Count);
+			StatusSaveLabel.Text = string.Format(UiLanguage.T("MainForm.SaveCountStatus", "S {0}"), e.Count);
 		}
 
 		private void Current_ConfigLoaded(object sender, SettingEventArgs e)
 		{
 			StatusTimerLabel.Text = string.Format(UiLanguage.T("MainForm.Loaded", "'{0}' loaded."), e.Name);
-		}
-
-		public void CopyElevated(string source, string dest)
-		{
-			if (!WinAPI.IsVista)
-			{
-				File.Copy(source, dest);
-				return;
-			}
-			var di = new DirectoryInfo(System.IO.Path.GetDirectoryName(dest));
-			var security = di.GetAccessControl();
-			var fi = new FileInfo(dest);
-			var fileSecurity = fi.GetAccessControl();
-			// Allow Users to Write.
-			//SecurityIdentifier SID = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-			//fileSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.Write, AccessControlType.Allow));
-			//fi.SetAccessControl(fileSecurity);
-			var rules = security.GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
-			var message = string.Empty;
-			foreach (var myacc in rules)
-			{
-				var acc = (FileSystemAccessRule)myacc;
-				message += string.Format("IdentityReference: {0}\r\n", acc.IdentityReference.Value);
-				message += string.Format("Access Control Type: {0}\r\n", acc.AccessControlType.ToString());
-				message += string.Format("\t{0}\r\n", acc.FileSystemRights.ToString());
-				//if ((acc.FileSystemRights & FileSystemRights.FullControl) == FileSystemRights.FullControl)
-				//{
-				//    Console.Write("FullControl");
-				//}
-				//if ((acc.FileSystemRights & FileSystemRights.ReadData) == FileSystemRights.ReadData)
-				//{
-				//    Console.Write("ReadData");
-				//}
-				//if ((acc.FileSystemRights & FileSystemRights.WriteData) == FileSystemRights.WriteData)
-				//{
-				//    Console.Write("WriteData");
-				//}
-				//if ((acc.FileSystemRights & FileSystemRights.ListDirectory) == FileSystemRights.ListDirectory)
-				//{
-				//    Console.Write("ListDirectory");
-				//}
-				//if ((acc.FileSystemRights & FileSystemRights.ExecuteFile) == FileSystemRights.ExecuteFile)
-				//{
-				//    Console.Write("ExecuteFile");
-				//}
-			}
-			MessageBox.Show(message);
-			//WindowsIdentity self = System.Security.Principal.WindowsIdentity.GetCurrent();
-			//			 FileSystemAccessRule rule = new FileSystemAccessRule(
-			//    self.Name, 
-			//    FileSystemRights.FullControl,
-			//    AccessControlType.Allow);
 		}
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -1250,7 +1210,7 @@ namespace x360ce.App
 			if (Global.DHelper != null)
 			{
 				Global.DHelper.Stop();
-				ControlsHelper.SetText(UpdateFrequencyLabel, "HW Hz: {0}", 0);
+				ControlsHelper.SetText(UpdateFrequencyLabel, UiLanguage.T("MainForm.HardwareRate", "HW Hz: {0}"), 0);
 			}
 			Program.StartupTrace.Mark("loops stopped");
 		}
@@ -1370,7 +1330,7 @@ namespace x360ce.App
 
 		public void UpdateStatus(string message = "")
 		{
-			ControlsHelper.SetText(StatusTimerLabel, "Reloads: {0}, Errors: {1} {2}",
+			ControlsHelper.SetText(StatusTimerLabel, UiLanguage.T("MainForm.ReloadAndErrorStatus", "Reloads: {0}, Errors: {1} {2}"),
 				Program.ReloadCount, Program.ErrorCount, message);
 		}
 		#endregion
@@ -1411,8 +1371,8 @@ namespace x360ce.App
 			var newDesc = EngineHelper.GetProcessorArchitectureDescription(newArchitecture);
 			var fileName = new FileInfo(destinationFileName).Name;
 			answer = form.ShowForm(
-				string.Format("You are running {2} application but {0} on the disk was built for {1} architecture.\r\n\r\nDo you want to replace {0} file with {2} version?", fileName, oldDesc, newDesc),
-				"Processor architecture mismatch.",
+				string.Format(UiLanguage.T("MainForm.ArchitectureMismatchReplace", "You are running {2} application but {0} on the disk was built for {1} architecture.\r\n\r\nDo you want to replace {0} file with {2} version?"), fileName, oldDesc, newDesc),
+				UiLanguage.T("MainForm.ArchitectureMismatch", "Processor architecture mismatch."),
 				MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 			if (answer == DialogResult.Yes)
 			{
@@ -1434,15 +1394,15 @@ namespace x360ce.App
 			if (newVersion == null)
 			{
 				answer = form.ShowForm(
-					string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", fileName),
-					string.Format("'{0}' was not found.", destinationFileName),
+					string.Format(UiLanguage.T("MainForm.FileNotFoundCreate", "'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?"), fileName),
+					string.Format(UiLanguage.T("MainForm.FileNotFound", "'{0}' was not found."), destinationFileName),
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 			}
 			else
 			{
 				answer = form.ShowForm(
-					string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", fileName, oldVersion, newVersion),
-					string.Format("New version of '{0}' file is available.", destinationFileName),
+					string.Format(UiLanguage.T("MainForm.NewFileVersionUpdate", "New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?"), fileName, oldVersion, newVersion),
+					string.Format(UiLanguage.T("MainForm.NewFileVersionAvailable", "New version of '{0}' file is available."), destinationFileName),
 					MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 			}
 			if (answer == DialogResult.Yes)
@@ -1927,8 +1887,8 @@ namespace x360ce.App
 		/// <summary>Shows how many times the devices were read, once the window is past saying it is loading.</summary>
 		void ShowDevicesRead()
 		{
-			if (LoadingLabel.IsDisposed)
-				ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
+			if (LoadingLabel.IsDisposed && Global.DHelper != null)
+				ControlsHelper.SetText(UpdateDevicesStatusLabel, UiLanguage.T("MainForm.DeviceReadCountStatus", "D: {0}"), Global.DHelper.RefreshDevicesCount);
 		}
 
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
@@ -2019,12 +1979,15 @@ namespace x360ce.App
 					(ud.IsOnline ? back : gone).Add(string.IsNullOrEmpty(ud.InstanceName) ? ud.ProductName : ud.InstanceName);
 			}
 			anyGone = gone.Count > 0;
-			var parts = new List<string>();
-			if (gone.Count > 0)
-				parts.Add(string.Join(", ", gone) + " disconnected");
-			if (back.Count > 0)
-				parts.Add(string.Join(", ", back) + " connected");
-			return parts.Count == 0 ? null : string.Join(". ", parts);
+			var disconnected = gone.Count == 0 ? null : string.Format(
+				gone.Count == 1 ? UiLanguage.T("MainForm.DeviceDisconnected", "{0} disconnected")
+					: UiLanguage.T("MainForm.DevicesDisconnected", "{0} disconnected"), string.Join(", ", gone));
+			var connected = back.Count == 0 ? null : string.Format(
+				back.Count == 1 ? UiLanguage.T("MainForm.DeviceConnected", "{0} connected")
+					: UiLanguage.T("MainForm.DevicesConnected", "{0} connected"), string.Join(", ", back));
+			return disconnected == null || connected == null
+				? disconnected ?? connected
+				: string.Format(UiLanguage.T("MainForm.DevicesDisconnectedAndConnected", "{0}. {1}"), disconnected, connected);
 		}
 
 		#endregion
@@ -2060,7 +2023,7 @@ namespace x360ce.App
 			if (hz != _shownUpdateFrequency)
 			{
 				_shownUpdateFrequency = hz;
-				ControlsHelper.SetText(UpdateFrequencyLabel, "HW Hz: {0}", hz);
+				ControlsHelper.SetText(UpdateFrequencyLabel, UiLanguage.T("MainForm.HardwareRate", "HW Hz: {0}"), hz);
 			}
 			// Turned off, the engine runs with nothing drawing behind it, so the rate beside the switch says what the
 			// engine reaches on its own.
@@ -2075,8 +2038,8 @@ namespace x360ce.App
 
 		private void InitiInterfaceUpdate()
 		{
-			EngineHelper.ReserveWidth(UpdateFrequencyLabel, "HW Hz: 1000");
-			EngineHelper.ReserveWidth(InterfaceUpdatesButton, "UI Hz: OFF");
+			ReserveRateWidths();
+			UiLanguage.Changed += UiLanguage_Changed;
 			Activated += MainForm_Activated;
 			Deactivate += MainForm_Deactivate;
 			InterfaceUpdatesButton.Checked = SettingsManager.Options.UpdateInterface;
@@ -2087,8 +2050,29 @@ namespace x360ce.App
 		}
 
 
+		/// <summary>Keeps room on the status bar for the widest rate in the language shown, so the bar does not move as the rate changes.</summary>
+		private void ReserveRateWidths()
+		{
+			EngineHelper.ReserveWidth(UpdateFrequencyLabel, string.Format(UiLanguage.T("MainForm.HardwareRate", "HW Hz: {0}"), 1000));
+			EngineHelper.ReserveWidth(InterfaceUpdatesButton, UiLanguage.T("MainForm.InterfaceRateOff", "UI Hz: OFF"));
+		}
+
+		/// <summary>Shows the rates in the language chosen at once, rather than at their next change.</summary>
+		private void UiLanguage_Changed(object sender, EventArgs e)
+		{
+			UpdateStatusAdminLabel();
+			UpdateStatusAiAccessLabel();
+			UpdateStatusErrorsLabel();
+			UpdateTrayIconHint();
+			ShowDevicesRead();
+			ReserveRateWidths();
+			_shownUpdateFrequency = -1;
+			ShowInterfaceRate();
+		}
+
 		private void DisposeInterfaceUpdate()
 		{
+			UiLanguage.Changed -= UiLanguage_Changed;
 			Activated -= MainForm_Activated;
 			Deactivate -= MainForm_Deactivate;
 			InterfaceUpdatesButton.CheckedChanged -= InterfaceUpdatesButton_CheckedChanged;
@@ -2133,7 +2117,10 @@ namespace x360ce.App
 			var rate = !on || !InterfaceTimer.Enabled ? 0 : fps;
 			if (InterfaceTimer != null)
 				InterfaceTimer.Interval = 1000 / fps;
-			ControlsHelper.SetText(InterfaceUpdatesButton, "UI Hz: {0}", on ? rate.ToString() : "OFF");
+			if (on)
+				ControlsHelper.SetText(InterfaceUpdatesButton, UiLanguage.T("MainForm.InterfaceRate", "UI Hz: {0}"), rate);
+			else
+				ControlsHelper.SetText(InterfaceUpdatesButton, UiLanguage.T("MainForm.InterfaceRateOff", "UI Hz: OFF"));
 		}
 
 
@@ -2211,7 +2198,9 @@ namespace x360ce.App
 				var item = q.FirstOrDefault(x => x.Action == CloudAction.SendMailMessage);
 				Invoke(new Action(() =>
 				{
-					win.ErrorReportPanel.StatusLabel.Text = item == null ? "Message Delivered" : "Sending...";
+					win.ErrorReportPanel.StatusLabel.Text = item == null
+						? UiLanguage.T("MainForm.MessageDelivered", "Message Delivered")
+						: UiLanguage.T("MainForm.Sending", "Sending...");
 				}));
 			}
 		}
@@ -2225,7 +2214,7 @@ namespace x360ce.App
 				control.StatusLabel.Text = off;
 				return;
 			}
-			control.StatusLabel.Text = "Sending...";
+			control.StatusLabel.Text = UiLanguage.T("MainForm.Sending", "Sending...");
 			// Run cloud operation on a separate thread so that it won't freeze the app.
 			Task.Run(new Action(() =>
 			{
@@ -2333,6 +2322,13 @@ namespace x360ce.App
 			{
 				return 0;
 			}
+		}
+
+		void UpdateStatusAdminLabel()
+		{
+			StatusIsAdminLabel.Text = WinAPI.IsVista
+				? string.Format(UiLanguage.T("MainForm.Elevated", "Elevated: {0}"), WinAPI.IsElevated())
+				: "";
 		}
 
 		/// <summary>The AI door's level in the status bar's words, in the language chosen; null for off.</summary>

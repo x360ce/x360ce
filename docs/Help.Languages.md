@@ -48,8 +48,9 @@ for, so a short word such as Range is translated in the right sense:
 
 Build again: the warning goes once nothing is left, and the to-do file is deleted. The build runs the check again on
 every build while a language lacks something, and never fails because of it. `XLANG000` says the check itself could not
-run, and why; `XLANG002` says a plugin's key does not start with the plugin's name. Neither stops the build, and the
-check is ended after two minutes.
+run, and why; `XLANG002` says a plugin's key does not start with the plugin's name; `XLANG003` names a text the program
+shows without a translation ([Texts built in code](#texts-built-in-code)). None stops the build, and the check is ended
+after two minutes.
 
 The check runs in its own settings folder under `App.v4\obj`, reads no device and makes no virtual controller, and shows
 nothing on the screen. It costs about three seconds, and only on a build that compiled the program or changed a
@@ -94,6 +95,21 @@ UiLanguage.T("PadControl.ClearControllerSettings", "Clear Controller Settings")
 The check finds every such call in the compiled program, so both must be written as literals. A plugin writes
 `PluginText.T("MyPlugin.Key", "English")`, its key starting with the plugin's name, and x360ce translates it in the same
 files ([Plugins](Help.Plugins.md#words-in-other-languages)).
+
+Write each text as one whole sentence, with `{0}`-style placeholders for what changes, and give one and many a sentence
+each. A sentence put together from pieces, such as "is" or "are" picked in code, cannot be translated: another language
+orders its words, and changes them for the count, in its own way.
+
+The check also reads the code of every page, control and issue for English sentences written as literals that never
+pass through `UiLanguage.T` or `PluginText.T`, and names each one:
+
+```text
+App.v4\Languages\en.json(1,1): warning XLANG003: x360ce MainForm.UpdateStatusErrorsLabel: No error reports: not translated, write it with UiLanguage.T("Key", "English")
+```
+
+It leaves out what a designer wrote, which every language file already holds; an element's accessible name and
+description, which stay English for screen readers and AI assistants; and a text that goes to a log, an exception, a
+path or a comparison.
 
 ## Adding a language
 

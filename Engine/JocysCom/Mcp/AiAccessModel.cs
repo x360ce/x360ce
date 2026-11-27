@@ -1,4 +1,5 @@
 #nullable disable
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -66,10 +67,10 @@ namespace JocysCom.ClassLibrary.Mcp
 		public static readonly string[] Addresses = { McpListener.LoopbackAddress, McpListener.AnyAddress };
 
 		/// <summary>What the person is told when the port box holds no port the door can use.</summary>
-		public const string PortRange = "The port must be a number from 1024 to 49151.";
+		public static string PortRange => UiLanguage.T("AiAccessModel.PortRange", "The port must be a number from 1024 to 49151.");
 
 		/// <summary>The Save as ZIP dialog's file type list.</summary>
-		public const string ZipFilter = "ZIP files (*.zip)|*.zip";
+		public static string ZipFilter => UiLanguage.T("AiAccessModel.ZipFileType", "ZIP files (*.zip)") + "|*.zip";
 
 		/// <summary>The Save as ZIP dialog's default extension.</summary>
 		public const string ZipExtension = "zip";
@@ -82,15 +83,16 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			get
 			{
-				return "An AI assistant you run, such as Claude Code or Codex, can read and use " + Subject
-					+ " for you, only at the level you choose. Nothing can reach " + Subject + " until you tick AI assistant access.";
+				return string.Format(UiLanguage.T("AiAccessModel.Header",
+					"An AI assistant you run, such as Claude Code or Codex, can read and use {0} for you, only at the level you choose. " +
+					"Nothing can reach {0} until you tick AI assistant access."), SubjectText);
 			}
 		}
 
 		/// <summary>The line under the AI skill heading.</summary>
 		public static string SkillNote
 		{
-			get { return "Teaches an AI agent what " + Subject + " does and how to use it through AI assistant access."; }
+			get { return string.Format(UiLanguage.T("AiAccessModel.SkillNote", "Teaches an AI agent what {0} does and how to use it through AI assistant access."), SubjectText); }
 		}
 
 		/// <summary>What an assistant's MCP settings need to start this program as a server. Holds no token.</summary>
@@ -106,7 +108,9 @@ namespace JocysCom.ClassLibrary.Mcp
 			}
 		}
 
-		const string ZipHint = "Save as a ZIP, then add it in Claude under Customize, Skills.";
+		static string SubjectText => Subject == "this program" ? UiLanguage.T("AiAccessModel.DefaultSubject", "this program") : Subject;
+
+		static string ZipHint => UiLanguage.T("AiAccessModel.ZipHint", "Save as a ZIP, then add it in Claude under Customize, Skills.");
 
 		#endregion
 
@@ -121,8 +125,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			_context = SynchronizationContext.Current;
 			Claude = new SkillRow(() => AiSkill.ClaudeFolder, " for Claude Code");
 			Agents = new SkillRow(() => AiSkill.AgentsFolder, " for other agents");
-			ZipNote = ZipHint;
-			Status = "";
 		}
 
 		/// <summary>Raised after anything the page shows has changed; the view copies the state into its controls.</summary>
@@ -180,7 +182,8 @@ namespace JocysCom.ClassLibrary.Mcp
 		public string Token { get { return Settings == null ? "" : Settings.Token ?? ""; } }
 
 		/// <summary>Whether the door is open and at which level, why it could not open, or what the last press did.</summary>
-		public string Status { get; private set; }
+		public string Status => _status?.Invoke() ?? "";
+		Func<string> _status;
 
 		/// <summary>The row for the folder Claude Code reads skills from.</summary>
 		public SkillRow Claude { get; private set; }
@@ -189,7 +192,8 @@ namespace JocysCom.ClassLibrary.Mcp
 		public SkillRow Agents { get; private set; }
 
 		/// <summary>What to do with the ZIP, or why it was not saved.</summary>
-		public string ZipNote { get; private set; }
+		public string ZipNote => _zipNote?.Invoke() ?? ZipHint;
+		Func<string> _zipNote;
 
 		#endregion
 
@@ -259,7 +263,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			int port;
 			if (!int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out port) || port < 1024 || port > 49151)
 			{
-				Status = PortRange;
+				_status = () => PortRange;
 				OnChanged();
 				return;
 			}
@@ -299,7 +303,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			}
 			catch (Win32Exception ex)
 			{
-				Status = "Log not opened: " + ex.Message;
+				_status = () => string.Format(UiLanguage.T("AiAccessModel.LogNotOpened", "Log not opened: {0}"), ex.Message);
 				OnChanged();
 			}
 		}
@@ -324,11 +328,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			try
 			{
 				AiSkill.SaveZip(path);
-				ZipNote = "Saved. In Claude, add " + Path.GetFileName(path) + " under Customize, Skills.";
+				var fileName = Path.GetFileName(path);
+				_zipNote = () => string.Format(UiLanguage.T("AiAccessModel.ZipSaved", "Saved. In Claude, add {0} under Customize, Skills."), fileName);
 			}
 			catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is InvalidOperationException)
 			{
-				ZipNote = "Not saved: " + ex.Message;
+				_zipNote = () => string.Format(UiLanguage.T("AiAccessModel.ZipNotSaved", "Not saved: {0}"), ex.Message);
 			}
 			OnChanged();
 		}
@@ -376,31 +381,51 @@ namespace JocysCom.ClassLibrary.Mcp
 		void ShowDoor()
 		{
 			var level = Level;
-			Status = !Settings.Enabled ? "Off. Nothing can reach " + (Door == null ? Subject : Door.Subject) + "."
-				: !Listener.IsRunning ? "Not open: " + Listener.LastError
-				: Address == McpListener.AnyAddress ? "On, at the " + level + " level, on every network: calls and the token travel unencrypted."
-				: TrustLocal ? "On, at the " + level + " level. Programs on this computer need no token."
-				: "On, at the " + level + " level.";
+			var door = Door;
+			if (!Settings.Enabled)
+				_status = () => string.Format(UiLanguage.T("AiAccessModel.DoorOff", "Off. Nothing can reach {0}."), door == null ? SubjectText : door.Subject);
+			else if (!Listener.IsRunning)
+			{
+				var error = Listener.LastError;
+				_status = () => string.Format(UiLanguage.T("AiAccessModel.DoorNotOpen", "Not open: {0}"), error);
+			}
+			else if (Address == McpListener.AnyAddress)
+				_status = () => string.Format(UiLanguage.T("AiAccessModel.DoorOnEveryNetwork", "On, at the {0} level, on every network: calls and the token travel unencrypted."), LevelText(level));
+			else if (TrustLocal)
+				_status = () => string.Format(UiLanguage.T("AiAccessModel.DoorOnTrustingLocal", "On, at the {0} level. Programs on this computer need no token."), LevelText(level));
+			else
+				_status = () => string.Format(UiLanguage.T("AiAccessModel.DoorOn", "On, at the {0} level."), LevelText(level));
+		}
+
+		internal static string LevelText(string level)
+		{
+			switch (level)
+			{
+				case nameof(AiAccess.Read): return UiLanguage.T("AiAccessModel.LevelRead", "Read");
+				case nameof(AiAccess.Configure): return UiLanguage.T("AiAccessModel.LevelConfigure", "Configure");
+				case nameof(AiAccess.Administer): return UiLanguage.T("AiAccessModel.LevelAdminister", "Administer");
+				default: return level;
+			}
 		}
 
 		/// <summary>Puts text on the clipboard, and shows what came of it.</summary>
 		void Copy(string text)
 		{
-			Status = CopyText(text);
+			_status = CopyText(text);
 			OnChanged();
 		}
 
 		/// <summary>Puts text on the clipboard. Says it did, or why it could not: another program can hold the clipboard for a moment.</summary>
-		string CopyText(string text)
+		Func<string> CopyText(string text)
 		{
 			try
 			{
 				_setClipboard(text);
-				return "Copied.";
+				return () => UiLanguage.T("AiAccessModel.Copied", "Copied.");
 			}
 			catch (ExternalException ex)
 			{
-				return "Not copied: " + ex.Message;
+				return () => string.Format(UiLanguage.T("AiAccessModel.NotCopied", "Not copied: {0}"), ex.Message);
 			}
 		}
 
@@ -421,9 +446,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				FolderOf = folderOf;
 				ForWhom = forWhom;
 				Folder = folderOf();
-				Status = "";
-				Caption = "Install";
-				AccessibleName = Caption + forWhom;
+				EnglishCaption = "Install";
 				Enabled = true;
 			}
 
@@ -436,13 +459,27 @@ namespace JocysCom.ClassLibrary.Mcp
 			public string Folder { get; internal set; }
 
 			/// <summary>Whether the skill is there and current, or why that could not be read or written.</summary>
-			public string Status { get; internal set; }
+			public string Status => StatusText?.Invoke() ?? "";
+			internal Func<string> StatusText { get; set; }
 
 			/// <summary>The button's caption: what it would do.</summary>
-			public string Caption { get; internal set; }
+			public string Caption
+			{
+				get
+				{
+					switch (EnglishCaption)
+					{
+						case "Install": return UiLanguage.T("AiAccessModel.SkillInstall", "Install");
+						case "Reinstall": return UiLanguage.T("AiAccessModel.SkillReinstall", "Reinstall");
+						case "Update": return UiLanguage.T("AiAccessModel.SkillUpdate", "Update");
+						default: return EnglishCaption;
+					}
+				}
+			}
+			internal string EnglishCaption { get; set; }
 
 			/// <summary>The button's accessible name: its caption and whom it is for, so two buttons that read alike are named apart.</summary>
-			public string AccessibleName { get; internal set; }
+			public string AccessibleName => EnglishCaption + ForWhom;
 
 			/// <summary>False for a copy a newer program wrote, which is left alone: this program's copy would describe fewer tools.</summary>
 			public bool Enabled { get; internal set; }
@@ -460,31 +497,30 @@ namespace JocysCom.ClassLibrary.Mcp
 			}
 			catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
 			{
-				row.Status = "Cannot read the installed copy: " + ex.Message;
-				row.AccessibleName = row.Caption + row.ForWhom;
+				row.StatusText = () => string.Format(UiLanguage.T("AiAccessModel.SkillCannotRead", "Cannot read the installed copy: {0}"), ex.Message);
 				return;
 			}
 			row.Enabled = state != AiSkill.State.Newer;
 			switch (state)
 			{
 				case AiSkill.State.NotInstalled:
-					row.Status = "Not installed.";
-					row.Caption = "Install";
+					row.StatusText = () => UiLanguage.T("AiAccessModel.SkillNotInstalled", "Not installed.");
+					row.EnglishCaption = "Install";
 					break;
 				case AiSkill.State.UpToDate:
-					row.Status = "Installed, this version.";
-					row.Caption = "Reinstall";
+					row.StatusText = () => UiLanguage.T("AiAccessModel.SkillInstalled", "Installed, this version.");
+					row.EnglishCaption = "Reinstall";
 					break;
 				case AiSkill.State.Older:
-					row.Status = installed == null ? "An older copy." : "Version " + installed + ", older.";
-					row.Caption = "Update";
+					row.StatusText = () => installed == null ? UiLanguage.T("AiAccessModel.SkillOlderCopy", "An older copy.")
+						: string.Format(UiLanguage.T("AiAccessModel.SkillOlderVersion", "Version {0}, older."), installed);
+					row.EnglishCaption = "Update";
 					break;
 				default:
-					row.Status = "Version " + installed + ", from a newer program.";
-					row.Caption = "Install";
+					row.StatusText = () => string.Format(UiLanguage.T("AiAccessModel.SkillNewerVersion", "Version {0}, from a newer program."), installed);
+					row.EnglishCaption = "Install";
 					break;
 			}
-			row.AccessibleName = row.Caption + row.ForWhom;
 		}
 
 		void Install(SkillRow row)
@@ -495,7 +531,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			}
 			catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is InvalidOperationException)
 			{
-				row.Status = "Not written: " + ex.Message;
+				row.StatusText = () => string.Format(UiLanguage.T("AiAccessModel.SkillNotWritten", "Not written: {0}"), ex.Message);
 				OnChanged();
 				return;
 			}

@@ -32,6 +32,9 @@ namespace x360ce.App.Controls
 			ScanProgressLevel1Label.Text = "";
 			HandleCreated += (s, e) => AttachPluginManager(PluginManager.Current);
 			HandleDestroyed += (s, e) => AttachPluginManager(null);
+			EventHandler languageChanged = (s, e) => RewordPluginTabs();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			// The game's pages lay themselves out with the window of their tabs, which can make this control's window, and
 			// raise its Load, while InitializeComponent runs.
 			if (IsHandleCreated)
@@ -71,14 +74,14 @@ namespace x360ce.App.Controls
 		{
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm(UiLanguage.T("GamesControl.ScanForGamesOnYourComputer", "Scan for games on your computer?"), "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			var result = form.ShowForm(UiLanguage.T("GamesControl.ScanForGamesOnYourComputer", "Scan for games on your computer?"), UiLanguage.T("GamesGridUserControl.Scan", "Scan"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK)
 			{
 				ScanStarted = DateTime.Now;
 				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames);
 				if (!success)
 				{
-					ScanProgressLevel0Label.Text = "Scan failed!";
+					ScanProgressLevel0Label.Text = UiLanguage.T("GamesGridUserControl.ScanFailed", "Scan failed!");
 					ScanProgressLevel1Label.Text = "";
 				}
 			}
@@ -116,7 +119,7 @@ namespace x360ce.App.Controls
 			switch (e.State)
 			{
 				case XInputMaskScannerState.Started:
-					label.Text = "Scanning...";
+					label.Text = UiLanguage.T("GamesGridUserControl.Scanning", "Scanning...");
 					break;
 				case XInputMaskScannerState.GameFound:
 					lock (GameAddLock)
@@ -194,18 +197,18 @@ namespace x360ce.App.Controls
 			var sb = new StringBuilder();
 			sb.AppendLine(e.Message);
 			if (e.State == XInputMaskScannerState.DirectoryUpdate && e.Directories != null && e.DirectoryIndex >= 0 && e.DirectoryIndex < e.Directories.Count)
-				sb.AppendFormat("Current Folder: {0}", e.Directories[e.DirectoryIndex].FullName);
+				sb.AppendFormat(UiLanguage.T("GamesGridUserControl.CurrentFolder", "Current Folder: {0}"), e.Directories[e.DirectoryIndex].FullName);
 			if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null && e.FileIndex >= 0 && e.FileIndex < e.Files.Count)
 			{
 				var file = e.Files[e.FileIndex];
 				// A name the folder lists but Windows cannot open has no size to give; asking ended the scan.
 				var size = file.Exists ? file.Length / 1024 / 1024 : 0;
-				sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
+				sb.AppendFormat(UiLanguage.T("GamesGridUserControl.CurrentFile", "Current File ({0:0.0} MB): {1} "), size, file.FullName);
 			}
 			if (e.Level == 0)
 			{
 				sb.AppendLine();
-				sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);
+				sb.AppendFormat(UiLanguage.T("GamesGridUserControl.ScanCounts", "Skipped = {0}, Added = {1}, Updated = {2}"), e.Skipped, e.Added, e.Updated);
 			}
 			sb.AppendLine();
 			return sb.ToString();
@@ -331,13 +334,13 @@ namespace x360ce.App.Controls
 					path = fi.Directory.FullName;
 				AddGameOpenFileDialog.FileName = fi.Name;
 			}
-			AddGameOpenFileDialog.Filter = EngineHelper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
+			AddGameOpenFileDialog.Filter = string.Format(UiLanguage.T("GamesGridUserControl.ExecutableFilter", "{0} (*.exe)|*.exe|All files (*.*)|*.*"), EngineHelper.GetFileDescription(".exe"));
 			AddGameOpenFileDialog.FilterIndex = 1;
 			AddGameOpenFileDialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(path))
 				path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 			AddGameOpenFileDialog.InitialDirectory = path;
-			AddGameOpenFileDialog.Title = "Browse for Executable";
+			AddGameOpenFileDialog.Title = UiLanguage.T("GamesGridUserControl.BrowseForExecutable", "Browse for Executable");
 			var result = AddGameOpenFileDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
@@ -345,7 +348,8 @@ namespace x360ce.App.Controls
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
-					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxForm.Show(UiLanguage.T("GamesGridUserControl.WindowsFoldersNotAllowed", "Windows folders are not allowed."),
+						UiLanguage.T("GamesGridUserControl.WindowsFolder", "Windows Folder"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 				else
 				{
@@ -360,9 +364,9 @@ namespace x360ce.App.Controls
 						form.StartPosition = FormStartPosition.CenterParent;
 						ControlsHelper.CheckTopMost(form);
 						var answer = form.ShowForm(
-							string.Format("{0} is already in the list:\r\n{1}\r\n\r\nAdd this folder as a separate game, or use the existing entry?", other.FileName, other.FullPath),
-							"Add Game", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2,
-							new[] { "Add Separate", "Use Existing" });
+							string.Format(UiLanguage.T("GamesGridUserControl.AlreadyInList", "{0} is already in the list:\r\n{1}\r\n\r\nAdd this folder as a separate game, or use the existing entry?"), other.FileName, other.FullPath),
+							UiLanguage.T("GamesGridUserControl.AddGame", "Add Game"), MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2,
+							new[] { UiLanguage.T("GamesGridUserControl.AddSeparate", "Add Separate"), UiLanguage.T("GamesGridUserControl.UseExisting", "Use Existing") });
 						form.Dispose();
 						_AddSeparateGame = answer == DialogResult.Yes;
 					}
@@ -370,7 +374,7 @@ namespace x360ce.App.Controls
 					var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames, AddGameOpenFileDialog.FileName);
 					if (!success)
 					{
-						ScanProgressLevel0Label.Text = "Scan failed!";
+						ScanProgressLevel0Label.Text = UiLanguage.T("GamesGridUserControl.ScanFailed", "Scan failed!");
 						ScanProgressLevel1Label.Text = "";
 					}
 				}
@@ -475,15 +479,15 @@ namespace x360ce.App.Controls
 			if (userGames.Length == 1)
 			{
 				var item = userGames[0];
-				message = string.Format("Are you sure you want to delete settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
+				message = string.Format(UiLanguage.T("GamesGridUserControl.DeleteOneGame", "Are you sure you want to delete settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}"),
 					item.FileName,
 					item.FileProductName);
 			}
 			else
 			{
-				message = string.Format("Delete {0} setting(s)?", userGames.Length);
+				message = string.Format(UiLanguage.T("GamesGridUserControl.DeleteGames", "Delete {0} settings?"), userGames.Length);
 			}
-			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+			var result = form.ShowForm(message, UiLanguage.T("GamesGridUserControl.Delete", "Delete"), MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 			if (result == DialogResult.OK)
 			{
 				// Remove from local settings.
@@ -616,7 +620,7 @@ namespace x360ce.App.Controls
 		TabPage NewPluginTab(PluginGameType type, string path)
 		{
 			Control page = null;
-			string fault = null;
+			Exception fault = null;
 			try
 			{
 				var game = type.NewInstance();
@@ -627,22 +631,26 @@ namespace x360ce.App.Controls
 			}
 			catch (Exception ex)
 			{
-				var inner = ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
-				fault = "The plugin’s page could not be made: " + inner.GetType().Name + ": " + inner.Message;
+				fault = ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
 			}
 			var pages = new TabControl { Name = "PluginTabControl", Dock = DockStyle.Fill };
 			// The room its tabs take is known once Windows has made them, as the plugin's tab is first shown.
 			pages.HandleCreated += (s, e) => RootLayoutPanel.PerformLayout();
 			var content = page ?? new Label
 			{
-				Name = "PluginNoteLabel",
+				Name = PluginNoteLabelName,
 				AutoSize = true,
 				Padding = AppHelper.ScaledPadding(8, 8, 8, 8),
-				Text = fault ?? "The plugin has no page of its own.",
+				// The fault is kept, so the note can be worded again in another language.
+				Tag = fault,
+				Text = PluginNote(fault),
 			};
 			content.Dock = DockStyle.Fill;
-			var text = page == null || string.IsNullOrWhiteSpace(page.Text) ? "Control" : page.Text;
-			AddPluginPage(pages, "PluginPageTabPage", text, "The page the plugin adds for the game.", content);
+			var controlTab = AddPluginPage(pages, "PluginPageTabPage", page?.AccessibleName ?? page?.Text ?? "Control",
+				"The page the plugin adds for the game.", content);
+			controlTab.Text = PluginTabText(page);
+			if (page != null)
+				page.TextChanged += (s, e) => controlTab.Text = PluginTabText(page);
 			if (!string.IsNullOrWhiteSpace(type.Description))
 			{
 				// As a plugin device's Help page shows its help.
@@ -657,7 +665,8 @@ namespace x360ce.App.Controls
 					AccessibleDescription = "The game plugin’s help, from its plugin: what it does for the game, and how to use it.",
 				};
 				AppHelper.ShowHelp(help, type.Description.Trim());
-				AddPluginPage(pages, "PluginHelpTabPage", "Help", "The game plugin’s help, from its plugin.", help);
+				AddPluginPage(pages, "PluginHelpTabPage", "Help", "The game plugin’s help, from its plugin.", help).Text =
+					UiLanguage.T("GamesGridUserControl.PluginHelpTab", "Help");
 			}
 			var tab = new TabPage
 			{
@@ -672,11 +681,50 @@ namespace x360ce.App.Controls
 			return tab;
 		}
 
-		static void AddPluginPage(TabControl pages, string name, string text, string description, Control content)
+		/// <summary>The name of the note a game plugin's tab shows when it has no page, or its page could not be made.</summary>
+		const string PluginNoteLabelName = "PluginNoteLabel";
+
+		/// <summary>The note in place of a game plugin's page: that it has none, or why it could not be made.</summary>
+		/// <param name="fault">What stopped the page being made, or null when the plugin has no page.</param>
+		static string PluginNote(Exception fault)
 		{
-			var page = new TabPage { Name = name, Text = text, AccessibleName = text, AccessibleDescription = description, UseVisualStyleBackColor = true };
+			return fault == null
+				? UiLanguage.T("GamesGridUserControl.PluginHasNoPage", "The plugin has no page of its own.")
+				: string.Format(UiLanguage.T("GamesGridUserControl.PluginPageFailed", "The plugin’s page could not be made: {0}: {1}"), fault.GetType().Name, fault.Message);
+		}
+
+		static string PluginTabText(Control page)
+		{
+			return string.IsNullOrWhiteSpace(page?.Text) ? UiLanguage.T("GamesGridUserControl.PluginControlTab", "Control") : page.Text;
+		}
+
+		/// <summary>Words the game plugins' own tabs and notes again, in the language chosen.</summary>
+		void RewordPluginTabs()
+		{
+			foreach (var tab in _pluginTabs)
+			{
+				var pages = (TabControl)tab.Controls[0];
+				var controlTab = pages.TabPages["PluginPageTabPage"];
+				var content = controlTab.Controls[0];
+				if (content.Name == PluginNoteLabelName)
+				{
+					content.Text = PluginNote(content.Tag as Exception);
+					content = null;
+				}
+				controlTab.Text = PluginTabText(content);
+				var helpTab = pages.TabPages["PluginHelpTabPage"];
+				if (helpTab != null)
+					helpTab.Text = UiLanguage.T("GamesGridUserControl.PluginHelpTab", "Help");
+			}
+		}
+
+		static TabPage AddPluginPage(TabControl pages, string name, string accessibleName, string description, Control content)
+		{
+			var page = new TabPage { Name = name, AccessibleName = accessibleName, AccessibleDescription = description, UseVisualStyleBackColor = true };
+			UiLanguage.Keep(page);
 			page.Controls.Add(content);
 			pages.TabPages.Add(page);
+			return page;
 		}
 
 		void AttachPluginManager(PluginManager manager)

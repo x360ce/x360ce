@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,8 +35,6 @@ namespace x360ce.App.Forms
 			if (IsDesignMode)
 				return;
 			Device = device;
-			if (device != null)
-				Text = "Test Device - " + (string.IsNullOrEmpty(device.ProductName) ? device.InstanceName : device.ProductName);
 			_buttonsView.Visible = false;
 			// Made after the window was scaled, so their gap is given at the screen's scale.
 			_stepsView.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
@@ -43,7 +42,11 @@ namespace x360ce.App.Forms
 			ContentTableLayoutPanel.Controls.Add(_stepsView, 0, 0);
 			ContentTableLayoutPanel.Controls.Add(_buttonsView, 0, 5);
 			AddColumns();
-			ShowSteps();
+			UiLanguage.Register(this);
+			ShowWords();
+			EventHandler languageChanged = (sender, args) => ShowWords();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (sender, args) => UiLanguage.Changed -= languageChanged;
 			ContentPanel.Resize += (s, e) => FitContent();
 			// Measured again whenever the theme gives the grid or its headings another font or room.
 			ResultsDataGridView.FontChanged += (s, e) => FitColumns();
@@ -51,6 +54,19 @@ namespace x360ce.App.Forms
 			ResultsDataGridView.ColumnHeadersDefaultCellStyleChanged += (s, e) => FitColumns();
 			ResultsDataGridView.HandleCreated += (s, e) => FitColumns();
 			ResultsDataGridView.ColumnHeadersHeightChanged += (s, e) => FitColumns();
+		}
+
+		void ShowWords()
+		{
+			if (Device != null)
+				Text = string.Format(UiLanguage.T("TestDeviceForm.Title", "Test Device - {0}"),
+					string.IsNullOrEmpty(Device.ProductName) ? Device.InstanceName : Device.ProductName);
+			_shownResults = null;
+			ShowSteps();
+			_stepsView.Invalidate();
+			foreach (var column in ColumnTexts)
+				ResultsDataGridView.Columns[column.Name].HeaderText = column.Header();
+			FitContent();
 		}
 
 		/// <summary>The device tested, or null.</summary>
@@ -203,18 +219,21 @@ namespace x360ce.App.Forms
 			var results = step == DeviceTestStep.Done ? s.Results : null;
 			// The header names the step and gives one fact; the large text is the one thing to do.
 			if (step == DeviceTestStep.Idle)
-				SetHeader("Ready", "Five steps, about a minute: each moves on by itself.");
+				SetHeader(UiLanguage.T("TestDeviceForm.Ready", "Ready"), UiLanguage.T("TestDeviceForm.FiveSteps", "Five steps, about a minute: each moves on by itself."));
 			else if (step == DeviceTestStep.Done)
-				SetHeader(unplugged ? "Unplugged" : s.StepName, "The controllers resumed.");
+				SetHeader(unplugged ? UiLanguage.T("TestDeviceForm.Unplugged", "Unplugged") : s.StepName, UiLanguage.T("TestDeviceForm.ControllersResumed", "The controllers resumed."));
 			else
-				SetHeader(string.Format("Step {0} of {1}: {2}", s.StepNumber, DeviceTestSteps.StepCount, s.StepName),
-					"Controllers are paused until the test ends.");
-			SetLine(InstructionLabel, unplugged ? "Plug the device in again, then press Start." : s == null ? "Press Start to test the controller." : s.Instruction);
+				SetHeader(string.Format(UiLanguage.T("TestDeviceForm.StepHeading", "Step {0} of {1}: {2}"), s.StepNumber, DeviceTestSteps.StepCount, s.StepName),
+					UiLanguage.T("TestDeviceForm.ControllersPaused", "Controllers are paused until the test ends."));
+			SetLine(InstructionLabel, unplugged ? UiLanguage.T("TestDeviceForm.ReconnectDevice", "Plug the device in again, then press Start.") : s == null ? UiLanguage.T("TestDeviceForm.PressStart", "Press Start to test the controller.") : s.Instruction);
 			SetLine(HintLabel, unplugged ? "" : s == null ? "" : s.Hint);
 			SetLine(CountdownLabel, s == null ? "" : s.Countdown);
 			SetLine(CountdownCaptionLabel, s == null ? "" : s.CountdownCaption);
 			var start = Running ? "Stop" : step == DeviceTestStep.Done ? "Test again" : "Start";
-			SetText(StartButton, start == "Stop" ? "S&top" : start == "Start" ? "&Start" : "&Test again");
+			SetText(StartButton, Running
+				? UiLanguage.T("TestDeviceForm.StopButton", "S&top")
+				: step == DeviceTestStep.Done ? UiLanguage.T("TestDeviceForm.TestAgainButton", "&Test again")
+					: UiLanguage.T("TestDeviceForm.StartButton", "&Start"));
 			// Named as it reads, for a screen reader and the door, which would otherwise take the catalog's name.
 			StartButton.AccessibleName = start;
 			SetVisible(SkipButton, Running && s.CanSkip);
@@ -311,7 +330,7 @@ namespace x360ce.App.Forms
 				old.Dispose();
 			var overall = new DeviceTestCard("OverallCard") { Overall = true };
 			panel.Controls.Add(overall);
-			overall.Set("Overall grade", results.Overall.HasValue ? results.Overall.Value.ToString() : "Not graded", results.Overall, OverallText(results));
+			overall.Set(UiLanguage.T("TestDeviceForm.OverallGrade", "Overall grade"), results.Overall.HasValue ? results.Overall.Value.ToString() : UiLanguage.T("TestDeviceForm.NotGraded", "Not graded"), results.Overall, OverallText(results));
 			foreach (var item in results.Items)
 			{
 				var card = new DeviceTestCard(new string(item.Criterion.Name.Where(char.IsLetterOrDigit).ToArray()) + "Card");
@@ -332,13 +351,15 @@ namespace x360ce.App.Forms
 		static string OverallText(DeviceTestResults results)
 		{
 			if (!results.Overall.HasValue)
-				return "Nothing could be graded: no control was moved until its bar was full.";
+				return UiLanguage.T("TestDeviceForm.NothingGraded", "Nothing could be graded: no control was moved until its bar was full.");
 			var count = results.Items.Count(x => x.Grade.HasValue);
-			var text = string.Format("The average of the {0} results graded, rounded toward the worse.", count);
+			var text = string.Format(UiLanguage.T("TestDeviceForm.AverageOfResults", "The average of the {0} results graded, rounded toward the worse."), count);
 			var weakest = results.Weakest;
 			if (weakest == null)
-				return text + " Every one is Best.";
-			return text + " Weakest: " + weakest.Criterion.Name + ", " + weakest.ValueText + (weakest.Control == null ? "" : " on " + weakest.Control) + ".";
+				return text + " " + UiLanguage.T("TestDeviceForm.EveryResultBest", "Every one is Best.");
+			return text + " " + (weakest.Control == null
+				? string.Format(UiLanguage.T("TestDeviceForm.WeakestResult", "Weakest: {0}, {1}."), weakest.Criterion.Name, weakest.ValueText)
+				: string.Format(UiLanguage.T("TestDeviceForm.WeakestControl", "Weakest: {0}, {1} on {2}."), weakest.Criterion.Name, weakest.ValueText, weakest.Control));
 		}
 
 		/// <summary>A card's line: what the result tells, the control its value came from, and what was left out or not measured.</summary>
@@ -346,19 +367,19 @@ namespace x360ce.App.Forms
 		{
 			var text = item.Explanation ?? item.Criterion.Explanation;
 			if (item.Control != null)
-				text += " Worst: " + item.Control + ".";
+				text += " " + string.Format(UiLanguage.T("TestDeviceForm.WorstControl", "Worst: {0}."), item.Control);
 			if (item.Limited != null && item.LimitedBy == null)
-				text += " " + item.Limited + ", not graded.";
+				text += " " + string.Format(UiLanguage.T("TestDeviceForm.LimitedResult", "{0}, not graded."), item.Limited);
 			if (item.Value.HasValue || item.LimitedBy != null)
 				return text;
 			var c = item.Criterion;
 			if (c == DeviceTestGrades.UpdatesPerSecond || c == DeviceTestGrades.SteadyTiming)
-				return text + " Too few updates came while the controller moved.";
+				return text + " " + UiLanguage.T("TestDeviceForm.TooFewUpdates", "Too few updates came while the controller moved.");
 			if (c == DeviceTestGrades.CircleError)
-				return text + " No stick was finished.";
+				return text + " " + UiLanguage.T("TestDeviceForm.NoStickFinished", "No stick was finished.");
 			if (c == DeviceTestGrades.DeadZone || c == DeviceTestGrades.JumpFromCentre)
-				return text + " No stick, or axis resting in the middle, was finished.";
-			return text + " No control was finished.";
+				return text + " " + UiLanguage.T("TestDeviceForm.NoCentredControlFinished", "No stick, or axis resting in the middle, was finished.");
+			return text + " " + UiLanguage.T("TestDeviceForm.NoControlFinished", "No control was finished.");
 		}
 
 		/// <summary>The controls left out of the grades, and why: never moved, skipped, or unstable, which is a finding of its own.</summary>
@@ -368,33 +389,41 @@ namespace x360ce.App.Forms
 			foreach (var control in steps.Controls)
 			{
 				if (control.Unstable)
-					parts.Add(control.Name + " unstable: it kept changing for " + DeviceTestSteps.UnstableSeconds + " s without getting fuller");
+					parts.Add(string.Format(UiLanguage.T("TestDeviceForm.UnstableControl",
+						"{0} unstable: it kept changing for {1} s without getting fuller"), control.Name, DeviceTestSteps.UnstableSeconds));
 				else if (control.Skipped)
-					parts.Add(control.Name + " skipped");
+					parts.Add(string.Format(UiLanguage.T("TestDeviceForm.SkippedControl", "{0} skipped"), control.Name));
 				else if (control.NotMoved)
-					parts.Add(control.Name + " not moved");
+					parts.Add(string.Format(UiLanguage.T("TestDeviceForm.UnmovedControl", "{0} not moved"), control.Name));
 			}
 			var flickering = steps.Buttons.Where(x => x.Unstable).Select(x => x.Number.ToString(CultureInfo.CurrentCulture)).ToArray();
 			if (flickering.Length > 0)
-				parts.Add("button " + string.Join(", ", flickering) + " unstable: pressed again and again by itself");
-			return parts.Count == 0 ? "" : "Not graded: " + string.Join("; ", parts) + ".";
+				parts.Add(string.Format(flickering.Length == 1
+					? UiLanguage.T("TestDeviceForm.UnstableButton", "button {0} unstable: pressed again and again by itself")
+					: UiLanguage.T("TestDeviceForm.UnstableButtons", "buttons {0} unstable: pressed again and again by themselves"), string.Join(", ", flickering)));
+			return parts.Count == 0 ? "" : string.Format(UiLanguage.T("TestDeviceForm.UngradedControls", "Not graded: {0}."), string.Join("; ", parts));
 		}
 
 		/// <summary>The buttons in words: how many were pressed, which never were, and which registered one push twice.</summary>
 		static string ButtonsText(DeviceTestButton[] buttons)
 		{
 			var c = CultureInfo.CurrentCulture;
-			var text = string.Format(c, "Buttons, shown and not graded: {0} of {1} pressed", buttons.Count(x => x.Pressed), buttons.Length);
+			var parts = new List<string>
+			{
+				string.Format(c, UiLanguage.T("TestDeviceForm.ButtonsPressed", "Buttons, shown and not graded: {0} of {1} pressed."), buttons.Count(x => x.Pressed), buttons.Length),
+			};
 			var never = buttons.Where(x => x.NotPressed).Select(x => x.Number.ToString(c)).ToArray();
 			if (never.Length > 0)
-				text += "; not pressed: " + string.Join(", ", never);
+				parts.Add(string.Format(UiLanguage.T("TestDeviceForm.ButtonsNotPressed", "Not pressed: {0}."), string.Join(", ", never)));
 			var skipped = buttons.Where(x => x.Skipped).Select(x => x.Number.ToString(c)).ToArray();
 			if (skipped.Length > 0)
-				text += "; skipped: " + string.Join(", ", skipped);
-			var twice = buttons.Where(x => x.Twice).Select(x => string.Format(c, "{0} ({1:0} ms apart)", x.Number, x.TwiceAfter)).ToArray();
+				parts.Add(string.Format(UiLanguage.T("TestDeviceForm.ButtonsSkipped", "Skipped: {0}."), string.Join(", ", skipped)));
+			var twice = buttons.Where(x => x.Twice).Select(x => string.Format(c, UiLanguage.T("TestDeviceForm.ButtonDoublePressInterval", "{0} ({1:0} ms apart)"), x.Number, x.TwiceAfter)).ToArray();
 			if (twice.Length > 0)
-				text += "; one push registered twice on button " + string.Join(", ", twice);
-			return text + ".";
+				parts.Add(string.Format(twice.Length == 1
+					? UiLanguage.T("TestDeviceForm.ButtonDoublePress", "One push registered twice on button {0}.")
+					: UiLanguage.T("TestDeviceForm.ButtonsDoublePress", "One push registered twice on buttons {0}."), string.Join(", ", twice)));
+			return string.Join(" ", parts);
 		}
 
 		/// <summary>The width the content is laid out in: the room of a scroll bar is kept whether it shows or not, so its coming and going changes nothing.</summary>
@@ -433,21 +462,30 @@ namespace x360ce.App.Forms
 		internal static string SummaryText(DeviceTestSummary s, long dropped)
 		{
 			var c = CultureInfo.CurrentCulture;
-			var reports = s.ReportRate.HasValue
-				? string.Format(c, "Report rate {0:N0} a second while moving", s.ReportRate.Value)
-				: "Report rate: measured while moving";
+			var reports = new List<string>
+			{
+				s.ReportRate.HasValue
+					? string.Format(c, UiLanguage.T("TestDeviceForm.ReportRate", "Report rate {0:N0} a second while moving."), s.ReportRate.Value)
+					: UiLanguage.T("TestDeviceForm.ReportRateWhileMoving", "Report rate: measured while moving."),
+			};
 			if (s.ShortestInterval.HasValue)
-				reports += string.Format(c, "; between reports {0:0.##} ms shortest, {1:0.##} ms median", s.ShortestInterval.Value, s.MedianInterval.Value);
-			if (s.OnTimePercent.HasValue)
-				reports += string.Format(c, ", {0:0.#} % within a tenth of it", s.OnTimePercent.Value);
+				reports.Add(string.Format(c, UiLanguage.T("TestDeviceForm.ReportIntervals",
+					"Between reports: {0:0.##} ms shortest, {1:0.##} ms median."), s.ShortestInterval.Value, s.MedianInterval.Value));
+			if (s.OnTimePercent.HasValue && s.MedianInterval.HasValue)
+				reports.Add(string.Format(c, UiLanguage.T("TestDeviceForm.ReportsNearMedianInterval",
+					"{0:0.#} % of intervals were within a tenth of the median."), s.OnTimePercent.Value));
 			if (s.ValuesPerReport.HasValue)
-				reports += string.Format(c, "; {0:0.0} values a report", s.ValuesPerReport.Value)
-					+ (s.TogetherPercent.HasValue ? string.Format(c, ", {0:0} % of reports while two moved changed both", s.TogetherPercent.Value) : "");
-			var reads = string.Format(c, "Read rate {0:N0} a second; {1:N0} reads; {2:N0} dropped",
+			{
+				reports.Add(string.Format(c, UiLanguage.T("TestDeviceForm.ValuesPerReport", "{0:0.0} values a report."), s.ValuesPerReport.Value));
+				if (s.TogetherPercent.HasValue)
+					reports.Add(string.Format(c, UiLanguage.T("TestDeviceForm.ValuesChangedTogether",
+						"{0:0} % of reports while two values moved changed both."), s.TogetherPercent.Value));
+			}
+			var reads = string.Format(c, UiLanguage.T("TestDeviceForm.ReadRate", "Read rate {0:N0} a second; {1:N0} reads; {2:N0} dropped."),
 				s.ReadRate ?? 0, s.Reads, dropped);
 			if (s.TooSlow)
-				reads += ". Reads come too slowly to see every report";
-			return reports + "." + Environment.NewLine + reads + ".";
+				reads += " " + UiLanguage.T("TestDeviceForm.ReadRateTooSlow", "Reads come too slowly to see every report.");
+			return string.Join(" ", reports) + Environment.NewLine + reads;
 		}
 
 		private void SkipButton_Click(object sender, EventArgs e)
@@ -465,38 +503,51 @@ namespace x360ce.App.Forms
 
 		#region Details
 
-		/// <summary>The columns: what each row shows of its axis or slider.</summary>
-		static readonly string[][] ColumnTexts =
+		struct ColumnText
 		{
-			new[] { "ControlColumn", "Control" },
-			new[] { "MinColumn", "Min" },
-			new[] { "MaxColumn", "Max" },
-			new[] { "RangeColumn", "Range %" },
-			new[] { "CentreColumn", "Centre" },
-			new[] { "OffsetColumn", "Offset %" },
-			new[] { "SpreadColumn", "Noise" },
-			new[] { "DeviationColumn", "Noise SD" },
-			new[] { "DeadZoneColumn", "Dead Zone %" },
-			new[] { "DistinctColumn", "Values" },
-			new[] { "BitsColumn", "Bits" },
-			new[] { "SmallestColumn", "Smallest Step" },
-			new[] { "FirstStepColumn", "First Step %" },
-			new[] { "LargestColumn", "Largest Step" },
-			new[] { "JumpsColumn", "Jumps" },
-			new[] { "RateColumn", "Updates/s" },
+			public readonly string Name;
+			public readonly Func<string> Header;
+
+			public ColumnText(string name, Func<string> header)
+			{
+				Name = name;
+				Header = header;
+			}
+		}
+
+		/// <summary>The columns: what each row shows of its axis or slider.</summary>
+		static readonly ColumnText[] ColumnTexts =
+		{
+			new ColumnText("ControlColumn", () => UiLanguage.T("TestDeviceForm.ControlColumn.HeaderText", "Control")),
+			new ColumnText("MinColumn", () => UiLanguage.T("TestDeviceForm.MinColumn.HeaderText", "Min")),
+			new ColumnText("MaxColumn", () => UiLanguage.T("TestDeviceForm.MaxColumn.HeaderText", "Max")),
+			new ColumnText("RangeColumn", () => UiLanguage.T("TestDeviceForm.RangeColumn.HeaderText", "Range %")),
+			new ColumnText("CentreColumn", () => UiLanguage.T("TestDeviceForm.CentreColumn.HeaderText", "Centre")),
+			new ColumnText("OffsetColumn", () => UiLanguage.T("TestDeviceForm.OffsetColumn.HeaderText", "Offset %")),
+			new ColumnText("SpreadColumn", () => UiLanguage.T("TestDeviceForm.SpreadColumn.HeaderText", "Noise")),
+			new ColumnText("DeviationColumn", () => UiLanguage.T("TestDeviceForm.DeviationColumn.HeaderText", "Noise SD")),
+			new ColumnText("DeadZoneColumn", () => UiLanguage.T("TestDeviceForm.DeadZoneColumn.HeaderText", "Dead Zone %")),
+			new ColumnText("DistinctColumn", () => UiLanguage.T("TestDeviceForm.DistinctColumn.HeaderText", "Values")),
+			new ColumnText("BitsColumn", () => UiLanguage.T("TestDeviceForm.BitsColumn.HeaderText", "Bits")),
+			new ColumnText("SmallestColumn", () => UiLanguage.T("TestDeviceForm.SmallestColumn.HeaderText", "Smallest Step")),
+			new ColumnText("FirstStepColumn", () => UiLanguage.T("TestDeviceForm.FirstStepColumn.HeaderText", "First Step %")),
+			new ColumnText("LargestColumn", () => UiLanguage.T("TestDeviceForm.LargestColumn.HeaderText", "Largest Step")),
+			new ColumnText("JumpsColumn", () => UiLanguage.T("TestDeviceForm.JumpsColumn.HeaderText", "Jumps")),
+			new ColumnText("RateColumn", () => UiLanguage.T("TestDeviceForm.RateColumn.HeaderText", "Updates/s")),
 		};
 
 		void AddColumns()
 		{
 			foreach (var text in ColumnTexts)
 			{
-				var column = new DataGridViewTextBoxColumn { Name = text[0], HeaderText = text[1], SortMode = DataGridViewColumnSortMode.NotSortable };
+				var column = new DataGridViewTextBoxColumn { Name = text.Name, HeaderText = text.Header(), SortMode = DataGridViewColumnSortMode.NotSortable };
 				// A number stands at the right, and its heading as its values do.
-				if (text[0] != "ControlColumn")
+				if (text.Name != "ControlColumn")
 					column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 				column.HeaderCell.Style.Alignment = column.DefaultCellStyle.Alignment;
 				// A heading of two words or more takes two lines, so the table fits the window.
 				column.HeaderCell.Style.WrapMode = DataGridViewTriState.True;
+				UiLanguage.Keep(column);
 				ResultsDataGridView.Columns.Add(column);
 			}
 			FitColumns();

@@ -2,6 +2,7 @@
 
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
@@ -340,7 +341,7 @@ namespace JocysCom.ClassLibrary.IO
 				DeviceDataGridView.SelectionChanged += DeviceDataGridView_SelectionChanged;
 				DeviceDataGridView_SelectionChanged(DeviceDataGridView, new EventArgs());
 			});
-			DeviceListTabPage.Text = string.Format("Device List [{0}]", filtered.Count);
+			DeviceListTabPage.Text = string.Format(UiLanguage.T("HardwareControl.DeviceListCount", "Device List [{0}]"), filtered.Count);
 		}
 
 		/// <summary>
@@ -371,7 +372,7 @@ namespace JocysCom.ClassLibrary.IO
 			AddChildNodes(DevicesTreeView.Nodes, topNodes, filteredWithParents, System.Environment.MachineName);
 			DevicesTreeView.EndUpdate();
 			DevicesTreeView.ExpandAll();
-			DeviceTreeTabPage.Text = string.Format("Device Tree [{0}]", filteredWithParents.Count);
+			DeviceTreeTabPage.Text = string.Format(UiLanguage.T("HardwareControl.DeviceTreeCount", "Device Tree [{0}]"), filteredWithParents.Count);
 		}
 
 		/// <summary>
@@ -494,22 +495,22 @@ namespace JocysCom.ClassLibrary.IO
 			var so = ControlsHelper.MainTaskScheduler;
 			await Task.Factory.StartNew(() =>
 			  {
-				AddLogLine("Enumerating Devices...");
+				AddLogLine(UiLanguage.T("HardwareControl.EnumeratingDevices", "Enumerating Devices..."));
 				var devices = DeviceDetector.GetDevices();
 				var offline = devices.Where(x => !x.IsPresent && x.IsRemovable && !x.Description.Contains("RAS Async Adapter")).ToArray();
 				var problem = devices.Where(x => x.Status.HasFlag(DeviceNodeStatus.DN_HAS_PROBLEM)).Except(offline).ToArray();
 				var unknown = devices.Where(x => x.Description.Contains("Unknown")).Except(offline).Except(problem).ToArray();
 				var list = new List<string>();
 				if (offline.Length > 0)
-					list.Add(string.Format("{0} offline devices.", offline.Length));
+					list.Add(string.Format(UiLanguage.T("HardwareControl.OfflineDevices", "{0} offline devices."), offline.Length));
 				if (problem.Length > 0)
-					list.Add(string.Format("{0} problem devices.", problem.Length));
+					list.Add(string.Format(UiLanguage.T("HardwareControl.ProblemDevices", "{0} problem devices."), problem.Length));
 				if (unknown.Length > 0)
-					list.Add(string.Format("{0} unknown devices.", unknown.Length));
+					list.Add(string.Format(UiLanguage.T("HardwareControl.UnknownDevices", "{0} unknown devices."), unknown.Length));
 				var message = string.Join("\r\n", list);
 				if (list.Count == 0)
 				{
-					AddLogLine("No offline, problem or unknown devices found.");
+					AddLogLine(UiLanguage.T("HardwareControl.NoDevicesFound", "No offline, problem or unknown devices found."));
 				}
 				else if (clean)
 				{
@@ -526,8 +527,8 @@ namespace JocysCom.ClassLibrary.IO
 						};
 						ControlsHelper.CheckTopMost(form);
 						result = form.ShowForm(
-							"Do you want to remove offline, problem or unknown devices?\r\n\r\n" + message,
-							"Do you want to remove devices?",
+							string.Format(UiLanguage.T("HardwareControl.RemoveDevicesQuestion", "Do you want to remove offline, problem or unknown devices?\r\n\r\n{0}"), message),
+							UiLanguage.T("HardwareControl.RemoveDevicesCaption", "Do you want to remove devices?"),
 							MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 						form.Dispose();
 					}));
@@ -540,7 +541,7 @@ namespace JocysCom.ClassLibrary.IO
 					for (var i = 0; i < devList.Count; i++)
 					{
 						var item = devList[i];
-						AddLogLine("Removing Device: {0}/{1} - {2}", i + 1, devList.Count, item.Description);
+						AddLogLine(UiLanguage.T("HardwareControl.RemovingDevice", "Removing Device: {0}/{1} - {2}"), i + 1, devList.Count, item.Description);
 						try
 						{
 							var exception = DeviceDetector.RemoveDevice(item.DeviceId);
@@ -554,7 +555,7 @@ namespace JocysCom.ClassLibrary.IO
 						}
 					}
 				}
-				AddLogLine("Done");
+				AddLogLine(UiLanguage.T("HardwareControl.Done", "Done"));
 			  }, CancellationToken.None, TaskCreationOptions.LongRunning, so).ConfigureAwait(true);
 		}
 
@@ -652,7 +653,7 @@ namespace JocysCom.ClassLibrary.IO
 			var isElevated = JocysCom.ClassLibrary.Security.PermissionHelper.IsElevated;
 			if (!isElevated)
 
-				JocysCom.ClassLibrary.Controls.MessageBoxForm.Show("You must run this program as administrator for this feature to work.");
+				JocysCom.ClassLibrary.Controls.MessageBoxForm.Show(UiLanguage.T("HardwareControl.RunAsAdministrator", "You must run this program as administrator for this feature to work."));
 			return isElevated;
 		}
 
@@ -663,7 +664,7 @@ namespace JocysCom.ClassLibrary.IO
 		/// </summary>
 		private void LogTextBox_TextChanged(object sender, EventArgs e)
 		{
-			LogsTabPage.Text = string.Format("Logs [{0}]", LogTextBox.TextLength);
+			LogsTabPage.Text = string.Format(UiLanguage.T("HardwareControl.LogsLength", "Logs [{0}]"), LogTextBox.TextLength);
 		}
 	}
 }

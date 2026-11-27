@@ -20,6 +20,9 @@ namespace x360ce.Plugins.Samples
 		readonly ToolTip _toolTip;
 		readonly List<string> _logEntries = new List<string>();
 		readonly List<Action<int>> _spacing = new List<Action<int>>();
+
+		/// <summary>Puts each text the page sets once in the language chosen: run again when the language changes.</summary>
+		readonly List<Action> _texts = new List<Action>();
 		Font _boldFont;
 		bool _syncing;
 		string _lastLoggedSource;
@@ -79,7 +82,7 @@ namespace x360ce.Plugins.Samples
 		{
 			_host = host ?? throw new ArgumentNullException(nameof(host));
 			Name = nameof(WheelTelemetryPage);
-			Text = "Game Telemetry";
+			_texts.Add(() => Text = PluginText.T("WheelTelemetry.GameTelemetry", "Game Telemetry"));
 			AccessibleName = "Game Telemetry";
 			AccessibleDescription = "Live game telemetry connection, UDP port forwarding, force feel tuning and live vehicle readings.";
 			Dock = DockStyle.Fill;
@@ -99,12 +102,12 @@ namespace x360ce.Plugins.Samples
 			var telemetryTab = new TabPage
 			{
 				Name = "TelemetryTabPage",
-				Text = "Telemetry",
 				AccessibleName = "Telemetry",
 				AccessibleDescription = "Telemetry ports, force feel tuning, live vehicle readings and activity log.",
 				BackColor = SystemColors.Control,
 				AutoScroll = true,
 			};
+			_texts.Add(() => telemetryTab.Text = PluginText.T("WheelTelemetry.Telemetry", "Telemetry"));
 
 			// Two-column grid matching x360ce's Options and Force Feedback pages:
 			// container Padding(0, 0, g, g), child GroupBoxes Margin(g, g, 0, 0); FormsTheme owns GroupBox.Padding.
@@ -158,13 +161,13 @@ namespace x360ce.Plugins.Samples
 			var portsGroup = new GroupBox
 			{
 				Name = "ConnectionGroupBox",
-				Text = "Connection && Ports",
 				AccessibleName = "Connection and Ports",
 				AccessibleDescription = "Telemetry enable switch, dedicated UDP port, optional standard game ports and UDP IP/port forwarding.",
 				AutoSize = true,
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Fill,
 			};
+			_texts.Add(() => portsGroup.Text = PluginText.T("WheelTelemetry.ConnectionAndPorts", "Connection && Ports"));
 			var portsTable = new TableLayoutPanel
 			{
 				Name = "ConnectionTableLayoutPanel",
@@ -186,13 +189,18 @@ namespace x360ce.Plugins.Samples
 			EnabledCheckBox = new CheckBox
 			{
 				Name = nameof(EnabledCheckBox),
-				Text = "Enable live game telemetry",
 				AccessibleName = "Enable live game telemetry",
 				AccessibleDescription = "Reads live vehicle telemetry from Shared Memory (Assetto Corsa, iRacing) and localhost UDP to drive wheels and telemetry-enabled devices.",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 				UseVisualStyleBackColor = true,
 			};
+			_texts.Add(() =>
+			{
+				EnabledCheckBox.Text = PluginText.T("WheelTelemetry.EnableLiveGameTelemetry", "Enable live game telemetry");
+				_toolTip.SetToolTip(EnabledCheckBox, PluginText.T("WheelTelemetry.EnableLiveGameTelemetryTip",
+					"Reads live vehicle telemetry from Shared Memory (Assetto Corsa, iRacing) and localhost UDP to drive wheels and telemetry-enabled devices."));
+			});
 			EnabledCheckBox.CheckedChanged += (s, e) =>
 			{
 				if (_syncing) return;
@@ -206,13 +214,18 @@ namespace x360ce.Plugins.Samples
 			StandardPortsCheckBox = new CheckBox
 			{
 				Name = nameof(StandardPortsCheckBox),
-				Text = "Also listen on standard game ports",
 				AccessibleName = "Listen on standard game ports",
 				AccessibleDescription = "Also binds standard game UDP ports (5300, 20777, 4123, 5606). Off by default so SimHub, CrewChief and wheel dashboards keep their ports. Occupied ports are always skipped automatically.",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 				UseVisualStyleBackColor = true,
 			};
+			_texts.Add(() =>
+			{
+				StandardPortsCheckBox.Text = PluginText.T("WheelTelemetry.ListenOnStandardPorts", "Also listen on standard game ports");
+				_toolTip.SetToolTip(StandardPortsCheckBox, PluginText.T("WheelTelemetry.ListenOnStandardPortsTip",
+					"Also binds standard game UDP ports (5300, 20777, 4123, 5606). Off by default so SimHub, CrewChief and wheel dashboards keep their ports. Occupied ports are always skipped automatically."));
+			});
 			StandardPortsCheckBox.CheckedChanged += (s, e) =>
 			{
 				if (_syncing) return;
@@ -225,7 +238,6 @@ namespace x360ce.Plugins.Samples
 			var listenLabel = new Label
 			{
 				Name = "ListenPortLabel",
-				Text = "Listen port",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 			};
@@ -239,6 +251,12 @@ namespace x360ce.Plugins.Samples
 				Value = WheelTelemetryProvider.DefaultPort,
 				Anchor = AnchorStyles.Left,
 			};
+			_texts.Add(() =>
+			{
+				listenLabel.Text = PluginText.T("WheelTelemetry.ListenPort", "Listen port");
+				_toolTip.SetToolTip(ListenPortUpDown, PluginText.T("WheelTelemetry.ListenPortTip",
+					"Dedicated conflict-free loopback UDP port x360ce listens on (default 37150). Point games or SimHub forwarding here."));
+			});
 			ListenPortUpDown.ValueChanged += (s, e) =>
 			{
 				if (_syncing) return;
@@ -249,13 +267,18 @@ namespace x360ce.Plugins.Samples
 			ForwardEnabledCheckBox = new CheckBox
 			{
 				Name = nameof(ForwardEnabledCheckBox),
-				Text = "Enable forward telemetry",
 				AccessibleName = "Enable forward telemetry",
 				AccessibleDescription = "Relays received UDP telemetry datagrams to Forward IP and Port (for example, SimHub on 127.0.0.1 or a dashboard on another PC/tablet).",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 				UseVisualStyleBackColor = true,
 			};
+			_texts.Add(() =>
+			{
+				ForwardEnabledCheckBox.Text = PluginText.T("WheelTelemetry.EnableForwardTelemetry", "Enable forward telemetry");
+				_toolTip.SetToolTip(ForwardEnabledCheckBox, PluginText.T("WheelTelemetry.EnableForwardTelemetryTip",
+					"Relays received UDP telemetry datagrams to Forward IP and Port (for example, SimHub on 127.0.0.1 or a dashboard on another PC/tablet)."));
+			});
 			ForwardEnabledCheckBox.CheckedChanged += (s, e) =>
 			{
 				if (_syncing) return;
@@ -267,7 +290,6 @@ namespace x360ce.Plugins.Samples
 			var forwardIpLabel = new Label
 			{
 				Name = "ForwardIpLabel",
-				Text = "Forward IP",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 			};
@@ -279,6 +301,12 @@ namespace x360ce.Plugins.Samples
 				Anchor = AnchorStyles.Left | AnchorStyles.Right,
 				Text = "127.0.0.1",
 			};
+			_texts.Add(() =>
+			{
+				forwardIpLabel.Text = PluginText.T("WheelTelemetry.ForwardIp", "Forward IP");
+				_toolTip.SetToolTip(ForwardIpTextBox, PluginText.T("WheelTelemetry.ForwardIpTip",
+					"Destination IP address to relay received UDP telemetry to (127.0.0.1 for local apps like SimHub, or a LAN PC/tablet IP)."));
+			});
 			ForwardIpTextBox.TextChanged += (s, e) =>
 			{
 				if (_syncing) return;
@@ -289,7 +317,6 @@ namespace x360ce.Plugins.Samples
 			var forwardPortLabel = new Label
 			{
 				Name = "ForwardPortLabel",
-				Text = "Port",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 			};
@@ -303,6 +330,12 @@ namespace x360ce.Plugins.Samples
 				Value = 0,
 				Anchor = AnchorStyles.Left,
 			};
+			_texts.Add(() =>
+			{
+				forwardPortLabel.Text = PluginText.T("WheelTelemetry.Port", "Port");
+				_toolTip.SetToolTip(ForwardPortUpDown, PluginText.T("WheelTelemetry.ForwardPortTip",
+					"Destination UDP port to relay received telemetry packets to (0 = forwarding off)."));
+			});
 			ForwardPortUpDown.ValueChanged += (s, e) =>
 			{
 				if (_syncing) return;
@@ -313,7 +346,6 @@ namespace x360ce.Plugins.Samples
 			DefaultsButton = new Button
 			{
 				Name = nameof(DefaultsButton),
-				Text = "Defaults",
 				AccessibleName = "Reset telemetry defaults",
 				AccessibleDescription = "Restores telemetry ports and force tuning sliders to their default values.",
 				AutoSize = true,
@@ -321,6 +353,7 @@ namespace x360ce.Plugins.Samples
 				Anchor = AnchorStyles.Right,
 				UseVisualStyleBackColor = true,
 			};
+			_texts.Add(() => DefaultsButton.Text = PluginText.T("WheelTelemetry.Defaults", "Defaults"));
 			DefaultsButton.Click += (s, e) =>
 			{
 				_host.ResetDefaults();
@@ -362,13 +395,13 @@ namespace x360ce.Plugins.Samples
 			var tuningGroup = new GroupBox
 			{
 				Name = "TuningGroupBox",
-				Text = "Force Feel Tuning",
 				AccessibleName = "Force Feel Tuning",
 				AccessibleDescription = "Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer, steering lead, and where road and impact feel comes from.",
 				AutoSize = true,
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Fill,
 			};
+			_texts.Add(() => tuningGroup.Text = PluginText.T("WheelTelemetry.ForceFeelTuning", "Force Feel Tuning"));
 			var tuningTable = new TableLayoutPanel
 			{
 				Name = "TuningTableLayoutPanel",
@@ -388,6 +421,8 @@ namespace x360ce.Plugins.Samples
 
 			AlignStrengthTrackBar = AddTuningRow(tuningTable, 0, "AlignStrength", "Aligning torque",
 				"Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).",
+				() => PluginText.T("WheelTelemetry.AligningTorque", "Aligning torque"),
+				() => PluginText.T("WheelTelemetry.AligningTorqueTip", "Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %)."),
 				0, 200, 100, 5, 25, " %", out AlignStrengthValueTextBox);
 			AlignStrengthTrackBar.ValueChanged += (s, e) =>
 			{
@@ -397,6 +432,8 @@ namespace x360ce.Plugins.Samples
 
 			UndersteerStrengthTrackBar = AddTuningRow(tuningTable, 1, "UndersteerStrength", "Understeer",
 				"Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.",
+				() => PluginText.T("WheelTelemetry.Understeer", "Understeer"),
+				() => PluginText.T("WheelTelemetry.UndersteerTip", "Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved."),
 				0, 100, 100, 5, 20, " %", out UndersteerStrengthValueTextBox);
 			UndersteerStrengthTrackBar.ValueChanged += (s, e) =>
 			{
@@ -406,6 +443,8 @@ namespace x360ce.Plugins.Samples
 
 			CurbStrengthTrackBar = AddTuningRow(tuningTable, 2, "CurbStrength", "Curb bumps",
 				"Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %).",
+				() => PluginText.T("WheelTelemetry.CurbBumps", "Curb bumps"),
+				() => PluginText.T("WheelTelemetry.CurbBumpsTip", "Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %)."),
 				0, 100, 100, 5, 20, " %", out CurbStrengthValueTextBox);
 			CurbStrengthTrackBar.ValueChanged += (s, e) =>
 			{
@@ -415,6 +454,8 @@ namespace x360ce.Plugins.Samples
 
 			DampingStrengthTrackBar = AddTuningRow(tuningTable, 3, "DampingStrength", "Dynamic damping",
 				"Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %).",
+				() => PluginText.T("WheelTelemetry.DynamicDamping", "Dynamic damping"),
+				() => PluginText.T("WheelTelemetry.DynamicDampingTip", "Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %)."),
 				0, 200, 100, 5, 25, " %", out DampingStrengthValueTextBox);
 			DampingStrengthTrackBar.ValueChanged += (s, e) =>
 			{
@@ -424,6 +465,8 @@ namespace x360ce.Plugins.Samples
 
 			RumbleUndersteerTrackBar = AddTuningRow(tuningTable, 4, "RumbleUndersteer", "Rumble understeer",
 				"Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).",
+				() => PluginText.T("WheelTelemetry.RumbleUndersteer", "Rumble understeer"),
+				() => PluginText.T("WheelTelemetry.RumbleUndersteerTip", "Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %)."),
 				0, 60, 0, 5, 15, " %", out RumbleUndersteerValueTextBox);
 			RumbleUndersteerTrackBar.ValueChanged += (s, e) =>
 			{
@@ -433,6 +476,8 @@ namespace x360ce.Plugins.Samples
 
 			SteeringLeadTrackBar = AddTuningRow(tuningTable, 5, "SteeringLead", "Steering lead",
 				"Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.",
+				() => PluginText.T("WheelTelemetry.SteeringLead", "Steering lead"),
+				() => PluginText.T("WheelTelemetry.SteeringLeadTip", "Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports."),
 				0, 80, 0, 5, 15, " ms", out SteeringLeadValueTextBox);
 			SteeringLeadTrackBar.ValueChanged += (s, e) =>
 			{
@@ -440,13 +485,12 @@ namespace x360ce.Plugins.Samples
 				if (!_syncing) _host.SteeringLeadMs = SteeringLeadTrackBar.Value;
 			};
 
-			var rumbleSourceDescription = "Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: "
+			const string rumbleSourceDescription = "Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: "
 				+ "the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both. "
 				+ "Telemetry is recommended for a wheel; the game's rumble plays unchanged while no telemetry arrives.";
 			var rumbleSourceLabel = new Label
 			{
 				Name = "RumbleSourceLabel",
-				Text = "Road and impact feel from",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 			};
@@ -458,9 +502,26 @@ namespace x360ce.Plugins.Samples
 				DropDownStyle = ComboBoxStyle.DropDownList,
 				Anchor = AnchorStyles.Left | AnchorStyles.Right,
 			};
-			// In the order of WheelRumbleSource's values.
-			RumbleSourceComboBox.Items.AddRange(new object[] { "Game", "Game without gear changes", "Telemetry", "Both" });
-			RumbleSourceComboBox.SelectedIndex = (int)WheelRumbleSource.Telemetry;
+			_texts.Add(() =>
+			{
+				rumbleSourceLabel.Text = PluginText.T("WheelTelemetry.RoadAndImpactFeelFrom", "Road and impact feel from");
+				var tip = PluginText.T("WheelTelemetry.RoadAndImpactFeelFromTip", rumbleSourceDescription);
+				_toolTip.SetToolTip(rumbleSourceLabel, tip);
+				_toolTip.SetToolTip(RumbleSourceComboBox, tip);
+				// In the order of WheelRumbleSource's values; the one chosen stays chosen when the language changes.
+				var selected = RumbleSourceComboBox.SelectedIndex;
+				_syncing = true;
+				RumbleSourceComboBox.Items.Clear();
+				RumbleSourceComboBox.Items.AddRange(new object[]
+				{
+					PluginText.T("WheelTelemetry.Game", "Game"),
+					PluginText.T("WheelTelemetry.GameWithoutGearChanges", "Game without gear changes"),
+					PluginText.T("WheelTelemetry.Telemetry", "Telemetry"),
+					PluginText.T("WheelTelemetry.Both", "Both"),
+				});
+				RumbleSourceComboBox.SelectedIndex = selected < 0 ? (int)WheelRumbleSource.Telemetry : selected;
+				_syncing = false;
+			});
 			RumbleSourceComboBox.SelectedIndexChanged += (s, e) =>
 			{
 				if (!_syncing && RumbleSourceComboBox.SelectedIndex >= 0)
@@ -472,14 +533,14 @@ namespace x360ce.Plugins.Samples
 				rumbleSourceLabel.Margin = itemMargin;
 				RumbleSourceComboBox.Margin = itemMargin;
 			});
-			_toolTip.SetToolTip(rumbleSourceLabel, rumbleSourceDescription);
-			_toolTip.SetToolTip(RumbleSourceComboBox, rumbleSourceDescription);
 			tuningTable.Controls.Add(rumbleSourceLabel, 0, 6);
 			tuningTable.Controls.Add(RumbleSourceComboBox, 1, 6);
 			tuningTable.SetColumnSpan(RumbleSourceComboBox, 2);
 
 			GearChangeRumbleTrackBar = AddTuningRow(tuningTable, 7, "GearChangeRumble", "Gear change",
 				"How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).",
+				() => PluginText.T("WheelTelemetry.GearChange", "Gear change"),
+				() => PluginText.T("WheelTelemetry.GearChangeTip", "How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %)."),
 				0, 100, 0, 5, 20, " %", out GearChangeRumbleValueTextBox);
 			GearChangeRumbleTrackBar.ValueChanged += (s, e) =>
 			{
@@ -499,13 +560,13 @@ namespace x360ce.Plugins.Samples
 			ReadingsGroupBox = new GroupBox
 			{
 				Name = nameof(ReadingsGroupBox),
-				Text = "Live Telemetry",
 				AccessibleName = "Live telemetry",
 				AccessibleDescription = "Connection state and newest vehicle physics values received from the running game.",
 				AutoSize = true,
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Fill,
 			};
+			_texts.Add(() => ReadingsGroupBox.Text = PluginText.T("WheelTelemetry.LiveTelemetry", "Live Telemetry"));
 
 			ReadingsPanel = new TableLayoutPanel
 			{
@@ -532,7 +593,7 @@ namespace x360ce.Plugins.Samples
 				AccessibleDescription = "Current telemetry state and detected game or protocol.",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				Text = "Waiting for game telemetry...",
+				Text = PluginText.T("WheelTelemetry.WaitingForGameTelemetry", "Waiting for game telemetry..."),
 			};
 			PortStatusLabel = new Label
 			{
@@ -542,7 +603,6 @@ namespace x360ce.Plugins.Samples
 				AutoSize = true,
 				Anchor = AnchorStyles.Left | AnchorStyles.Right,
 				ForeColor = SystemColors.GrayText,
-				Text = "Shared Memory + UDP 37150",
 			};
 			ReadingsPanel.Controls.Add(StatusLabel, 0, 0);
 			ReadingsPanel.SetColumnSpan(StatusLabel, 3);
@@ -552,12 +612,18 @@ namespace x360ce.Plugins.Samples
 			SourceValueLabel = StatusLabel;
 			RateValueLabel = PortStatusLabel;
 			FreshnessValueLabel = StatusLabel;
-			SpeedValueLabel = AddReadingRow(ReadingsPanel, 2, "Speed", "Vehicle speed in km/h.", true, out SpeedBar);
-			AlignValueLabel = AddReadingRow(ReadingsPanel, 3, "Aligning angle", "Self-aligning / counter-steer equilibrium shift in degrees.", true, out AlignBar);
-			FrontGripValueLabel = AddReadingRow(ReadingsPanel, 4, "Front grip", "Estimated front-tire grip (100 % full grip, lower = understeer).", true, out FrontGripBar);
-			LateralGValueLabel = AddReadingRow(ReadingsPanel, 5, "Lateral G", "Sideways cornering acceleration in G.", true, out LateralGBar);
-			PitchValueLabel = AddReadingRow(ReadingsPanel, 6, "Road pitch", "Vehicle pitch angle in degrees and road grade in percent (nose up positive).", true, out PitchBar);
-			RpmValueLabel = AddReadingRow(ReadingsPanel, 7, "Engine RPM", "Normalized engine RPM for steering wheel RGB/RPM shift LEDs.", true, out RpmBar);
+			SpeedValueLabel = AddReadingRow(ReadingsPanel, 2, "Speed", "Vehicle speed in km/h.",
+				() => PluginText.T("WheelTelemetry.Speed", "Speed"), true, out SpeedBar);
+			AlignValueLabel = AddReadingRow(ReadingsPanel, 3, "Aligning angle", "Self-aligning / counter-steer equilibrium shift in degrees.",
+				() => PluginText.T("WheelTelemetry.AligningAngle", "Aligning angle"), true, out AlignBar);
+			FrontGripValueLabel = AddReadingRow(ReadingsPanel, 4, "Front grip", "Estimated front-tire grip (100 % full grip, lower = understeer).",
+				() => PluginText.T("WheelTelemetry.FrontGrip", "Front grip"), true, out FrontGripBar);
+			LateralGValueLabel = AddReadingRow(ReadingsPanel, 5, "Lateral G", "Sideways cornering acceleration in G.",
+				() => PluginText.T("WheelTelemetry.LateralG", "Lateral G"), true, out LateralGBar);
+			PitchValueLabel = AddReadingRow(ReadingsPanel, 6, "Road pitch", "Vehicle pitch angle in degrees and road grade in percent (nose up positive).",
+				() => PluginText.T("WheelTelemetry.RoadPitch", "Road pitch"), true, out PitchBar);
+			RpmValueLabel = AddReadingRow(ReadingsPanel, 7, "Engine RPM", "Normalized engine RPM for steering wheel RGB/RPM shift LEDs.",
+				() => PluginText.T("WheelTelemetry.EngineRpm", "Engine RPM"), true, out RpmBar);
 
 			ReadingsGroupBox.Controls.Add(ReadingsPanel);
 			_spacing.Add(g =>
@@ -572,12 +638,12 @@ namespace x360ce.Plugins.Samples
 			var logGroup = new GroupBox
 			{
 				Name = "ActivityGroupBox",
-				Text = "Activity",
 				AccessibleName = "Telemetry activity",
 				AccessibleDescription = "Recent telemetry port binds, protocol switches and setup hints, newest first.",
 				Dock = DockStyle.Fill,
 				MinimumSize = new Size(120, 64),
 			};
+			_texts.Add(() => logGroup.Text = PluginText.T("WheelTelemetry.Activity", "Activity"));
 			var logTable = new TableLayoutPanel
 			{
 				Name = "ActivityTableLayoutPanel",
@@ -622,11 +688,11 @@ namespace x360ce.Plugins.Samples
 			var helpTab = new TabPage
 			{
 				Name = "HelpTabPage",
-				Text = "Help",
 				AccessibleName = "Help",
 				AccessibleDescription = "Supported games, standard telemetry protocols, port coexistence and testing instructions.",
 				BackColor = SystemColors.Control,
 			};
+			_texts.Add(() => helpTab.Text = PluginText.T("WheelTelemetry.Help", "Help"));
 			HelpRichTextBox = new RichTextBox
 			{
 				Name = nameof(HelpRichTextBox),
@@ -644,20 +710,23 @@ namespace x360ce.Plugins.Samples
 			PageTabControl.TabPages.Add(helpTab);
 			Controls.Add(PageTabControl);
 
-			_toolTip.SetToolTip(EnabledCheckBox, EnabledCheckBox.AccessibleDescription);
-			_toolTip.SetToolTip(StandardPortsCheckBox, StandardPortsCheckBox.AccessibleDescription);
-			_toolTip.SetToolTip(ListenPortUpDown, ListenPortUpDown.AccessibleDescription);
-			_toolTip.SetToolTip(ForwardEnabledCheckBox, ForwardEnabledCheckBox.AccessibleDescription);
-			_toolTip.SetToolTip(ForwardIpTextBox, ForwardIpTextBox.AccessibleDescription);
-			_toolTip.SetToolTip(ForwardPortUpDown, ForwardPortUpDown.AccessibleDescription);
-
+			ApplyTexts();
 			ApplySpacing();
 			_host.SettingsChanged += Host_SettingsChanged;
+			EventHandler languageChanged = (s, e) =>
+			{
+				ApplyTexts();
+				RefreshStatus();
+			};
+			PluginText.Changed += languageChanged;
+			Disposed += (s, e) => PluginText.Changed -= languageChanged;
 
 			ResumeLayout(false);
 			PerformLayout();
 
-			AppendLog("Ready. Send standard UDP telemetry to 127.0.0.1:" + _host.Port + ", launch Assetto Corsa / iRacing, or use x360ce Test Game -> Virtual Car.");
+			AppendLog(string.Format(PluginText.T("WheelTelemetry.Ready",
+				"Ready. Send standard UDP telemetry to 127.0.0.1:{0}, launch Assetto Corsa / iRacing, or use x360ce Test Game -> Virtual Car."),
+				_host.Port));
 			SyncFromHost();
 			RefreshStatus();
 		}
@@ -713,13 +782,19 @@ namespace x360ce.Plugins.Samples
 				ApplySpacing();
 		}
 
+		void ApplyTexts()
+		{
+			for (var i = 0; i < _texts.Count; i++)
+				_texts[i]();
+		}
+
+		/// <summary>Adds a slider row: its caption and tip in the language chosen, its names and description in English for the AI door and screen readers.</summary>
 		TrackBar AddTuningRow(TableLayoutPanel table, int row, string key, string labelText, string description,
-			int min, int max, int def, int small, int large, string unit, out TextBox valueBox)
+			Func<string> captionText, Func<string> tipText, int min, int max, int def, int small, int large, string unit, out TextBox valueBox)
 		{
 			var caption = new Label
 			{
 				Name = key + "Label",
-				Text = labelText,
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 			};
@@ -758,25 +833,31 @@ namespace x360ce.Plugins.Samples
 				val.Margin = itemMargin;
 				val.Width = g * 7;
 			});
-			_toolTip.SetToolTip(caption, description);
-			_toolTip.SetToolTip(bar, description);
+			_texts.Add(() =>
+			{
+				caption.Text = captionText();
+				var tip = tipText();
+				_toolTip.SetToolTip(caption, tip);
+				_toolTip.SetToolTip(bar, tip);
+			});
 			table.Controls.Add(caption, 0, row);
 			table.Controls.Add(bar, 1, row);
 			table.Controls.Add(val, 2, row);
 			return bar;
 		}
 
-		Label AddReadingRow(TableLayoutPanel table, int row, string name, string description, bool withBar, out ProgressBar bar)
+		/// <summary>Adds a reading row: its caption in the language chosen, its names and description in English for the AI door and screen readers.</summary>
+		Label AddReadingRow(TableLayoutPanel table, int row, string name, string description, Func<string> captionText, bool withBar, out ProgressBar bar)
 		{
 			var key = name.Replace(" ", "");
 			var caption = new Label
 			{
 				Name = key + "CaptionLabel",
-				Text = name,
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 				ForeColor = SystemColors.GrayText,
 			};
+			_texts.Add(() => caption.Text = captionText());
 			var value = new Label
 			{
 				Name = key + "ValueLabel",
@@ -907,38 +988,42 @@ namespace x360ce.Plugins.Samples
 			if (_lastLoggedEnabled != enabled)
 			{
 				_lastLoggedEnabled = enabled;
-				AppendLog(enabled ? "Telemetry enabled." : "Telemetry turned off - listeners closed.");
+				AppendLog(enabled
+					? PluginText.T("WheelTelemetry.TelemetryEnabled", "Telemetry enabled.")
+					: PluginText.T("WheelTelemetry.TelemetryTurnedOff", "Telemetry turned off - listeners closed."));
 			}
 			if (enabled && ports != _lastLoggedPortStatus && !string.IsNullOrEmpty(ports))
 			{
 				_lastLoggedPortStatus = ports;
-				AppendLog("Listeners: " + ports);
+				AppendLog(string.Format(PluginText.T("WheelTelemetry.Listeners", "Listeners: {0}"), ports));
 			}
 			if (enabled && freshness > 0.0 && !string.IsNullOrEmpty(source) && source != _lastLoggedSource)
 			{
 				_lastLoggedSource = source;
-				AppendLog("Receiving live telemetry: " + source + ".");
+				AppendLog(string.Format(PluginText.T("WheelTelemetry.ReceivingLiveTelemetry", "Receiving live telemetry: {0}."), source));
 			}
 			else if (freshness <= 0.0 && _lastLoggedSource != null)
 			{
-				AppendLog("Telemetry stream idle (" + _lastLoggedSource + ").");
+				AppendLog(string.Format(PluginText.T("WheelTelemetry.TelemetryStreamIdle", "Telemetry stream idle ({0})."), _lastLoggedSource));
 				_lastLoggedSource = null;
 			}
 
 			var header = !enabled
-				? "Telemetry off"
+				? PluginText.T("WheelTelemetry.TelemetryOff", "Telemetry off")
 				: (freshness > 0.0 && !string.IsNullOrEmpty(source)
 					? string.Format(CultureInfo.InvariantCulture, "{0} - {1} km/h{2}",
 						source,
 						float.IsNaN(live.SpeedKmh) ? (_host.SpeedKmh ?? 0) : (int)Math.Round(live.SpeedKmh),
 						hz > 0 ? " (" + hz + " Hz)" : "")
-					: "Waiting for game telemetry...");
+					: PluginText.T("WheelTelemetry.WaitingForGameTelemetry", "Waiting for game telemetry..."));
 			if (StatusLabel.Text != header)
 				StatusLabel.Text = header;
 
 			var portLine = !enabled
-				? "Sockets closed while telemetry is off."
-				: (string.IsNullOrEmpty(ports) ? "Shared Memory + UDP " + _host.Port : ports);
+				? PluginText.T("WheelTelemetry.SocketsClosed", "Sockets closed while telemetry is off.")
+				: string.IsNullOrEmpty(ports)
+					? string.Format(PluginText.T("WheelTelemetry.SharedMemoryAndUdp", "Shared Memory + UDP {0}"), _host.Port)
+					: ports;
 			if (PortStatusLabel.Text != portLine)
 				PortStatusLabel.Text = portLine;
 

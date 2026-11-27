@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.IO;
 using System;
 using System.Linq;
@@ -59,6 +60,9 @@ namespace x360ce.App.Controls
 				if (manager != null)
 					manager.Changed -= Manager_Changed;
 			};
+			EventHandler languageChanged = (s, e) => RefreshList();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			RefreshList();
 		}
 
@@ -75,7 +79,20 @@ namespace x360ce.App.Controls
 			public bool Enabled { get; set; }
 			public string Name { get; set; }
 			public string Devices { get; set; }
-			public string State { get; set; }
+			internal PluginFileState FileState { get; set; }
+			public string State
+			{
+				get
+				{
+					switch (FileState)
+					{
+						case PluginFileState.Loaded: return UiLanguage.T("OptionsPluginsUserControl.StateLoaded", "Loaded");
+						case PluginFileState.Disabled: return UiLanguage.T("OptionsPluginsUserControl.StateDisabled", "Disabled");
+						case PluginFileState.WaitingForPermission: return UiLanguage.T("OptionsPluginsUserControl.StateWaitingForPermission", "Waiting for permission");
+						default: return UiLanguage.T("OptionsPluginsUserControl.StateFailed", "Failed");
+					}
+				}
+			}
 			public string Signer { get; set; }
 			public string Source { get; set; }
 			public string Reason { get; set; }
@@ -91,21 +108,24 @@ namespace x360ce.App.Controls
 				Enabled = x.Enabled,
 				Name = x.Name,
 				Devices = string.Join(", ",
-					x.DeviceTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name)
-						.Concat(x.TelemetryTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name))
-						.Concat(x.GameTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name + " (Games tab)"))),
-				State = x.State == PluginFileState.Loaded ? "Loaded"
-					: x.State == PluginFileState.Disabled ? "Disabled"
-					: x.State == PluginFileState.WaitingForPermission ? "Waiting for permission"
-					: "Failed",
-				Signer = x.Embedded ? "Part of x360ce" : x.Signer ?? "Not signed",
+					x.DeviceTypes.Select(t => t.Faulted ? SwitchedOffDeviceName(t.Name) : t.Name)
+						.Concat(x.TelemetryTypes.Select(t => t.Faulted ? SwitchedOffDeviceName(t.Name) : t.Name))
+						.Concat(x.GameTypes.Select(t => t.Faulted ? SwitchedOffDeviceName(t.Name)
+							: string.Format(UiLanguage.T("OptionsPluginsUserControl.GamesTabDeviceName", "{0} (Games tab)"), t.Name)))),
+				FileState = x.State,
+				Signer = x.Embedded ? UiLanguage.T("OptionsPluginsUserControl.BuiltInSigner", "Part of x360ce") : x.Signer ?? UiLanguage.T("OptionsPluginsUserControl.UnsignedSigner", "Not signed"),
 				// The folder is shown above the list: each row names the file within it.
-				Source = x.Embedded ? "Embedded" : PathHelper.GetRelativePath(manager.Folder.TrimEnd('\\') + "\\", x.Source, false),
+				Source = x.Embedded ? UiLanguage.T("OptionsPluginsUserControl.EmbeddedSource", "Embedded") : PathHelper.GetRelativePath(manager.Folder.TrimEnd('\\') + "\\", x.Source, false),
 				Reason = x.Reason ?? string.Join(" ",
 					x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)
 						.Concat(x.TelemetryTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason))
 						.Concat(x.GameTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason))),
 			}).ToArray();
+		}
+
+		static string SwitchedOffDeviceName(string name)
+		{
+			return string.Format(UiLanguage.T("OptionsPluginsUserControl.SwitchedOffDeviceName", "{0} (switched off)"), name);
 		}
 
 		/// <summary>Lets the scripts' note wrap at the width its group has, so the group is as tall as the wrapped note needs.</summary>
@@ -151,7 +171,7 @@ namespace x360ce.App.Controls
 				return;
 			}
 			var rows = PluginsDataGridView.DataSource as PluginRow[];
-			if (rows != null && e.RowIndex < rows.Length && rows[e.RowIndex].State == "Failed")
+			if (rows != null && e.RowIndex < rows.Length && rows[e.RowIndex].FileState == PluginFileState.Failed)
 				e.Cancel = true;
 		}
 

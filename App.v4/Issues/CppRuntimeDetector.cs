@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using Microsoft.Win32;
 using System;
 using System.Linq;
@@ -26,6 +27,12 @@ namespace x360ce.App.Issues
 		/// <summary>Microsoft's guide for a Visual C++ Redistributable that will not install.</summary>
 		public const string TroubleshootUrl = "https://learn.microsoft.com/cpp/windows/troubleshoot-vc-redistributable-installation-issues";
 
+		/// <summary>The runtime name displayed on the Issues tab for the given architecture.</summary>
+		internal static string DisplayName(string architecture)
+		{
+			return string.Format(UiLanguage.T("CppRuntimeDetector.DisplayName", "Microsoft Visual C++ v14 Redistributable ({0})"), architecture);
+		}
+
 		/// <summary>What the Issues tab says about the runtime, given what its installer last answered.</summary>
 		/// <param name="exitCode">The installer's last exit code; null when it has not run.</param>
 		/// <param name="installed">Whether the runtime is detected now.</param>
@@ -49,7 +56,7 @@ namespace x360ce.App.Issues
 				return IssueSeverity.None;
 			if (!exitCode.HasValue)
 			{
-				description = "Install " + program;
+				description = string.Format(UiLanguage.T("CppRuntimeDetector.Install", "Install {0}"), program);
 				return IssueSeverity.Critical;
 			}
 			var code = exitCode.Value;
@@ -59,31 +66,29 @@ namespace x360ce.App.Issues
 			switch (code)
 			{
 				case -1:
-					description = "The " + program + " installer did not start, because administrator permission was refused. Install again and allow it.";
+					description = string.Format(UiLanguage.T("CppRuntimeDetector.PermissionRefused", "The {0} installer did not start, because administrator permission was refused. Install again and allow it."), program);
 					return IssueSeverity.Critical;
 				case 0:
-					description = "The " + program + " installer finished, but the runtime is still not found. Restart Windows, then check again.";
+					description = string.Format(UiLanguage.T("CppRuntimeDetector.StillNotFound", "The {0} installer finished, but the runtime is still not found. Restart Windows, then check again."), program);
 					return IssueSeverity.Critical;
 				case 1223:
 				case 1602:
-					description = "Installing " + program + " was cancelled.";
+					description = string.Format(UiLanguage.T("CppRuntimeDetector.Cancelled", "Installing {0} was cancelled."), program);
 					return IssueSeverity.Critical;
 				case 1618:
-					description = "Another installation is running. Wait for it to finish, then install " + program + " again.";
+					description = string.Format(UiLanguage.T("CppRuntimeDetector.AnotherInstallation", "Another installation is running. Wait for it to finish, then install {0} again."), program);
 					return IssueSeverity.Critical;
 				case 1638:
-					description = "The same or a newer " + program + " is already registered, but it is not found. " +
-						"Remove every Microsoft Visual C++ v14 Redistributable in Windows Settings > Apps, restart Windows, " +
-						"then install again. More... opens Microsoft’s troubleshooting guide.";
+					description = string.Format(UiLanguage.T("CppRuntimeDetector.AlreadyRegistered", "The same or a newer {0} is already registered, but it is not found. Remove every Microsoft Visual C++ v14 Redistributable in Windows Settings > Apps, restart Windows, then install again. More... opens Microsoft’s troubleshooting guide."), program);
 					troubleshoot = true;
 					return IssueSeverity.Moderate;
 				case 3010:
-					description = "Restart Windows to finish installing " + program + ".";
+					description = string.Format(UiLanguage.T("CppRuntimeDetector.RestartToFinish", "Restart Windows to finish installing {0}."), program);
 					return IssueSeverity.Critical;
 				default:
 					// A result that is not a Windows error is read in hexadecimal, the form Microsoft's guide uses.
 					var shown = code < 0 ? "0x" + code.ToString("X8") : code.ToString();
-					description = string.Format("Installing {0} failed with code {1}. More... opens Microsoft’s troubleshooting guide.", program, shown);
+					description = string.Format(UiLanguage.T("CppRuntimeDetector.Failed", "Installing {0} failed with code {1}. More... opens Microsoft’s troubleshooting guide."), program, shown);
 					troubleshoot = true;
 					return IssueSeverity.Critical;
 			}

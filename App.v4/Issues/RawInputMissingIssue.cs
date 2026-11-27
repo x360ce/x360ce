@@ -30,9 +30,14 @@ namespace x360ce.App.Issues
 	{
 		public RawInputMissingIssue() : base()
 		{
+			FixNeedsAdmin = true;
+		}
+
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
 			Name = UiLanguage.T("RawInputMissingIssue.GamesCannotSeeController", "Games Cannot See Controller");
 			FixName = UiLanguage.T("RawInputMissingIssue.RestartController", "Restart Controller");
-			FixNeedsAdmin = true;
 		}
 
 		/// <summary>The controllers found missing on the round before, by instance.</summary>
@@ -134,7 +139,7 @@ namespace x360ce.App.Issues
 			using (var devices = new ElevatedDevices())
 			{
 				done = devices.Switch(false, ids, out error) && devices.Switch(true, ids, out error);
-				_lastFixResult = done ? null : "The restart did not finish: " + error;
+				_lastFixResult = done ? null : string.Format(UiLanguage.T("RawInputMissingIssue.RestartNotFinished", "The restart did not finish: {0}"), error);
 			}
 			// Restarted controllers come back as new arrivals, which the device list reads as for any controller plugged in.
 			// A failed restart keeps them named, so the next round shows why it failed.

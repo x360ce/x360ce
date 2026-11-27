@@ -19,7 +19,8 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	public class XboxDirectInputIssue : IssueItem
 	{
-		public XboxDirectInputIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
 			Name = UiLanguage.T("XboxDirectInputIssue.XboxControllerThroughDirectInput", "Xbox Controller Through DirectInput");
 			FixName = UiLanguage.T("XboxDirectInputIssue.UseRawInput", "Use Raw Input");
@@ -67,11 +68,9 @@ namespace x360ce.App.Issues
 				Attributes.GetDescription((MapTo)x.Setting.MapTo),
 				string.IsNullOrEmpty(x.RawInput.ProductName) ? x.RawInput.InstanceName : x.RawInput.ProductName)).ToArray();
 			SetSeverity(IssueSeverity.Moderate, 0,
-				"Windows lets only the program in front read an Xbox controller through DirectInput, so "
-				+ (moves.Length == 1 ? "this controller works here and stops" : "these controllers work here and stop")
-				+ " once a game is in front. Use Raw Input moves "
-				+ (moves.Length == 1 ? "it to its Raw Input row" : "each to its Raw Input row")
-				+ ", which keeps working, with the same settings."
+				(moves.Length == 1
+					? UiLanguage.T("XboxDirectInputIssue.OneStops", "Windows lets only the foreground program read this controller through DirectInput. Use Raw Input moves its mapping to Raw Input so it still works in the game with the same settings.")
+					: UiLanguage.T("XboxDirectInputIssue.ManyStop", "Windows lets only the foreground program read these controllers through DirectInput. Use Raw Input moves their mappings to Raw Input so they still work in the game with the same settings."))
 				+ Environment.NewLine + Environment.NewLine + string.Join(Environment.NewLine, named));
 		}
 

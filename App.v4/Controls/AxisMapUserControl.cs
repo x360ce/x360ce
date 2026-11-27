@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Threading;
 using SharpDX.XInput;
@@ -41,9 +42,20 @@ namespace x360ce.App.Controls
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			PresetComboBox.FormattingEnabled = true;
+			PresetComboBox.Format += (sender, e) =>
+				e.Value = (e.ListItem as Preset)?.ToString() ?? UiLanguage.T("AxisMapUserControl.ApplyPreset", "Apply Preset");
 			PresetComboBox.Items.AddRange(Presets);
 			PresetComboBox.SelectedIndex = 0;
 			RefreshBackgroundImageAsync();
+			EventHandler languageChanged = (sender, e) =>
+			{
+				UiLanguage.Relist(PresetComboBox);
+				UpdateHeader();
+				RefreshBackgroundImageAsync();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (sender, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		void deadzoneLink_ValueChanged(object sender, EventArgs e)
@@ -119,7 +131,16 @@ namespace x360ce.App.Controls
 		{
 			if (_HeaderText == null)
 				_HeaderText = MainGroupBox.Text;
-			MainGroupBox.Text = _TuningEnabled ? _HeaderText : _HeaderText + " (settings only for a mapped axis or slider)";
+			var header = _HeaderText;
+			switch (header)
+			{
+				case "Left Trigger": header = UiLanguage.T("AxisMapUserControl.LeftTrigger", "Left Trigger"); break;
+				case "Right Trigger": header = UiLanguage.T("AxisMapUserControl.RightTrigger", "Right Trigger"); break;
+				case "X - Horizontal Axis": header = UiLanguage.T("AxisMapUserControl.HorizontalAxis", "X - Horizontal Axis"); break;
+				case "Y - Vertical Axis": header = UiLanguage.T("AxisMapUserControl.VerticalAxis", "Y - Vertical Axis"); break;
+			}
+			MainGroupBox.Text = _TuningEnabled ? header : string.Format(UiLanguage.T("AxisMapUserControl.TuningUnavailable",
+				"{0} (settings only for a mapped axis or slider)"), header);
 		}
 
 		TargetType _TargetType;
@@ -166,8 +187,8 @@ namespace x360ce.App.Controls
 			var param = (int)SensitivityTrackBar.Value;
 			updateTimer.DoActionNow(param);
 			SensitivityNoteLabel.Text = SensitivityCheckBox.Checked
-				? "Make more sensitive in the center"
-				: "Make less sensitive in the center";
+				? UiLanguage.T("AxisMapUserControl.MoreSensitive", "Make more sensitive in the center")
+				: UiLanguage.T("AxisMapUserControl.LessSensitive", "Make less sensitive in the center");
 		}
 
 		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)
@@ -579,34 +600,40 @@ namespace x360ce.App.Controls
 		/// <summary>A ready-made dead zone, anti-dead zone and sensitivity, each in percent.</summary>
 		sealed class Preset
 		{
-			public Preset(string name, int deadZone, int antiDeadZone, int sensitivity)
+			public Preset(int deadZone, int antiDeadZone, int sensitivity)
 			{
-				Name = name;
 				DeadZone = deadZone;
 				AntiDeadZone = antiDeadZone;
 				Sensitivity = sensitivity;
 			}
 
-			public readonly string Name;
 			public readonly int DeadZone;
 			public readonly int AntiDeadZone;
 			public readonly int Sensitivity;
 
-			public override string ToString() => Name;
+			public override string ToString()
+			{
+				if (DeadZone > 0)
+					return string.Format(UiLanguage.T("AxisMapUserControl.DeadZoneAndAntiDeadZone",
+						"{0}% DeadZone, {1}% Controller Anti-DeadZone"), DeadZone, AntiDeadZone);
+				if (AntiDeadZone > 0)
+					return string.Format(UiLanguage.T("AxisMapUserControl.AntiDeadZone", "{0}% Controller Anti-DeadZone"), AntiDeadZone);
+				return UiLanguage.T("AxisMapUserControl.ClearPreset", "Clear");
+			}
 		}
 
 		/// <summary>The list's own name, then the presets: picking one applies it, and the list shows its name again.</summary>
 		static readonly object[] Presets =
 		{
-			"Apply Preset",
-			new Preset("Clear", 0, 0, 0),
-			new Preset("5% DeadZone, 100% Controller Anti-DeadZone", 5, 100, 0),
-			new Preset("1% DeadZone, 100% Controller Anti-DeadZone", 1, 100, 0),
-			new Preset("100% Controller Anti-DeadZone", 0, 100, 0),
-			new Preset("80% Controller Anti-DeadZone", 0, 80, 0),
-			new Preset("60% Controller Anti-DeadZone", 0, 60, 0),
-			new Preset("40% Controller Anti-DeadZone", 0, 40, 0),
-			new Preset("20% Controller Anti-DeadZone", 0, 20, 0),
+			string.Empty,
+			new Preset(0, 0, 0),
+			new Preset(5, 100, 0),
+			new Preset(1, 100, 0),
+			new Preset(0, 100, 0),
+			new Preset(0, 80, 0),
+			new Preset(0, 60, 0),
+			new Preset(0, 40, 0),
+			new Preset(0, 20, 0),
 		};
 
 		private void PresetComboBox_SelectedIndexChanged(object sender, EventArgs e)

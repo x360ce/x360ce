@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Mail;
 using JocysCom.ClassLibrary.Threading;
 using System;
@@ -71,9 +72,9 @@ namespace x360ce.App
 			{
 				var o = SettingsManager.Options;
 				if (!o.InternetFeatures)
-					return "The cloud is off: tick Enable Internet Features on the Options tab’s Internet page.";
+					return UiLanguage.T("CloudClient.EnableInternetFeatures", "The cloud is off: tick Enable Internet Features on the Options tab’s Internet page.");
 				if (!o.InternetAutoSave)
-					return "The cloud is off: tick Save Settings to Cloud on the Options tab’s Internet page.";
+					return UiLanguage.T("CloudClient.EnableSaveToCloud", "The cloud is off: tick Save Settings to Cloud on the Options tab’s Internet page.");
 				return null;
 			}
 		}

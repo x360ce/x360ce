@@ -1,8 +1,10 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -38,11 +40,20 @@ namespace x360ce.App.Controls
 			ResumeLayout(false);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			Disposed += (s, e) => WatchForm(null);
+			EventHandler languageChanged = (s, e) => ShowWords();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) =>
+			{
+				UiLanguage.Changed -= languageChanged;
+				WatchForm(null);
+			};
+			UpdatePlayButton();
 		}
 
-		const string PlayText = "Play";
-		const string StopText = "Stop";
+		void UpdatePlayButton()
+		{
+			PlayButton.Text = _playing ? UiLanguage.T("MouseDemoUserControl.Stop", "Stop") : UiLanguage.T("MouseDemoUserControl.Play", "Play");
+		}
 
 		#region The scripts
 
@@ -55,19 +66,20 @@ namespace x360ce.App.Controls
 		/// </summary>
 		public sealed class Phase
 		{
-			public Phase(double seconds, double x, double y, bool pressed, string text)
+			public Phase(double seconds, double x, double y, bool pressed, Func<string> text)
 			{
 				Seconds = seconds;
 				X = x;
 				Y = y;
 				Pressed = pressed;
-				Text = text;
+				_text = text;
 			}
 
+			readonly Func<string> _text;
 			public readonly double Seconds;
 			public readonly double X, Y;
 			public readonly bool Pressed;
-			public readonly string Text;
+			public string Text { get { return _text(); } }
 		}
 
 		/// <summary>A style's script: where its mouse starts, and its steps.</summary>
@@ -116,38 +128,38 @@ namespace x360ce.App.Controls
 
 		/// <summary>Speed: the stick tilts while the mouse moves, and is back at the centre while the mouse rests away from where it started.</summary>
 		static readonly DemoScript SpeedScript = new DemoScript(0, 0,
-			new Phase(1.0, 0, 0, false, "Mouse rests: stick at the centre"),
-			new Phase(1.2, 0.6, 0, false, "Mouse moves right: stick tilts right"),
-			new Phase(1.5, 0.6, 0, false, "Mouse stops: stick returns to the centre"),
-			new Phase(1.2, -0.2, 0, false, "Mouse moves left: stick tilts left"),
-			new Phase(1.5, -0.2, 0, false, "Mouse stops: stick returns to the centre"));
+			new Phase(1.0, 0, 0, false, () => UiLanguage.T("MouseDemoUserControl.MouseRests", "Mouse rests: stick at the centre")),
+			new Phase(1.2, 0.6, 0, false, () => UiLanguage.T("MouseDemoUserControl.MouseMovesRight", "Mouse moves right: stick tilts right")),
+			new Phase(1.5, 0.6, 0, false, () => UiLanguage.T("MouseDemoUserControl.StickReturns", "Mouse stops: stick returns to the centre")),
+			new Phase(1.2, -0.2, 0, false, () => UiLanguage.T("MouseDemoUserControl.MouseMovesLeft", "Mouse moves left: stick tilts left")),
+			new Phase(1.5, -0.2, 0, false, () => UiLanguage.T("MouseDemoUserControl.StickReturns", "Mouse stops: stick returns to the centre")));
 
 		/// <summary>Position: the stick follows how far the mouse has moved from where it started, stays while the mouse rests, and comes back with it.</summary>
 		static readonly DemoScript PositionScript = new DemoScript(0, 0,
-			new Phase(1.0, 0, 0, false, "Mouse rests: stick at the centre"),
-			new Phase(1.2, 0.6, -0.4, false, "Mouse moves: stick follows"),
-			new Phase(1.5, 0.6, -0.4, false, "Mouse stops: stick stays"),
-			new Phase(1.35, 0, 0, false, "Mouse moves back: stick comes back"),
-			new Phase(1.0, 0, 0, false, "Mouse rests: stick at the centre"));
+			new Phase(1.0, 0, 0, false, () => UiLanguage.T("MouseDemoUserControl.MouseRests", "Mouse rests: stick at the centre")),
+			new Phase(1.2, 0.6, -0.4, false, () => UiLanguage.T("MouseDemoUserControl.StickFollowsMouse", "Mouse moves: stick follows")),
+			new Phase(1.5, 0.6, -0.4, false, () => UiLanguage.T("MouseDemoUserControl.StickStays", "Mouse stops: stick stays")),
+			new Phase(1.35, 0, 0, false, () => UiLanguage.T("MouseDemoUserControl.StickFollowsMouseBack", "Mouse moves back: stick comes back")),
+			new Phase(1.0, 0, 0, false, () => UiLanguage.T("MouseDemoUserControl.MouseRests", "Mouse rests: stick at the centre")));
 
 		/// <summary>Wheel: held, the stick follows the mouse and stays; let go, it glides back to the centre over Back to centre's time.</summary>
 		static readonly DemoScript WheelScript = new DemoScript(0, 0,
-			new Phase(1.0, 0, 0, false, "Button up: stick at the centre"),
-			new Phase(1.0, 0, 0, true, "Button held"),
-			new Phase(1.2, 0.6, 0, true, "Button held, mouse moves: stick follows"),
-			new Phase(1.5, 0.6, 0, true, "Mouse stops: stick stays while held"),
-			new Phase(2.0, 0.6, 0, false, "Button let go: stick glides back"));
+			new Phase(1.0, 0, 0, false, () => UiLanguage.T("MouseDemoUserControl.ButtonUp", "Button up: stick at the centre")),
+			new Phase(1.0, 0, 0, true, () => UiLanguage.T("MouseDemoUserControl.ButtonHeld", "Button held")),
+			new Phase(1.2, 0.6, 0, true, () => UiLanguage.T("MouseDemoUserControl.StickFollowsMouseWhileHeld", "Button held, mouse moves: stick follows")),
+			new Phase(1.5, 0.6, 0, true, () => UiLanguage.T("MouseDemoUserControl.StickStaysWhileHeld", "Mouse stops: stick stays while held")),
+			new Phase(2.0, 0.6, 0, false, () => UiLanguage.T("MouseDemoUserControl.ButtonReleased", "Button let go: stick glides back")));
 
 		/// <summary>Screen: the stick is where the pointer is from the screen's centre, before the pointer moves, round the centre and through it.</summary>
 		static readonly DemoScript ScreenScript = PointerScript();
 
 		static DemoScript PointerScript()
 		{
-			const string shows = "Stick shows where the pointer is";
+			Func<string> shows = () => UiLanguage.T("MouseDemoUserControl.StickShowsPointer", "Stick shows where the pointer is");
 			var phases = new List<Phase> { new Phase(1.5, 0.5, 0, false, shows) };
 			for (var i = 1; i <= 8; i++)
-				phases.Add(new Phase(0.3, 0.5 * Math.Cos(i * Math.PI / 4), -0.5 * Math.Sin(i * Math.PI / 4), false, "Pointer circles the centre: stick too"));
-			phases.Add(new Phase(1.5, -0.5, 0, false, "Pointer through the centre: stick too"));
+				phases.Add(new Phase(0.3, 0.5 * Math.Cos(i * Math.PI / 4), -0.5 * Math.Sin(i * Math.PI / 4), false, () => UiLanguage.T("MouseDemoUserControl.PointerCirclesCentre", "Pointer circles the centre: stick too")));
+			phases.Add(new Phase(1.5, -0.5, 0, false, () => UiLanguage.T("MouseDemoUserControl.PointerThroughCentre", "Pointer through the centre: stick too")));
 			phases.Add(new Phase(1.5, -0.5, 0, false, shows));
 			return new DemoScript(0.5, 0, phases.ToArray());
 		}
@@ -193,11 +205,11 @@ namespace x360ce.App.Controls
 			if (group == null)
 				return "";
 			if (group.Style == MouseStyle.Wheel && group.Active == MouseActive.Always)
-				return "Active is Always here, so this stick never glides back.";
+				return UiLanguage.T("MouseDemoUserControl.AlwaysActive", "Active is Always here, so this stick never glides back.");
 			if (group.Style == MouseStyle.Wheel && group.Active == MouseActive.HeldStay)
-				return "Active keeps the stick where it was here, so it never glides back.";
+				return UiLanguage.T("MouseDemoUserControl.ActiveKeepsStick", "Active keeps the stick where it was here, so it never glides back.");
 			if (group.Style == MouseStyle.Screen && group.Active != MouseActive.Always)
-				return "Turned on by a button here, it counts from the pointer, not the centre.";
+				return UiLanguage.T("MouseDemoUserControl.PointerWithButton", "Turned on by a button here, it counts from the pointer, not the centre.");
 			return "";
 		}
 
@@ -222,7 +234,9 @@ namespace x360ce.App.Controls
 			public double MouseX, MouseY;
 			public bool Pressed;
 			/// <summary>What happens now, in words.</summary>
-			public string Text = "";
+			public string Text { get { return _phase?.Text ?? ""; } }
+
+			Phase _phase;
 			/// <summary>The stick, as an axis reads: 0 to 65535, the centre in the middle.</summary>
 			public ushort StickX = 32768, StickY = 32768;
 			/// <summary>
@@ -243,7 +257,7 @@ namespace x360ce.App.Controls
 				var fromY = MouseY;
 				var phase = Script.At(seconds, out MouseX, out MouseY);
 				Pressed = phase.Pressed;
-				Text = phase.Text;
+				_phase = phase;
 				var button = Stick.Settings.Button;
 				if (button > 0 && button <= _state.Buttons.Length)
 					_state.Buttons[button - 1] = Pressed;
@@ -350,21 +364,27 @@ namespace x360ce.App.Controls
 				_time = _run.Script.Seconds;
 			for (var frame = 0; frame / FramesPerSecond <= _time; frame++)
 				_run.Step(frame / FramesPerSecond);
-			ControlsHelper.SetText(PhaseLabel, _run.Text);
+			ShowWords();
+			DemoPictureBox.Invalidate();
+		}
+
+		void ShowWords()
+		{
+			UpdatePlayButton();
+			ControlsHelper.SetText(PhaseLabel, _run?.Text ?? "");
+			var group = _source?.ReadSettings();
 			var note = NoteFor(group);
 			ControlsHelper.SetText(NoteLabel, note);
 			if (NoteLabel.Visible != (note.Length > 0))
 				NoteLabel.Visible = note.Length > 0;
-			if (_source != null)
+			if (group != null)
 			{
-				// The Style list's words: the style's name, then what it does.
-				var text = _source.StyleText ?? "";
-				var colon = text.IndexOf(':');
-				ControlsHelper.SetText(CaptionLabel, _source.StickName + ": " + (colon < 0 ? text : text.Substring(0, colon)));
-				var what = colon < 0 ? "" : text.Substring(colon + 1).Trim();
-				ControlsHelper.SetText(DescriptionLabel, what.Length == 0 ? "" : char.ToUpperInvariant(what[0]) + what.Substring(1) + ".");
+				ControlsHelper.SetText(CaptionLabel, string.Format(UiLanguage.T("MouseDemoUserControl.StyleCaption", "{0}: {1}"),
+					_source.StickName, MouseStickUserControl.StyleName(group.Style)));
+				var what = MouseStickUserControl.StyleExplanation(group.Style);
+				var culture = CultureInfo.GetCultureInfo(UiLanguage.Culture);
+				ControlsHelper.SetText(DescriptionLabel, char.ToUpper(what[0], culture) + what.Substring(1) + ".");
 			}
-			DemoPictureBox.Invalidate();
 		}
 
 		void PlayButton_Click(object sender, EventArgs e)
@@ -377,7 +397,6 @@ namespace x360ce.App.Controls
 		{
 			_playing = playing;
 			_time = 0;
-			PlayButton.Text = playing ? StopText : PlayText;
 			Restart();
 			UpdateTimer();
 		}
@@ -450,7 +469,7 @@ namespace x360ce.App.Controls
 			{
 				// Played through: it rests on the last moment.
 				_playing = false;
-				PlayButton.Text = PlayText;
+				UpdatePlayButton();
 				UpdateTimer();
 			}
 			DemoPictureBox.Invalidate();

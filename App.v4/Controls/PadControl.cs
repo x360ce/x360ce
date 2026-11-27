@@ -117,7 +117,19 @@ namespace x360ce.App.Controls
 			EventHandler languageChanged = (s, e) =>
 			{
 				RemapAllButton.Texts = RemapTexts();
-				UiLanguage.Relist(ForceTypeComboBox, LeftMotorDirectionComboBox, RightMotorDirectionComboBox);
+				UiLanguage.Relist(ForceTypeComboBox, LeftMotorDirectionComboBox, RightMotorDirectionComboBox, WheelRangeComboBox, ForceSpringCarComboBox);
+				// The texts written once, or only when what they say changes, are written again in the new words. The mapping
+				// menu is made again with the next update, and the Force Source box is worked out again.
+				UpdateWheelTooltips();
+				UpdateForceFeedbackTitle();
+				UpdateEffectDescription();
+				UpdateDirectInputTabPage(GetSelectedDevice());
+				MappedDevicesDataGridView.Invalidate();
+				XboxImage.Invalidate();
+				_InstanceGuid = Guid.Empty;
+				forceSourceRouting = null;
+				UpdateForceSource();
+				MappedDevicesDataGridView.Invalidate();
 				// The pages and the buttons below them ask for other heights in other words: the device list takes what is left again.
 				PadTableLayoutPanel.PerformLayout();
 			};
@@ -350,7 +362,7 @@ namespace x360ce.App.Controls
 						if (RecordAllMaps.Count == 0)
 						{
 							if (ud.SourceState != null)
-								XboxImage.SetHelpText(XboxImage.MappingDone);
+								XboxImage.SetHelpText(mappingDone: true);
 							else
 								XboxImage.SetHelpText("");
 							UiLanguage.SetText(RemapAllButton, "Text", RemapName);
@@ -728,6 +740,22 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		/// <summary>A range on the Wheel range list as the list shows it, in the language chosen: the degrees and the cars they suit.</summary>
+		/// <param name="range">The range lock to lock, or nought to leave the wheel as it is.</param>
+		static string WheelRangeText(int range)
+		{
+			switch (range)
+			{
+				case RoadCarRange: return UiLanguage.T("PadControl.WheelRange900", "900° - Road and sports cars");
+				case 720: return UiLanguage.T("PadControl.WheelRange720", "720° - Drift and rally cars");
+				case 540: return UiLanguage.T("PadControl.WheelRange540", "540° - GT and WRC cars");
+				case 360: return UiLanguage.T("PadControl.WheelRange360", "360° - Formula cars");
+				case 270: return UiLanguage.T("PadControl.WheelRange270", "270° - Arcade");
+				case 200: return UiLanguage.T("PadControl.WheelRange200", "200° - As powered up");
+				default: return UiLanguage.T("PadControl.WheelRangeLeave", "Leave as it is (spring off)");
+			}
+		}
+
 		public bool StopRecording()
 		{
 			RecordAllMaps.Clear();
@@ -768,8 +796,8 @@ namespace x360ce.App.Controls
 			var helpText =
 				SettingsConverter.ThumbDirections.Contains(map.Code) ||
 				SettingsConverter.TriggerButtonCodes.Contains(map.Code)
-					? "Move Axis"
-					: "Press Button";
+					? UiLanguage.T("PadControl.MoveAxis", "Move Axis")
+					: UiLanguage.T("PadControl.PressButton", "Press Button");
 			XboxImage.SetHelpText(helpText);
 			RemapAllButton.Text = RemapStopText;
 		}
@@ -995,13 +1023,10 @@ namespace x360ce.App.Controls
 			// The centering spring needs a range, so the first choice is for a wheel without it.
 			WheelRangeComboBox.DisplayMember = nameof(KeyValuePair.Key);
 			WheelRangeComboBox.ValueMember = nameof(KeyValuePair.Value);
-			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is (spring off)", "0"));
-			WheelRangeComboBox.Items.Add(new KeyValuePair("900° - Road and sports cars", "900"));
-			WheelRangeComboBox.Items.Add(new KeyValuePair("720° - Drift and rally cars", "720"));
-			WheelRangeComboBox.Items.Add(new KeyValuePair("540° - GT and WRC cars", "540"));
-			WheelRangeComboBox.Items.Add(new KeyValuePair("360° - Formula cars", "360"));
-			WheelRangeComboBox.Items.Add(new KeyValuePair("270° - Arcade", "270"));
-			WheelRangeComboBox.Items.Add(new KeyValuePair("200° - As powered up", "200"));
+			// Each item keeps its English, and the list words it in the language chosen.
+			foreach (var range in new[] { 0, RoadCarRange, 720, 540, 360, 270, 200 })
+				WheelRangeComboBox.Items.Add(new KeyValuePair(UiLanguage.InSource(() => WheelRangeText(range)), range.ToString()));
+			WheelRangeComboBox.Format += (s, e) => e.Value = WheelRangeText(int.Parse(((KeyValuePair)e.ListItem).Value));
 			// The cars the Car list offers, then Custom for values that match none of them.
 			ForceSpringCarComboBox.Items.AddRange(SpringCars);
 			ForceSpringCarComboBox.Items.Add(CustomSpringCar);
@@ -2110,11 +2135,15 @@ namespace x360ce.App.Controls
 		/// <remarks>A Raw Input device has no DirectInput device; its state is the one the engine reads it into.</remarks>
 		public static string DirectInputTabTitle(UserDevice diDevice)
 		{
-			var isOnline = diDevice != null && diDevice.IsOnline;
-			var hasState = isOnline && (diDevice.IsDirectInput ? diDevice.Device != null : diDevice.SourceState != null);
-			var source = diDevice != null && !diDevice.IsDirectInput ? AppHelper.GetInputSourceName(diDevice) : "Direct Input";
-			var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
-			return source + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
+			if (diDevice == null)
+				return UiLanguage.T("PadControl.NoDirectInputDevice", "Direct Input - Offline");
+			var source = diDevice.IsDirectInput
+				? UiLanguage.T("PadControl.DirectInput", "Direct Input") : AppHelper.GetInputSourceName(diDevice);
+			var hasState = diDevice.IsDirectInput ? diDevice.Device != null : diDevice.SourceState != null;
+			var format = !diDevice.IsOnline
+				? UiLanguage.T("PadControl.InputOffline", "{0} - {1} - Offline")
+				: hasState ? UiLanguage.T("PadControl.InputActive", "{0} - {1}") : UiLanguage.T("PadControl.InputOnline", "{0} - {1} - Online");
+			return string.Format(format, source, diDevice.InstanceId);
 		}
 
 		#endregion
@@ -2169,17 +2198,17 @@ namespace x360ce.App.Controls
 			adjust.DropDownItems.Add(mi);
 			// [Recentre] makes where the box's axis rests now read as its middle.
 			mi = new ToolStripMenuItem(cRecentre);
-			mi.ToolTipText = "Leave the stick at rest, then pick this: where it rests now reads as the middle.";
+			mi.ToolTipText = UiLanguage.T("PadControl.RecentreHint", "Leave the stick at rest, then pick this: where it rests now reads as the middle.");
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			adjust.DropDownItems.Add(mi);
 			// [Round Dead Zone] gives the stick one dead zone for both of its axes, a circle round its middle.
 			mi = new ToolStripMenuItem(cRoundDeadZone);
-			mi.ToolTipText = "On a stick’s X or Y box: the stick reads nothing inside a circle round its middle, in every direction.";
+			mi.ToolTipText = UiLanguage.T("PadControl.RoundDeadZoneHint", "On a stick’s X or Y box: the stick reads nothing inside a circle round its middle, in every direction.");
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			adjust.DropDownItems.Add(mi);
 			// [Turbo] makes the box's button press ten times a second while it is held.
 			mi = new ToolStripMenuItem(cTurbo);
-			mi.ToolTipText = "On a box mapped to a button: while the button is held, it presses ten times a second.";
+			mi.ToolTipText = UiLanguage.T("PadControl.TurboHint", "On a box mapped to a button: while the button is held, it presses ten times a second.");
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			adjust.DropDownItems.Add(mi);
 			// Do not add menu items for keyboard, because user interface will become too sluggish.
@@ -2187,29 +2216,29 @@ namespace x360ce.App.Controls
 			if (!ud.IsKeyboard)
 			{
 				// Add Buttons.
-				mi = new ToolStripMenuItem("Buttons");
+				mi = new ToolStripMenuItem(UiLanguage.T("PadControl.MappingMenuButtons", "Buttons"));
 				DiMenuStrip.Items.Add(mi);
-				CreateItems(mi, "Inverted", "IButton {0}", "-{0}", ud.CapButtonCount);
+				CreateItems(mi, UiLanguage.T("PadControl.MappingMenuInverted", "Inverted"), "IButton {0}", "-{0}", ud.CapButtonCount);
 				CreateItems(mi, "Button {0}", "{0}", ud.CapButtonCount);
 				if (ud.DiAxeMask > 0)
 				{
 					// Add Axes.
-					mi = new ToolStripMenuItem("Axes");
+					mi = new ToolStripMenuItem(UiLanguage.T("PadControl.MappingMenuAxes", "Axes"));
 					DiMenuStrip.Items.Add(mi);
-					CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", SourceState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", SourceState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Half", "HAxis {0}", "x{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, UiLanguage.T("PadControl.MappingMenuInverted", "Inverted"), "IAxis {0}", "a-{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, UiLanguage.T("PadControl.MappingMenuInvertedHalf", "Inverted Half"), "IHAxis {0}", "x-{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, UiLanguage.T("PadControl.MappingMenuHalf", "Half"), "HAxis {0}", "x{0}", SourceState.MaxAxis, ud.DiAxeMask);
 					CreateItems(mi, "Axis {0}", "a{0}", SourceState.MaxAxis, ud.DiAxeMask);
 				}
 				if (ud.DiSliderMask > 0)
 				{
 					// Add Sliders.            
-					mi = new ToolStripMenuItem("Sliders");
+					mi = new ToolStripMenuItem(UiLanguage.T("PadControl.MappingMenuSliders", "Sliders"));
 					DiMenuStrip.Items.Add(mi);
 					// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
-					CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", SourceState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", SourceState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Half", "HSlider {0}", "h{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, UiLanguage.T("PadControl.MappingMenuInverted", "Inverted"), "ISlider {0}", "s-{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, UiLanguage.T("PadControl.MappingMenuInvertedHalf", "Inverted Half"), "IHSlider {0}", "h-{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, UiLanguage.T("PadControl.MappingMenuHalf", "Half"), "HSlider {0}", "h{0}", SourceState.MaxSliders, ud.DiSliderMask);
 					CreateItems(mi, "Slider {0}", "s{0}", SourceState.MaxSliders, ud.DiSliderMask);
 				}
 				// Add D-Pads.
@@ -2334,8 +2363,8 @@ namespace x360ce.App.Controls
 					if (recentred != null)
 						SettingsManager.Current.SetComboBoxValue(cbx, recentred);
 					MainForm.Current.StatusTimerLabel.Text = recentred == null
-						? "[Recentre] works on a box mapped to an axis of a connected device."
-						: "Recentred: where the stick rests now reads as the middle (" + recentred + ").";
+						? UiLanguage.T("PadControl.RecentreNeedsAxis", "[Recentre] works on a box mapped to an axis of a connected device.")
+						: string.Format(UiLanguage.T("PadControl.Recentred", "Recentred: where the stick rests now reads as the middle ({0})."), recentred);
 					CurrentCbx = null;
 				}
 				else if (item.Text == cRoundDeadZone)
@@ -2350,8 +2379,8 @@ namespace x360ce.App.Controls
 						SettingsManager.Current.SetComboBoxValue(stick.Item2, texts[1]);
 					}
 					MainForm.Current.StatusTimerLabel.Text = texts == null
-						? "[Round Dead Zone] works on a stick’s X or Y box, with both boxes mapped to axes."
-						: string.Format("Round dead zone: the stick reads nothing within {0:0} % of its middle, in every direction.", size * 100);
+						? UiLanguage.T("PadControl.RoundDeadZoneNeedsAxes", "[Round Dead Zone] works on a stick’s X or Y box, with both boxes mapped to axes.")
+						: string.Format(UiLanguage.T("PadControl.RoundDeadZoneSet", "Round dead zone: the stick reads nothing within {0:0} % of its middle, in every direction."), size * 100);
 					CurrentCbx = null;
 				}
 				else if (item.Text == cTurbo)
@@ -2360,8 +2389,8 @@ namespace x360ce.App.Controls
 					if (turbo != null)
 						SettingsManager.Current.SetComboBoxValue(cbx, turbo);
 					MainForm.Current.StatusTimerLabel.Text = turbo == null
-						? "[Turbo] works on a box mapped to a button, such as Button 1."
-						: "Turbo: while the button is held, it presses ten times a second (" + turbo + ").";
+						? UiLanguage.T("PadControl.TurboNeedsButton", "[Turbo] works on a box mapped to a button, such as Button 1.")
+						: string.Format(UiLanguage.T("PadControl.TurboSet", "Turbo: while the button is held, it presses ten times a second ({0})."), turbo);
 					CurrentCbx = null;
 				}
 				else if (item.Text == cEmpty)
@@ -2577,9 +2606,9 @@ namespace x360ce.App.Controls
 		/// <remarks>Neither Strength nor Friction is among them: Friction is the wheel's, which Auto measures, and Strength is left as it is.</remarks>
 		public class SpringCar
 		{
-			public SpringCar(string name, int centre, int peak, int lightening, int damping, int speed, int range)
+			public SpringCar(Func<string> name, int centre, int peak, int lightening, int damping, int speed, int range)
 			{
-				Name = name;
+				_name = name;
 				Centre = centre;
 				Peak = peak;
 				Lightening = lightening;
@@ -2588,8 +2617,10 @@ namespace x360ce.App.Controls
 				Range = range;
 			}
 
-			/// <summary>The kind of car, its speed, and what its values are based on.</summary>
-			public readonly string Name;
+			readonly Func<string> _name;
+
+			/// <summary>The kind of car, its speed, and what its values are based on, in the language chosen.</summary>
+			public string Name { get { return _name(); } }
 			public readonly int Centre;
 			public readonly int Peak;
 			public readonly int Lightening;
@@ -2614,11 +2645,11 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		public static readonly SpringCar[] SpringCars =
 		{
-			new SpringCar("Family car, 100 km/h (ISO 13674-1 weave test, measured)", 12, 60, 40, 5, 100, RoadCarRange),
-			new SpringCar("Family car in town, 40 km/h (same car, slower)", 12, 60, 40, 5, 40, RoadCarRange),
-			new SpringCar("Parking (same car, 10 km/h)", 12, 60, 40, 0, 10, RoadCarRange),
-			new SpringCar("Sports car, 100 km/h (estimate, firm end of the ISO 13674-1 range)", 8, 40, 30, 5, 100, RoadCarRange),
-			new SpringCar("Heavy van, 80 km/h (estimate, slow end of the ISO 13674-1 range)", 30, 120, 50, 10, 80, RoadCarRange),
+			new SpringCar(() => UiLanguage.T("PadControl.SpringCarFamily", "Family car, 100 km/h (ISO 13674-1 weave test, measured)"), 12, 60, 40, 5, 100, RoadCarRange),
+			new SpringCar(() => UiLanguage.T("PadControl.SpringCarFamilyInTown", "Family car in town, 40 km/h (same car, slower)"), 12, 60, 40, 5, 40, RoadCarRange),
+			new SpringCar(() => UiLanguage.T("PadControl.SpringCarParking", "Parking (same car, 10 km/h)"), 12, 60, 40, 0, 10, RoadCarRange),
+			new SpringCar(() => UiLanguage.T("PadControl.SpringCarSports", "Sports car, 100 km/h (estimate, firm end of the ISO 13674-1 range)"), 8, 40, 30, 5, 100, RoadCarRange),
+			new SpringCar(() => UiLanguage.T("PadControl.SpringCarHeavyVan", "Heavy van, 80 km/h (estimate, slow end of the ISO 13674-1 range)"), 30, 120, 50, 10, 80, RoadCarRange),
 		};
 
 		/// <summary>The range of "900° - Road and sports cars" on the Wheel range list.</summary>
@@ -2853,12 +2884,12 @@ namespace x360ce.App.Controls
 		{
 			if (MainToolTip == null)
 				return;
-			MainToolTip.SetToolTip(WheelSoftLockCheckBox,
-				"Enforce the chosen Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of.");
-			MainToolTip.SetToolTip(WheelRgbStripCheckBox,
-				"Drive supported steering wheels’ RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM.");
-			MainToolTip.SetToolTip(WheelRgbTestButton,
-				"Sweeps the RGB/RPM LED strip on screen and on a connected Logitech G27, G29 or G923 wheel.");
+			MainToolTip.SetToolTip(WheelSoftLockCheckBox, UiLanguage.T("PadControl.WheelSoftLockHint",
+				"Enforce the chosen Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of."));
+			MainToolTip.SetToolTip(WheelRgbStripCheckBox, UiLanguage.T("PadControl.WheelRgbStripHint",
+				"Drive supported steering wheels’ RGB/RPM shift LED strip (Logitech G27, G29, G923) from live game telemetry RPM."));
+			MainToolTip.SetToolTip(WheelRgbTestButton, UiLanguage.T("PadControl.WheelRgbTestHint",
+				"Sweeps the RGB/RPM LED strip on screen and on a connected Logitech G27, G29 or G923 wheel."));
 		}
 
 		#region Wheel telemetry plugin UI
@@ -3123,7 +3154,8 @@ namespace x360ce.App.Controls
 				return new Label
 				{
 					AutoSize = true,
-					Text = "The plugin’s controls could not be made: " + inner.GetType().Name + ": " + inner.Message,
+					Text = string.Format(UiLanguage.T("PadControl.PluginControlsNotMade", "The plugin’s controls could not be made: {0}: {1}"),
+						inner.GetType().Name, inner.Message),
 				};
 			}
 		}
@@ -3403,7 +3435,7 @@ namespace x360ce.App.Controls
 			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
 			if (driven == null || driven.DiActuatorCount == 0 || !ForceSpringEnableCheckBox.Checked)
 			{
-				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Centering Spring ticked.";
+				WheelDescriptionLabel.Text = UiLanguage.T("PadControl.AutoNeedsWheel", "Auto needs a connected wheel with force feedback, with Centering Spring ticked.");
 				return;
 			}
 			// The engine drives the run only for a device whose spring the routing takes from this tab. A tab switched
@@ -3411,10 +3443,11 @@ namespace x360ce.App.Controls
 			// never end.
 			if (!SpringFromThisTab(ud))
 			{
-				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, this device ticked in its list and on the Devices page, and no other controller tab’s settings driving it. Otherwise nothing drives the wheel.";
+				WheelDescriptionLabel.Text = UiLanguage.T("PadControl.AutoNeedsThisTab",
+					"Auto needs this controller tab switched on, this device ticked in its list and on the Devices page, and no other controller tab’s settings driving it. Otherwise nothing drives the wheel.");
 				return;
 			}
-			WheelDescriptionLabel.Text = "Hands off the wheel.";
+			WheelDescriptionLabel.Text = UiLanguage.T("PadControl.HandsOffTheWheel", "Hands off the wheel.");
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
 			springAutoDevice = driven;
@@ -3452,9 +3485,12 @@ namespace x360ce.App.Controls
 			if (!springOn)
 				return null;
 			if (route == null)
-				return "The centering spring does nothing now: this controller tab is switched off for the current game, or the wheel is unticked in its list or on the Devices page.";
+				return UiLanguage.T("PadControl.SpringReachesNothing",
+					"The centering spring does nothing now: this controller tab is switched off for the current game, or the wheel is unticked in its list or on the Devices page.");
 			if (route.SettingsPad >= 0 && route.SettingsPad != pad)
-				return string.Format("The centering spring here does nothing: Controller {0} is the lowest enabled controller tab this wheel is on, so its settings drive it. Change the spring there.", route.SettingsPad + 1);
+				return string.Format(UiLanguage.T("PadControl.SpringFromOtherTab",
+					"The centering spring here does nothing: Controller {0} is the lowest enabled controller tab this wheel is on, so its settings drive it. Change the spring there."),
+					route.SettingsPad + 1);
 			return null;
 		}
 
@@ -3470,7 +3506,9 @@ namespace x360ce.App.Controls
 		{
 			if (wheelRange <= 0 || takesRange)
 				return null;
-			return string.Format("x360ce cannot set this wheel’s range: it turns what its own software sets. Set {0}° there, or shorten the steering with a formula in the steering box: =a1*900/270 steers as 270° on a wheel set to 900°.", wheelRange);
+			return string.Format(UiLanguage.T("PadControl.RangeNotSet",
+				"x360ce cannot set this wheel’s range: it turns what its own software sets. Set {0}° there, or shorten the steering with a formula in the steering box: =a1*900/270 steers as 270° on a wheel set to 900°."),
+				wheelRange);
 		}
 
 		/// <summary>Whether the wheel whose motors the engine drives for this device takes a range from x360ce.</summary>
@@ -3497,7 +3535,7 @@ namespace x360ce.App.Controls
 			var ud = GetSelectedDevice();
 			var selectedRange = SelectedWheelRange();
 			var softLockNote = ud != null && SettingsManager.Options.WheelSoftLockEnabled && selectedRange > 0 && !TakesRange(ud)
-				? string.Format("Soft lock holds this wheel at {0}° and scales steering to match.", selectedRange)
+				? string.Format(UiLanguage.T("PadControl.SoftLockHolds", "Soft lock holds this wheel at {0}° and scales steering to match."), selectedRange)
 				: null;
 			var note = ud == null ? null : SpringNote(ForceSpringEnableCheckBox.Checked, (int)MappedTo - 1, ForceRoute(DInput.DeviceRouting.Current, ud))
 				?? softLockNote
@@ -3543,9 +3581,9 @@ namespace x360ce.App.Controls
 			{
 				// Kept with the wheel, for every car; the slider shows it on the next refresh.
 				ud.SetForceSpringFriction(run.Result);
-				WheelDescriptionLabel.Text = string.Format(
+				WheelDescriptionLabel.Text = string.Format(UiLanguage.T("PadControl.FrictionSet",
 					"Friction set to {0} %: the wheel turns at {1} % and {2} % from the two stops, comes home within {3} s at {4} % and {5} %, and a tenth more starts it every time. "
-					+ "Outside the centre the spring never pushes less, so the wheel comes home from any angle, and Strength adds the car’s steering on top.",
+					+ "Outside the centre the spring never pushes less, so the wheel comes home from any angle, and Strength adds the car’s steering on top."),
 					run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
 			}
 			else
@@ -3624,7 +3662,7 @@ namespace x360ce.App.Controls
 		/// <summary>Shows what the motors do and what the presets mean: the Force Feedback help document.</summary>
 		private void MotorInfoButton_Click(object sender, EventArgs e)
 		{
-			HelpForm.Show(this, "Force Feedback: motors and periods", AppHelper.HelpForceFeedbackResource);
+			HelpForm.Show(this, UiLanguage.T("PadControl.MotorsAndPeriodsTitle", "Force Feedback: motors and periods"), AppHelper.HelpForceFeedbackResource);
 		}
 
 		/// <summary>Puts every setting on the Force Feedback page back to its default.</summary>
@@ -3836,7 +3874,7 @@ namespace x360ce.App.Controls
 		void SdlPanel_CopyClicked(object sender, EventArgs e)
 		{
 			SettingsManager.CopyPresetToClipboard(GetSelectedPadSetting(), SettingsManager.PresetFormat.Sdl, GetSelectedDevice());
-			MainForm.Current.StatusTimerLabel.Text = "Copied this controller’s mapping as a row of SDL’s controller database.";
+			MainForm.Current.StatusTimerLabel.Text = UiLanguage.T("PadControl.CopiedAsSdlRow", "Copied this controller’s mapping as a row of SDL’s controller database.");
 		}
 
 		#endregion
@@ -4049,10 +4087,11 @@ namespace x360ce.App.Controls
 				return devices;
 			var names = string.Join(", ", devices.Where((x, i) => twins[i] != null)
 				.Select(x => string.IsNullOrEmpty(x.ProductName) ? x.InstanceName : x.ProductName).Distinct());
-			var answer = AskRawInput(string.Format("Add {0} through Raw Input instead?", names),
-				"Windows lets only the program in front read an Xbox controller through DirectInput, so it stops working once a game is in front. Raw Input keeps working." + Environment.NewLine
-				+ "Use Raw Input - add the controller’s Raw Input row." + Environment.NewLine
-				+ "Add DirectInput - add the row picked, which works only while x360ce is in front.");
+			var answer = AskRawInput(string.Format(UiLanguage.T("PadControl.AddThroughRawInputInstead", "Add {0} through Raw Input instead?"), names),
+				UiLanguage.T("PadControl.XboxReadsOnlyInFront",
+					"Windows lets only the program in front read an Xbox controller through DirectInput, so it stops working once a game is in front. Raw Input keeps working.\r\n"
+					+ "Use Raw Input - add the controller’s Raw Input row.\r\n"
+					+ "Add DirectInput - add the row picked, which works only while x360ce is in front."));
 			if (answer == DialogResult.Yes)
 				return devices.Select((x, i) => twins[i] ?? x).Distinct().ToArray();
 			if (answer == DialogResult.No)
@@ -4147,7 +4186,7 @@ namespace x360ce.App.Controls
 			{
 				// A device unticked on the Devices page is left out of every game, whatever its box here says.
 				var off = device != null && !device.IsEnabled;
-				grid.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = off ? SwitchedOffOnDevicesPage : "";
+				grid.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = off ? UiLanguage.T("PadControl.SwitchedOffOnDevicesPage", SwitchedOffOnDevicesPage) : "";
 				if (off)
 				{
 					e.CellStyle.BackColor = SystemColors.Control;
@@ -4245,10 +4284,11 @@ namespace x360ce.App.Controls
 		public static string ForceFeedbackTitle(MapTo[] otherTabs)
 		{
 			if (otherTabs == null || otherTabs.Length == 0)
-				return "Force Feedback";
-			return string.Format("Force Feedback - Shared with Controller{0} {1}",
-				otherTabs.Length > 1 ? "s" : "",
-				string.Join(", ", otherTabs.Select(x => ((int)x).ToString())));
+				return UiLanguage.T("PadControl.ForceFeedbackTitle", "Force Feedback");
+			var format = otherTabs.Length == 1
+				? UiLanguage.T("PadControl.ForceFeedbackSharedWithController", "Force Feedback - Shared with Controller {0}")
+				: UiLanguage.T("PadControl.ForceFeedbackSharedWithControllers", "Force Feedback - Shared with Controllers {0}");
+			return string.Format(format, string.Join(", ", otherTabs.Select(x => ((int)x).ToString())));
 		}
 
 		/// <summary>Shows on the Force Feedback page which other tabs the selected device is on.</summary>
@@ -4515,21 +4555,21 @@ namespace x360ce.App.Controls
 		public static string ForceSourceNote(int pad, DInput.DeviceForce route)
 		{
 			if (route == null)
-				return "No force reaches this device: this controller tab is switched off for the current game, or the device is unticked in its list or on the Devices page.";
+				return UiLanguage.T("PadControl.ForceNotReachingDevice", "No force reaches this device: this controller tab is switched off for the current game, or the device is unticked in its list or on the Devices page.");
 			var lines = new List<string>();
 			if (route.SettingsPad == pad)
-				lines.Add("This is the lowest enabled controller tab the device is on, so these settings shape its force.");
+				lines.Add(UiLanguage.T("PadControl.ForceSettingsOnThisTab", "This is the lowest enabled controller tab the device is on, so these settings shape its force."));
 			else if (route.SettingsPad >= 0)
-				lines.Add(string.Format("Controller {0} is the lowest enabled controller tab the device is on, so its settings shape the force. Change them there; here they are greyed out.", route.SettingsPad + 1));
+				lines.Add(string.Format(UiLanguage.T("PadControl.ForceSettingsOnAnotherTab", "Controller {0} is the lowest enabled controller tab the device is on, so its settings shape the force. Change them there; here they are greyed out."), route.SettingsPad + 1));
 			var pads = route.ForcePads.Select(x => (x + 1).ToString()).ToArray();
 			if (pads.Length == 0)
 				lines.Add(route.Spring
-					? "No game force reaches it: Force Feedback Enable is off on every controller tab it is on. Only the centering spring holds it."
-					: "No game force reaches it: Force Feedback Enable is off on every controller tab it is on.");
+					? UiLanguage.T("PadControl.OnlyCenteringSpring", "No game force reaches it: Force Feedback Enable is off on every controller tab it is on. Only the centering spring holds it.")
+					: UiLanguage.T("PadControl.NoGameForce", "No game force reaches it: Force Feedback Enable is off on every controller tab it is on."));
 			else if (pads.Length == 1)
-				lines.Add(string.Format("It plays Controller {0}’s force.", pads[0]));
+				lines.Add(string.Format(UiLanguage.T("PadControl.ForceFromOneController", "It plays Controller {0}’s force."), pads[0]));
 			else
-				lines.Add(string.Format("It plays the strongest force of Controllers {0} and {1}: each motor at the highest value any of them asks for.",
+				lines.Add(string.Format(UiLanguage.T("PadControl.ForceFromSeveralControllers", "It plays the strongest force of Controllers {0} and {1}: each motor at the highest value any of them asks for."),
 					string.Join(", ", pads, 0, pads.Length - 1), pads[pads.Length - 1]));
 			return string.Join(Environment.NewLine + Environment.NewLine, lines);
 		}
@@ -4543,10 +4583,13 @@ namespace x360ce.App.Controls
 		/// <param name="devices">The devices listed, among which the twin is looked for.</param>
 		public static string RawInputForceNote(UserDevice ud, IEnumerable<UserDevice> devices)
 		{
-			return ud != null && ud.InputSource == InputSourceType.RawInput && ud.ForceTwin(devices) == null ? RawInputForceNoteText : null;
+			return ud != null && ud.InputSource == InputSourceType.RawInput && ud.ForceTwin(devices) == null
+				? UiLanguage.T("PadControl.RawInputForceNote",
+					"No vibration or wheel forces reach this controller: Raw Input only reads, and its DirectInput side takes none. Pass Through reaches an Xbox controller.")
+				: null;
 		}
 
-		const string RawInputForceNoteText = "No vibration or wheel forces reach this controller: Raw Input only reads, and its DirectInput side takes none. Pass Through reaches an Xbox controller.";
+		bool _showingRawInputForceNote;
 
 		/// <summary>Shows what the chosen effect type does, or <see cref="RawInputForceNote"/> in its place for a Raw Input device.</summary>
 		/// <remarks>Written when the effect type changes and when another device is selected, so neither leaves the other's text.</remarks>
@@ -4555,27 +4598,28 @@ namespace x360ce.App.Controls
 			var note = RawInputForceNote(GetSelectedDevice(), SettingsManager.UserDevices.ItemsToArraySynchronized());
 			if (note != null)
 			{
+				_showingRawInputForceNote = true;
 				EffectDescriptionLabel.Text = note;
 				return;
 			}
-			if (ForceTypeComboBox.SelectedItem == null)
+			if (_showingRawInputForceNote)
 			{
-				// No effect type to describe yet; the note of a Raw Input device selected before goes.
-				if (EffectDescriptionLabel.Text == RawInputForceNoteText)
-					EffectDescriptionLabel.Text = string.Empty;
-				return;
+				_showingRawInputForceNote = false;
+				EffectDescriptionLabel.Text = string.Empty;
 			}
+			if (ForceTypeComboBox.SelectedItem == null)
+				return;
 			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
 			var list = new List<string>();
 			if (type == ForceEffectType.Constant || type == ForceEffectType._Type2)
-				list.Add("Constant force type. Good for vibrating motors on game pads, and for wheels.");
+				list.Add(UiLanguage.T("PadControl.ConstantForceDescription", "Constant force type. Good for vibrating motors on game pads, and for wheels."));
 			if (type.HasFlag(ForceEffectType.PeriodicSine))
-				list.Add("Periodic 'Sine Wave' force type. Good for car/plane engine vibration.");
+				list.Add(UiLanguage.T("PadControl.SineWaveDescription", "Periodic 'Sine Wave' force type. Good for car/plane engine vibration."));
 			if (type.HasFlag(ForceEffectType.PeriodicSawtooth))
-				list.Add("Periodic 'Sawtooth Down Wave' force type. Good for gun recoil.");
+				list.Add(UiLanguage.T("PadControl.SawtoothDescription", "Periodic 'Sawtooth Down Wave' force type. Good for gun recoil."));
 			if (type.HasFlag(ForceEffectType._Type2))
-				list.Add("Alternative implementation - two motors / actuators per effect.");
-			EffectDescriptionLabel.Text = string.Format("{0} ({1}) - {2}", type, (int)type, string.Join(" ", list));
+				list.Add(UiLanguage.T("PadControl.AlternativeForceDescription", "Alternative implementation - two motors / actuators per effect."));
+			EffectDescriptionLabel.Text = string.Format("{0} ({1}) - {2}", EffectText(type), (int)type, string.Join(" ", list));
 		}
 
 		private void CalibrateButton_Click(object sender, EventArgs e)
@@ -4609,7 +4653,7 @@ namespace x360ce.App.Controls
 				name = name.Replace(c, '_');
 			using (var dialog = new SaveFileDialog())
 			{
-				dialog.Title = "Save Preset";
+				dialog.Title = UiLanguage.T("PadControl.SavePresetTitle", "Save Preset");
 				dialog.Filter = SettingsManager.PresetFileFilter;
 				dialog.DefaultExt = "xml";
 				dialog.AddExtension = true;

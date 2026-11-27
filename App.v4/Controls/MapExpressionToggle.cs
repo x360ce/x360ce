@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -355,12 +356,11 @@ namespace x360ce.App.Controls
 		{
 			var seed = SeedFor(box);
 			Hint.SetToolTip(toggle, string.IsNullOrEmpty(seed)
-				? "Write this mapping as a formula."
-				: "Write this mapping as a formula. These settings are the same as:" +
-					Environment.NewLine + seed +
-					Environment.NewLine + Environment.NewLine +
+				? UiLanguage.T("MapExpressionToggle.WriteFormula", "Write this mapping as a formula.")
+				: string.Format(UiLanguage.T("MapExpressionToggle.EquivalentFormula",
+					"Write this mapping as a formula. These settings are the same as:\r\n{0}\r\n\r\n" +
 					"Switching over replaces the dead zone, anti dead zone and sensitivity on this row " +
-					"with the formula, which starts out doing exactly what they do now.");
+					"with the formula, which starts out doing exactly what they do now."), seed));
 		}
 
 		/// <summary>
@@ -478,8 +478,9 @@ namespace x360ce.App.Controls
 				return;
 			}
 			Hint.SetToolTip(toggle, toggle._state == FormulaState.Broken
-				? "This formula is not understood, so the row is doing nothing: " + toggle._problem
-				: "This formula is understood and is driving the row.");
+				? string.Format(UiLanguage.T("MapExpressionToggle.BrokenFormula",
+					"This formula is not understood, so the row is doing nothing: {0}"), toggle._problem)
+				: UiLanguage.T("MapExpressionToggle.WorkingFormula", "This formula is understood and is driving the row."));
 		}
 
 		/// <summary>Turns writing an expression on or off for one mapping box.</summary>

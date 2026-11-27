@@ -229,6 +229,40 @@ namespace x360ce.Tests
 			Assert.IsTrue(program.Any(x => x.Key == "PadControl.ClearControllerSettings"), "A dialog's title in the program was not found.");
 		}
 
+		/// <summary>A control that shows one sentence through <see cref="UiLanguage.T"/>, one without, and logs a third.</summary>
+		public sealed class UntranslatedTestLabel : Label
+		{
+			public void Show(int count)
+			{
+				Text = UiLanguage.T("UntranslatedTestLabel.Translated", "This one is translated.");
+				System.Diagnostics.Debug.WriteLine("This one goes to the log.");
+				AccessibleName = "Stays in English";
+				Text = "This one is not translated: " + count;
+			}
+		}
+
+		[TestMethod, TestCategory("languages")]
+		[Description("The sync names a sentence a control shows without a translation, and leaves the translated, the logged and the accessible name alone")]
+		public void Untranslated_texts_are_named()
+		{
+			var t = typeof(UiLanguage).GetMethod(nameof(UiLanguage.T));
+			var found = UiLanguage.FindUntranslated(typeof(LanguageTest).Assembly, x => x == typeof(UntranslatedTestLabel), t);
+			CollectionAssert.AreEqual(new[] { "UntranslatedTestLabel.Show: This one is not translated: " }, found.ToArray());
+		}
+
+		[TestMethod, TestCategory("languages")]
+		[Description("Every issue on the Issues tab, and the tab itself, says its words in the language shown")]
+		public void Issues_say_every_sentence_in_the_language_shown()
+		{
+			var t = typeof(UiLanguage).GetMethod(nameof(UiLanguage.T));
+			var issues = typeof(JocysCom.ClassLibrary.Controls.IssuesControl.IssueItem);
+			Func<Type, bool> shows = x => issues.IsAssignableFrom(x) || x == typeof(JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl)
+				|| x.Namespace == "x360ce.App.Issues";
+			var found = UiLanguage.FindUntranslated(typeof(AppLanguages).Assembly, shows, t)
+				.Concat(UiLanguage.FindUntranslated(issues.Assembly, shows, t)).ToList();
+			Assert.AreEqual(0, found.Count, "Not translated:" + Environment.NewLine + string.Join(Environment.NewLine, found));
+		}
+
 		[TestMethod, TestCategory("languages")]
 		[Description("The globe's menu lists the eleven languages, each in its own words with its flag, the one shown ticked")]
 		public void Globe_menu_lists_eleven_languages_with_flags()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using System;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -125,7 +126,7 @@ namespace x360ce.App
 			// hold - program.
 			// NOTE: also it would be possible to track which direction mouse will move in or move out on TrayIcon.
 			// For example: open program if mouse moves in from left and moves out from top.
-			TrayNotifyIcon.Text = "X360CE: Double click - program, click - menu.";
+			UpdateTrayIconHint();
 			if (WindowState != FormWindowState.Minimized)
 			{
 				WindowState = FormWindowState.Minimized;
@@ -134,6 +135,11 @@ namespace x360ce.App
 			// here again from Resize when it is first shown.
 			if (minimizeToTray && IsHandleCreated)
 				BeginInvoke((Action)HideInTray);
+		}
+
+		void UpdateTrayIconHint()
+		{
+			TrayNotifyIcon.Text = UiLanguage.T("MainForm.TrayIconHint", "X360CE: Double click - program, click - menu.");
 		}
 
 		/// <summary>Hides the window, if it is still open and minimised.</summary>

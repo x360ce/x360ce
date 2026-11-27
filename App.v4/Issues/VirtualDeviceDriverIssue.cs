@@ -16,7 +16,8 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	public class VirtualDeviceDriverIssue : OnChangeIssue
 	{
-		public VirtualDeviceDriverIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
 			Name = UiLanguage.T("VirtualDeviceDriverIssue.VirtualDeviceDriver", "Virtual Device Driver");
 			FixName = UiLanguage.T("VirtualDeviceDriverIssue.Install", "Install");

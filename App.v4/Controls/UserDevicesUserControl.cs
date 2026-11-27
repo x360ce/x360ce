@@ -345,18 +345,24 @@ namespace x360ce.App.Controls
 				if (count == 0)
 				{
 					CleanupVirtualPadsButton.Enabled = true;
-					MessageBoxForm.Show("No virtual controllers have been left behind.",
-						"Remove Leftover Pads", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxForm.Show(UiLanguage.T("UserDevicesUserControl.NoLeftoverPads", "No virtual controllers have been left behind."),
+						UiLanguage.T("UserDevicesUserControl.RemoveLeftoverPads", "Remove Leftover Pads"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
 				// Say what the trouble is before asking, because the number on its own means nothing to
 				// somebody who does not know that only four XInput places exist.
-				var question = string.Format(
-					"{0} virtual controllers from earlier runs are still present.\r\n\r\n" +
-					"Windows offers only four XInput places, so these take the places this program needs " +
-					"and a controller can appear to move on its own.\r\n\r\n" +
-					"Remove them? Real controllers are not touched.", count);
-				var answer = MessageBoxForm.Show(question, "Remove Leftover Pads",
+				var question = count == 1
+					? UiLanguage.T("UserDevicesUserControl.OneLeftoverController",
+						"One virtual controller from an earlier run is still present.\r\n\r\n" +
+						"Windows offers only four XInput places, so this controller takes a place this program needs " +
+						"and a controller can appear to move on its own.\r\n\r\n" +
+						"Remove it? Real controllers are not touched.")
+					: string.Format(UiLanguage.T("UserDevicesUserControl.LeftoverControllers",
+						"{0} virtual controllers from earlier runs are still present.\r\n\r\n" +
+						"Windows offers only four XInput places, so these take the places this program needs " +
+						"and a controller can appear to move on its own.\r\n\r\n" +
+						"Remove them? Real controllers are not touched."), count);
+				var answer = MessageBoxForm.Show(question, UiLanguage.T("UserDevicesUserControl.RemoveLeftoverPads", "Remove Leftover Pads"),
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				if (answer != DialogResult.Yes)
 				{
@@ -368,7 +374,7 @@ namespace x360ce.App.Controls
 				{
 					CleanupVirtualPadsButton.Enabled = true;
 					var result = removed.IsFaulted ? removed.Exception.GetBaseException().Message : removed.Result;
-					MessageBoxForm.Show(result, "Remove Leftover Pads", MessageBoxButtons.OK,
+					MessageBoxForm.Show(result, UiLanguage.T("UserDevicesUserControl.RemoveLeftoverPads", "Remove Leftover Pads"), MessageBoxButtons.OK,
 						succeeded && !removed.IsFaulted ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
 					Global.DHelper.UpdateDevicesEnabled = true;
 				}, ui);
@@ -456,7 +462,7 @@ namespace x360ce.App.Controls
 				ShowHidHideRefused();
 				return;
 			}
-			ShowList(state.HiddenDevices, "Hidden Devices");
+			ShowList(state.HiddenDevices, UiLanguage.T("UserDevicesUserControl.HiddenDevices", "Hidden Devices"));
 		}
 
 		private void GamingDevicesMenuItem_Click(object sender, EventArgs e)
@@ -466,7 +472,7 @@ namespace x360ce.App.Controls
 				ShowHidHideRefused();
 				return;
 			}
-			ShowList(DInput.VirtualDriverInstaller.GetHidHideGamingDevices(), "Gaming Devices");
+			ShowList(DInput.VirtualDriverInstaller.GetHidHideGamingDevices(), UiLanguage.T("UserDevicesUserControl.GamingDevices", "Gaming Devices"));
 		}
 
 		private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)

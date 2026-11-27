@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using JocysCom.ClassLibrary;
 using System.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,9 @@ namespace x360ce.App.Controls
 			CpuTimer.Elapsed += CpuTimer_Elapsed;
 			LoadSettings();
 			CheckTimer();
+			EventHandler languageChanged = (s, e) => ShowNavImagesButton.Text = NavImagesButtonText();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
@@ -319,7 +323,7 @@ namespace x360ce.App.Controls
 
 		private void CleanupDevicesButton_Click(object sender, EventArgs e)
 		{
-			LogTextBox.Text = "Please Wait...";
+			LogTextBox.Text = UiLanguage.T("DebugUserControl.PleaseWait", "Please Wait...");
 			var ts = new ThreadStart(CheckDevices);
 			var t = new Thread(ts);
 			t.IsBackground = false;
@@ -341,15 +345,16 @@ namespace x360ce.App.Controls
 			DeviceInfo[] unknown;
 			GetDevices(out offline, out problem, out unknown);
 			var list = new List<string>();
-			list.Add(string.Format("{0,4} offline devices", offline.Length));
-			list.Add(string.Format("{0,4} problem devices", problem.Length));
-			list.Add(string.Format("{0,4} unknown devices", unknown.Length));
+			list.Add(string.Format(UiLanguage.T("DebugUserControl.OfflineDevices", "{0,4} offline devices"), offline.Length));
+			list.Add(string.Format(UiLanguage.T("DebugUserControl.ProblemDevices", "{0,4} problem devices"), problem.Length));
+			list.Add(string.Format(UiLanguage.T("DebugUserControl.UnknownDevices", "{0,4} unknown devices"), unknown.Length));
 			if (Disposing || IsDisposed)
 				return;
 			ControlsHelper.BeginInvoke(() =>
 			{
 				LogTextBox.Text = "";
-				var result = MessageBox.Show("Do you want to remove:\r\n\r\n" + string.Join("\r\n", list), "Remove Devices", MessageBoxButtons.YesNo);
+				var result = MessageBox.Show(string.Format(UiLanguage.T("DebugUserControl.RemoveDevicesQuestion", "Do you want to remove:\r\n\r\n{0}"), string.Join("\r\n", list)),
+					UiLanguage.T("DebugUserControl.RemoveDevices", "Remove Devices"), MessageBoxButtons.YesNo);
 				if (result != DialogResult.Yes)
 					return;
 				var ts = new ThreadStart(CleanupDevices);
@@ -382,7 +387,7 @@ namespace x360ce.App.Controls
 			}
 			ControlsHelper.BeginInvoke(() =>
 			{
-				LogTextBox.Text = string.Format("{0} devices removed", list.Count);
+				LogTextBox.Text = string.Format(UiLanguage.T("DebugUserControl.DevicesRemoved", "{0} devices removed"), list.Count);
 			});
 
 		}
@@ -403,9 +408,7 @@ namespace x360ce.App.Controls
 			if (form?.Main?.PadControls == null)
 				return;
 			_NavImagesShown = !_NavImagesShown;
-			ShowNavImagesButton.Text = _NavImagesShown
-				? "Hide All Pad Images"
-				: "Show All Pad Images";
+			ShowNavImagesButton.Text = NavImagesButtonText();
 			var shown = 0;
 			foreach (var pad in form.Main.PadControls)
 			{
@@ -413,11 +416,20 @@ namespace x360ce.App.Controls
 					continue;
 				shown += pad.ShowAllNavImages(_NavImagesShown);
 			}
-			LogTextBox.Text = string.Format("{0} navigation glyphs {1}",
-				shown, _NavImagesShown ? "shown" : "hidden");
+			LogTextBox.Text = _NavImagesShown
+				? string.Format(UiLanguage.T("DebugUserControl.NavImagesShown", "{0} navigation glyphs shown"), shown)
+				: string.Format(UiLanguage.T("DebugUserControl.NavImagesHidden", "{0} navigation glyphs hidden"), shown);
 		}
 
 		bool _NavImagesShown;
+
+		/// <summary>What [Show All Pad Images] reads: what pressing it does next.</summary>
+		string NavImagesButtonText()
+		{
+			return _NavImagesShown
+				? UiLanguage.T("DebugUserControl.HideAllPadImages", "Hide All Pad Images")
+				: UiLanguage.T("DebugUserControl.ShowAllPadImages", "Show All Pad Images");
+		}
 
 		private void ThrowExceptionButton_Click(object sender, EventArgs e)
 		{

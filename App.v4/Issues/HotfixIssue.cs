@@ -12,7 +12,8 @@ namespace x360ce.App.Issues
     /// </summary>
     public class HotfixIssue : OnChangeIssue
     {
-        public HotfixIssue() : base()
+        /// <inheritdoc/>
+        public override void SetTexts()
         {
             Name = UiLanguage.T("HotfixIssue.HotFix", "HotFix");
             FixName = UiLanguage.T("HotfixIssue.Download", "Download");
@@ -20,9 +21,6 @@ namespace x360ce.App.Issues
 
         // This will be used to stop check on success.
         bool enableCheck = true;
-
-        // Availability of SHA-2 Code Signing Support for Windows 7 and Windows Server 2008 R2
-        string program = "Microsoft Security Advisory (KB3033929) Update";
 
         public override void CheckTask()
         {
@@ -52,7 +50,7 @@ namespace x360ce.App.Issues
             var version = IssueHelper.GetRealOSVersion();
             if (version.Major != 6 || version.Minor != 1)
             {
-                SetSeverity(IssueSeverity.None, 0, program);
+                SetSeverity(IssueSeverity.None);
                 enableCheck = false;
                 return;
             }
@@ -61,11 +59,12 @@ namespace x360ce.App.Issues
             var installed = fileVersion >= new Version(6, 1, 7601, 22948);
             if (!installed)
             {
+                var program = UiLanguage.T("HotfixIssue.SecurityUpdate", "Microsoft Security Advisory (KB3033929) Update");
                 var bits = Environment.Is64BitOperatingSystem
                     ? "64-bit" : "32-bit";
                 SetSeverity(
                     IssueSeverity.Critical, 1,
-                    string.Format("Old WinTrust {0}. Install {1} for Windows 7 {2}", fileVersion, program, bits)
+                    string.Format(UiLanguage.T("HotfixIssue.OldWinTrust", "Old WinTrust {0}. Install {1} for Windows 7 {2}"), fileVersion, program, bits)
                 );
                 return;
             }

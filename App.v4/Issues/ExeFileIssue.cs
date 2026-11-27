@@ -14,10 +14,15 @@ namespace x360ce.App.Issues
 	{
 		public ExeFileIssue() : base()
 		{
-			Name = UiLanguage.T("ExeFileIssue.EXEFile", "EXE File");
-			FixName = UiLanguage.T("ExeFileIssue.Fix", "Fix");
 			// Copying into a protected folder raises a prompt. Marked, so it is expected.
 			FixNeedsAdmin = true;
+		}
+
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
+			Name = UiLanguage.T("ExeFileIssue.EXEFile", "EXE File");
+			FixName = UiLanguage.T("ExeFileIssue.Fix", "Fix");
 		}
 
 		/// <summary>The program folder is protected and the process is not elevated.</summary>

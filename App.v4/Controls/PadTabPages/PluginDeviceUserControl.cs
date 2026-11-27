@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Mcp;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using JocysCom.ClassLibrary.Mcp;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -49,8 +50,10 @@ namespace x360ce.App.Controls
 				if (control != null)
 					control.Dock = DockStyle.Fill;
 				// The plugin names the page with its control's Text.
-				var text = control == null || string.IsNullOrWhiteSpace(control.Text) ? "Control" : control.Text;
-				AddPage("ControlTabPage", text, "The control the plugin adds for the device.", control ?? NoteLabel);
+				var page = AddPage("ControlTabPage", control?.AccessibleName ?? control?.Text ?? "Control",
+					"The control the plugin adds for the device.", control ?? NoteLabel);
+				if (control != null)
+					control.TextChanged += (s, e) => page.Text = ControlTabText(control);
 			}
 			var door = PluginMcpDoors.Get(instanceGuid, type, store);
 			if (door != null)
@@ -88,13 +91,13 @@ namespace x360ce.App.Controls
 					ResetButton = new Button
 					{
 						Name = nameof(ResetButton),
-						Text = "Reset",
 						AutoSize = true,
 						Anchor = AnchorStyles.Left,
 						AccessibleName = "Reset",
 						AccessibleDescription = "Gives every setting of this device the value a new device starts with.",
 						UseVisualStyleBackColor = true,
 					};
+					UiLanguage.Keep(ResetButton);
 					ResetButton.Click += ResetButton_Click;
 					properties.RowStyles.Add(new RowStyle());
 					properties.Controls.Add(ResetButton, 0, 1);
@@ -128,6 +131,10 @@ namespace x360ce.App.Controls
 			ResumeLayout(false);
 			PerformLayout();
 			UiHelp.Attach(this);
+			ShowWords();
+			EventHandler languageChanged = (s, e) => ShowWords();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>The device the tab belongs to, as the device list knows it.</summary>
@@ -175,12 +182,48 @@ namespace x360ce.App.Controls
 		string[] _statuses;
 		string[] _kept;
 
-		/// <summary>Adds a page holding one control, which fills it.</summary>
-		void AddPage(string name, string text, string description, Control content)
+		/// <summary>What stopped the plugin's own control being made, which its page says; null when nothing did.</summary>
+		Exception _fault;
+
+		static string ControlTabText(Control control)
 		{
-			var page = new TabPage { Name = name, Text = text, AccessibleName = text, AccessibleDescription = description, UseVisualStyleBackColor = true };
+			return string.IsNullOrWhiteSpace(control?.Text) ? UiLanguage.T("PluginDeviceUserControl.ControlTab", "Control") : control.Text;
+		}
+
+		/// <summary>Words the tabs and a fault in the language chosen; the tabs keep their English names for accessibility.</summary>
+		void ShowWords()
+		{
+			var control = PluginTabControl.TabPages["ControlTabPage"];
+			if (control != null)
+				control.Text = ControlTabText(control.Controls[0] == NoteLabel ? null : control.Controls[0]);
+			var mcp = PluginTabControl.TabPages["McpServerTabPage"];
+			if (mcp != null)
+				mcp.Text = UiLanguage.T("PluginDeviceUserControl.McpServerTabPage", "MCP Server");
+			var properties = PluginTabControl.TabPages["PropertiesTabPage"];
+			if (properties != null)
+				properties.Text = UiLanguage.T("PluginDeviceUserControl.PropertiesTab", "Properties");
+			var help = PluginTabControl.TabPages["HelpTabPage"];
+			if (help != null)
+				help.Text = UiLanguage.T("PluginDeviceUserControl.HelpTab", "Help");
+			if (ResetButton != null)
+				ResetButton.Text = UiLanguage.T("PluginDeviceUserControl.ResetSettings", "Reset");
+			if (_fault != null)
+				NoteLabel.Text = FaultText(_fault);
+		}
+
+		static string FaultText(Exception fault)
+		{
+			return string.Format(UiLanguage.T("PluginDeviceUserControl.ControlsFailed", "The plugin’s own controls could not be made: {0}: {1}"), fault.GetType().Name, fault.Message);
+		}
+
+		/// <summary>Adds a page holding one control, which fills it.</summary>
+		TabPage AddPage(string name, string accessibleName, string description, Control content)
+		{
+			var page = new TabPage { Name = name, AccessibleName = accessibleName, AccessibleDescription = description, UseVisualStyleBackColor = true };
+			UiLanguage.Keep(page);
 			page.Controls.Add(content);
 			PluginTabControl.TabPages.Add(page);
+			return page;
 		}
 
 		private void ResetButton_Click(object sender, EventArgs e)
@@ -291,10 +334,10 @@ namespace x360ce.App.Controls
 
 		void ShowFault(Exception ex)
 		{
-			var inner = ex is System.Reflection.TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
-			var text = "The plugin’s own controls could not be made: " + inner.GetType().Name + ": " + inner.Message;
-			NoteLabel.Text = text;
-			NoteLabel.AccessibleName = text;
+			_fault = ex is System.Reflection.TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
+			NoteLabel.Text = FaultText(_fault);
+			// Its name stays English, which the AI door and a screen reader search by.
+			NoteLabel.AccessibleName = UiLanguage.InSource(() => FaultText(_fault));
 			NoteLabel.Visible = true;
 		}
 

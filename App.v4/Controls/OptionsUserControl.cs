@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,10 @@ namespace x360ce.App.Controls
 				_LoadingWindowsStart = true;
 				JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Relist(ThemeComboBox, FontComboBox, SizeComboBox, StartWithWindowsStateComboBox);
 				_LoadingWindowsStart = false;
+				SetCues();
+				// The reason the Start with Windows box is unticked, once its hint exists.
+				if (StartWithWindowsHint != null)
+					LoadWindowsStart();
 			};
 			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed += languageChanged;
 			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed -= languageChanged;
@@ -48,7 +53,7 @@ namespace x360ce.App.Controls
 			EmulationHotkeyTextBox.ShortcutsEnabled = false;
 			// The cue lives in the window handle, and Windows Forms makes a text box a new handle when it
 			// is parented, so the cue is put back whenever a handle is made.
-			EmulationHotkeyTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
+			EmulationHotkeyTextBox.HandleCreated += (s, e) => SetCues();
 			EmulationHotkeyTextBox.KeyDown += EmulationHotkeyTextBox_KeyDown;
 			EventHandler themeChanged = (s, e) => ColorEmulationHotkey();
 			FormsTheme.ThemeChanged += themeChanged;
@@ -56,7 +61,7 @@ namespace x360ce.App.Controls
 			// The buttons field records the buttons held on the emulated controllers in the same way, while it has the focus.
 			EmulationButtonsTextBox.ReadOnly = true;
 			EmulationButtonsTextBox.ShortcutsEnabled = false;
-			EmulationButtonsTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationButtonsTextBox, "Click, then hold buttons");
+			EmulationButtonsTextBox.HandleCreated += (s, e) => SetCues();
 			EmulationButtonsTextBox.KeyDown += EmulationButtonsTextBox_KeyDown;
 			// Focus, not Enter and Leave, which stay put while another program is in front.
 			EmulationButtonsTextBox.GotFocus += (s, e) => RecordingButtonsChanged();
@@ -99,6 +104,15 @@ namespace x360ce.App.Controls
 				RefreshHidGuardianStatus();
 			else if (tab == HidHideTabPage)
 				RefreshHidHideStatus();
+		}
+
+		/// <summary>Puts the cue of each recording field in the language chosen, on each field that has its window handle.</summary>
+		void SetCues()
+		{
+			if (EmulationHotkeyTextBox.IsHandleCreated)
+				HotkeyHelper.SetCue(EmulationHotkeyTextBox, UiLanguage.T("OptionsUserControl.ClickThenPressKeys", "Click, then press keys"));
+			if (EmulationButtonsTextBox.IsHandleCreated)
+				HotkeyHelper.SetCue(EmulationButtonsTextBox, UiLanguage.T("OptionsUserControl.ClickThenHoldButtons", "Click, then hold buttons"));
 		}
 
 		/// <summary>A theme as the list shows it, in the language chosen.</summary>
@@ -186,9 +200,9 @@ namespace x360ce.App.Controls
 			_LoadingWindowsStart = false;
 			string reason = null;
 			if (path != null && !thisCopy)
-				reason = "Windows starts another copy: " + path + "\r\nTicking this starts this copy instead.";
+				reason = string.Format(UiLanguage.T("OptionsUserControl.WindowsStartsAnotherCopy", "Windows starts another copy: {0}\r\nTicking this starts this copy instead."), path);
 			else if (thisCopy && !approved)
-				reason = "Switched off in Task Manager, on its Startup apps page. Ticking this switches it on again.";
+				reason = UiLanguage.T("OptionsUserControl.SwitchedOffInTaskManager", "Switched off in Task Manager, on its Startup apps page. Ticking this switches it on again.");
 			StartWithWindowsHint?.SetToolTip(StartWithWindowsCheckBox, reason);
 		}
 
@@ -561,7 +575,7 @@ namespace x360ce.App.Controls
 			if (string.IsNullOrEmpty(path))
 				path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 			LocationFolderBrowserDialog.SelectedPath = path;
-			LocationFolderBrowserDialog.Description = "Browse for Scan Location";
+			LocationFolderBrowserDialog.Description = UiLanguage.T("OptionsUserControl.BrowseForScanLocation", "Browse for Scan Location");
 			var result = LocationFolderBrowserDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
@@ -569,7 +583,8 @@ namespace x360ce.App.Controls
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 				if (LocationFolderBrowserDialog.SelectedPath.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
-					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxForm.Show(UiLanguage.T("OptionsUserControl.WindowsFoldersNotAllowed", "Windows folders are not allowed."),
+						UiLanguage.T("OptionsUserControl.WindowsFolder", "Windows Folder"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 				else
 				{
@@ -714,7 +729,9 @@ namespace x360ce.App.Controls
 			if (!AgreedToChangeViGEmBus(installed, supplied))
 				return;
 			var repair = installed != null;
-			ViGEmBusTextBox.Text = repair ? "Repairing. Please Wait..." : "Installing. Please Wait...";
+			ViGEmBusTextBox.Text = repair
+				? UiLanguage.T("OptionsUserControl.RepairingPleaseWait", "Repairing. Please Wait...")
+				: UiLanguage.T("OptionsUserControl.InstallingPleaseWait", "Installing. Please Wait...");
 			ViGEmBusInstallButton.Enabled = false;
 			// Off this thread. The Administrator copy removes and adds devices, and Windows asks this
 			// window whether each may go; a window waiting here cannot answer, and both wait for ever.
@@ -741,33 +758,33 @@ namespace x360ce.App.Controls
 			var modern = DInput.VirtualDriverInstaller.TakesModernViGEmBus;
 			if (installed != null && installed > supplied)
 			{
-				MessageBoxForm.Show(string.Format(
+				MessageBoxForm.Show(string.Format(UiLanguage.T("OptionsUserControl.NewerDriverNothingChanged",
 					"The driver on this computer is version {0}, which is newer than the {1} supplied with "
 					+ "this program." + "\r\n\r\n"
 					+ "Nothing will be changed. Putting the older one on would take away whatever the newer "
 					+ "one fixed, for every program on this computer that uses it, not only this one." + "\r\n\r\n"
-					+ "If the driver is faulty, repair it through its own setup or Apps and Features.",
+					+ "If the driver is faulty, repair it through its own setup or Apps and Features."),
 					installed, supplied),
-					"Newer driver already installed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					UiLanguage.T("OptionsUserControl.NewerDriverAlreadyInstalled", "Newer driver already installed"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return false;
 			}
 			var what = installed == null
-				? string.Format("Version {0} will be installed.", supplied)
+				? string.Format(UiLanguage.T("OptionsUserControl.VersionWillBeInstalled", "Version {0} will be installed."), supplied)
 				: installed == supplied
-					? string.Format("Version {0} is already installed and will be repaired.", installed)
-					: string.Format("Version {0} will be replaced with {1}.", installed, supplied);
+					? string.Format(UiLanguage.T("OptionsUserControl.VersionWillBeRepaired", "Version {0} is already installed and will be repaired."), installed)
+					: string.Format(UiLanguage.T("OptionsUserControl.VersionWillBeReplaced", "Version {0} will be replaced with {1}."), installed, supplied);
 			var how = modern
-				? "The setup published by the driver authors will open. Follow it through to the end."
-				: "The driver supplied with this program will be installed directly.";
+				? UiLanguage.T("OptionsUserControl.DriverSetupWillOpen", "The setup published by the driver authors will open. Follow it through to the end.")
+				: UiLanguage.T("OptionsUserControl.DriverInstalledDirectly", "The driver supplied with this program will be installed directly.");
 			var why = modern
 				? string.Empty
-				: "\r\n\r\n" + "This version of Windows cannot use the newer driver: from version 1.17 it "
-				+ "is made for Windows 10 and later only.";
+				: "\r\n\r\n" + UiLanguage.T("OptionsUserControl.NewerDriverNeedsWindows10", "This version of Windows cannot use the newer driver: from version 1.17 it "
+				+ "is made for Windows 10 and later only.");
 			var answer = MessageBoxForm.Show(
 				what + "\r\n\r\n" + how + "\r\n\r\n"
-				+ "This driver is shared. Other programs that use virtual controllers will get this "
-				+ "version too." + why + "\r\n\r\n" + "Go ahead?",
-				"Change the virtual controller driver", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+				+ UiLanguage.T("OptionsUserControl.DriverIsShared", "This driver is shared. Other programs that use virtual controllers will get this "
+				+ "version too.") + why + "\r\n\r\n" + UiLanguage.T("OptionsUserControl.GoAhead", "Go ahead?"),
+				UiLanguage.T("OptionsUserControl.ChangeVirtualControllerDriver", "Change the virtual controller driver"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			return answer == DialogResult.OK;
 		}
 
@@ -777,7 +794,7 @@ namespace x360ce.App.Controls
 			var installed = DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion();
 			if (installed == null)
 			{
-				ViGEmBusTextBox.Text = "Not installed. Nothing to remove.";
+				ViGEmBusTextBox.Text = UiLanguage.T("OptionsUserControl.NotInstalledNothingToRemove", "Not installed. Nothing to remove.");
 				return;
 			}
 			var embedded = DInput.VirtualDriverInstaller.EmbeddedViGEmBusVersion;
@@ -786,24 +803,24 @@ namespace x360ce.App.Controls
 			if (!Equals(installed, embedded))
 			{
 				MessageBoxForm.Show(
-					string.Format(
+					string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusInstalledBySomethingElse",
 						"Installed version {0} does not match the version supplied with this " +
 						"application ({1}), so it was installed by something else.\r\n\r\n" +
 						"Remove it through the installer that put it there, or through " +
-						"Apps & Features. This application will not touch it.",
+						"Apps & Features. This application will not touch it."),
 						installed, embedded),
-					"Remove Virtual Gamepad Bus", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					UiLanguage.T("OptionsUserControl.RemoveVirtualGamepadBus", "Remove Virtual Gamepad Bus"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			var text =
-				string.Format("Remove the virtual gamepad bus driver (version {0})?\r\n\r\n", installed) +
+			var text = string.Format(UiLanguage.T("OptionsUserControl.RemoveViGEmBusConfirm",
+				"Remove the virtual gamepad bus driver (version {0})?\r\n\r\n" +
 				"This driver is shared. Other applications that create virtual controllers, " +
 				"for example DS4Windows, stop working until it is installed again.\r\n\r\n" +
 				"The driver package stays in the Windows driver store, so Windows may " +
-				"recreate the device. Use the official installer to remove it completely.";
-			if (!Confirm(text, "Remove Virtual Gamepad Bus"))
+				"recreate the device. Use the official installer to remove it completely."), installed);
+			if (!Confirm(text, UiLanguage.T("OptionsUserControl.RemoveVirtualGamepadBus", "Remove Virtual Gamepad Bus")))
 				return;
-			ViGEmBusTextBox.Text = "Uninstalling. Please Wait...";
+			ViGEmBusTextBox.Text = UiLanguage.T("OptionsUserControl.UninstallingPleaseWait", "Uninstalling. Please Wait...");
 			// Disable Virtual mode first.
 			MainForm.Current.ChangeCurrentGameEmulationType(EmulationType.None);
 			DInput.DInputHelper.CheckUnInstallVirtualDriver();
@@ -811,9 +828,9 @@ namespace x360ce.App.Controls
 			var remaining = DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion();
 			MessageBoxForm.Show(
 				remaining == null
-					? "Virtual gamepad bus removed."
-					: string.Format("Virtual gamepad bus is still present (version {0}).", remaining),
-				"Uninstall result", MessageBoxButtons.OK,
+					? UiLanguage.T("OptionsUserControl.ViGEmBusRemoved", "Virtual gamepad bus removed.")
+					: string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusStillPresent", "Virtual gamepad bus is still present (version {0})."), remaining),
+				UiLanguage.T("OptionsUserControl.UninstallResult", "Uninstall result"), MessageBoxButtons.OK,
 				remaining == null ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
 			RefreshViGEmBusStatus();
 		}
@@ -826,7 +843,7 @@ namespace x360ce.App.Controls
 
 		void RefreshViGEmBusStatus()
 		{
-			ControlsHelper.SetText(ViGEmBusTextBox, "Please wait...");
+			ControlsHelper.SetText(ViGEmBusTextBox, UiLanguage.T("OptionsUserControl.PleaseWait", "Please wait..."));
 			// run in another thread, to make sure it is not freezing interface.
 			var ts = new System.Threading.ThreadStart(delegate ()
 			{
@@ -840,15 +857,19 @@ namespace x360ce.App.Controls
 					// exactly what was missing when a repair silently replaced a newer driver with an older one.
 					var supplied = DInput.VirtualDriverInstaller.EmbeddedViGEmBusVersion;
 					var busStatus = bus.DriverVersion == 0
-						? string.Format("Not installed. Supplied with this program: {0}.", supplied)
-						: string.Format("{0} {1}   (supplied with this program: {2}{3})",
-							bus.Description, bus.GetVersion(), supplied,
-							bus.GetVersion() > supplied ? ", older - will not be installed over this" : string.Empty);
+						? string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusNotInstalled", "Not installed. Supplied with this program: {0}."), supplied)
+						: bus.GetVersion() > supplied
+							? string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusInstalledNewer", "{0} {1}   (supplied with this program: {2}, older - will not be installed over this)"),
+								bus.Description, bus.GetVersion(), supplied)
+							: string.Format(UiLanguage.T("OptionsUserControl.ViGEmBusInstalled", "{0} {1}   (supplied with this program: {2})"),
+								bus.Description, bus.GetVersion(), supplied);
 					ControlsHelper.SetText(ViGEmBusTextBox, busStatus);
 					// Always available, because a bus that is present is exactly the one that might
 					// need putting right. The word changes so it is clear which of the two it will do.
 					ViGEmBusInstallButton.Enabled = true;
-					ViGEmBusInstallButton.Text = bus.DriverVersion == 0 ? "Install" : "Repair";
+					ViGEmBusInstallButton.Text = bus.DriverVersion == 0
+						? UiLanguage.T("OptionsUserControl.Install", "Install")
+						: UiLanguage.T("OptionsUserControl.Repair", "Repair");
 					ViGEmBusUninstallButton.Enabled = bus.DriverVersion != 0;
 				});
 			});
@@ -884,24 +905,35 @@ namespace x360ce.App.Controls
 			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
 			var latest = HidHideLatest;
 			var outdated = installed && latest != null && HidHideSetupClient.Outdated(version, latest.Version);
-			if (installed)
+			if (installed && string.IsNullOrEmpty(version))
 			{
-				HidHideStatusTextBox.Text = (string.IsNullOrEmpty(version)
-					? "Installed."
-					: string.Format("Installed. Version {0}.", version))
-					+ (latest == null ? ""
-					: outdated ? string.Format(" Version {0} is available.", latest.Version)
-					: " It is the latest.");
+				HidHideStatusTextBox.Text = latest == null
+					? UiLanguage.T("OptionsUserControl.HidHideInstalled", "Installed.")
+					: outdated
+						? string.Format(UiLanguage.T("OptionsUserControl.HidHideInstalledNewerAvailable", "Installed. Version {0} is available."), latest.Version)
+						: UiLanguage.T("OptionsUserControl.HidHideInstalledLatest", "Installed. It is the latest.");
+			}
+			else if (installed)
+			{
+				HidHideStatusTextBox.Text = latest == null
+					? string.Format(UiLanguage.T("OptionsUserControl.HidHideInstalledVersion", "Installed. Version {0}."), version)
+					: outdated
+						? string.Format(UiLanguage.T("OptionsUserControl.HidHideInstalledVersionNewerAvailable", "Installed. Version {0}. Version {1} is available."), version, latest.Version)
+						: string.Format(UiLanguage.T("OptionsUserControl.HidHideInstalledVersionLatest", "Installed. Version {0}. It is the latest."), version);
 			}
 			else
 			{
 				HidHideStatusTextBox.Text = Environment.Is64BitOperatingSystem
-					? "Not installed."
-					: "Not installed. HID Hide requires 64-bit Windows 10 or 11.";
+					? UiLanguage.T("OptionsUserControl.HidHideNotInstalled", "Not installed.")
+					: UiLanguage.T("OptionsUserControl.HidHideNeeds64Bit", "Not installed. HID Hide requires 64-bit Windows 10 or 11.");
 			}
 			// Nothing to open until its own setup has put the program on disk.
 			HidHideConfigureButton.Enabled = !string.IsNullOrEmpty(client);
-			HidHideInstallButton.Text = !installed ? "Install HID Hide" : outdated ? "Update HID Hide" : "Check for Update";
+			HidHideInstallButton.Text = !installed
+				? UiLanguage.T("OptionsUserControl.InstallHidHide", "Install HID Hide")
+				: outdated
+					? UiLanguage.T("OptionsUserControl.UpdateHidHide", "Update HID Hide")
+					: UiLanguage.T("OptionsUserControl.CheckForUpdate", "Check for Update");
 		}
 
 		private void HidHideRefreshButton_Click(object sender, EventArgs e)
@@ -921,7 +953,7 @@ namespace x360ce.App.Controls
 				InstallHidHide(latest);
 				return;
 			}
-			HidHideStatusTextBox.Text = "Asking GitHub for the latest HID Hide...";
+			HidHideStatusTextBox.Text = UiLanguage.T("OptionsUserControl.AskingGitHubForHidHide", "Asking GitHub for the latest HID Hide...");
 			string error = null;
 			Task.Run(() => new HidHideSetupClient().Latest(HidHideSetupClient.MachineArchitecture(), out error)).ContinueWith(t =>
 			{
@@ -974,7 +1006,7 @@ namespace x360ce.App.Controls
 			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
 			if (string.IsNullOrEmpty(client))
 			{
-				HidHideStatusTextBox.Text = "Configuration program not found. Install HID Hide first.";
+				HidHideStatusTextBox.Text = UiLanguage.T("OptionsUserControl.HidHideClientNotFound", "Configuration program not found. Install HID Hide first.");
 				return;
 			}
 			ControlsHelper.OpenPath(client);
@@ -982,23 +1014,38 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void HidGuardianInstallButton_Click(object sender, EventArgs e)
+		static string HidGuardianInstallConfirmText()
 		{
-#if DEBUG
-			var text =
+			return UiLanguage.T("OptionsUserControl.InstallHidGuardianConfirm",
 				"Install HID Guardian?\r\n\r\n" +
 				"DEVELOPMENT BUILD ONLY. HID Guardian is a filter on every HID device. " +
 				"If it is left registered while its driver is missing, keyboard and mouse " +
 				"can stop working and recovery needs safe mode and a registry edit.\r\n\r\n" +
 				"The driver is installed first and the class filter is added only after the " +
-				"driver is confirmed present.";
-			if (!Confirm(text, "Install HID Guardian"))
+				"driver is confirmed present.");
+		}
+
+		static string HidGuardianInstallTitle()
+		{
+			return UiLanguage.T("OptionsUserControl.InstallHidGuardian", "Install HID Guardian");
+		}
+
+		static string HidGuardianInstallNotSupportedText()
+		{
+			return UiLanguage.T("OptionsUserControl.HidGuardianInstallNotSupported",
+				"Install is not supported by this version. Only uninstall is available.");
+		}
+
+		private void HidGuardianInstallButton_Click(object sender, EventArgs e)
+		{
+#if DEBUG
+			if (!Confirm(HidGuardianInstallConfirmText(), HidGuardianInstallTitle()))
 				return;
-			HidGuardianTextBox.Text = "Installing. Please Wait...";
-			RunHidGuardianCommand(AdminCommand.InstallHidGuardian, "Install");
+			HidGuardianTextBox.Text = UiLanguage.T("OptionsUserControl.InstallingPleaseWait", "Installing. Please Wait...");
+			RunHidGuardianCommand(AdminCommand.InstallHidGuardian, true);
 #else
 			// Install is not supported. Only uninstall is available.
-			HidGuardianTextBox.Text = "Install is not supported by this version. Only uninstall is available.";
+			HidGuardianTextBox.Text = HidGuardianInstallNotSupportedText();
 #endif
 		}
 
@@ -1013,20 +1060,28 @@ namespace x360ce.App.Controls
 			var device = DInput.VirtualDriverInstaller.IsHidGuardianDevicePresent();
 			if (!filter && !device)
 			{
-				HidGuardianTextBox.Text = "Not installed. Nothing to remove.";
+				HidGuardianTextBox.Text = UiLanguage.T("OptionsUserControl.NotInstalledNothingToRemove", "Not installed. Nothing to remove.");
 				return;
 			}
-			var text =
+			var text = string.Format(UiLanguage.T("OptionsUserControl.RemoveHidGuardianConfirm",
 				"Remove HID Guardian?\r\n\r\n" +
-				string.Format("HID class filter: {0}\r\nDriver: {1}\r\n\r\n", filter ? "present" : "not present", device ? "present" : "not present") +
+				"HID class filter: {0}\r\nDriver: {1}\r\n\r\n" +
 				"The class filter is removed first and checked, and the driver is removed " +
 				"only after the filter is confirmed gone. Nothing else is touched. If the " +
 				"filter cannot be removed the driver is left in place, because a filter that " +
-				"names a missing driver can stop keyboard and mouse from working.";
-			if (!Confirm(text, "Remove HID Guardian"))
+				"names a missing driver can stop keyboard and mouse from working."), PresentText(filter), PresentText(device));
+			if (!Confirm(text, UiLanguage.T("OptionsUserControl.RemoveHidGuardian", "Remove HID Guardian")))
 				return;
-			HidGuardianTextBox.Text = "Uninstalling. Please Wait...";
-			RunHidGuardianCommand(AdminCommand.UninstallHidGuardian, "Uninstall");
+			HidGuardianTextBox.Text = UiLanguage.T("OptionsUserControl.UninstallingPleaseWait", "Uninstalling. Please Wait...");
+			RunHidGuardianCommand(AdminCommand.UninstallHidGuardian, false);
+		}
+
+		/// <summary>Whether a part of HID Guardian is there, as the value beside its name in a report.</summary>
+		static string PresentText(bool present)
+		{
+			return present
+				? UiLanguage.T("OptionsUserControl.Present", "present")
+				: UiLanguage.T("OptionsUserControl.NotPresent", "not present");
 		}
 
 		/// <summary>
@@ -1034,7 +1089,9 @@ namespace x360ce.App.Controls
 		/// left, measured rather than trusted. Off this thread because a filter on every HID device
 		/// makes Windows re-ask this window about each of them, and a window waiting here cannot answer.
 		/// </summary>
-		void RunHidGuardianCommand(AdminCommand command, string action)
+		/// <param name="command">The change the Administrator copy makes.</param>
+		/// <param name="install">True for an install, false for a removal: the report's title says which.</param>
+		void RunHidGuardianCommand(AdminCommand command, bool install)
 		{
 			HidGuardianInstallButton.Enabled = false;
 			HidGuardianUninstallButton.Enabled = false;
@@ -1047,30 +1104,41 @@ namespace x360ce.App.Controls
 			}).ContinueWith(state =>
 			{
 				if (!state.IsFaulted)
-					ReportHidGuardianState(action, state.Result.Item1, state.Result.Item2);
+					ReportHidGuardianState(install, state.Result.Item1, state.Result.Item2);
 				RefreshHidGuardianStatus();
 			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		/// <summary>Report the driver state reached.</summary>
-		void ReportHidGuardianState(string action, bool filter, bool device)
+		/// <param name="install">True after an install, false after a removal.</param>
+		/// <param name="filter">Whether the class filter is registered.</param>
+		/// <param name="device">Whether the driver is installed.</param>
+		void ReportHidGuardianState(bool install, bool filter, bool device)
 		{
 			// The unsafe combination: filter registered while the driver is gone.
 			if (filter && !device)
 			{
 				var script = DInput.VirtualDriverInstaller.GetHidGuardianRemoveScript();
 				MessageBoxForm.Show(
+					string.Format(UiLanguage.T("OptionsUserControl.HidGuardianFilterWithoutDriver",
 					"HID Guardian is still registered as a HID class filter but its driver is not " +
 					"installed. Devices may fail to start after a restart.\r\n\r\n" +
 					"Run the recovery script from an administrative command prompt before " +
-					"restarting:\r\n\r\n" + (script ?? "HidGuardian_Remove.ps1 could not be extracted."),
-					action + " incomplete", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					"restarting:\r\n\r\n{0}"),
+					script ?? UiLanguage.T("OptionsUserControl.HidGuardianScriptNotExtracted", "HidGuardian_Remove.ps1 could not be extracted.")),
+					install
+						? UiLanguage.T("OptionsUserControl.InstallIncomplete", "Install incomplete")
+						: UiLanguage.T("OptionsUserControl.UninstallIncomplete", "Uninstall incomplete"),
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 			MessageBoxForm.Show(
-				string.Format("HID class filter: {0}\r\nDriver: {1}",
-					filter ? "present" : "not present", device ? "present" : "not present"),
-				action + " result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				string.Format(UiLanguage.T("OptionsUserControl.HidGuardianState", "HID class filter: {0}\r\nDriver: {1}"),
+					PresentText(filter), PresentText(device)),
+				install
+					? UiLanguage.T("OptionsUserControl.InstallResult", "Install result")
+					: UiLanguage.T("OptionsUserControl.UninstallResult", "Uninstall result"),
+				MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// <summary>Ask before changing driver state. Cancel is the default answer.</summary>
@@ -1086,7 +1154,7 @@ namespace x360ce.App.Controls
 
 		void RefreshHidGuardianStatus()
 		{
-			ControlsHelper.SetText(HidGuardianTextBox, "Please wait...");
+			ControlsHelper.SetText(HidGuardianTextBox, UiLanguage.T("OptionsUserControl.PleaseWait", "Please wait..."));
 			// run in another thread, to make sure it is not freezing interface.
 			var ts = new System.Threading.ThreadStart(delegate ()
 			{
@@ -1096,7 +1164,7 @@ namespace x360ce.App.Controls
 				{
 					// Update HID status.
 					var hidStatus = hid.DriverVersion == 0
-						? "Not installed"
+						? UiLanguage.T("OptionsUserControl.HidGuardianNotInstalled", "Not installed")
 						: string.Format("{0} {1}", hid.Description, hid.GetVersion());
 					ControlsHelper.SetText(HidGuardianTextBox, hidStatus);
 #if DEBUG

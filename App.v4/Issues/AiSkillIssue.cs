@@ -1,7 +1,6 @@
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.Mcp;
 using System;
-using System.Collections.Generic;
 using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
@@ -14,7 +13,8 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	public class AiSkillIssue : OnChangeIssue
 	{
-		public AiSkillIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
 			Name = UiLanguage.T("AiSkillIssue.AISkill", "AI skill");
 			FixName = UiLanguage.T("AiSkillIssue.Update", "Update");
@@ -28,18 +28,20 @@ namespace x360ce.App.Issues
 
 		public override void CheckTask()
 		{
-			var older = new List<string>();
-			if (IsOlder(AiSkill.ClaudeFolder))
-				older.Add("Claude Code");
-			if (IsOlder(AiSkill.AgentsFolder))
-				older.Add("other agents");
-			if (older.Count == 0)
+			var claude = IsOlder(AiSkill.ClaudeFolder);
+			var agents = IsOlder(AiSkill.AgentsFolder);
+			if (!claude && !agents)
 			{
 				SetSeverity(IssueSeverity.None);
 				return;
 			}
-			SetSeverity(IssueSeverity.Low, 1, "The x360ce skill installed for " + string.Join(" and ", older) +
-				" is older than this program, so an AI agent may describe pages and tools that have changed.");
+			// One whole sentence for each case, so each language can say it its own way.
+			var text = claude && agents
+				? UiLanguage.T("AiSkillIssue.OlderForBoth", "The x360ce skill installed for Claude Code and other agents is older than this program, so an AI agent may describe pages and tools that have changed.")
+				: claude
+					? UiLanguage.T("AiSkillIssue.OlderForClaude", "The x360ce skill installed for Claude Code is older than this program, so an AI agent may describe pages and tools that have changed.")
+					: UiLanguage.T("AiSkillIssue.OlderForAgents", "The x360ce skill installed for other agents is older than this program, so an AI agent may describe pages and tools that have changed.");
+			SetSeverity(IssueSeverity.Low, 1, text);
 		}
 
 		public override void FixTask()

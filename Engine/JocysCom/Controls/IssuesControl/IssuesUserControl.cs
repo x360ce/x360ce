@@ -2,6 +2,7 @@
 
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Threading;
 using System;
 using System.Collections;
@@ -54,7 +55,18 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			WarningsDataGridView.KeyDown += WarningsDataGridView_KeyDown;
 			WarningsDataGridView.CellMouseDown += WarningsDataGridView_CellMouseDown;
 			var copyMenu = new ContextMenuStrip();
-			var copyItem = new ToolStripMenuItem("&Copy", null, (s, e) => CopySelectedIssues());
+			var copyItem = new ToolStripMenuItem(UiLanguage.T("IssuesUserControl.Copy", "&Copy"), null, (s, e) => CopySelectedIssues());
+			// What each issue says, and the name of its fix, are made again in the language chosen.
+			EventHandler languageChanged = (s, e) =>
+			{
+				copyItem.Text = UiLanguage.T("IssuesUserControl.Copy", "&Copy");
+				foreach (var issue in IssueList.ToArray())
+					issue.SetTexts();
+				WarningsDataGridView.Invalidate();
+				TasksTimer.DoActionNow();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			copyItem.ShortcutKeyDisplayString = "Ctrl+C";
 			copyMenu.Items.Add(copyItem);
 			WarningsDataGridView.ContextMenuStrip = copyMenu;
@@ -480,11 +492,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			else if (column == SolutionColumn)
 			{
-				e.Value = item.Status == IssueStatus.Fixing ? "Please Wait..." : item.FixName;
+				e.Value = item.Status == IssueStatus.Fixing ? UiLanguage.T("IssuesUserControl.PleaseWait", "Please Wait...") : item.FixName;
 			}
 			else if (column == MoreColumn)
 			{
-				e.Value = item.MoreInfo is null ? "" : "More...";
+				e.Value = item.MoreInfo is null ? "" : UiLanguage.T("IssuesUserControl.More", "More...");
 			}
 		}
 
@@ -500,11 +512,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			if (nextRunTime.Ticks > 0)
 				remains = nextRunTime.Subtract(DateTime.Now);
 			var nextRun = _checksEnabled
-				? string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m))
-				: "Next Run: off";
+				? string.Format(UiLanguage.T("IssuesUserControl.NextRunIn", "Next Run: {0:00}:{1:00}"), remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m))
+				: UiLanguage.T("IssuesUserControl.NextRunOff", "Next Run: off");
 			ControlsHelper.SetText(NextRunLabel, nextRun);
-			var lrt = TasksTimer.LastActionDoneTime;
-			var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
 			var state = TasksTimer.IsRunning ? "↑" : " ";
 			ControlsHelper.SetText(RunStateLabel, state);
 		}

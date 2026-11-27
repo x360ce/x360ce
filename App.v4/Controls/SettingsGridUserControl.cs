@@ -80,7 +80,7 @@ namespace x360ce.App.Controls
 			var userSettings = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserSetting)x.DataBoundItem).ToArray();
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm(UiLanguage.T("SettingsGridUserControl.DoYouWantToDeleteSelected", "Do you want to delete selected settings?"), "X360CE - Delete Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+			var result = form.ShowForm(UiLanguage.T("SettingsGridUserControl.DoYouWantToDeleteSelected", "Do you want to delete selected settings?"), UiLanguage.T("SettingsGridUserControl.DeleteSettingsTitle", "X360CE - Delete Settings"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
 				// Remove from local settings.
@@ -130,7 +130,7 @@ namespace x360ce.App.Controls
 			form.EditTextBox.MaxLength = 1024;
 			form.EditTextBox.Text = note;
 			form.StartPosition = FormStartPosition.CenterParent;
-			form.Text = "X360CE - Edit Note";
+			form.Text = UiLanguage.T("SettingsGridUserControl.EditNoteTitle", "X360CE - Edit Note");
 			ControlsHelper.CheckTopMost(form);
 			var result = form.ShowDialog();
 			if (result == DialogResult.OK)
@@ -184,7 +184,7 @@ namespace x360ce.App.Controls
 			}
 			else if (e.Result == null)
 			{
-				_ParentForm.SetHeaderInfo("No user settings received.");
+				_ParentForm.SetHeaderInfo(UiLanguage.T("SettingsGridUserControl.NoSettingsReceived", "No user settings received."));
 			}
 			else
 			{
@@ -204,7 +204,7 @@ namespace x360ce.App.Controls
 				// Display results about operation.
 				var settingsCount = (result.Settings == null) ? 0 : result.Settings.Length;
 				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-				_ParentForm.SetHeaderInfo("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
+				_ParentForm.SetHeaderInfo(UiLanguage.T("SettingsGridUserControl.SettingsReceived", "{0} user settings and {1} PAD settings received."), settingsCount, padSettingsCount);
 
 				SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
 				// Resume DInput Service.

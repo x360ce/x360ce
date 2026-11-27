@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -112,9 +113,9 @@ namespace x360ce.App.Forms
 		private void InformationButton_Click(object sender, EventArgs e)
 		{
 			var answer = MessageBoxForm.Show(
-				"Settings were saved.\r\n\r\n" +
-				"This test shows an information message: one button, and text long enough to wrap beside the icon.",
-				"Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				UiLanguage.T("DeveloperToolsForm.InformationMessage", "Settings were saved.\r\n\r\n" +
+				"This test shows an information message: one button, and text long enough to wrap beside the icon."),
+				UiLanguage.T("DeveloperToolsForm.InformationTitle", "Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 			WriteAnswer("Information", answer);
 		}
 
@@ -123,10 +124,10 @@ namespace x360ce.App.Forms
 			using (var form = new MessageBoxForm { StartPosition = FormStartPosition.CenterParent })
 			{
 				var answer = form.ShowForm(
-					"Settings could not be saved to:\r\nC:\\ProgramData\\X360CE\\Settings\r\n\r\n" +
-					"This test shows a warning with three buttons named for what they do.",
-					"Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1,
-					new[] { "&Try again", "&Use my own folder", "&Not now" });
+					string.Format(UiLanguage.T("DeveloperToolsForm.WarningMessage", "Settings could not be saved to:\r\n{0}\r\n\r\n" +
+						"This test shows a warning with three buttons named for what they do."), @"C:\ProgramData\X360CE\Settings"),
+					UiLanguage.T("DeveloperToolsForm.WarningTitle", "Warning"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1,
+					new[] { UiLanguage.T("DeveloperToolsForm.TryAgain", "&Try again"), UiLanguage.T("DeveloperToolsForm.UseOwnFolder", "&Use my own folder"), UiLanguage.T("DeveloperToolsForm.NotNow", "&Not now") });
 				WriteAnswer("Warning", answer);
 			}
 		}
@@ -136,9 +137,9 @@ namespace x360ce.App.Forms
 			using (var form = new MessageBoxForm { StartPosition = FormStartPosition.CenterParent })
 			{
 				var answer = form.ShowForm(
-					"Do you want to clear all errors?\r\n\r\n" +
-					"This test shows an error message with the second button as the default.",
-					"Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+					UiLanguage.T("DeveloperToolsForm.ErrorMessage", "Do you want to clear all errors?\r\n\r\n" +
+					"This test shows an error message with the second button as the default."),
+					UiLanguage.T("DeveloperToolsForm.ErrorTitle", "Error"), MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
 				WriteAnswer("Error", answer);
 			}
 		}
@@ -148,10 +149,10 @@ namespace x360ce.App.Forms
 			using (var form = new MessageBoxForm { StartPosition = FormStartPosition.CenterParent })
 			{
 				var answer = form.ShowForm(
-					"The device is already on Controller 1.\r\n\r\n" +
-					"This test shows a question with a heading and buttons named for what they do.",
-					"Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1,
-					new[] { "&Move", "&Copy" }, "Move the device to Controller 2, or copy it there?");
+					UiLanguage.T("DeveloperToolsForm.QuestionMessage", "The device is already on Controller 1.\r\n\r\n" +
+					"This test shows a question with a heading and buttons named for what they do."),
+					UiLanguage.T("DeveloperToolsForm.QuestionTitle", "Question"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1,
+					new[] { UiLanguage.T("DeveloperToolsForm.Move", "&Move"), UiLanguage.T("DeveloperToolsForm.Copy", "&Copy") }, UiLanguage.T("DeveloperToolsForm.QuestionHeading", "Move the device to Controller 2, or copy it there?"));
 				WriteAnswer("Question", answer);
 			}
 		}

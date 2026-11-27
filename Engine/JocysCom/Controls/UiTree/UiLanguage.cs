@@ -199,17 +199,148 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 
 		static bool IsMethod(Module module, int token, MethodBase body, MethodInfo method)
 		{
+			return Resolve(module, token, body) == method;
+		}
+
+		static MethodBase Resolve(Module module, int token, MethodBase body)
+		{
 			var types = body.DeclaringType != null && body.DeclaringType.IsGenericType ? body.DeclaringType.GetGenericArguments() : null;
 			var arguments = body.IsGenericMethod ? body.GetGenericArguments() : null;
 			try
 			{
-				return module.ResolveMethod(token, types, arguments) == method;
+				return module.ResolveMethod(token, types, arguments);
 			}
 			// A call into an assembly that is not there names nothing that can be the method looked for.
 			catch (Exception ex) when (ex is ArgumentException || ex is TypeLoadException || ex is System.IO.FileNotFoundException || ex is MissingMemberException)
 			{
-				return false;
+				return null;
 			}
+		}
+
+		/// <summary>
+		/// English sentences written as literals in the code of the types that show text, and never passed to one of
+		/// <paramref name="translators"/>: texts a person sees that no language document can translate. Each is
+		/// "Type.Method: text".
+		/// </summary>
+		/// <param name="shows">Whether a type shows its texts to a person, such as a control or an issue.</param>
+		/// <remarks>
+		/// Read from the compiled program like <see cref="FindCalls(Assembly, MethodInfo, string)"/>. A sentence is a word,
+		/// a space and a letter. Left out: what a designer wrote, which the controls record as they are built; an element's
+		/// name and purpose, which stay English; and a literal that goes to a log, to an exception, to a comparison or to a
+		/// path, which no person reads as the interface.
+		/// </remarks>
+		public static List<string> FindUntranslated(Assembly assembly, Func<Type, bool> shows, params MethodInfo[] translators)
+		{
+			var found = new List<string>();
+			const BindingFlags all = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+			foreach (var type in TypesOf(assembly))
+			{
+				// A lambda, an iterator or an async method is compiled into a type nested in the one that wrote it.
+				var owner = type;
+				while (owner.DeclaringType != null && !shows(owner))
+					owner = owner.DeclaringType;
+				if (!shows(owner))
+					continue;
+				var bodies = type.GetMethods(all).Cast<MethodBase>().Concat(type.GetConstructors(all));
+				foreach (var body in bodies)
+				{
+					if (body.Name == "InitializeComponent")
+						continue;
+					foreach (var text in FindUntranslated(body, translators))
+						found.Add(owner.Name + "." + body.Name + ": " + text);
+				}
+			}
+			return found.Distinct().ToList();
+		}
+
+		/// <summary>A word, a space and a letter: a sentence a person reads, never a key or a name.</summary>
+		static readonly System.Text.RegularExpressions.Regex Sentence =
+			new System.Text.RegularExpressions.Regex(@"\p{L}{2,}[ ]+\p{L}");
+
+		static IEnumerable<string> FindUntranslated(MethodBase body, MethodInfo[] translators)
+		{
+			var il = body.GetMethodBody()?.GetILAsByteArray();
+			if (il == null)
+				yield break;
+			var module = body.Module;
+			// The literals loaded since the last call, and those a call took that may reach the screen.
+			var recent = new List<string>();
+			var shown = new List<string>();
+			var i = 0;
+			while (i < il.Length)
+			{
+				var code = il[i] == 0xFE && i + 1 < il.Length ? OpCodeTable.TwoByte[il[++i]] : OpCodeTable.OneByte[il[i]];
+				i++;
+				var operand = i;
+				i += OperandSize(code.OperandType, il, operand);
+				if (code.Value == OpCodes.Ldstr.Value)
+				{
+					recent.Add(module.ResolveString(BitConverter.ToInt32(il, operand)));
+					continue;
+				}
+				if (code.Value != OpCodes.Call.Value && code.Value != OpCodes.Callvirt.Value && code.Value != OpCodes.Newobj.Value)
+					continue;
+				var called = Resolve(module, BitConverter.ToInt32(il, operand), body);
+				if (called != null && translators.Contains(called))
+				{
+					// The key and the English it translates.
+					recent.RemoveRange(Math.Max(0, recent.Count - 2), Math.Min(2, recent.Count));
+					shown.AddRange(recent);
+					recent.Clear();
+				}
+				// A text being built, or waiting beside a call that cannot take it, goes on to wherever the text goes.
+				else if (called != null && Builds(called))
+					continue;
+				else if (called == null || IsNotShown(called))
+					recent.Clear();
+				else
+				{
+					shown.AddRange(recent);
+					recent.Clear();
+				}
+			}
+			foreach (var text in shown.Concat(recent))
+				if (Sentence.IsMatch(text))
+					yield return text;
+		}
+
+		/// <summary>Whether a call builds a text from its parts, or cannot take a text at all: the text goes on to wherever it goes.</summary>
+		static bool Builds(MethodBase method)
+		{
+			var type = method.DeclaringType;
+			if (type == typeof(string))
+				return method.Name == nameof(string.Concat) || method.Name == nameof(string.Format) || method.Name == nameof(string.Join);
+			// A lambda is made as a delegate from an object and a method pointer, and takes no text.
+			return type == typeof(StringBuilder) || typeof(Delegate).IsAssignableFrom(type)
+				|| !method.GetParameters().Any(x => TakesText(x.ParameterType));
+		}
+
+		static bool TakesText(Type type)
+		{
+			return type == typeof(string) || type == typeof(object) || (type.IsArray && TakesText(type.GetElementType()))
+				|| (type.IsByRef && TakesText(type.GetElementType()));
+		}
+
+		/// <summary>Whether a call takes a text that no person reads as the interface: a log, an exception, a comparison, a path.</summary>
+		static bool IsNotShown(MethodBase method)
+		{
+			var type = method.DeclaringType;
+			if (type == null)
+				return false;
+			if (method.IsConstructor && typeof(Exception).IsAssignableFrom(type))
+				return true;
+			if (type == typeof(IssuesControl.IssueHelper) && method.Name == nameof(IssuesControl.IssueHelper.IsInstalled))
+				return true;
+			// An element keeps its English name and purpose, which a screen reader and an AI assistant search by.
+			if (method.Name == "set_AccessibleName" || method.Name == "set_AccessibleDescription"
+				|| (method.Name == "set_Name" && typeof(System.ComponentModel.Component).IsAssignableFrom(type)))
+				return true;
+			var ns = type.Namespace ?? "";
+			return ns == "System.Diagnostics" || ns == "System.IO" || ns.StartsWith("Microsoft.Win32", StringComparison.Ordinal)
+				|| ns == "System.Text.RegularExpressions" || type == typeof(Console) || type == typeof(Environment)
+				|| type.Name.IndexOf("Log", StringComparison.Ordinal) >= 0 || type.Name.IndexOf("Trace", StringComparison.Ordinal) >= 0
+				|| type.Name.EndsWith("Recorder", StringComparison.Ordinal)
+				|| type == typeof(string);
 		}
 
 		static int OperandSize(OperandType type, byte[] il, int at)

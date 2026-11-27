@@ -29,6 +29,9 @@ namespace x360ce.App.Controls
 			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
 			SdlTabPage.Controls.Add(SdlPresetsPanel);
 			MainTabControl.TabPages.Add(SdlTabPage);
+			EventHandler languageChanged = (s, e) => UpdateControls();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>The SDL tab: SDL's controller database, as presets for the selected device.</summary>
@@ -219,7 +222,7 @@ namespace x360ce.App.Controls
 		{
 			using (var dialog = new OpenFileDialog())
 			{
-				dialog.Title = "Open Preset";
+				dialog.Title = UiLanguage.T("LoadPresetsForm.OpenPreset", "Open Preset");
 				dialog.Filter = SettingsManager.PresetFileFilter;
 				if (dialog.ShowDialog(this) != DialogResult.OK)
 					return;

@@ -15,7 +15,8 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	class PluginIssue : IssueItem
 	{
-		public PluginIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
 			Name = UiLanguage.T("PluginIssue.Plugins", "Plugins");
 			FixName = null;
@@ -31,8 +32,9 @@ namespace x360ce.App.Issues
 				return;
 			}
 			SetSeverity(IssueSeverity.Low, 0,
-				(problems.Length == 1 ? "A plugin did not load or was switched off." : problems.Length + " plugins did not load or were switched off.")
-				+ " The Plugins page on the Options tab lists every plugin and why."
+				(problems.Length == 1
+					? UiLanguage.T("PluginIssue.OneFailed", "A plugin did not load or was switched off. The Plugins page on the Options tab lists every plugin and why.")
+					: string.Format(UiLanguage.T("PluginIssue.ManyFailed", "{0} plugins did not load or were switched off. The Plugins page on the Options tab lists every plugin and why."), problems.Length))
 				+ Environment.NewLine + Environment.NewLine
 				+ string.Join(Environment.NewLine, problems.Select(x => "    " + x).ToArray()));
 		}
@@ -47,12 +49,13 @@ namespace x360ce.App.Issues
 					continue;
 				if (file.State != PluginFileState.Loaded || file.Reason != null)
 					list.Add(file.Name + ": " + file.Reason);
+				var switchedOff = UiLanguage.T("PluginIssue.SwitchedOff", "{0}, {1}: switched off after it failed: {2}");
 				foreach (var type in file.DeviceTypes.Where(x => x.Faulted))
-					list.Add(file.Name + ", " + type.Name + ": switched off after it failed: " + type.FaultReason);
+					list.Add(string.Format(switchedOff, file.Name, type.Name, type.FaultReason));
 				foreach (var type in file.TelemetryTypes.Where(x => x.Faulted))
-					list.Add(file.Name + ", " + type.Name + ": switched off after it failed: " + type.FaultReason);
+					list.Add(string.Format(switchedOff, file.Name, type.Name, type.FaultReason));
 				foreach (var type in file.GameTypes.Where(x => x.Faulted))
-					list.Add(file.Name + ", " + type.Name + ": switched off after it failed: " + type.FaultReason);
+					list.Add(string.Format(switchedOff, file.Name, type.Name, type.FaultReason));
 			}
 			return list.ToArray();
 		}

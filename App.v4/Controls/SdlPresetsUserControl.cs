@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -88,6 +89,7 @@ namespace x360ce.App.Controls
 			PerformLayout();
 			// The window it sits in is made after the main window has named and described everything.
 			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			UiLanguage.Register(this);
 			x360ce.App.UiTree.UiHelp.Attach(this);
 		}
 
@@ -134,7 +136,7 @@ namespace x360ce.App.Controls
 		void Fill()
 		{
 			var database = SdlDatabase.Current;
-			ControlsHelper.SetText(VersionLabel, "SDL controller database: " + database.Describe() + ".");
+			ControlsHelper.SetText(VersionLabel, string.Format(UiLanguage.T("SdlPresetsUserControl.DatabaseVersion", "SDL controller database: {0}."), database.Describe()));
 			var device = SdlDevice.From(_device);
 			var own = new HashSet<SdlMapping>(database.FindAll(device));
 			var filter = FilterTextBox.Text.Trim();
@@ -146,7 +148,7 @@ namespace x360ce.App.Controls
 					Guid = x.Guid.Text,
 					Ids = x.Guid.HasIds ? string.Format(CultureInfo.InvariantCulture, "{0:X4}:{1:X4}", x.Guid.VendorId, x.Guid.ProductId) : "",
 					Source = Source(database.SourceOf(x)),
-					Device = own.Contains(x) ? "This device" : "",
+					Device = own.Contains(x) ? UiLanguage.T("SdlPresetsUserControl.ThisDevice", "This device") : "",
 				})
 				.Where(x => filter.Length == 0
 					|| x.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
@@ -167,10 +169,10 @@ namespace x360ce.App.Controls
 				return "";
 			switch (source.Kind)
 			{
-				case SdlSourceKind.Downloaded: return "Downloaded";
+				case SdlSourceKind.Downloaded: return UiLanguage.T("SdlPresetsUserControl.Downloaded", "Downloaded");
 				case SdlSourceKind.File: return SdlDatabase.FileName;
 				case SdlSourceKind.Environment: return SdlDatabase.EnvironmentVariable;
-				default: return "Built in";
+				default: return UiLanguage.T("SdlPresetsUserControl.BuiltIn", "Built in");
 			}
 		}
 

@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Web.Services;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using JocysCom.ClassLibrary.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -119,7 +120,7 @@ namespace x360ce.App.Controls
 			}
 			else if (e.Result == null)
 			{
-				_ParentForm.SetHeaderInfo("No default settings received.");
+				_ParentForm.SetHeaderInfo(UiLanguage.T("SummariesGridUserControl.NoSettingsReceived", "No default settings received."));
 			}
 			else
 			{
@@ -132,7 +133,7 @@ namespace x360ce.App.Controls
 				var padSettingsCount = sent.Count;
 				if (summariesCount == 0)
 				{
-					_ParentForm.SetHeaderInfo("0 default settings received.");
+					_ParentForm.SetHeaderInfo(UiLanguage.T("SummariesGridUserControl.ZeroSettingsReceived", "0 default settings received."));
 				}
 				else
 				{
@@ -142,7 +143,7 @@ namespace x360ce.App.Controls
 					// Update pad settings.
 					SettingsManager.Current.UpsertPadSettings(result.PadSettings);
 					SettingsManager.Current.CleanupPadSettings();
-					_ParentForm.SetHeaderInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
+					_ParentForm.SetHeaderInfo(UiLanguage.T("SummariesGridUserControl.SettingsReceived", "{0} default settings and {1} PAD settings received."), summariesCount, padSettingsCount);
 				}
 			}
 			_ParentForm.RemoveTask(TaskName.SearchSummaries);

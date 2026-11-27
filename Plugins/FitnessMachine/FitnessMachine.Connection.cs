@@ -44,11 +44,11 @@ namespace x360ce.Plugins.Samples
 			_scan = scan;
 			Name = "FitnessConnection";
 			// The page's name on the device's tab.
-			Text = "Connection";
 			AccessibleName = "Connection";
 			AccessibleDescription = "Finds fitness machines over Bluetooth, chooses the one this device connects to while it is ticked, and shows what it sends.";
 			SuspendLayout();
 			Build();
+			ApplyTexts();
 			ResumeLayout(false);
 			PerformLayout();
 			// A machine that asks to be paired is asked about on this thread.
@@ -59,6 +59,7 @@ namespace x360ce.Plugins.Samples
 			_timer.Tick += (s, e) => ShowSession();
 			_timer.Start();
 			ShowSession();
+			PluginText.Changed += LanguageChanged;
 		}
 
 		readonly FitnessMachine _device;
@@ -113,6 +114,9 @@ namespace x360ce.Plugins.Samples
 		/// <summary>Gives each control its room from the font: run again when the font changes.</summary>
 		readonly List<Action<int>> _spacing = new List<Action<int>>();
 
+		/// <summary>Applies the translated captions of the target rows.</summary>
+		readonly List<Action> _targetTexts = new List<Action>();
+
 		/// <summary>The least width of the left column, the machines and commands, in gaps (half a line): the receiver's, at its own window's width.</summary>
 		const int LeftGaps = 60;
 
@@ -140,8 +144,6 @@ namespace x360ce.Plugins.Samples
 			NoteLabel = new Label
 			{
 				Name = nameof(NoteLabel),
-				Text = "Experimental: walk, drive or row in games with a fitness machine. Tested on a Tunturi E60R exercise bike only. "
-					+ "Use it with care and at your own risk.",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left | AnchorStyles.Right,
 				BackColor = SystemColors.Info,
@@ -158,7 +160,6 @@ namespace x360ce.Plugins.Samples
 			ShowAllCheckBox = new CheckBox
 			{
 				Name = nameof(ShowAllCheckBox),
-				Text = "Show all Bluetooth devices",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 				AccessibleName = "Show all Bluetooth devices",
@@ -184,9 +185,9 @@ namespace x360ce.Plugins.Samples
 				AccessibleName = "Fitness machines",
 				AccessibleDescription = "The machines heard: each one’s name, what kind it is, and its signal. Selecting one chooses it for this device.",
 			};
-			NameColumn = NewMachineColumn(nameof(NameColumn), "Name", DataGridViewAutoSizeColumnMode.Fill);
-			TypeColumn = NewMachineColumn(nameof(TypeColumn), "Type", DataGridViewAutoSizeColumnMode.AllCells);
-			SignalColumn = NewMachineColumn(nameof(SignalColumn), "Signal", DataGridViewAutoSizeColumnMode.AllCells);
+			NameColumn = NewMachineColumn(nameof(NameColumn), DataGridViewAutoSizeColumnMode.Fill);
+			TypeColumn = NewMachineColumn(nameof(TypeColumn), DataGridViewAutoSizeColumnMode.AllCells);
+			SignalColumn = NewMachineColumn(nameof(SignalColumn), DataGridViewAutoSizeColumnMode.AllCells);
 			SignalColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 			MachinesDataGridView.Columns.AddRange(NameColumn, TypeColumn, SignalColumn);
 			MachinesDataGridView.SelectionChanged += MachinesDataGridView_SelectionChanged;
@@ -221,16 +222,19 @@ namespace x360ce.Plugins.Samples
 			for (var i = 0; i < 3; i++)
 				TargetsTableLayoutPanel.RowStyles.Add(new RowStyle());
 			_spacing.Add(g => TargetsTableLayoutPanel.MinimumSize = new Size(LeftGaps * g, 0));
-			PowerTrackBar = AddTarget(0, "Power", "Target power", 0, 1500, 150, 5, 25);
+			PowerTrackBar = AddTarget(0, "Power", "Target power",
+				() => PluginText.T("FitnessMachine.TargetPower", "Target power"), 0, 1500, 150, 5, 25);
 			PowerValueLabel = (Label)TargetsTableLayoutPanel.GetControlFromPosition(2, 0);
 			SetPowerButton = (Button)TargetsTableLayoutPanel.GetControlFromPosition(3, 0);
 			SetPowerButton.Click += (s, e) => _session.Send(FitnessCommand.Power, PowerTrackBar.Value);
-			ResistanceTrackBar = AddTarget(1, "Resistance", "Target resistance", 0, 20, 5, 1, 2);
+			ResistanceTrackBar = AddTarget(1, "Resistance", "Target resistance",
+				() => PluginText.T("FitnessMachine.TargetResistance", "Target resistance"), 0, 20, 5, 1, 2);
 			ResistanceValueLabel = (Label)TargetsTableLayoutPanel.GetControlFromPosition(2, 1);
 			SetResistanceButton = (Button)TargetsTableLayoutPanel.GetControlFromPosition(3, 1);
 			SetResistanceButton.Click += (s, e) => _session.Send(FitnessCommand.Resistance, ResistanceTrackBar.Value);
 			// Half percents, so the slider steps by half a percent.
-			GradeTrackBar = AddTarget(2, "Grade", "Road grade", -40, 40, 0, 1, 4);
+			GradeTrackBar = AddTarget(2, "Grade", "Road grade",
+				() => PluginText.T("FitnessMachine.RoadGrade", "Road grade"), -40, 40, 0, 1, 4);
 			GradeValueLabel = (Label)TargetsTableLayoutPanel.GetControlFromPosition(2, 2);
 			SetGradeButton = (Button)TargetsTableLayoutPanel.GetControlFromPosition(3, 2);
 			SetGradeButton.Click += (s, e) => _session.Send(FitnessCommand.Grade, GradeTrackBar.Value / 2.0);
@@ -321,6 +325,29 @@ namespace x360ce.Plugins.Samples
 			ApplyFont();
 		}
 
+		void ApplyTexts()
+		{
+			Text = PluginText.T("FitnessMachine.Connection", "Connection");
+			NoteLabel.Text = PluginText.T("FitnessMachine.ExperimentalNote",
+				"Experimental: walk, drive or row in games with a fitness machine. Tested on a Tunturi E60R exercise bike only. Use it with care and at your own risk.");
+			ShowAllCheckBox.Text = PluginText.T("FitnessMachine.ShowAllBluetoothDevices", "Show all Bluetooth devices");
+			NameColumn.HeaderText = PluginText.T("FitnessMachine.Name", "Name");
+			TypeColumn.HeaderText = PluginText.T("FitnessMachine.Type", "Type");
+			SignalColumn.HeaderText = PluginText.T("FitnessMachine.Signal", "Signal");
+			StartButton.Text = PluginText.T("FitnessMachine.Start", "Start");
+			PauseButton.Text = PluginText.T("FitnessMachine.Pause", "Pause");
+			StopButton.Text = PluginText.T("FitnessMachine.Stop", "Stop");
+			ResetButton.Text = PluginText.T("FitnessMachine.Reset", "Reset");
+			foreach (var text in _targetTexts)
+				text();
+		}
+
+		void LanguageChanged(object sender, EventArgs e)
+		{
+			ApplyTexts();
+			ShowSession(true);
+		}
+
 		/// <summary>Puts a control in a cell of the main table, with the room after it the font gives, and twice that between the columns.</summary>
 		void Place(Control control, int column, int row)
 		{
@@ -328,13 +355,13 @@ namespace x360ce.Plugins.Samples
 			MainTableLayoutPanel.Controls.Add(control, column, row);
 		}
 
-		/// <summary>A button named by its words, as the AI door reads it: Scan reads Stop scanning while it scans.</summary>
-		Button NewButton(string name, string text, string description, int widthInGaps)
+		/// <summary>A button with an English name for the AI door and screen readers.</summary>
+		Button NewButton(string name, string accessibleName, string description, int widthInGaps)
 		{
 			var button = new Button
 			{
 				Name = name,
-				Text = text,
+				AccessibleName = accessibleName,
 				AutoSize = true,
 				UseVisualStyleBackColor = true,
 				AccessibleDescription = description,
@@ -344,12 +371,11 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>A column of the list of machines, kept in the order the machines were heard rather than sorted.</summary>
-		static DataGridViewTextBoxColumn NewMachineColumn(string name, string header, DataGridViewAutoSizeColumnMode size)
+		static DataGridViewTextBoxColumn NewMachineColumn(string name, DataGridViewAutoSizeColumnMode size)
 		{
 			return new DataGridViewTextBoxColumn
 			{
 				Name = name,
-				HeaderText = header,
 				AutoSizeMode = size,
 				SortMode = DataGridViewColumnSortMode.NotSortable,
 			};
@@ -376,9 +402,9 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>Adds a target's row: its label, its slider, its value and its Set button.</summary>
-		TrackBar AddTarget(int row, string key, string text, int minimum, int maximum, int value, int smallChange, int largeChange)
+		TrackBar AddTarget(int row, string key, string text, Func<string> caption, int minimum, int maximum, int value, int smallChange, int largeChange)
 		{
-			var label = new Label { Name = key + "Label", Text = text, AutoSize = true, Anchor = AnchorStyles.Left };
+			var label = new Label { Name = key + "Label", AccessibleName = text, AutoSize = true, Anchor = AnchorStyles.Left };
 			var slider = new TrackBar
 			{
 				Name = key + "TrackBar",
@@ -396,13 +422,17 @@ namespace x360ce.Plugins.Samples
 			var set = new Button
 			{
 				Name = "Set" + key + "Button",
-				Text = "Set",
 				AutoSize = true,
 				Anchor = AnchorStyles.Left,
 				UseVisualStyleBackColor = true,
 				AccessibleName = "Set " + text.ToLowerInvariant(),
 				AccessibleDescription = "Sends the " + text.ToLowerInvariant() + " to the machine.",
 			};
+			_targetTexts.Add(() =>
+			{
+				label.Text = caption();
+				set.Text = PluginText.T("FitnessMachine.Set", "Set");
+			});
 			slider.ValueChanged += (s, e) => ShowTargets();
 			_spacing.Add(g =>
 			{
@@ -492,8 +522,12 @@ namespace x360ce.Plugins.Samples
 			ShowMachines();
 			SetText(StatusLabel, StatusText());
 			SetText(FeaturesLabel, _session.FeaturesText);
-			SetText(ScanButton, _scan.Scanning ? "Stop scanning" : "Scan");
-			ShowAllCheckBox.Enabled = !_scan.Scanning;
+			var scanning = _scan.Scanning;
+			ScanButton.AccessibleName = scanning ? "Stop scanning" : "Scan";
+			SetText(ScanButton, scanning
+				? PluginText.T("FitnessMachine.StopScanning", "Stop scanning")
+				: PluginText.T("FitnessMachine.Scan", "Scan"));
+			ShowAllCheckBox.Enabled = !scanning;
 			var commands = connected && _session.CanCommand && !_session.Busy;
 			StartButton.Enabled = commands;
 			PauseButton.Enabled = commands;
@@ -522,8 +556,13 @@ namespace x360ce.Plugins.Samples
 				if (_scan.Scanning)
 				{
 					var count = _scan.Machines().Length;
-					return "Scanning. " + (_scan.ShowAll ? "Devices" : "Fitness machines") + " found: " + count + "."
-						+ (count > 0 ? " Select the one this device connects to." : "");
+					if (_scan.ShowAll)
+						return count == 0 ? PluginText.T("FitnessMachine.ScanNoDevices", "Scanning. Devices found: 0.")
+							: count == 1 ? PluginText.T("FitnessMachine.ScanOneDevice", "Scanning. Device found: 1. Select the one this device connects to.")
+							: string.Format(PluginText.T("FitnessMachine.ScanMultipleDevices", "Scanning. Devices found: {0}. Select the one this device connects to."), count);
+					return count == 0 ? PluginText.T("FitnessMachine.ScanNoMachines", "Scanning. Fitness machines found: 0.")
+						: count == 1 ? PluginText.T("FitnessMachine.ScanOneMachine", "Scanning. Fitness machine found: 1. Select the one this device connects to.")
+						: string.Format(PluginText.T("FitnessMachine.ScanMultipleMachines", "Scanning. Fitness machines found: {0}. Select the one this device connects to."), count);
 				}
 				var problem = _scan.Problem;
 				if (problem != null)
@@ -733,7 +772,8 @@ namespace x360ce.Plugins.Samples
 					pairing.Accept(false);
 					return;
 				}
-				using (var form = new FitnessQuestionForm("Pair with fitness machine", pairing.Question, pairing.Kind == FitnessPairingKind.DisplayPin))
+				using (var form = new FitnessQuestionForm(PluginText.T("FitnessMachine.PairWithMachine", "Pair with fitness machine"),
+					pairing.Question, pairing.Kind == FitnessPairingKind.DisplayPin))
 				{
 					var answer = form.ShowDialog(FindForm());
 					pairing.Accept(answer == DialogResult.Yes || answer == DialogResult.OK);
@@ -747,6 +787,7 @@ namespace x360ce.Plugins.Samples
 		{
 			if (disposing)
 			{
+				PluginText.Changed -= LanguageChanged;
 				if (_timer != null)
 					_timer.Dispose();
 				// Another page of the device may ask from now on.
@@ -793,7 +834,7 @@ namespace x360ce.Plugins.Samples
 			var yes = new Button
 			{
 				Name = "YesButton",
-				Text = okCancel ? "OK" : "&Yes",
+				Text = okCancel ? PluginText.T("FitnessMachine.Ok", "OK") : PluginText.T("FitnessMachine.Yes", "&Yes"),
 				DialogResult = okCancel ? DialogResult.OK : DialogResult.Yes,
 				AutoSize = true,
 				UseVisualStyleBackColor = true,
@@ -803,7 +844,7 @@ namespace x360ce.Plugins.Samples
 			var no = new Button
 			{
 				Name = "NoButton",
-				Text = okCancel ? "Cancel" : "&No",
+				Text = okCancel ? PluginText.T("FitnessMachine.Cancel", "Cancel") : PluginText.T("FitnessMachine.No", "&No"),
 				DialogResult = okCancel ? DialogResult.Cancel : DialogResult.No,
 				AutoSize = true,
 				UseVisualStyleBackColor = true,

@@ -13,6 +13,9 @@ namespace x360ce.App.Issues
 		/// <summary>The count of changes this issue was last checked at, none yet.</summary>
 		int _checkedAt = -1;
 
+		/// <summary>The language this issue last said what it found in: a new one is a reason to check again.</summary>
+		string _checkedIn;
+
 		protected OnChangeIssue()
 		{
 			// Added first, so the round that follows a fix finds the change.
@@ -33,9 +36,11 @@ namespace x360ce.App.Issues
 		public override bool IsDue()
 		{
 			var changes = Changes;
-			if (changes == _checkedAt)
+			var culture = JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Culture;
+			if (changes == _checkedAt && culture == _checkedIn)
 				return false;
 			_checkedAt = changes;
+			_checkedIn = culture;
 			return true;
 		}
 	}

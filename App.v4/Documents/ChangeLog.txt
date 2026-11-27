@@ -1,4 +1,4 @@
-﻿## [4.31.67.0] - 2026-11-27
+﻿## [4.31.68.0] - 2026-11-27
 
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Fixed: A controller's SDL page shows its row from x360ce's database.
@@ -30,6 +30,7 @@
 - Fixed: AI assistant access scrolls to the control it shows.
 - Fixed: Scroll bars take the theme's colours, as on the Game Telemetry page.
 - Fixed: x360ce Test Game's AI assistant access takes yes or no values.
+- Fixed: Issues, messages and plugins show in the chosen language.
 - Changed: A dragged chip keeps the hand cursor and turns red.
 - Changed: Adding a device switches its controller on and shows its XInput state.
 - Changed: Road and impact feel come from telemetry by default; the game's own rumble plays when no telemetry arrives.

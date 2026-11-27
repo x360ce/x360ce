@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -93,13 +94,13 @@ namespace x360ce.App.Controls
 		{
 			var dialog = ImportOpenFileDialog;
 			dialog.DefaultExt = "*.xml";
-			dialog.Filter = "Game Settings (*.xml;*.xml.gz)|*.xml;*.xml.gz|All files (*.*)|*.*";
+			dialog.Filter = UiLanguage.T("ProgramsGridUserControl.ImportFilter", "Game Settings (*.xml;*.xml.gz)|*.xml;*.xml.gz|All files (*.*)|*.*");
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce_Games";
 			if (string.IsNullOrEmpty(dialog.InitialDirectory))
 				dialog.InitialDirectory = EngineHelper.AppDataPath;
-			dialog.Title = "Import Games Settings File";
+			dialog.Title = UiLanguage.T("ProgramsGridUserControl.ImportTitle", "Import Games Settings File");
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
@@ -126,13 +127,13 @@ namespace x360ce.App.Controls
 		{
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.xml";
-			dialog.Filter = "Game Settings (*.xml)|*.xml|Compressed Game Settings (*.xml.gz)|*.gz|All files (*.*)|*.*";
+			dialog.Filter = UiLanguage.T("ProgramsGridUserControl.ExportFilter", "Game Settings (*.xml)|*.xml|Compressed Game Settings (*.xml.gz)|*.gz|All files (*.*)|*.*");
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce_Games";
 			if (string.IsNullOrEmpty(dialog.InitialDirectory))
 				dialog.InitialDirectory = EngineHelper.AppDataPath;
-			dialog.Title = "Export Games Settings File";
+			dialog.Title = UiLanguage.T("ProgramsGridUserControl.ExportTitle", "Export Games Settings File");
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
@@ -168,13 +169,13 @@ namespace x360ce.App.Controls
 			if (itemsToDelete.Length == 1)
 			{
 				var item = itemsToDelete[0];
-				message = string.Format("Are you sure you want to delete default settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
+				message = string.Format(UiLanguage.T("ProgramsGridUserControl.DeleteOneDefaultSetting", "Are you sure you want to delete default settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}"),
 					item.FileName,
 					item.FileProductName);
 			}
 			else
 			{
-				message = string.Format("Delete {0} default setting(s)?", itemsToDelete.Length);
+				message = string.Format(UiLanguage.T("ProgramsGridUserControl.DeleteDefaultSettings", "Delete {0} default settings?"), itemsToDelete.Length);
 			}
 			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 			if (result == DialogResult.OK)
@@ -255,7 +256,7 @@ namespace x360ce.App.Controls
 				}
 				else if (e.Result == null)
 				{
-					MainForm.Current.SetHeaderError("No results were returned by the web service!");
+					MainForm.Current.SetHeaderError(UiLanguage.T("ProgramsGridUserControl.NoWebServiceResults", "No results were returned by the web service!"));
 				}
 				else
 				{

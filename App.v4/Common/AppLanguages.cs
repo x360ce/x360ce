@@ -131,6 +131,7 @@ namespace x360ce.App
 					CheckOnClick = true,
 					// A screen reader announces the language by its name in itself, which is how a person looks for it.
 					AccessibleName = language.Name,
+					AccessibleDescription = "Shows the window in " + language.Name + ".",
 				};
 				// A language is named in itself in every language.
 				UiLanguage.Keep(item);
@@ -168,6 +169,29 @@ namespace x360ce.App
 
 		/// <summary>Warns that a plugin's key does not start with the plugin's name.</summary>
 		public const string WarningPluginKey = "XLANG002";
+
+		/// <summary>Warns that a control or an issue shows an English sentence written in code without <see cref="UiLanguage.T"/>.</summary>
+		public const string WarningUntranslated = "XLANG003";
+
+		/// <summary>Whether a type shows its texts to a person: a control, or an issue on the Issues page and what words it.</summary>
+		static bool Shows(Type type)
+		{
+			return typeof(Control).IsAssignableFrom(type)
+				|| typeof(JocysCom.ClassLibrary.Controls.IssuesControl.IssueItem).IsAssignableFrom(type)
+				|| (type.Namespace != null && type.Namespace.EndsWith(".Issues", StringComparison.Ordinal));
+		}
+
+		/// <summary>One warning for each English sentence a control or an issue shows that no language can translate.</summary>
+		static void FindUntranslated(IEnumerable<Assembly> plugins, List<string> warnings)
+		{
+			var t = typeof(UiLanguage).GetMethod(nameof(UiLanguage.T));
+			var pluginT = typeof(global::x360ce.Plugins.PluginText).GetMethod(nameof(global::x360ce.Plugins.PluginText.T));
+			var assemblies = new[] { typeof(AppLanguages).Assembly, typeof(UiLanguage).Assembly }.Concat(plugins);
+			foreach (var assembly in assemblies)
+				foreach (var text in UiLanguage.FindUntranslated(assembly, Shows, t, pluginT))
+					warnings.Add(string.Format("warning {0}: {1}: not translated, write it with UiLanguage.T(\"Key\", \"English\")",
+						WarningUntranslated, assembly.GetName().Name + " " + text.Replace("\r", "\\r").Replace("\n", "\\n")));
+		}
 
 		/// <summary>
 		/// Every English text of the interface, for the sync: the texts of the controls recorded, the names and purposes
@@ -224,6 +248,7 @@ namespace x360ce.App
 			Directory.CreateDirectory(folder);
 			var warnings = new List<string>();
 			var sources = Sources(plugins, warnings);
+			FindUntranslated(plugins, warnings);
 			WriteIfChanged(Path.Combine(folder, UiLanguage.SourceCulture + ".json"), UiLanguage.Write(new UiLanguageDocument
 			{
 				Culture = UiLanguage.SourceCulture,

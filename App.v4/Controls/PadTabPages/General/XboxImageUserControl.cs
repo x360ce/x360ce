@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using System;
@@ -116,8 +117,6 @@ namespace x360ce.App.Controls
 
 		/// <summary>Raised to end recording; returns true when something was captured.</summary>
 		public Func<bool> StopRecording;
-
-		public string MappingDone = "Mapping Done";
 
 		#region Setup
 
@@ -297,20 +296,23 @@ namespace x360ce.App.Controls
 		#region Help text
 
 		/// <summary>Show a short instruction under the controller; it clears itself.</summary>
-		public void SetHelpText(string text = null)
+		public void SetHelpText(string text = null, bool mappingDone = false)
 		{
 			_HelpText = text ?? "";
+			_MappingDone = mappingDone;
 			Invalidate();
-			if (string.IsNullOrEmpty(_HelpText))
+			if (!_MappingDone && string.IsNullOrEmpty(_HelpText))
 				return;
 			ControlsHelper.BeginInvoke(() =>
 			{
 				_HelpText = "";
+				_MappingDone = false;
 				Invalidate();
 			}, 4000);
 		}
 
 		string _HelpText = "";
+		bool _MappingDone;
 
 		#endregion
 
@@ -529,13 +531,14 @@ namespace x360ce.App.Controls
 
 		void DrawHelpText(Graphics g)
 		{
-			if (string.IsNullOrEmpty(_HelpText))
+			if (!_MappingDone && string.IsNullOrEmpty(_HelpText))
 				return;
 			// An instruction is a notice, and the end of the mapping a success.
-			var key = _HelpText == MappingDone ? "ForegroundSuccess" : "ForegroundInformation";
+			var key = _MappingDone ? "ForegroundSuccess" : "ForegroundInformation";
+			var text = _MappingDone ? UiLanguage.T("XboxImageUserControl.MappingDone", "Mapping Done") : _HelpText;
 			using (var brush = new SolidBrush(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor(key)))
 			using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Far })
-				g.DrawString(_HelpText, Font, brush, new RectangleF(0, 0, Width, Height), format);
+				g.DrawString(text, Font, brush, new RectangleF(0, 0, Width, Height), format);
 		}
 
 		#endregion

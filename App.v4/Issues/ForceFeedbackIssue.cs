@@ -18,7 +18,8 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	public class ForceFeedbackIssue : IssueItem
 	{
-		public ForceFeedbackIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
 			Name = UiLanguage.T("ForceFeedbackIssue.ForceFeedback", "Force Feedback");
 			FixName = "";

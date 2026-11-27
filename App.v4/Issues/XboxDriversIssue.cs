@@ -13,13 +13,14 @@ namespace x360ce.App.Issues
     public class XboxDriversIssue : OnChangeIssue
     {
 
-        public XboxDriversIssue() : base()
+        /// <inheritdoc/>
+        public override void SetTexts()
         {
             Name = UiLanguage.T("XboxDriversIssue.Drivers", "Drivers");
             FixName = UiLanguage.T("XboxDriversIssue.Download", "Download");
         }
 
-        string program1 = "Microsoft Xbox 360 Accessories";
+        const string InstalledProgramName = "Microsoft Xbox 360 Accessories";
 
         public override void CheckTask()
         {
@@ -48,7 +49,7 @@ namespace x360ce.App.Issues
 			var version = IssueHelper.GetRealOSVersion();
             if (version >= new Version(6, 2))
             {
-                SetSeverity(IssueSeverity.None, 0, program1);
+                SetSeverity(IssueSeverity.None);
                 return;
             }
             var extra = "";
@@ -65,17 +66,18 @@ namespace x360ce.App.Issues
             //        "The Xbox 360 Accessories Setup program installs the necessary files on the computer. " +
             //        "You might be prompted to restart when finished.";
             //}
-            var installed = IssueHelper.IsInstalled(program1, false);
+            var installed = IssueHelper.IsInstalled(InstalledProgramName, false);
             if (!installed)
             {
                 SetSeverity(
                     IssueSeverity.Critical, 1,
                     string.Format(UiLanguage.T("XboxDriversIssue.PleaseInstallDriversAndSoftware", "Please install {0} ({1}) drivers and software.{2}"),
-                    program1, Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit", extra)
+                    UiLanguage.T("XboxDriversIssue.Accessories", "Microsoft Xbox 360 Accessories"),
+                    Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit", extra)
                 );
                 return;
             }
-            SetSeverity(IssueSeverity.None, 0, program1);
+            SetSeverity(IssueSeverity.None);
         }
 
         public override void FixTask()

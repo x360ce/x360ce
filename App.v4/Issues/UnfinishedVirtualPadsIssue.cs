@@ -20,10 +20,15 @@ namespace x360ce.App.Issues
 	{
 		public UnfinishedVirtualPadsIssue() : base()
 		{
-			Name = UiLanguage.T("UnfinishedVirtualPadsIssue.VirtualControllerNotFinished", "Virtual Controller Not Finished");
-			FixName = UiLanguage.T("UnfinishedVirtualPadsIssue.RepairBus", "Repair Bus");
 			// Removing and putting back the bus is an Administrator action.
 			FixNeedsAdmin = true;
+		}
+
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
+			Name = UiLanguage.T("UnfinishedVirtualPadsIssue.VirtualControllerNotFinished", "Virtual Controller Not Finished");
+			FixName = UiLanguage.T("UnfinishedVirtualPadsIssue.RepairBus", "Repair Bus");
 		}
 
 		public override void CheckTask()

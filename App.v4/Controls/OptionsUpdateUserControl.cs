@@ -1,5 +1,6 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,12 +46,18 @@ namespace x360ce.App.Controls
 			_lines.Add(args.Length == 0 ? format : string.Format(format, args));
 		}
 
-		/// <summary>Continues the last line of the log, the way a step reports its outcome.</summary>
+		/// <summary>Continues the last line of the log, the way a step reports its outcome, one space after the step.</summary>
 		void Append(string text)
 		{
 			if (_lines.Count == 0)
 				_lines.Add("");
-			_lines[_lines.Count - 1] += text;
+			_lines[_lines.Count - 1] += " " + text;
+		}
+
+		/// <summary>A step's outcome when it failed, with the reason.</summary>
+		static string Failed(string reason)
+		{
+			return string.Format(UiLanguage.T("OptionsUpdateUserControl.FailedReason", "Failed: {0}"), reason);
 		}
 
 		/// <summary>Shows the log. On the window's thread only.</summary>
@@ -77,7 +84,7 @@ namespace x360ce.App.Controls
 
 		void Step1CheckOnline()
 		{
-			Log("Check Online...");
+			Log(UiLanguage.T("OptionsUpdateUserControl.CheckOnline", "Check Online..."));
 			Render();
 			var o = SettingsManager.Options;
 			var client = new UpdateClient(typeof(OptionsUpdateUserControl).Assembly.GetName().Version);
@@ -91,15 +98,15 @@ namespace x360ce.App.Controls
 				switch (check.Outcome)
 				{
 					case UpdateOutcome.Failed:
-						Append(" Failed: " + check.Error);
+						Append(Failed(check.Error));
 						Finish();
 						return;
 					case UpdateOutcome.Current:
-						Append(" No new updates.");
+						Append(UiLanguage.T("OptionsUpdateUserControl.NoNewUpdates", "No new updates."));
 						Finish();
 						return;
 				}
-				Append(string.Format(" Version {0} is available.", check.Version));
+				Append(string.Format(UiLanguage.T("OptionsUpdateUserControl.VersionIsAvailable", "Version {0} is available."), check.Version));
 				if (!string.IsNullOrEmpty(check.Release.Page))
 					Log("{0}", check.Release.Page);
 				Step2Download(client, check);
@@ -112,7 +119,7 @@ namespace x360ce.App.Controls
 		/// </summary>
 		internal void Step2Download(UpdateClient client, UpdateCheck check)
 		{
-			Log("Download... {0}", check.Release.Url);
+			Log(UiLanguage.T("OptionsUpdateUserControl.Download", "Download... {0}"), check.Release.Url);
 			Render();
 			// The boxes are read here, on the window's thread, for the worker.
 			var checkSignature = CheckDigitalSignatureCheckBox.Checked;
@@ -121,7 +128,7 @@ namespace x360ce.App.Controls
 			{
 				string updateFileName = null;
 				if (t.IsFaulted)
-					Append(" Failed: " + t.Exception.GetBaseException().Message);
+					Append(Failed(t.Exception.GetBaseException().Message));
 				else
 					updateFileName = t.Result;
 				Render();
@@ -146,22 +153,22 @@ namespace x360ce.App.Controls
 			}
 			catch (Exception ex)
 			{
-				Append(" Failed: " + ex.GetBaseException().Message);
+				Append(Failed(ex.GetBaseException().Message));
 				return null;
 			}
-			Append(string.Format(" Done, {0:N1} MB", data.Length / 1024m / 1024m));
-			Log("Size and SHA-256 match what GitHub publishes for the release.");
+			Append(string.Format(UiLanguage.T("OptionsUpdateUserControl.DoneMegabytes", "Done, {0:N1} MB"), data.Length / 1024m / 1024m));
+			Log(UiLanguage.T("OptionsUpdateUserControl.SizeAndHashMatch", "Size and SHA-256 match what GitHub publishes for the release."));
 			var updateFileName = processFileName + ".tmp";
 			var install = false;
 			try
 			{
-				Log("Unpacking...");
+				Log(UiLanguage.T("OptionsUpdateUserControl.Unpacking", "Unpacking..."));
 				if (!Unpack(data, updateFileName))
 				{
-					Append(" Failed: the download holds no x360ce.exe.");
+					Append(UiLanguage.T("OptionsUpdateUserControl.FailedNoProgramInDownload", "Failed: the download holds no x360ce.exe."));
 					return null;
 				}
-				Append(" Done");
+				Append(UiLanguage.T("OptionsUpdateUserControl.Done", "Done"));
 				install = Passes(check, updateFileName, checkSignature, checkVersion);
 				return install ? updateFileName : null;
 			}
@@ -188,14 +195,14 @@ namespace x360ce.App.Controls
 		{
 			if (checkSignature)
 			{
-				Log("Check Digital Signature...");
+				Log(UiLanguage.T("OptionsUpdateUserControl.CheckDigitalSignature", "Check Digital Signature..."));
 				Exception error;
 				if (!CertificateHelper.IsSignedAndTrusted(updateFileName, out error))
 				{
-					Append(error == null ? " Failed" : string.Format(" Failed: {0}", error.Message));
+					Append(error == null ? UiLanguage.T("OptionsUpdateUserControl.Failed", "Failed") : Failed(error.Message));
 					return false;
 				}
-				Append(" Done");
+				Append(UiLanguage.T("OptionsUpdateUserControl.Done", "Done"));
 			}
 			if (checkVersion)
 			{
@@ -203,25 +210,25 @@ namespace x360ce.App.Controls
 				if (!JocysCom.ClassLibrary.Helper.TryParseVersion(System.Diagnostics.FileVersionInfo.GetVersionInfo(processFileName).FileVersion, out processVersion)
 					|| !JocysCom.ClassLibrary.Helper.TryParseVersion(System.Diagnostics.FileVersionInfo.GetVersionInfo(updateFileName).FileVersion, out updatedVersion))
 				{
-					Log("The version of the program or of the update cannot be read. Skip Update.");
+					Log(UiLanguage.T("OptionsUpdateUserControl.VersionCannotBeRead", "The version of the program or of the update cannot be read. Skip Update."));
 					return false;
 				}
-				Log("Current version: {0}", processVersion);
-				Log("Updated version: {0}", updatedVersion);
+				Log(UiLanguage.T("OptionsUpdateUserControl.CurrentVersion", "Current version: {0}"), processVersion);
+				Log(UiLanguage.T("OptionsUpdateUserControl.UpdatedVersion", "Updated version: {0}"), updatedVersion);
 				if (processVersion == updatedVersion)
 				{
-					Log("Versions are the same. Skip Update.");
+					Log(UiLanguage.T("OptionsUpdateUserControl.VersionsAreTheSame", "Versions are the same. Skip Update."));
 					return false;
 				}
 				if (processVersion > updatedVersion)
 				{
-					Log("Remote version is older. Skip Update.");
+					Log(UiLanguage.T("OptionsUpdateUserControl.RemoteVersionIsOlder", "Remote version is older. Skip Update."));
 					return false;
 				}
 				// A release announcing one version and shipping another installs nowhere.
 				if (!UpdateClient.Announced(check, updatedVersion))
 				{
-					Log("The release announces {0} but the file is {1}. Skip Update.", check.Version, updatedVersion);
+					Log(UiLanguage.T("OptionsUpdateUserControl.AnnouncedVersionDiffers", "The release announces {0} but the file is {1}. Skip Update."), check.Version, updatedVersion);
 					return false;
 				}
 			}
@@ -250,17 +257,17 @@ namespace x360ce.App.Controls
 				if (GameIsActive())
 				{
 					var answer = MessageBoxForm.Show(
-						"A game is using the emulated controllers. Installing the update restarts this program and the game loses them.\r\n\r\nInstall now?",
-						"X360CE - Update", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+						UiLanguage.T("OptionsUpdateUserControl.GameIsUsingControllers", "A game is using the emulated controllers. Installing the update restarts this program and the game loses them.\r\n\r\nInstall now?"),
+						UiLanguage.T("OptionsUpdateUserControl.UpdateCaption", "X360CE - Update"), MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 					if (answer != DialogResult.Yes)
 					{
-						Log("Update postponed while the game runs. Press Check now again when it has closed.");
+						Log(UiLanguage.T("OptionsUpdateUserControl.UpdatePostponed", "Update postponed while the game runs. Press Check now again when it has closed."));
 						return false;
 					}
 				}
 				// The running program cannot be deleted, but it can be renamed; the new start deletes it (DeleteLeftovers).
 				var bak = processFileName + ".bak";
-				Log("Renaming running process...");
+				Log(UiLanguage.T("OptionsUpdateUserControl.RenamingRunningProcess", "Renaming running process..."));
 				try
 				{
 					if (File.Exists(bak))
@@ -279,11 +286,11 @@ namespace x360ce.App.Controls
 				}
 				catch (Exception ex)
 				{
-					Append(" Failed: " + ex.Message);
+					Append(Failed(ex.Message));
 					return false;
 				}
-				Append(" Done");
-				Log("Restarting...");
+				Append(UiLanguage.T("OptionsUpdateUserControl.Done", "Done"));
+				Log(UiLanguage.T("OptionsUpdateUserControl.Restarting", "Restarting..."));
 				Render();
 				Application.Restart();
 				return true;

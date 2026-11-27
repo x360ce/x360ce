@@ -17,7 +17,8 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	class RestartToFinishRemovalIssue : IssueItem
 	{
-		public RestartToFinishRemovalIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
 			Name = UiLanguage.T("RestartToFinishRemovalIssue.RestartNeededToFinishRemoving", "Restart Needed To Finish Removing");
 			// No button. Restarting is the person's decision, and offering one that cannot work is worse

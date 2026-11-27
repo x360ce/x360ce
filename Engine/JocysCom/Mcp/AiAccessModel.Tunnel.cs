@@ -1,4 +1,5 @@
 #nullable disable
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,31 +17,38 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			get
 			{
-				return "ChatGPT runs on OpenAI's servers, so it cannot reach " + Subject + " on this computer. OpenAI's tunnel-client, started here, "
-					+ "connects out to OpenAI and passes ChatGPT's calls to the door, with its token, while AI assistant access is on. The IDs and keys below come from the "
-					+ "OpenAI Platform, where you sign in with your ChatGPT account. For ChatGPT Plus or Pro, first pick Personal in its organization menu.";
+				return string.Format(UiLanguage.T("AiAccessModel.TunnelNote",
+					"ChatGPT runs on OpenAI's servers, so it cannot reach {0} on this computer. OpenAI's tunnel-client, started here, " +
+					"connects out to OpenAI and passes ChatGPT's calls to the door, with its token, while AI assistant access is on. The IDs and keys below come from the " +
+					"OpenAI Platform, where you sign in with your ChatGPT account. For ChatGPT Plus or Pro, first pick Personal in its organization menu."), SubjectText);
 			}
 		}
 
 		/// <summary>What to do in ChatGPT once the tunnel is open, beside the caption "In ChatGPT".</summary>
-		public const string TunnelChatGpt = "Plugins, the plus button, Add custom MCP server. Connection: Tunnel, with the tunnel ID above. "
-			+ "Authentication: No authentication. Then Create as a plugin, Install it, and type @ in a chat to use it.";
+		public static string TunnelChatGpt => UiLanguage.T("AiAccessModel.TunnelChatGpt",
+			"Plugins, the plus button, Add custom MCP server. Connection: Tunnel, with the tunnel ID above. " +
+			"Authentication: No authentication. Then Create as a plugin, Install it, and type @ in a chat to use it.");
 
 		/// <summary>Where the tunnel's keys are kept, and how.</summary>
 		public static string TunnelKeysNote
 		{
 			get
 			{
-				return "The API key is kept in this file encrypted for your Windows account with Windows DPAPI: other accounts and other computers "
-					+ "cannot read it. The admin key is used only to list, create and delete tunnels and is never kept. tunnel-client is downloaded from "
-					+ McpTunnel.Releases + " into " + McpTunnel.ClientFolder + ".";
+				return string.Format(UiLanguage.T("AiAccessModel.TunnelKeysNote",
+					"The API key is kept in this file encrypted for your Windows account with Windows DPAPI: other accounts and other computers " +
+					"cannot read it. The admin key is used only to list, create and delete tunnels and is never kept. tunnel-client is downloaded from " +
+					"{0} into {1}."), McpTunnel.Releases, McpTunnel.ClientFolder);
 			}
 		}
 
 		/// <summary>The question the view asks before Delete.</summary>
 		public string TunnelDeleteQuestion
 		{
-			get { return "Delete " + TunnelId + " at OpenAI? ChatGPT can then no longer reach " + Subject + " through it, and the plugin made with it stops working."; }
+			get
+			{
+				return string.Format(UiLanguage.T("AiAccessModel.TunnelDeleteQuestion",
+					"Delete {0} at OpenAI? ChatGPT can then no longer reach {1} through it, and the plugin made with it stops working."), TunnelId, SubjectText);
+			}
 		}
 
 		#endregion
@@ -66,7 +74,8 @@ namespace JocysCom.ClassLibrary.Mcp
 		public string TunnelFile { get { return Tunnel == null ? "" : Tunnel.SettingsFile ?? ""; } }
 
 		/// <summary>Whether the tunnel is open, why not, or what the last press did.</summary>
-		public string TunnelStatus { get; private set; }
+		public string TunnelStatus => _tunnelStatus?.Invoke();
+		Func<string> _tunnelStatus;
 
 		/// <summary>True while Create, Delete or a list of the tunnels waits for OpenAI; both buttons are greyed out meanwhile.</summary>
 		public bool TunnelBusy { get; private set; }
@@ -101,7 +110,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				return;
 			if (text.Length > 0 && !McpTunnel.IsOrganization(text))
 			{
-				ShowTunnel("An organization ID starts with org-. Find opens the page that shows it.");
+				ShowTunnel(() => UiLanguage.T("AiAccessModel.OrganizationIdFormat", "An organization ID starts with org-. Find opens the page that shows it."));
 				return;
 			}
 			Tunnel.TunnelOrganization = text;
@@ -120,7 +129,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				return;
 			if (text.Length > 0 && !McpTunnel.IsTunnelId(text))
 			{
-				ShowTunnel("A tunnel ID is tunnel_ followed by 32 digits and letters a to f.");
+				ShowTunnel(() => UiLanguage.T("AiAccessModel.TunnelIdFormat", "A tunnel ID is tunnel_ followed by 32 digits and letters a to f."));
 				return;
 			}
 			Tunnel.TunnelId = text;
@@ -134,7 +143,10 @@ namespace JocysCom.ClassLibrary.Mcp
 			if (Tunnel == null || text == TunnelApiKey)
 				return;
 			Tunnel.TunnelApiKey = McpTunnel.Protect(text);
-			TunnelStatus = text.Length == 0 ? "API key forgotten." : "API key kept, encrypted for your Windows account.";
+			var forgotten = text.Length == 0;
+			_tunnelStatus = () => forgotten
+				? UiLanguage.T("AiAccessModel.ApiKeyForgotten", "API key forgotten.")
+				: UiLanguage.T("AiAccessModel.ApiKeyKept", "API key kept, encrypted for your Windows account.");
 			SaveTunnel();
 		}
 
@@ -148,11 +160,11 @@ namespace JocysCom.ClassLibrary.Mcp
 				return;
 			if (string.IsNullOrEmpty(adminKey))
 			{
-				ShowTunnel("Paste the admin key to list the organization's tunnels: OpenAI lets no other key list them.");
+				ShowTunnel(() => UiLanguage.T("AiAccessModel.ListNeedsAdminKey", "Paste the admin key to list the organization's tunnels: OpenAI lets no other key list them."));
 				return;
 			}
 			var organization = TunnelOrganization;
-			Busy("Listing the tunnels in " + organization + ".");
+			Busy(() => string.Format(UiLanguage.T("AiAccessModel.ListingTunnels", "Listing the tunnels in {0}."), organization));
 			Task.Run(() =>
 			{
 				McpTunnel.Info[] tunnels = null;
@@ -170,13 +182,16 @@ namespace JocysCom.ClassLibrary.Mcp
 					TunnelBusy = false;
 					if (tunnels == null)
 					{
-						ShowTunnel("Not listed: " + error);
+						ShowTunnel(() => string.Format(UiLanguage.T("AiAccessModel.TunnelsNotListed", "Not listed: {0}"), error));
 						return;
 					}
 					TunnelChoices = tunnels;
-					ShowTunnel(tunnels.Length == 0
-						? organization + " has no tunnels yet. Create makes one."
-						: organization + " has " + tunnels.Length + " tunnel(s). Pick the one your ChatGPT plugin was made with.");
+					var count = tunnels.Length;
+					ShowTunnel(() => count == 0
+						? string.Format(UiLanguage.T("AiAccessModel.NoTunnels", "{0} has no tunnels yet. Create makes one."), organization)
+						: count == 1
+							? string.Format(UiLanguage.T("AiAccessModel.OneTunnel", "{0} has one tunnel. Pick the one your ChatGPT plugin was made with."), organization)
+							: string.Format(UiLanguage.T("AiAccessModel.SeveralTunnels", "{0} has {1} tunnels. Pick the one your ChatGPT plugin was made with."), organization, count));
 				});
 			});
 		}
@@ -198,7 +213,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			if (tunnel == null || TunnelBusy)
 				return;
 			var organization = TunnelOrganization;
-			Busy("Looking for this computer's tunnel in " + organization + ".");
+			Busy(() => string.Format(UiLanguage.T("AiAccessModel.LookingForThisTunnel", "Looking for this computer's tunnel in {0}."), organization));
 			Task.Run(() =>
 			{
 				McpTunnel.Info[] tunnels = null;
@@ -222,13 +237,13 @@ namespace JocysCom.ClassLibrary.Mcp
 						TunnelChoices = tunnels;
 					if (id == null)
 					{
-						ShowTunnel("Not made: " + error);
+						ShowTunnel(() => string.Format(UiLanguage.T("AiAccessModel.TunnelNotMade", "Not made: {0}"), error));
 						return;
 					}
 					tunnel.TunnelId = id;
-					TunnelStatus = mine != null
-						? "Using " + id + ", made earlier for this computer. Delete it first to make a new one."
-						: "Made " + id + ". OpenAI makes it ready in about 30 seconds.";
+					_tunnelStatus = () => mine != null
+						? string.Format(UiLanguage.T("AiAccessModel.TunnelReused", "Using {0}, made earlier for this computer. Delete it first to make a new one."), id)
+						: string.Format(UiLanguage.T("AiAccessModel.TunnelMade", "Made {0}. OpenAI makes it ready in about 30 seconds."), id);
 					SaveTunnel();
 				});
 			});
@@ -241,7 +256,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			if (tunnel == null || !TunnelDeleteAllowed)
 				return;
 			var id = TunnelId;
-			Busy("Deleting " + id + ".");
+			Busy(() => string.Format(UiLanguage.T("AiAccessModel.DeletingTunnel", "Deleting {0}."), id));
 			Task.Run(() =>
 			{
 				string error = null;
@@ -258,12 +273,12 @@ namespace JocysCom.ClassLibrary.Mcp
 					TunnelBusy = false;
 					if (error != null)
 					{
-						ShowTunnel("Not deleted: " + error);
+						ShowTunnel(() => string.Format(UiLanguage.T("AiAccessModel.TunnelNotDeleted", "Not deleted: {0}"), error));
 						return;
 					}
 					tunnel.TunnelId = "";
 					TunnelChoices = TunnelChoices.Where(x => x.Id != id).ToArray();
-					TunnelStatus = "Deleted " + id + " at OpenAI.";
+					_tunnelStatus = () => string.Format(UiLanguage.T("AiAccessModel.TunnelDeleted", "Deleted {0} at OpenAI."), id);
 					SaveTunnel();
 				});
 			});
@@ -301,7 +316,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			}
 			catch (Win32Exception ex)
 			{
-				ShowTunnel("Not shown: " + ex.Message);
+				ShowTunnel(() => string.Format(UiLanguage.T("AiAccessModel.TunnelFileNotShown", "Not shown: {0}"), ex.Message));
 			}
 		}
 
@@ -320,13 +335,13 @@ namespace JocysCom.ClassLibrary.Mcp
 			if (Tunnel == null)
 				return;
 			McpTunnel.Changed += McpTunnel_Changed;
-			TunnelStatus = McpTunnel.Status;
+			_tunnelStatus = () => McpTunnel.Status;
 		}
 
 		/// <summary>The tunnel changes state on another thread; the page shows it on its own.</summary>
 		void McpTunnel_Changed(object sender, EventArgs e)
 		{
-			Post(() => ShowTunnel(McpTunnel.Status));
+			Post(() => ShowTunnel(() => McpTunnel.Status));
 		}
 
 		void SaveTunnel()
@@ -336,13 +351,13 @@ namespace JocysCom.ClassLibrary.Mcp
 			OnChanged();
 		}
 
-		void ShowTunnel(string status)
+		void ShowTunnel(Func<string> status)
 		{
-			TunnelStatus = status;
+			_tunnelStatus = status;
 			OnChanged();
 		}
 
-		void Busy(string status)
+		void Busy(Func<string> status)
 		{
 			TunnelBusy = true;
 			ShowTunnel(status);
@@ -356,7 +371,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			}
 			catch (Win32Exception ex)
 			{
-				ShowTunnel("Not opened: " + ex.Message);
+				ShowTunnel(() => string.Format(UiLanguage.T("AiAccessModel.TunnelPageNotOpened", "Not opened: {0}"), ex.Message));
 			}
 		}
 

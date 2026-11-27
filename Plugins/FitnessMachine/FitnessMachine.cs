@@ -2523,11 +2523,14 @@ namespace x360ce.Plugins.Samples
 				switch (Kind)
 				{
 					case FitnessPairingKind.ConfirmPinMatch:
-						return "Pair with " + Name + "?\n\nAccept only if " + Name + " shows the same number:\n\n" + Pin;
+						return string.Format(PluginText.T("FitnessMachine.ConfirmPairingPin",
+							"Pair with {0}?\n\nAccept only if {0} shows the same number:\n\n{1}"), Name, Pin);
 					case FitnessPairingKind.DisplayPin:
-						return "Enter this number on " + Name + ":\n\n" + Pin + "\n\nPress OK once you have entered it, or Cancel to stop pairing.";
+						return string.Format(PluginText.T("FitnessMachine.EnterPairingPin",
+							"Enter this number on {0}:\n\n{1}\n\nPress OK once you have entered it, or Cancel to stop pairing."), Name, Pin);
 					default:
-						return "Pair with " + Name + "?\n\nNo number is shown, so this cannot confirm that it is the right machine.";
+						return string.Format(PluginText.T("FitnessMachine.ConfirmPairing",
+							"Pair with {0}?\n\nNo number is shown, so this cannot confirm that it is the right machine."), Name);
 				}
 			}
 		}

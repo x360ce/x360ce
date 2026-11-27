@@ -84,10 +84,15 @@ namespace x360ce.App.Issues
 
 		public VirtualDriverNotWorkingIssue() : base()
 		{
-			Name = Title(IssueSeverity.Moderate);
-			FixName = UiLanguage.T("VirtualDriverNotWorkingIssue.Repair", "Repair");
 			// Removing and putting back the driver is an Administrator action.
 			FixNeedsAdmin = true;
+		}
+
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
+			Name = Title(IssueSeverity.Moderate);
+			FixName = UiLanguage.T("VirtualDriverNotWorkingIssue.Repair", "Repair");
 		}
 
 		/// <summary>The row's title, named for the worst it says.</summary>
@@ -274,9 +279,9 @@ namespace x360ce.App.Issues
 			var severity = lines.Count > quiet ? IssueSeverity.Moderate : IssueSeverity.Low;
 			// Says what the button does, not that it will work: on Windows 10 and later the driver's
 			// own setup decides, and on older Windows a driver of another version is left alone.
-			lines.Add(
-				"Repair installs the driver again" + (quiet > 0 ? ", which may restore what the driver refused" : "") +
-				"; if its own setup opens, choose Repair there. If this message comes back afterwards, close and reopen x360ce, then restart Windows if it is still here.");
+			lines.Add(quiet > 0
+				? UiLanguage.T("VirtualDriverNotWorkingIssue.RepairRestores", "Repair installs the driver again, which may restore what the driver refused; if its own setup opens, choose Repair there. If this message comes back afterwards, close and reopen x360ce, then restart Windows if it is still here.")
+				: UiLanguage.T("VirtualDriverNotWorkingIssue.RepairInstallsAgain", "Repair installs the driver again; if its own setup opens, choose Repair there. If this message comes back afterwards, close and reopen x360ce, then restart Windows if it is still here."));
 			message = string.Join(Environment.NewLine + Environment.NewLine, lines.ToArray());
 			return severity;
 		}

@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.Drawing;
@@ -206,19 +207,19 @@ namespace x360ce.App.Forms
 			get
 			{
 				if (Item.Unstable)
-					return "unstable";
+					return UiLanguage.T("DeviceTestControlView.Unstable", "unstable");
 				if (Item.Skipped)
-					return "skipped";
+					return UiLanguage.T("DeviceTestControlView.Skipped", "skipped");
 				if (Item.NotMoved)
-					return "not moved";
-				return Item.Complete ? "\u2713 full" : (int)Math.Floor(Item.Progress * 100) + " %";
+					return UiLanguage.T("DeviceTestControlView.NotMoved", "not moved");
+				return Item.Complete ? UiLanguage.T("DeviceTestControlView.Full", "\u2713 full") : (int)Math.Floor(Item.Progress * 100) + " %";
 			}
 		}
 
 		/// <summary>Draws the control as it is now.</summary>
 		public void Redraw()
 		{
-			Say(Item.Name + ": " + Status);
+			Say(Item.Name + ": " + UiLanguage.InSource(() => Status));
 			Invalidate();
 		}
 
@@ -349,11 +350,11 @@ namespace x360ce.App.Forms
 		static string ChipText(DeviceTestButton button)
 		{
 			if (button.Unstable)
-				return button.Number + " unstable";
+				return string.Format(UiLanguage.T("DeviceTestButtonsView.Unstable", "{0} unstable"), button.Number);
 			if (button.Skipped)
-				return button.Number + " skipped";
+				return string.Format(UiLanguage.T("DeviceTestButtonsView.Skipped", "{0} skipped"), button.Number);
 			if (button.Twice)
-				return "\u2713 " + button.Number + " twice";
+				return string.Format(UiLanguage.T("DeviceTestButtonsView.DoublePress", "\u2713 {0} twice"), button.Number);
 			return button.Pressed ? "\u2713 " + button.Number : button.Number.ToString();
 		}
 

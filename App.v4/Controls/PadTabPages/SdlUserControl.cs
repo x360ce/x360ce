@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -75,6 +76,14 @@ namespace x360ce.App.Controls
 			ApplyButton.Click += (s, e) => ApplyClicked?.Invoke(this, EventArgs.Empty);
 			CopyButton.Click += (s, e) => CopyClicked?.Invoke(this, EventArgs.Empty);
 			UpdateButton.Click += UpdateButton_Click;
+			// The page's sentences and the Match column are worded as they are drawn: drawn again in the language chosen.
+			EventHandler languageChanged = (s, e) =>
+			{
+				Redraw();
+				PositionsDataGridView.Invalidate();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			var buttons = new FlowLayoutPanel
 			{
 				Name = "ButtonsFlowLayoutPanel",
@@ -154,7 +163,8 @@ namespace x360ce.App.Controls
 				return;
 			if (e.ColumnIndex == PositionsDataGridView.Columns["DiffersColumn"].Index)
 			{
-				e.Value = Translation == null ? "" : row.Differs ? "Differs" : "Same";
+				e.Value = Translation == null ? ""
+					: row.Differs ? UiLanguage.T("SdlUserControl.Differs", "Differs") : UiLanguage.T("SdlUserControl.Same", "Same");
 				e.FormattingApplied = true;
 			}
 			// A difference wants a look, and is no error: the theme's caution colour. Said in words in the last column too, so
@@ -189,8 +199,8 @@ namespace x360ce.App.Controls
 			_database = database;
 			_x360ceDatabase = x360ceDatabase;
 			// Each database is named with the copies of it in use.
-			var x360ceNamed = "x360ce’s database (" + x360ceDatabase.Describe() + ")";
-			var sdlNamed = "SDL’s database (" + database.Describe() + ")";
+			var x360ceCopies = x360ceDatabase.Describe();
+			var sdlCopies = database.Describe();
 			var device = SdlDevice.From(ud);
 			SdlMapping mapping = null;
 			string text;
@@ -199,42 +209,48 @@ namespace x360ce.App.Controls
 			var recommended = AutoMapHelper.GetPluginMapping(ud);
 			Translation = pad ? X360ceDatabase.AutoMapping(device, true, x360ceDatabase, database) : recommended;
 			if (ud == null)
-				text = x360ceNamed + " and " + sdlNamed + " are in use. Select a device on this controller to see what they say about it.";
+				text = string.Format(UiLanguage.T("SdlUserControl.DatabasesInUse",
+					"x360ce’s database ({0}) and SDL’s database ({1}) are in use. Select a device on this controller to see what they say about it."),
+					x360ceCopies, sdlCopies);
 			else if (recommended != null)
-				text = x360ceNamed + " and " + sdlNamed + " describe game controllers, not this device."
-					+ " Its plugin recommends a mapping for it, and Auto Preset fills it from this row: " + recommended.Mapping
+				text = string.Format(UiLanguage.T("SdlUserControl.PluginRecommends",
+					"x360ce’s database ({0}) and SDL’s database ({1}) describe game controllers, not this device. Its plugin recommends a mapping for it, and Auto Preset fills it from this row: {2}"),
+					x360ceCopies, sdlCopies, recommended.Mapping)
 					+ (recommended.Skipped.Count > 0 ? " " + recommended.SkippedText() : "");
 			else if (!pad)
-				text = x360ceNamed + " and " + sdlNamed + " describe game controllers, not keyboards, mice or plugin devices.";
+				text = string.Format(UiLanguage.T("SdlUserControl.NotGameController",
+					"x360ce’s database ({0}) and SDL’s database ({1}) describe game controllers, not keyboards, mice or plugin devices."),
+					x360ceCopies, sdlCopies);
 			else
 			{
 				mapping = database.Find(device);
 				var row = Translation == null ? null : Translation.X360ceRow;
-				var sdlKnows = mapping == null ? null : string.Format(CultureInfo.InvariantCulture, "{0} knows it as \"{1}\" ({2}{3})",
-					sdlNamed, mapping.Name, mapping.Guid.Text, Where(database, mapping, ", {0}"));
 				if (Translation == null && mapping != null)
-					text = x360ceNamed + " has no row for this controller. " + sdlKnows
-						+ ", but its row maps none of this device’s controls, so Auto Preset guesses its mapping.";
+					text = string.Format(CultureInfo.InvariantCulture, UiLanguage.T("SdlUserControl.SdlRowMapsNothing",
+						"x360ce’s database ({0}) has no row for this controller. SDL’s database ({1}) knows it as \"{2}\" ({3}{4}), but its row maps none of this device’s controls, so Auto Preset guesses its mapping."),
+						x360ceCopies, sdlCopies, mapping.Name, mapping.Guid.Text, Where(database, mapping, ", {0}"));
 				else if (Translation == null)
-					text = string.Format(CultureInfo.InvariantCulture,
-						"Neither {0} nor {1} has a row for this controller ({2}), so Auto Preset guesses its mapping."
-						+ " [Copy as SDL] writes a row for it, to share with SDL_GameControllerDB.",
-						x360ceNamed, sdlNamed, Ids(device));
+					text = string.Format(CultureInfo.InvariantCulture, UiLanguage.T("SdlUserControl.NoRow",
+						"Neither x360ce’s database ({0}) nor SDL’s database ({1}) has a row for this controller ({2}), so Auto Preset guesses its mapping. [Copy as SDL] writes a row for it, to share with SDL_GameControllerDB."),
+						x360ceCopies, sdlCopies, Ids(device));
 				else if (row == null)
-					text = x360ceNamed + " has no row for this controller. " + sdlKnows + ", and Auto Preset fills it from that row.";
+					text = string.Format(CultureInfo.InvariantCulture, UiLanguage.T("SdlUserControl.SdlRowFills",
+						"x360ce’s database ({0}) has no row for this controller. SDL’s database ({1}) knows it as \"{2}\" ({3}{4}), and Auto Preset fills it from that row."),
+						x360ceCopies, sdlCopies, mapping.Name, mapping.Guid.Text, Where(database, mapping, ", {0}"));
+				else if (mapping == null)
+					text = string.Format(CultureInfo.InvariantCulture, UiLanguage.T("SdlUserControl.X360ceRowFills",
+						"x360ce’s database ({0}) knows this controller as \"{1}\"{2}, used by {3} people, and Auto Preset fills it from that row. SDL’s database ({4}) has no row for it."),
+						x360ceCopies, row.Name, Where(x360ceDatabase, row, " ({0})"), X360ceDatabase.Users(row), sdlCopies);
 				else
-				{
-					text = string.Format(CultureInfo.InvariantCulture, "{0} knows this controller as \"{1}\"{2}, used by {3} people",
-						x360ceNamed, row.Name, Where(x360ceDatabase, row, " ({0})"), X360ceDatabase.Users(row));
-					text += mapping == null
-						? ", and Auto Preset fills it from that row. " + sdlNamed + " has no row for it."
-						: "; " + sdlKnows + ". Auto Preset fills from x360ce’s row and takes SDL’s where x360ce’s maps nothing; From shows which.";
-				}
+					text = string.Format(CultureInfo.InvariantCulture, UiLanguage.T("SdlUserControl.BothRowsFill",
+						"x360ce’s database ({0}) knows this controller as \"{1}\"{2}, used by {3} people; SDL’s database ({4}) knows it as \"{5}\" ({6}{7}). Auto Preset fills from x360ce’s row and takes SDL’s where x360ce’s maps nothing; From shows which."),
+						x360ceCopies, row.Name, Where(x360ceDatabase, row, " ({0})"), X360ceDatabase.Users(row),
+						sdlCopies, mapping.Name, mapping.Guid.Text, Where(database, mapping, ", {0}"));
 			}
 			if (pad)
 			{
 				var style = SdlPositions.FaceStyle(mapping, device.VendorId, mapping == null ? device.ProductName : mapping.Name);
-				text += " Its buttons are labelled as on " + SdlPositions.Describe(style) + ".";
+				text += " " + string.Format(UiLanguage.T("SdlUserControl.ButtonsLabelledAs", "Its buttons are labelled as on {0}."), SdlPositions.Describe(style));
 				if (Translation != null && Translation.Skipped.Count > 0)
 					text += " " + Translation.SkippedText();
 				PositionsDataGridView.DataSource = SdlPositions.Compare(Translation, current, style);
@@ -255,8 +271,8 @@ namespace x360ce.App.Controls
 		static string Ids(SdlDevice device)
 		{
 			return device.HasIds
-				? string.Format(CultureInfo.InvariantCulture, "vendor 0x{0:X4}, product 0x{1:X4}", device.VendorId, device.ProductId)
-				: "no vendor or product id";
+				? string.Format(CultureInfo.InvariantCulture, UiLanguage.T("SdlUserControl.VendorProductIds", "vendor 0x{0:X4}, product 0x{1:X4}"), device.VendorId, device.ProductId)
+				: UiLanguage.T("SdlUserControl.NoIds", "no vendor or product id");
 		}
 
 		/// <summary>
@@ -274,10 +290,10 @@ namespace x360ce.App.Controls
 			string where;
 			switch (source.Kind)
 			{
-				case SdlSourceKind.Downloaded: where = "from the downloaded copy"; break;
-				case SdlSourceKind.File: where = "from " + SdlDatabase.FileName + " in the settings folder"; break;
-				case SdlSourceKind.Environment: where = "from " + SdlDatabase.EnvironmentVariable; break;
-				default: where = "from the built-in copy"; break;
+				case SdlSourceKind.Downloaded: where = UiLanguage.T("SdlUserControl.FromDownloadedCopy", "from the downloaded copy"); break;
+				case SdlSourceKind.File: where = string.Format(UiLanguage.T("SdlUserControl.FromSettingsFolder", "from {0} in the settings folder"), SdlDatabase.FileName); break;
+				case SdlSourceKind.Environment: where = string.Format(UiLanguage.T("SdlUserControl.FromVariable", "from {0}"), SdlDatabase.EnvironmentVariable); break;
+				default: where = UiLanguage.T("SdlUserControl.FromBuiltInCopy", "from the built-in copy"); break;
 			}
 			return string.Format(CultureInfo.InvariantCulture, format, where);
 		}
@@ -315,7 +331,7 @@ namespace x360ce.App.Controls
 		{
 			var address = SettingsManager.Options.SdlDatabaseUrl;
 			button.Enabled = false;
-			say("Fetching the SDL controller database from " + address + "...", false);
+			say(string.Format(UiLanguage.T("SdlUserControl.Fetching", "Fetching the SDL controller database from {0}..."), address), false);
 			var path = SdlDatabase.SettingsFilePath;
 			var current = SdlDatabase.Current;
 			var updater = Updater;

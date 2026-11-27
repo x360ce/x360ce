@@ -404,13 +404,14 @@ namespace x360ce.Plugins.Samples
 			}
 			catch (Exception ex)
 			{
+				var message = string.Format(PluginText.T("WheelTelemetry.Games.NotStarted", "The game was not started: {0}"), ex.Message);
 				if (!again)
 				{
 					GameParking.Park(paths, folder, parked);
-					Done(gamePath, PluginText.T("WheelTelemetry.Games.NotStarted", "The game was not started:") + " " + ex.Message);
+					Done(gamePath, message);
 				}
 				else
-					SetState(gamePath, PluginText.T("WheelTelemetry.Games.NotStarted", "The game was not started:") + " " + ex.Message);
+					SetState(gamePath, message);
 				return;
 			}
 			if (again)

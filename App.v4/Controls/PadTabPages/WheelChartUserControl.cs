@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using System;
@@ -29,6 +30,14 @@ namespace x360ce.App.Controls
 			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			UpdateRangeLabels();
 			UpdateValues();
+			EventHandler languageChanged = (s, e) =>
+			{
+				UpdateValues(true);
+				pictureOutOfDate = true;
+				MainPictureBox.Invalidate();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>The curve the chart draws, built from the settings below.</summary>
@@ -126,13 +135,13 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Writes the wheel's angle and force above the chart, when either changed.</summary>
-		void UpdateValues()
+		void UpdateValues(bool reword = false)
 		{
 			curve.Set(strength, centre, peak, lightening, range, speedOverride ?? speed, strength == 0 ? 0 : friction);
 			var known = position >= 0;
 			var angle = known ? AngleOf(position) : int.MinValue;
 			var force = known ? curve.Force(position) : int.MinValue;
-			if (angle == shownAngle && force == shownForce)
+			if (!reword && angle == shownAngle && force == shownForce)
 				return;
 			shownAngle = angle;
 			shownForce = force;
@@ -141,7 +150,8 @@ namespace x360ce.App.Controls
 				? "-"
 				: force == 0
 					? "0 %"
-					: string.Format("{0} % to the {1}", Math.Abs(force), force > 0 ? "right" : "left");
+					: string.Format(force > 0 ? UiLanguage.T("WheelChartUserControl.ForceRight", "{0} % to the right")
+						: UiLanguage.T("WheelChartUserControl.ForceLeft", "{0} % to the left"), Math.Abs(force));
 		}
 
 		/// <summary>The steering angle of a wheel position, in whole degrees from the centre, negative to the left.</summary>
@@ -327,9 +337,9 @@ namespace x360ce.App.Controls
 				g.DrawLine(gridPen, middleX, 0f, middleX, h);
 				g.DrawLine(gridPen, 0f, middleY, w, middleY);
 				g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-				var pushesLeft = "pushes left";
+				var pushesLeft = UiLanguage.T("WheelChartUserControl.PushesLeft", "pushes left");
 				var size = g.MeasureString(pushesLeft, noteFont);
-				g.DrawString("pushes right", noteFont, noteBrush, 4f, 2f);
+				g.DrawString(UiLanguage.T("WheelChartUserControl.PushesRight", "pushes right"), noteFont, noteBrush, 4f, 2f);
 				g.DrawString(pushesLeft, noteFont, noteBrush, w - size.Width - 4f, h - size.Height - 2f);
 				g.SmoothingMode = SmoothingMode.HighQuality;
 				var points = CurvePoints(w, h);

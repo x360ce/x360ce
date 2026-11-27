@@ -8,10 +8,15 @@ namespace x360ce.App.Issues
 	{
 		public AiAccessIssue() : base()
 		{
-			Name = UiLanguage.T("AiAccessIssue.AIAssistantAccess", "AI assistant access");
-			FixName = UiLanguage.T("AiAccessIssue.Fix", "Fix");
 			// Making the reservation asks Windows for elevation. Marked, so the prompt is expected.
 			FixNeedsAdmin = true;
+		}
+
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
+			Name = UiLanguage.T("AiAccessIssue.AIAssistantAccess", "AI assistant access");
+			FixName = UiLanguage.T("AiAccessIssue.Fix", "Fix");
 		}
 
 		public override void CheckTask()
@@ -22,7 +27,7 @@ namespace x360ce.App.Issues
 			var error = JocysCom.ClassLibrary.Mcp.McpListener.Program.LastError;
 			if (SettingsManager.AiOptions.AiAccessEnabled && error != null)
 			{
-				SetSeverity(IssueSeverity.Important, JocysCom.ClassLibrary.Mcp.McpListener.Program.NeedsUrlReservation ? 1 : 0, "AI assistant access: " + error);
+				SetSeverity(IssueSeverity.Important, JocysCom.ClassLibrary.Mcp.McpListener.Program.NeedsUrlReservation ? 1 : 0, string.Format(UiLanguage.T("AiAccessIssue.AccessError", "AI assistant access: {0}"), error));
 				return;
 			}
 			SetSeverity(IssueSeverity.None);
