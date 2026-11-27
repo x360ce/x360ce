@@ -108,6 +108,7 @@ namespace x360ce.App.Forms
 		}
 
 		/// <summary>Names the view by what it shows, once it changed.</summary>
+		[System.ComponentModel.Localizable(false)]
 		protected void Say(string text)
 		{
 			if (AccessibleName != text)

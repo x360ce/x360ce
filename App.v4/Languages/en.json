@@ -2288,6 +2288,7 @@
 		{ "Key": "UserDevicesUserControl.HardwareButton.AccessibleName", "Source": "Hardware...", "Role": "Help line name", "Purpose": "Opens the selected device in Windows Device Manager." },
 		{ "Key": "UserDevicesUserControl.HardwareButton.Text", "Source": "Hardware...", "Role": "ToolStripButton", "Purpose": "Opens the selected device in Windows Device Manager." },
 		{ "Key": "UserDevicesUserControl.HardwareButton.ToolTipText", "Source": "Hardware...", "Role": "ToolStripButton", "Purpose": "Opens the selected device in Windows Device Manager." },
+		{ "Key": "UserDevicesUserControl.HidHide", "Source": "HID Hide", "Role": "Text built in code" },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.AccessibleDescription", "Source": "Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.", "Role": "Help line", "Purpose": "HID Hide" },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.AccessibleName", "Source": "HID Hide", "Role": "Help line name", "Purpose": "Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab." },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.Text", "Source": "HID Hide...", "Role": "ToolStripDropDownButton", "Purpose": "Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab." },

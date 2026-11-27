@@ -334,6 +334,7 @@ namespace x360ce.Plugins.Samples
 			table.SetColumnSpan(control, columns);
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		static Label NewValue(string name, string accessibleName, string description)
 		{
 			return new Label
@@ -347,6 +348,7 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>A button with its words in the language chosen and its purpose in English, which the header shows under the mouse.</summary>
+		[System.ComponentModel.Localizable(false)]
 		Button NewButton(string name, Func<string> text, string accessibleName, string description)
 		{
 			var button = new Button
@@ -365,6 +367,7 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>A link with its words in the language chosen, and its English name, which the AI door and screen readers read.</summary>
+		[System.ComponentModel.Localizable(false)]
 		LinkLabel NewLink(string name, string accessibleName, Func<string> text, string address)
 		{
 			var link = new LinkLabel
@@ -381,6 +384,7 @@ namespace x360ce.Plugins.Samples
 			return link;
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		NumericUpDown NewNumber(string name, string accessibleName, string description, int minimum, int maximum)
 		{
 			var number = new NumericUpDown
@@ -507,6 +511,7 @@ namespace x360ce.Plugins.Samples
 		const string PlayPurpose = "Puts the mods back into the game’s folder, starts the game through Steam with {0}, and parks the mods again once the game has closed.";
 
 		/// <summary>Play story mode's purpose, worded as given, with the game's launch arguments.</summary>
+		[System.ComponentModel.Localizable(false)]
 		string PlayDescription(string purpose)
 		{
 			return string.Format(purpose, _game.LaunchArguments ?? "");

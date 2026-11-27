@@ -148,6 +148,7 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>How the main window is shown, in the words a recording writes.</summary>
+		[System.ComponentModel.Localizable(false)]
 		static string WindowState()
 		{
 			var form = MainForm.Current;

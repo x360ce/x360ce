@@ -229,13 +229,12 @@ namespace x360ce.App.Forms
 			SetLine(HintLabel, unplugged ? "" : s == null ? "" : s.Hint);
 			SetLine(CountdownLabel, s == null ? "" : s.Countdown);
 			SetLine(CountdownCaptionLabel, s == null ? "" : s.CountdownCaption);
-			var start = Running ? "Stop" : step == DeviceTestStep.Done ? "Test again" : "Start";
 			SetText(StartButton, Running
 				? UiLanguage.T("TestDeviceForm.StopButton", "S&top")
 				: step == DeviceTestStep.Done ? UiLanguage.T("TestDeviceForm.TestAgainButton", "&Test again")
 					: UiLanguage.T("TestDeviceForm.StartButton", "&Start"));
 			// Named as it reads, for a screen reader and the door, which would otherwise take the catalog's name.
-			StartButton.AccessibleName = start;
+			StartButton.AccessibleName = Running ? "Stop" : step == DeviceTestStep.Done ? "Test again" : "Start";
 			SetVisible(SkipButton, Running && s.CanSkip);
 			SetVisible(_stepsView, step <= DeviceTestStep.PickUp);
 			if (step <= DeviceTestStep.PickUp)

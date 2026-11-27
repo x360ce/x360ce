@@ -217,6 +217,7 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Adds a page holding one control, which fills it.</summary>
+		[System.ComponentModel.Localizable(false)]
 		TabPage AddPage(string name, string accessibleName, string description, Control content)
 		{
 			var page = new TabPage { Name = name, AccessibleName = accessibleName, AccessibleDescription = description, UseVisualStyleBackColor = true };

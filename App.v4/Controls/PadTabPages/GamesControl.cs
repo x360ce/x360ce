@@ -718,6 +718,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		static TabPage AddPluginPage(TabControl pages, string name, string accessibleName, string description, Control content)
 		{
 			var page = new TabPage { Name = name, AccessibleName = accessibleName, AccessibleDescription = description, UseVisualStyleBackColor = true };

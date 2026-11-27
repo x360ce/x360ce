@@ -789,6 +789,7 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>Adds a slider row: its caption and tip in the language chosen, its names and description in English for the AI door and screen readers.</summary>
+		[System.ComponentModel.Localizable(false)]
 		TrackBar AddTuningRow(TableLayoutPanel table, int row, string key, string labelText, string description,
 			Func<string> captionText, Func<string> tipText, int min, int max, int def, int small, int large, string unit, out TextBox valueBox)
 		{
@@ -847,6 +848,7 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>Adds a reading row: its caption in the language chosen, its names and description in English for the AI door and screen readers.</summary>
+		[System.ComponentModel.Localizable(false)]
 		Label AddReadingRow(TableLayoutPanel table, int row, string name, string description, Func<string> captionText, bool withBar, out ProgressBar bar)
 		{
 			var key = name.Replace(" ", "");
@@ -1117,6 +1119,7 @@ namespace x360ce.Plugins.Samples
 			return v < min ? min : v > max ? max : v;
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		static string BuildHelpMarkdown()
 		{
 			return "# Game Telemetry\n\n"

@@ -31,6 +31,15 @@ namespace x360ce.App.Controls
 	{
 		public SdlPresetsUserControl()
 		{
+			InitializeComponent();
+			// The window it sits in is made after the main window has named and described everything.
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			UiLanguage.Register(this);
+			x360ce.App.UiTree.UiHelp.Attach(this);
+		}
+
+		void InitializeComponent()
+		{
 			Name = "SdlPresetsPanel";
 			SuspendLayout();
 			MainTableLayoutPanel = new TableLayoutPanel
@@ -87,19 +96,15 @@ namespace x360ce.App.Controls
 			Controls.Add(MainTableLayoutPanel);
 			ResumeLayout(false);
 			PerformLayout();
-			// The window it sits in is made after the main window has named and described everything.
-			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
-			UiLanguage.Register(this);
-			x360ce.App.UiTree.UiHelp.Attach(this);
 		}
 
-		readonly TableLayoutPanel MainTableLayoutPanel;
-		public readonly Label VersionLabel;
-		public readonly Label FilterLabel;
-		public readonly TextBox FilterTextBox;
-		public readonly DataGridView RowsDataGridView;
-		public readonly Button UpdateButton;
-		public readonly Label StatusLabel;
+		TableLayoutPanel MainTableLayoutPanel;
+		public Label VersionLabel { get; private set; }
+		public Label FilterLabel { get; private set; }
+		public TextBox FilterTextBox { get; private set; }
+		public DataGridView RowsDataGridView { get; private set; }
+		public Button UpdateButton { get; private set; }
+		public Label StatusLabel { get; private set; }
 
 		/// <summary>The row selected changed.</summary>
 		public event EventHandler SelectionChanged;

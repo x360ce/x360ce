@@ -515,10 +515,10 @@ namespace x360ce.App.Controls
 			form.StartPosition = FormStartPosition.CenterParent;
 			if (!DInput.VirtualDriverInstaller.IsHidHideDevicePresent())
 				form.ShowForm(UiLanguage.T("UserDevicesUserControl.HIDHideIsNotInstalledSo", "HID Hide is not installed, so x360ce cannot hide devices.\r\nThe HID Hide page on the Options tab downloads it."),
-					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					UiLanguage.T("UserDevicesUserControl.HidHide", "HID Hide"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 			else
 				form.ShowForm(UiLanguage.T("UserDevicesUserControl.HIDHideDidNotAcceptThe", "HID Hide did not accept the change.\r\nOpen HID Hide from this menu and make it there."),
-					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					UiLanguage.T("UserDevicesUserControl.HidHide", "HID Hide"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(true), Browsable(true)]

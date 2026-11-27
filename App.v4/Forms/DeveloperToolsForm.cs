@@ -157,6 +157,7 @@ namespace x360ce.App.Forms
 			}
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		private void ExceptionButton_Click(object sender, EventArgs e)
 		{
 			LogTextBox.AppendText("Exception: thrown; the program records it and counts it in the status bar.\r\n");

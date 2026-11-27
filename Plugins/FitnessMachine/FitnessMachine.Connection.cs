@@ -356,6 +356,7 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>A button with an English name for the AI door and screen readers.</summary>
+		[System.ComponentModel.Localizable(false)]
 		Button NewButton(string name, string accessibleName, string description, int widthInGaps)
 		{
 			var button = new Button
@@ -402,6 +403,7 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>Adds a target's row: its label, its slider, its value and its Set button.</summary>
+		[System.ComponentModel.Localizable(false)]
 		TrackBar AddTarget(int row, string key, string text, Func<string> caption, int minimum, int maximum, int value, int smallChange, int largeChange)
 		{
 			var label = new Label { Name = key + "Label", AccessibleName = text, AutoSize = true, Anchor = AnchorStyles.Left };

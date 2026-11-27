@@ -237,7 +237,15 @@ namespace x360ce.Tests
 				Text = UiLanguage.T("UntranslatedTestLabel.Translated", "This one is translated.");
 				System.Diagnostics.Debug.WriteLine("This one goes to the log.");
 				AccessibleName = "Stays in English";
+				Text = string.Format("{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, count);
+				Describe("English accessibility helper");
 				Text = "This one is not translated: " + count;
+			}
+
+			[System.ComponentModel.Localizable(false)]
+			void Describe(string description)
+			{
+				AccessibleDescription = description;
 			}
 		}
 

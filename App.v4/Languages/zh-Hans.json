@@ -2325,6 +2325,7 @@
 		{ "Key": "UserDevicesUserControl.HardwareButton.AccessibleName", "Source": "Hardware...", "Text": "硬件..." },
 		{ "Key": "UserDevicesUserControl.HardwareButton.Text", "Source": "Hardware...", "Text": "硬件..." },
 		{ "Key": "UserDevicesUserControl.HardwareButton.ToolTipText", "Source": "Hardware...", "Text": "硬件..." },
+		{ "Key": "UserDevicesUserControl.HidHide", "Source": "HID Hide", "Text": "HID Hide" },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.AccessibleDescription", "Source": "Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.", "Text": "通过 HID Hide 对游戏隐藏设备，必须先安装 HID Hide：请参阅“选项”选项卡上的 HID Hide 页面。" },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.AccessibleName", "Source": "HID Hide", "Text": "HID Hide" },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.Text", "Source": "HID Hide...", "Text": "HID Hide..." },

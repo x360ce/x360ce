@@ -27,6 +27,19 @@ namespace x360ce.App.Controls
 	{
 		public SdlUserControl()
 		{
+			InitializeComponent();
+			// The page's sentences and the Match column are worded as they are drawn: drawn again in the language chosen.
+			EventHandler languageChanged = (s, e) =>
+			{
+				Redraw();
+				PositionsDataGridView.Invalidate();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
+		}
+
+		void InitializeComponent()
+		{
 			Name = "SdlPanel";
 			SuspendLayout();
 			MainTableLayoutPanel = new TableLayoutPanel
@@ -76,14 +89,6 @@ namespace x360ce.App.Controls
 			ApplyButton.Click += (s, e) => ApplyClicked?.Invoke(this, EventArgs.Empty);
 			CopyButton.Click += (s, e) => CopyClicked?.Invoke(this, EventArgs.Empty);
 			UpdateButton.Click += UpdateButton_Click;
-			// The page's sentences and the Match column are worded as they are drawn: drawn again in the language chosen.
-			EventHandler languageChanged = (s, e) =>
-			{
-				Redraw();
-				PositionsDataGridView.Invalidate();
-			};
-			UiLanguage.Changed += languageChanged;
-			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			var buttons = new FlowLayoutPanel
 			{
 				Name = "ButtonsFlowLayoutPanel",
@@ -104,14 +109,14 @@ namespace x360ce.App.Controls
 			PerformLayout();
 		}
 
-		readonly TableLayoutPanel MainTableLayoutPanel;
+		TableLayoutPanel MainTableLayoutPanel;
 		/// <summary>Which copies of the databases are in use, and what they say about the device.</summary>
-		public readonly Label DeviceLabel;
-		public readonly DataGridView PositionsDataGridView;
-		public readonly Button ApplyButton;
-		public readonly Button CopyButton;
-		public readonly Button UpdateButton;
-		public readonly Label StatusLabel;
+		public Label DeviceLabel { get; private set; }
+		public DataGridView PositionsDataGridView { get; private set; }
+		public Button ApplyButton { get; private set; }
+		public Button CopyButton { get; private set; }
+		public Button UpdateButton { get; private set; }
+		public Label StatusLabel { get; private set; }
 
 		/// <summary>[Apply SDL Mapping] was pressed: the controller takes <see cref="Translation"/>.</summary>
 		public event EventHandler ApplyClicked;

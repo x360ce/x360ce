@@ -2329,6 +2329,7 @@
 		{ "Key": "UserDevicesUserControl.HardwareButton.AccessibleName", "Source": "Hardware...", "Text": "Sprzęt..." },
 		{ "Key": "UserDevicesUserControl.HardwareButton.Text", "Source": "Hardware...", "Text": "Sprzęt..." },
 		{ "Key": "UserDevicesUserControl.HardwareButton.ToolTipText", "Source": "Hardware...", "Text": "Sprzęt..." },
+		{ "Key": "UserDevicesUserControl.HidHide", "Source": "HID Hide", "Text": "HID Hide" },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.AccessibleDescription", "Source": "Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.", "Text": "Ukrywa urządzenia przed grami za pomocą HID Hide, który musi być zainstalowany: zobacz stronę HID Hide na karcie Opcje." },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.AccessibleName", "Source": "HID Hide", "Text": "HID Hide" },
 		{ "Key": "UserDevicesUserControl.HidHideDropDownButton.Text", "Source": "HID Hide...", "Text": "HID Hide..." },

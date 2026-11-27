@@ -235,16 +235,19 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			const BindingFlags all = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 			foreach (var type in TypesOf(assembly))
 			{
+				// An accessibility object stays English for screen readers and UI automation.
+				if (IsAccessibleObject(type) || IsNotLocalizable(type))
+					continue;
 				// A lambda, an iterator or an async method is compiled into a type nested in the one that wrote it.
 				var owner = type;
 				while (owner.DeclaringType != null && !shows(owner))
 					owner = owner.DeclaringType;
-				if (!shows(owner))
+				if (!shows(owner) || IsNotLocalizable(owner))
 					continue;
 				var bodies = type.GetMethods(all).Cast<MethodBase>().Concat(type.GetConstructors(all));
 				foreach (var body in bodies)
 				{
-					if (body.Name == "InitializeComponent")
+					if (body.Name == "InitializeComponent" || IsNotLocalizable(body))
 						continue;
 					foreach (var text in FindUntranslated(body, translators))
 						found.Add(owner.Name + "." + body.Name + ": " + text);
@@ -256,6 +259,24 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// <summary>A word, a space and a letter: a sentence a person reads, never a key or a name.</summary>
 		static readonly System.Text.RegularExpressions.Regex Sentence =
 			new System.Text.RegularExpressions.Regex(@"\p{L}{2,}[ ]+\p{L}");
+
+		/// <summary>A format placeholder, such as <c>{0: yyyy-MM-dd HH:mm:ss}</c>, whose format specifiers are not words.</summary>
+		static readonly System.Text.RegularExpressions.Regex Placeholder =
+			new System.Text.RegularExpressions.Regex(@"\{[^}]*\}");
+
+		static bool IsAccessibleObject(Type type)
+		{
+			for (var t = type; t != null; t = t.BaseType)
+				if (t.FullName == "System.Windows.Forms.AccessibleObject")
+					return true;
+			return false;
+		}
+
+		static bool IsNotLocalizable(MemberInfo member)
+		{
+			var attr = (System.ComponentModel.LocalizableAttribute)Attribute.GetCustomAttribute(member, typeof(System.ComponentModel.LocalizableAttribute), false);
+			return attr != null && !attr.IsLocalizable;
+		}
 
 		static IEnumerable<string> FindUntranslated(MethodBase body, MethodInfo[] translators)
 		{
@@ -300,7 +321,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				}
 			}
 			foreach (var text in shown.Concat(recent))
-				if (Sentence.IsMatch(text))
+				if (Sentence.IsMatch(Placeholder.Replace(text, "")))
 					yield return text;
 		}
 
@@ -327,7 +348,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var type = method.DeclaringType;
 			if (type == null)
 				return false;
-			if (method.IsConstructor && typeof(Exception).IsAssignableFrom(type))
+			if (method.IsConstructor && (typeof(Exception).IsAssignableFrom(type) || type.FullName == "System.Drawing.Font"))
+				return true;
+			if (IsNotLocalizable(method))
 				return true;
 			if (type == typeof(IssuesControl.IssueHelper) && method.Name == nameof(IssuesControl.IssueHelper.IsInstalled))
 				return true;
