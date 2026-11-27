@@ -48,12 +48,16 @@
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.ScanProgressLevel1Label = new System.Windows.Forms.Label();
 			this.GameDetailsControl = new x360ce.App.Controls.GameDetailsUserControl();
+			this.GameTabControl = new x360ce.App.Controls.GameTabControl();
+			this.GameSettingsTabPage = new System.Windows.Forms.TabPage();
 			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.ScanProgressPlacePanel.SuspendLayout();
 			this.ScanProgressPanel.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			this.GameTabControl.SuspendLayout();
+			this.GameSettingsTabPage.SuspendLayout();
 			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -374,21 +378,38 @@
 			this.GameDetailsControl.AutoSize = true;
 			this.GameDetailsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.GameDetailsControl.BackColor = System.Drawing.SystemColors.Control;
-			this.GameDetailsControl.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.GameDetailsControl.Location = new System.Drawing.Point(0, 363);
+			this.GameDetailsControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GameDetailsControl.Margin = new System.Windows.Forms.Padding(0);
 			this.GameDetailsControl.Name = "GameDetailsControl";
-			this.GameDetailsControl.Size = new System.Drawing.Size(781, 226);
-			this.GameDetailsControl.TabIndex = 3;
-			// 
+			this.GameDetailsControl.TabIndex = 0;
+			//
+			// GameTabControl
+			//
+			this.GameTabControl.AutoSize = true;
+			this.GameTabControl.Controls.Add(this.GameSettingsTabPage);
+			this.GameTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.GameTabControl.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+			this.GameTabControl.Name = "GameTabControl";
+			this.GameTabControl.SelectedIndex = 0;
+			this.GameTabControl.TabIndex = 3;
+			//
+			// GameSettingsTabPage
+			//
+			this.GameSettingsTabPage.Controls.Add(this.GameDetailsControl);
+			this.GameSettingsTabPage.Name = "GameSettingsTabPage";
+			this.GameSettingsTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
+			this.GameSettingsTabPage.TabIndex = 0;
+			this.GameSettingsTabPage.Text = "x360ce";
+			this.GameSettingsTabPage.UseVisualStyleBackColor = true;
+			//
 			// RootLayoutPanel
-			// 
+			//
 			this.RootLayoutPanel.ColumnCount = 1;
 			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.RootLayoutPanel.Controls.Add(this.GamesToolStrip, 0, 0);
 			this.RootLayoutPanel.Controls.Add(this.GamesDataGridView, 0, 1);
 			this.RootLayoutPanel.Controls.Add(this.ScanProgressPlacePanel, 0, 2);
-			this.RootLayoutPanel.Controls.Add(this.GameDetailsControl, 0, 3);
+			this.RootLayoutPanel.Controls.Add(this.GameTabControl, 0, 3);
 			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.RootLayoutPanel.Name = "RootLayoutPanel";
@@ -416,6 +437,9 @@
 			this.ScanProgressPanel.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			this.GameSettingsTabPage.ResumeLayout(false);
+			this.GameSettingsTabPage.PerformLayout();
+			this.GameTabControl.ResumeLayout(false);
 			this.RootLayoutPanel.ResumeLayout(false);
 			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -432,6 +456,8 @@
         internal System.Windows.Forms.ToolStripButton ScanGamesButton;
 		internal System.Windows.Forms.ToolStripButton AddGameButton;
 		internal GameDetailsUserControl GameDetailsControl;
+		internal GameTabControl GameTabControl;
+		internal System.Windows.Forms.TabPage GameSettingsTabPage;
 		internal System.Windows.Forms.ToolStripButton StartGameButton;
 		internal System.Windows.Forms.ToolStripButton OpenGameButton;
 		internal System.Windows.Forms.ToolStripDropDownButton ShowGamesDropDownButton;

@@ -1,0 +1,58 @@
+{
+  "Enabled": true,
+
+  // Required
+  "Namespace": "x360ce.Engine.Data",
+  "ModelClassName": "x360ceModelContainer",
+  "ModelConnection": "Integrated Security=True;Persist Security Info=False;Initial Catalog=x360ce;Data Source=localhost;TrustServerCertificate=True;Encrypt=True",
+
+  // Output, relative to this file. The entity classes go to Model\ and build without Entity Framework, so the
+  // programs carry none. The context, which needs it, goes to the web site, the only place that queries the
+  // database. Hand-written partial classes stay one folder up and extend the generated ones through the shared namespace.
+  "OutputPath": "Model\\",
+  "ContextOutputPath": "..\\..\\Web\\Data\\",
+  "DefaultColumnSummary": "{0}",
+  "DefaultTableSummary": "{0}",
+
+  // Item. No navigation properties: XmlSerializer writes the entities to the settings files and the web service.
+  "GenerateCloneAndCopyMethods": false,
+  "GenerateOneToManyItems": false,
+  "GenerateOneToManyLists": false,
+  // The device list and the engine listen for property changes, which are raised only when a value changes.
+  "GeneratePropertyChanged": true,
+  "ItemBaseClass": "JocysCom.ClassLibrary.ComponentModel.NotifyPropertyChanged",
+  // The checksums and the copies between records read the columns by [DataMember] (RuntimeHelper.GetDataMembersString).
+  "GenerateDataContract": true,
+  // The class names the programs and the web service have always used.
+  "EntityModelNames": { "dbo.x360ce_Settings": "UserSetting" },
+  // The [x360ce] schema's classes share the model's namespace with the dbo ones.
+  "SchemaNamespaces": { "x360ce": "" },
+
+  // Context: EF6 under NETFRAMEWORK for the ASMX site, EF Core otherwise.
+  "GenerateContext": true,
+  "ConnectionStringName": "x360ceModelContainer",
+  "GenerateDataAccessClasses": false,
+  "GenerateControllers": false,
+  "GenerateStoredProcedures": false,
+  "GenerateDTO": false,
+
+  // Table x360ce_PadSettings -> entity PadSetting + DbSet PadSettings.
+  "PluralizeTableName": true,
+  "SingularizeItemName": true,
+  "TablePrefixRemovalFilter": "^(x360ce_)",
+
+  // C# 7.3 in the programs: no nullable reference types.
+  "EnableNullableReferenceTypes": false,
+  "EnableEntityFramework6": true,
+  "EnableEntityFrameworkCore": true,
+
+  "UseDateTimeKindUtcAttribute": false,
+  "UseDateTimeKindUtcProperty": false,
+  "StoreEnumDataAsStrings": false,
+
+  // The tables the programs and the web service read and write. New tables are [x360ce].[{SingularName}].
+  "ExcludeFilter": ["\\b__"],
+  "IncludeFilter": "\\bdbo\\.x360ce_(Layouts|PadSettings|Products|Programs|Settings|Summaries|UserComputers|UserDevices|UserGames|UserInstances|UserProfiles|Vendors)\\b|\\bx360ce\\.Telemetry(Format|FormatSpec|Game|GameStep|GameMod|GameFile)\\b",
+
+  "OverrideColumnInfo": []
+}

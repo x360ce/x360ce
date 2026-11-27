@@ -122,6 +122,12 @@ namespace x360ce.App.Recording
 			RawViewAtStart,
 			RawDiffers,
 			RawAgrees,
+			Telemetry,
+			Spring,
+			GearChange,
+			RangeSent,
+			CenteringSent,
+			LedSent,
 		}
 
 		/// <summary>One change the engine handed over. Plain fields, so a write makes nothing.</summary>
@@ -132,6 +138,8 @@ namespace x360ce.App.Recording
 			public UserDevice Device;
 			public int Index;
 			public int A, B, C, D, E, F, G;
+			/// <summary>More numbers, for the lines that carry more than seven.</summary>
+			public int H, I, J, K, L;
 			public string Text;
 		}
 
@@ -156,9 +164,11 @@ namespace x360ce.App.Recording
 			Volatile.Write(ref _head, next);
 		}
 
-		void Add(long ticks, Kind kind, UserDevice device, int index, int a, int b = 0, int c = 0, int d = 0, int e = 0, int f = 0, int g = 0, string text = null)
+		void Add(long ticks, Kind kind, UserDevice device, int index, int a, int b = 0, int c = 0, int d = 0, int e = 0, int f = 0, int g = 0, string text = null,
+			int h = 0, int i = 0, int j = 0, int k = 0, int l = 0)
 		{
-			var entry = new Entry { Ticks = ticks, Kind = kind, Device = device, Index = index, A = a, B = b, C = c, D = d, E = e, F = f, G = g, Text = text };
+			var entry = new Entry { Ticks = ticks, Kind = kind, Device = device, Index = index, A = a, B = b, C = c, D = d, E = e, F = f, G = g,
+				H = h, I = i, J = j, K = k, L = l, Text = text };
 			Add(ref entry);
 		}
 
@@ -177,7 +187,16 @@ namespace x360ce.App.Recording
 			public bool HasForce;
 			public int ForceFault;
 			public int SpringRefused;
+			public int RangeSends;
+			public int CenteringSends;
+			public int GearChanges;
+			public int LedSends;
+			public long SpringAt;
+			public int SpringPercent = int.MinValue, SpringAngle, SpringAlign, SpringGrip, SpringImpulse, SpringJolt, SpringSpeed, SpringDamper;
 		}
+
+		/// <summary>The least time between two lines of the spring, or of the telemetry, while they change: ten a second.</summary>
+		public static readonly long SpringStepTicks = Stopwatch.Frequency / 10;
 
 		readonly Dictionary<UserDevice, DeviceTrack> _tracks = new Dictionary<UserDevice, DeviceTrack>();
 
@@ -250,7 +269,124 @@ namespace x360ce.App.Recording
 					if (springRefused != 0)
 						Add(now, Kind.SpringRefused, ud, 0, springRefused);
 				}
+				if (ff != null)
+					DeviceForce(ud, t, ff, now);
+				var leds = Volatile.Read(ref ud.WheelLedSends);
+				if (leds != t.LedSends)
+				{
+					t.LedSends = leds;
+					Add(now, Kind.LedSent, ud, 0, ud.LastSentWheelLedMask, Volatile.Read(ref ud.WheelLedRefused), ud.WheelLedLastError);
+				}
 			}
+		}
+
+		/// <summary>
+		/// Records what was sent to a wheel's own interface, its range and its own centering, each time with whether it was
+		/// taken, and how its centering spring's force was made, ten times a second at most while it changes. Engine thread only.
+		/// </summary>
+		void DeviceForce(UserDevice ud, DeviceTrack t, ForceFeedbackState ff, long now)
+		{
+			if (ff.Counts.RangeSends != t.RangeSends)
+			{
+				t.RangeSends = ff.Counts.RangeSends;
+				Add(now, Kind.RangeSent, ud, 0, ff.RangeLastDegrees, ff.RangeLastError);
+			}
+			if (ff.Counts.CenteringSends != t.CenteringSends)
+			{
+				t.CenteringSends = ff.Counts.CenteringSends;
+				Add(now, Kind.CenteringSent, ud, 0, ff.CenteringLastOn ? 1 : 0, ff.CenteringLastError);
+			}
+			if (ff.Counts.GearChanges != t.GearChanges)
+			{
+				t.GearChanges = ff.Counts.GearChanges;
+				Add(now, Kind.GearChange, ud, 0, ff.LastGear, ff.LastGearChangeRumblePercent);
+			}
+			if (ff.SpringAxisIndex < 0 || now - t.SpringAt < SpringStepTicks)
+				return;
+			var s = ff.LastSpringTerms;
+			var range = s.RangeDegrees > 0 ? s.RangeDegrees : ForceFeedbackState.DefaultRangeDegrees;
+			// The wheel's angle from its centre, in tenths of a degree, positive right.
+			var angle = (int)Math.Round((s.Position - SpringCalibration.Center) * 10.0 * range / SpringCalibration.AxisMax);
+			var align = (int)Math.Round(s.AlignDeg * 10);
+			var grip = (int)Math.Round(s.Grip * 100);
+			var impulse = (int)Math.Round(s.ImpulsePercent * 10);
+			var jolt = (int)Math.Round(s.JoltPercent * 10);
+			var damper = ff.LastDamper;
+			// A turn of less than a degree, with nothing else changed, is the wheel at rest.
+			if (s.Percent == t.SpringPercent && Math.Abs(angle - t.SpringAngle) < 10 && align == t.SpringAlign && grip == t.SpringGrip
+				&& impulse == t.SpringImpulse && jolt == t.SpringJolt && s.SpeedKmh == t.SpringSpeed && damper == t.SpringDamper)
+				return;
+			t.SpringJolt = jolt;
+			t.SpringAt = now;
+			t.SpringPercent = s.Percent;
+			t.SpringAngle = angle;
+			t.SpringAlign = align;
+			t.SpringGrip = grip;
+			t.SpringImpulse = impulse;
+			t.SpringSpeed = s.SpeedKmh;
+			t.SpringDamper = damper;
+			// Two numbers to a field where both are small: the damper (0 to 10000) with the telemetry's weight in percent,
+			// the speed (km/h, below 4096) with the range in degrees.
+			var weight = (int)Math.Round(s.Weight * 100);
+			Add(now, Kind.Spring, ud, damper | (weight << 16), angle, s.Percent, align, grip, impulse, s.CurveForce,
+				Math.Max(0, Math.Min(4095, s.SpeedKmh)) | (range << 12), s.SoftLock ? "soft lock" : null, jolt);
+		}
+
+		/// <summary>What the telemetry last recorded was, to tell what changed. Engine thread only.</summary>
+		int _telemetryActive = -1, _telemetrySpeed, _telemetryLatG, _telemetryAlign, _telemetryGrip, _telemetryImpulse, _telemetryRpm,
+			_telemetryGear, _telemetryLongG, _telemetryJolt;
+		long _telemetryAt;
+
+		/// <summary>
+		/// Records the telemetry the wheels' springs took this pass: when it starts and stops, and ten times a second at most
+		/// while it changes. Engine thread only.
+		/// </summary>
+		/// <param name="packetRateHz">Packets a second the telemetry plugin counts.</param>
+		public void Telemetry(WheelTelemetrySample s, int packetRateHz, long now)
+		{
+			if (!Has(RecordParts.Forces))
+				return;
+			var fresh = s.Active ? WheelTelemetryMath.Freshness(s.TimestampMs, WheelTelemetryMath.MonotonicNowMs()) : 0.0;
+			var active = s.Active && fresh > 0.0 ? 1 : 0;
+			var speed = Tenths(s.SpeedKmh);
+			var latG = Hundredths(s.LateralG);
+			var align = Tenths(s.AlignAngleDeg);
+			var grip = Hundredths(s.FrontGrip);
+			var impulse = Hundredths(s.Impulse);
+			var rpm = Hundredths(s.RpmFraction);
+			var longG = Hundredths(s.LongitudinalG);
+			var jolt = Hundredths(s.Jolt);
+			if (active == _telemetryActive && (active == 0 || now - _telemetryAt < SpringStepTicks))
+				return;
+			if (active == _telemetryActive && speed == _telemetrySpeed && latG == _telemetryLatG && align == _telemetryAlign
+				&& grip == _telemetryGrip && impulse == _telemetryImpulse && rpm == _telemetryRpm
+				&& s.Gear == _telemetryGear && longG == _telemetryLongG && jolt == _telemetryJolt)
+				return;
+			_telemetryGear = s.Gear;
+			_telemetryLongG = longG;
+			_telemetryJolt = jolt;
+			_telemetryActive = active;
+			_telemetryAt = now;
+			_telemetrySpeed = speed;
+			_telemetryLatG = latG;
+			_telemetryAlign = align;
+			_telemetryGrip = grip;
+			_telemetryImpulse = impulse;
+			_telemetryRpm = rpm;
+			Add(now, Kind.Telemetry, null, packetRateHz | ((int)Math.Round(fresh * 100) << 16), active, speed, latG, align, grip, impulse, rpm, s.Source,
+				s.Gear, longG, Hundredths(s.VerticalG), jolt, Tenths(s.DistanceMeters));
+		}
+
+		/// <summary>A value in tenths, or <see cref="int.MinValue"/> when it is not a number.</summary>
+		static int Tenths(float value)
+		{
+			return float.IsNaN(value) || float.IsInfinity(value) ? int.MinValue : (int)Math.Round(value * 10.0);
+		}
+
+		/// <summary>A value in hundredths, or <see cref="int.MinValue"/> when it is not a number.</summary>
+		static int Hundredths(float value)
+		{
+			return float.IsNaN(value) || float.IsInfinity(value) ? int.MinValue : (int)Math.Round(value * 100.0);
 		}
 
 		void DeviceState(UserDevice ud, DeviceTrack t, SourceState state, long now)
@@ -415,8 +551,12 @@ namespace x360ce.App.Recording
 		/// <summary>Records the force sent to a device: each motor 0 to 255, as merged from its controllers. Engine thread only.</summary>
 		public void Force(UserDevice ud, byte large, byte small)
 		{
-			if (Has(RecordParts.Forces))
-				Add(Stopwatch.GetTimestamp(), Kind.ForceSent, ud, 0, large, small);
+			if (!Has(RecordParts.Forces))
+				return;
+			// What the motors' effects play it as: a push along the axis or a shake, and at what strength.
+			var ff = ud.FFState;
+			Add(Stopwatch.GetTimestamp(), Kind.ForceSent, ud, 0, large, small,
+				ff == null ? 0 : ff.MotorMagnitudeL, ff == null ? 0 : ff.MotorMagnitudeR, text: ff == null ? null : ff.MotorEffectName);
 		}
 
 		readonly Gamepad[] _padOutput = new Gamepad[4];
@@ -776,6 +916,14 @@ namespace x360ce.App.Recording
 			return type == MapType.Button ? (value != 0 ? "down" : "up") : type == MapType.POV ? Hat(value) : value.ToString(CultureInfo.InvariantCulture);
 		}
 
+		/// <summary>A value kept in tenths or hundredths, as a number, or "not sent" when the game sent none.</summary>
+		static string Number(int value, int scale)
+		{
+			if (value == int.MinValue)
+				return "not sent";
+			return (value / (double)scale).ToString(scale == 10 ? "0.0" : "0.00", CultureInfo.InvariantCulture);
+		}
+
 		/// <summary>An error code in brackets, or nothing for nought.</summary>
 		static string Error(int code)
 		{
@@ -836,7 +984,36 @@ namespace x360ce.App.Recording
 				case Kind.SpringRefused:
 					return d + " refused the centering spring with 0x" + e.A.ToString("X8", CultureInfo.InvariantCulture) + ", its own centring left off";
 				case Kind.ForceSent:
-					return d + " force sent: large " + e.A + ", small " + e.B;
+					return d + " force sent: large " + e.A + ", small " + e.B
+						+ (e.Text == null ? "" : ", played as a " + e.Text + " at " + e.C + (e.D != 0 ? " and " + e.D : "") + " of 10000");
+				case Kind.Telemetry:
+					if (e.A == 0)
+						return "telemetry: none fresh, the springs use their own settings";
+					return "telemetry from " + (e.Text ?? "a game") + ": speed " + Number(e.B, 10) + " km/h, gear "
+						+ (e.H < 0 ? "not sent" : e.H.ToString(CultureInfo.InvariantCulture)) + ", sideways " + Number(e.C, 100)
+						+ " G, forward-back " + Number(e.I, 100) + " G, up-down " + Number(e.J, 100)
+						+ " G, centre pulled " + Number(e.D, 10) + "°, front grip " + Number(e.E, 100) + ", kick " + Number(e.F, 100)
+						+ ", jolt " + Number(e.K, 100)
+						+ ", engine " + (e.G == int.MinValue ? "not sent" : e.G + " % of its redline")
+						+ ", distance " + (e.L == int.MinValue ? "not sent" : Number(e.L, 10) + " m") + ", "
+						+ (e.Index & 0xFFFF) + " packets a second, " + (e.Index >> 16) + " % fresh";
+				case Kind.Spring:
+					var range = e.G >> 12;
+					return d + " spring: wheel at " + Number(e.A, 10) + "° of " + range + "°, force " + e.B + " % (curve " + e.F
+						+ " %, centre pulled " + Number(e.C, 10) + "°, front grip " + Number(e.D, 100) + ", kick " + Number(e.E, 10) + " %"
+						+ (e.H == 0 ? "" : ", jolt " + Number(e.H, 10) + " %")
+						+ (e.Text == null ? "" : ", " + e.Text) + "), speed " + (e.G & 0xFFF) + " km/h, damper " + (e.Index & 0xFFFF)
+						+ ", telemetry weight " + (e.Index >> 16) + " %";
+				case Kind.GearChange:
+					return d + " gear change" + (e.A < 0 ? " (the engine slowed while the car gained speed)" : " to " + e.A)
+						+ ": the game's rumble plays at " + e.B + " % for " + ForceFeedbackState.GearChangeRumbleMs + " ms";
+				case Kind.RangeSent:
+					return d + " range " + e.A + "° sent to its own interface: " + (e.B == 0 ? "taken" : "not taken" + Error(e.B));
+				case Kind.CenteringSent:
+					return d + " its own centring switched " + (e.A != 0 ? "on" : "off") + " on its own interface: " + (e.B == 0 ? "taken" : "not taken" + Error(e.B));
+				case Kind.LedSent:
+					return d + " LEDs " + (e.A < 0 ? "none" : Convert.ToString(e.A, 2).PadLeft(5, '0')) + " sent to its own interface"
+						+ (e.B == 0 ? "" : ", " + e.B + " not taken so far" + Error(e.C));
 				case Kind.SlowCall:
 					return (d ?? "engine") + " " + e.Text + " took " + e.A.ToString("N0", CultureInfo.InvariantCulture) + " ms";
 				case Kind.PadOutput:

@@ -89,7 +89,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
@@ -104,6 +103,7 @@
     <Compile Include="Common\AdminCommand.cs" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\AppFonts.cs" />
+    <Compile Include="Common\AppLanguages.cs" />
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudClient.cs" />
@@ -464,6 +464,7 @@
     <Compile Include="Plugins\PluginMcpDoors.cs" />
     <Compile Include="Plugins\PluginSettings.cs" />
     <Compile Include="Plugins\PluginSettingsView.cs" />
+    <Compile Include="Plugins\PluginTelemetryData.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -654,6 +655,13 @@
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
+    <!-- Telemetry formats and games, made from the [x360ce] tables' rows; plain XML, so a change can be read in a diff. -->
+    <EmbeddedResource Include="Resources\x360ce.TelemetryFormats.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryFormatSpecs.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGames.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGameSteps.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGameMods.xml" />
+    <EmbeddedResource Include="Resources\x360ce.TelemetryGameFiles.xml" />
     <EmbeddedResource Include="Resources\ViGEmBus.zip" />
   </ItemGroup>
   <ItemGroup>
@@ -704,75 +712,84 @@
     <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTopDark_512x210.png">
       <Link>Images\xboxControllerTopDark.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavActive.png">
-      <Link>Images\Nav\NavActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavAxisActive.png">
       <Link>Images\Nav\NavAxisActive.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownActive.png">
-      <Link>Images\Nav\NavDownActive.png</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownNormal.png">
       <Link>Images\Nav\NavDownNormal.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownRecord.png">
-      <Link>Images\Nav\NavDownRecord.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftActive.png">
-      <Link>Images\Nav\NavLeftActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftNormal.png">
       <Link>Images\Nav\NavLeftNormal.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftRecord.png">
-      <Link>Images\Nav\NavLeftRecord.png</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavNormal.png">
       <Link>Images\Nav\NavNormal.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRecord.png">
-      <Link>Images\Nav\NavRecord.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightActive.png">
-      <Link>Images\Nav\NavRightActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightNormal.png">
       <Link>Images\Nav\NavRightNormal.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightRecord.png">
-      <Link>Images\Nav\NavRightRecord.png</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavTriggerActive.png">
       <Link>Images\Nav\NavTriggerActive.png</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpActive.png">
-      <Link>Images\Nav\NavUpActive.png</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpNormal.png">
       <Link>Images\Nav\NavUpNormal.png</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpRecord.png">
-      <Link>Images\Nav\NavUpRecord.png</Link>
     </EmbeddedResource>
     <None Include="..\Resources\Images\shared\**;..\Resources\Images\v4\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>
   <ItemGroup>
-    <!-- The fonts the program carries (Common\AppFonts.cs), each with its SIL Open Font Licence. -->
+    <!--
+      The languages the interface is offered in besides English (Common\AppLanguages.cs), one document each. en.json lists
+      the English the sync found, for translators, and each {culture}.todo.json what one language lacks: the program needs
+      neither.
+    -->
+    <LanguageFile Include="Languages\*.json" Exclude="Languages\en.json;Languages\*.todo.json" />
+    <EmbeddedResource Include="@(LanguageFile)">
+      <LogicalName>x360ce.App.Languages.%(Filename).json</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The fonts the program carries (Common\AppFonts.cs). Their licences are with the others, below. -->
     <EmbeddedResource Include="..\Resources\Fonts\Selawik\selawk.ttf">
       <Link>Resources\Fonts\Selawik\selawk.ttf</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Fonts\Selawik\selawkb.ttf">
       <Link>Resources\Fonts\Selawik\selawkb.ttf</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Fonts\Selawik\OFL.txt">
-      <Link>Resources\Fonts\Selawik\OFL.txt</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Fonts\Inconsolata\Inconsolata-Medium.ttf">
       <Link>Resources\Fonts\Inconsolata\Inconsolata-Medium.ttf</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+      The parts the program carries from other projects, as ..\Resources\Licenses\README.md lists them, and the licence
+      of each that names x360ce 4, each under its path in the repository: the License tab shows them (ThirdPartyLicences).
+    -->
+    <EmbeddedResource Include="..\Resources\Licenses\README.md">
+      <Link>Resources\Licenses\README.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\SharpDX\License.txt">
+      <Link>Resources\Licenses\SharpDX\License.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\ViGEmBus_1_21_442\LICENSE">
+      <Link>Resources\Licenses\ViGEmBus_1_21_442\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\ViGEmBus_1_16_112\LICENSE">
+      <Link>Resources\Licenses\ViGEmBus_1_16_112\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\ViGEm\LICENSE">
+      <Link>Resources\Licenses\ViGEm\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\SDL_GameControllerDB\LICENSE">
+      <Link>Resources\Licenses\SDL_GameControllerDB\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Fonts\Selawik\LICENSE.txt">
+      <Link>Resources\Fonts\Selawik\LICENSE.txt</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Fonts\Inconsolata\OFL.txt">
       <Link>Resources\Fonts\Inconsolata\OFL.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\IconExperience\IconExperience.License.txt">
+      <Link>Resources\Licenses\IconExperience\IconExperience.License.txt</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -844,6 +861,22 @@
     that is already right keeps its time, so the build this starts from its own sources does not start another.
   -->
   <Target Name="WriteSkill" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
-    <Exec Command="&quot;$(TargetPath)&quot; -Skill=&quot;$(MSBuildProjectDirectory)\..\skills&quot;" ContinueOnError="true" />
+    <!-- Its own settings folder: a build never reads or writes the person's. -->
+    <Exec Command="&quot;$(TargetPath)&quot; -Skill=&quot;$(MSBuildProjectDirectory)\..\skills&quot; &quot;-Profile=$(MSBuildProjectDirectory)\$(IntermediateOutputPath)Skill.Profile&quot;" ContinueOnError="true" />
+  </Target>
+  <!--
+    What each language lacks against the English, as a build warning per language document: the program builds its pages
+    without showing them, records the English of every text, writes Languages\en.json, and a {culture}.todo.json beside
+    each document that lacks something (-Languages, Common\AppLanguages.cs). Never an error, as a text without a
+    translation shows in English. It runs when the program or a document changed, and again on every build while a
+    language lacks something, so the warnings stay until they are fixed. Its own settings folder keeps the person's out.
+    It shows no window: what stops it is a warning too (XLANG000), and a run that hangs is ended after two minutes.
+  -->
+  <Target Name="SyncLanguages" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'" Inputs="$(TargetPath);@(LanguageFile)" Outputs="$(IntermediateOutputPath)Languages.synced">
+    <Exec Command="&quot;$(TargetPath)&quot; -Languages=&quot;$(MSBuildProjectDirectory)\Languages&quot; &quot;-Profile=$(MSBuildProjectDirectory)\$(IntermediateOutputPath)Languages.Profile&quot;" IgnoreExitCode="true" ContinueOnError="true" Timeout="120000">
+      <Output TaskParameter="ExitCode" PropertyName="LanguagesExitCode" />
+    </Exec>
+    <Touch Files="$(IntermediateOutputPath)Languages.synced" AlwaysCreate="true" Condition="'$(LanguagesExitCode)' == '0'" />
+    <Delete Files="$(IntermediateOutputPath)Languages.synced" Condition="'$(LanguagesExitCode)' != '0'" />
   </Target>
 </Project>

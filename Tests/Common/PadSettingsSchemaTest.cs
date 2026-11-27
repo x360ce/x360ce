@@ -1,25 +1,27 @@
-// @under-test: Data/dbo/Tables/x360ce_PadSettings.sql, Engine/Data/x360ceModel.edmx, Engine/Data/x360ceModel.csdl, Engine/Data/x360ceModel.ssdl, Engine/Data/x360ceModel.msl, Engine/Common/MapExpression.cs
+// @under-test: Data/dbo/Tables/x360ce_PadSettings.sql, Engine/Data/Model/dbo/PadSetting.cs, Engine/Common/MapExpression.cs
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using x360ce.Engine;
 
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// A mapping is written by the parser, described by the model, and kept in a column, and all three
+	/// A mapping is written by the parser, described by the class, and kept in a column, and all three
 	/// have to agree about how long one may be. These tests are what makes them agree.
 	/// </summary>
 	/// <remarks>
 	/// The failure this prevents is silent. A parser cap larger than the column lets an expression pass
 	/// every check and then be cut short on the way to storage, so the person who wrote it is told
 	/// nothing and finds out later, in a game, through a control that no longer does what they set. A
-	/// model that still says sixteen fails at the same point for the same reason. Nothing at run time
+	/// class that still says sixteen fails at the same point for the same reason. Nothing at run time
 	/// notices any of this, so it has to be noticed here.
 	///
 	/// The backup schema under Change Scripts is deliberately not checked. It is written out from the
@@ -67,29 +69,18 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("Both layers of the model describe the mapping columns at their real width")]
+		[Description("The class generated from the database describes the mapping columns at their real width")]
 		public void Model_describes_the_columns_at_their_real_width()
 		{
-			var model = XDocument.Parse(Read("Engine/Data/x360ceModel.edmx"));
-			// The storage layer names the table and the conceptual layer names the class. Both carry
-			// their own length, and either one being wrong fails the save.
-			foreach (var entityName in new[] { "x360ce_PadSettings", "PadSetting" })
+			// The web service's context saves through the class's [StringLength], so a wrong one fails the save.
+			foreach (var column in MappingColumns())
 			{
-				var entity = model.Descendants()
-					.FirstOrDefault(x => x.Name.LocalName == "EntityType"
-						&& (string)x.Attribute("Name") == entityName);
-				Assert.IsNotNull(entity, "The model has no entity named " + entityName + ".");
-				foreach (var column in MappingColumns())
-				{
-					var property = entity.Elements()
-						.FirstOrDefault(x => x.Name.LocalName == "Property"
-							&& (string)x.Attribute("Name") == column);
-					Assert.IsNotNull(property, entityName + " has no property named " + column + ".");
-					var length = (string)property.Attribute("MaxLength");
-					Assert.AreEqual(MapExpression.MaxLength.ToString(), length,
-						entityName + "." + column + " is described as " + length + " characters, but the " +
-						"parser accepts " + MapExpression.MaxLength + ".");
-				}
+				var property = typeof(x360ce.Engine.Data.PadSetting).GetProperty(column);
+				Assert.IsNotNull(property, "PadSetting has no property named " + column + ".");
+				var length = (StringLengthAttribute)Attribute.GetCustomAttribute(property, typeof(StringLengthAttribute));
+				Assert.AreEqual(MapExpression.MaxLength, length?.MaximumLength,
+					"PadSetting." + column + " is described as " + length?.MaximumLength + " characters, but the " +
+					"parser accepts " + MapExpression.MaxLength + ".");
 			}
 		}
 
@@ -114,25 +105,23 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
-		[Description("The model the engine runs from loads, and both of its halves carry every column of the table")]
-		public void The_embedded_model_loads_and_carries_every_column()
+		[Description("The class generated from the database carries every column of the table")]
+		public void The_generated_class_carries_every_column()
 		{
-			// The engine runs from the three files embedded in it, not from the .edmx beside them, and
-			// Entity Framework reads them together on the first query. A mapping naming a property or a
-			// column the other two lack fails there, in a program that is saving; here it fails in a test.
-			var engine = typeof(EngineHelper).Assembly;
-			Func<string, System.Xml.XmlReader> open = name => System.Xml.XmlReader.Create(engine.GetManifestResourceStream(name));
-			var conceptual = new System.Data.Metadata.Edm.EdmItemCollection(new[] { open("Data.x360ceModel.csdl") });
-			var storage = new System.Data.Metadata.Edm.StoreItemCollection(new[] { open("Data.x360ceModel.ssdl") });
-			new System.Data.Mapping.StorageMappingItemCollection(conceptual, storage, new[] { open("Data.x360ceModel.msl") });
-			var table = storage.GetItems<System.Data.Metadata.Edm.EntityType>().Single(x => x.Name == "x360ce_PadSettings");
-			var entity = conceptual.GetItems<System.Data.Metadata.Edm.EntityType>().Single(x => x.Name == "PadSetting");
+			// The web service's context maps the class by its [Table] and its properties, and the checksum and the
+			// copies between records read the ones marked [DataMember]. A column the class lacks is one the table file
+			// has and the database does not, or one added since Engine\Data\Generate-Models.ps1 last ran.
+			var type = typeof(x360ce.Engine.Data.PadSetting);
+			Assert.AreEqual("x360ce_PadSettings", ((TableAttribute)Attribute.GetCustomAttribute(type, typeof(TableAttribute)))?.Name);
 			var columns = Regex.Matches(Read("Data/dbo/Tables/x360ce_PadSettings.sql"), @"^\s+\[(?<name>\w+)\]\s", RegexOptions.Multiline)
 				.Cast<Match>().Select(x => x.Groups["name"].Value).ToArray();
 			Assert.IsTrue(columns.Length > 50, "Only " + columns.Length + " column(s) were read from the table.");
-			var missing = columns.Where(x => !table.Properties.Contains(x)).Select(x => "storage: " + x)
-				.Concat(columns.Where(x => !entity.Properties.Contains(x)).Select(x => "program: " + x)).ToArray();
-			Assert.AreEqual(0, missing.Length, "The table has columns the embedded model does not describe, "
+			var missing = columns.Where(x =>
+			{
+				var p = type.GetProperty(x);
+				return p == null || !Attribute.IsDefined(p, typeof(DataMemberAttribute)) || Attribute.IsDefined(p, typeof(NotMappedAttribute));
+			}).ToArray();
+			Assert.AreEqual(0, missing.Length, "The table has columns the class does not map, "
 				+ "so the program never reads or writes them:" + Environment.NewLine + string.Join(Environment.NewLine, missing));
 			// Nothing sets this one, and its column refuses null, so a new setting has to start it empty.
 			Assert.AreEqual("", new x360ce.Engine.Data.PadSetting().ButtonBig, "A new setting would save null into ButtonBig.");

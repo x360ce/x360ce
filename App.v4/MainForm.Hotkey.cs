@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using System;
 using System.Windows.Forms;
 
 namespace x360ce.App
@@ -88,7 +89,9 @@ namespace x360ce.App
 		{
 			var o = SettingsManager.Options;
 			o.XInputEnabled = !o.XInputEnabled;
-			var text = o.XInputEnabled ? "Emulated controllers on" : "Emulated controllers off";
+			var text = o.XInputEnabled
+				? UiLanguage.T("MainForm.EmulatedControllersOn", "Emulated controllers on")
+				: UiLanguage.T("MainForm.EmulatedControllersOff", "Emulated controllers off");
 			if (o.EmulationHotkeyOverlay)
 				OverlayNote.Show(text, System.Drawing.ColorTranslator.FromHtml(o.XInputEnabled ? AppHelper.StatusGreen : AppHelper.StatusGrey));
 			else

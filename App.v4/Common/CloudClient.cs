@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Mail;
 using JocysCom.ClassLibrary.Threading;
 using System;
@@ -71,9 +72,9 @@ namespace x360ce.App
 			{
 				var o = SettingsManager.Options;
 				if (!o.InternetFeatures)
-					return "The cloud is off: tick Enable Internet Features on the Options tab's Internet page.";
+					return UiLanguage.T("CloudClient.EnableInternetFeatures", "The cloud is off: tick Enable Internet Features on the Options tab’s Internet page.");
 				if (!o.InternetAutoSave)
-					return "The cloud is off: tick Save Settings to Cloud on the Options tab's Internet page.";
+					return UiLanguage.T("CloudClient.EnableSaveToCloud", "The cloud is off: tick Save Settings to Cloud on the Options tab’s Internet page.");
 				return null;
 			}
 		}
@@ -89,6 +90,23 @@ namespace x360ce.App
 			message.UserGames = items as UserGame[];
 			message.UserSettings = items as UserSetting[];
 			message.UserDevices = items as UserDevice[];
+			// Exclude hardware-backed plugin devices (e.g. an unconnected Fitness Machine) until real hardware identity is known.
+			if (action == CloudAction.Insert || action == CloudAction.Update)
+			{
+				var manager = Plugins.PluginManager.Current;
+				if (message.UserDevices != null)
+				{
+					message.UserDevices = message.UserDevices.Where(d => Plugins.PluginDevices.IsReadyForCloudUpload(d, manager)).ToArray();
+					if (message.UserDevices.Length == 0)
+						return;
+				}
+				if (message.UserSettings != null)
+				{
+					message.UserSettings = message.UserSettings.Where(s => Plugins.PluginDevices.IsSettingReadyForCloudUpload(s, manager)).ToArray();
+					if (message.UserSettings.Length == 0)
+						return;
+				}
+			}
 			message.UserComputers = items as UserComputer[];
 			message.UserInstances = items as UserInstance[];
 			message.MailMessages = items as MailMessageSerializable[];

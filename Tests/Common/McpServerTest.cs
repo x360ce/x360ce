@@ -82,6 +82,30 @@ namespace x360ce.Tests
 			CollectionAssert.AreEqual(new[] { "value" }, (string[])schema["required"], "Only the parameter without a default is required.");
 		}
 
+		/// <summary>A tool's optional yes/no and number, as TestGame's car_control takes them.</summary>
+		public static string Optional(bool? flag = null, int? count = null) { return flag + "|" + count; }
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("An optional yes/no or number argument, such as bool? or int?, is described and bound as the type it holds")]
+		public void Optional_arguments_bind_as_the_type_they_hold()
+		{
+			var method = typeof(McpServerTest).GetMethod(nameof(Optional));
+			var tool = new McpToolInfo { Name = "optional", Method = method, Parameters = method.GetParameters() };
+			var properties = (Dictionary<string, object>)tool.InputSchema()["properties"];
+			Assert.AreEqual("boolean", ((Dictionary<string, object>)properties["flag"])["type"]);
+			Assert.AreEqual("integer", ((Dictionary<string, object>)properties["count"])["type"]);
+			// The command line gives text, an MCP client gives JSON values.
+			var values = tool.Bind(new Dictionary<string, object> { { "flag", "true" }, { "count", "3" } });
+			Assert.AreEqual(true, values[0]);
+			Assert.AreEqual(3, values[1]);
+			values = tool.Bind(new Dictionary<string, object> { { "flag", false }, { "count", 4L } });
+			Assert.AreEqual(false, values[0]);
+			Assert.AreEqual(4, values[1]);
+			values = tool.Bind(null);
+			Assert.IsNull(values[0], "An optional argument not given stays unset.");
+			Assert.IsNull(values[1]);
+		}
+
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("A password or the token box's value sent through the door is masked in the log, and the token never appears in it")]
 		public void The_log_keeps_no_secret()

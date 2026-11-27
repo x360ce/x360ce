@@ -23,11 +23,15 @@ namespace x360ce.App.Controls
 			var stream = EngineHelper.GetResourceStream("ChangeLog.txt");
 			var sr = new StreamReader(stream);
 			ChangeLogTextBox.Text = ControlsHelper.NormalizeLineBreaks(sr.ReadToEnd());
-			AboutProductLabel.Text = string.Format(AboutProductLabel.Text, Application.ProductVersion);
-			stream = EngineHelper.GetResourceStream("License.txt");
+			// The program's own name and version: wherever it is hosted, as in a test, the process's product can be another's.
+			var program = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(typeof(AboutControl).Assembly);
+			var version = program.Version;
+			AboutProductLabel.Text = string.Format(AboutProductLabel.Text, version);
+			stream = EngineHelper.GetResourceStream("Documents.License.txt");
 			sr = new StreamReader(stream);
-			LicenseTextBox.Text = ControlsHelper.NormalizeLineBreaks(sr.ReadToEnd());
-			LicenseTabPage.Text = string.Format("{0} {1} License", Application.ProductName, new Version(Application.ProductVersion).ToString(2));
+			// What x360ce carries from other projects is shown under its own licence, as each of those licences asks.
+			LicenseTextBox.Text = ControlsHelper.NormalizeLineBreaks(sr.ReadToEnd() + ThirdPartyLicences.Text(program.Assembly));
+			LicenseTabPage.Text = string.Format("{0} {1} License", program.Product, version.ToString(2));
 		}
 
 	}

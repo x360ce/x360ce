@@ -139,14 +139,6 @@ namespace x360ce.App.DInput
 			return true;
 		}
 
-		/// <summary>The time the centering spring's Auto run is measured by: counts up from 0, and never wraps or starts again.</summary>
-		/// <remarks>
-		/// The run marks a time not yet taken with -1, so it needs a time that is never negative, and one
-		/// that never goes back. <see cref="Environment.TickCount"/> is negative from 24.9 to 49.7 days
-		/// after Windows starts, and <see cref="watch"/> starts again with the update thread, which a
-		/// reorder of the XInput places restarts in the middle of a run.
-		/// </remarks>
-		static readonly System.Diagnostics.Stopwatch SpringCalibrationClock = System.Diagnostics.Stopwatch.StartNew();
 
 		/// <param name="routing">Which rows each controller reads and where each device's force comes from, for this pass.</param>
 		internal void UpdateDiStates(DirectInput manager, UserGame game, System.Windows.Forms.NativeWindow window, DeviceRouting routing)
@@ -174,6 +166,14 @@ namespace x360ce.App.DInput
 			// Allow if not testing or testing with option enabled. Read once for the pass.
 			var o = SettingsManager.Options;
 			var allow = !o.TestEnabled || o.TestGetDInputStates;
+			// The conversion that follows uses these, from this one read.
+			_wheelSoftLock = o.WheelSoftLockEnabled;
+			_wheelLeadMs = o.WheelSteeringLeadMs;
+			var anyWheelSpringActive = false;
+			var anyTelemetryConsumerActive = false;
+			var telemetryPolled = false;
+			var passTelemetry = WheelTelemetrySample.Inactive;
+			var passRawTelemetry = x360ce.Plugins.WheelTelemetry.Neutral;
 			for (int i = 0; i < userDevices.Length; i++)
 			{
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
@@ -197,10 +197,11 @@ namespace x360ce.App.DInput
 					ReadRawInputState(ud, o.ReadEveryChange);
 					continue;
 				}
-				// A plugin device is asked for its state by its plugin, and has nothing else to hold or poll.
+				// A plugin device is asked for its state by its plugin, given its force and/or telemetry when it takes them,
+				// and has nothing else to hold or poll.
 				if (ud.InputSourceType == (int)InputSourceType.Plugin)
 				{
-					ReadPluginState(ud);
+					ReadPluginState(ud, routing, o, ref telemetryPolled, ref passTelemetry, ref passRawTelemetry, ref anyTelemetryConsumerActive);
 					continue;
 				}
 				JoystickState state = null;
@@ -276,7 +277,7 @@ namespace x360ce.App.DInput
 								if (autoCenter.HasValue)
 								{
 									step = Calling(recording, ud, "AutoCenter");
-									SetAutoCenter(device, autoCenter.Value);
+									SetAutoCenter(ud, device, autoCenter.Value);
 									ud.AutoCenter = autoCenter.Value;
 								}
 								ud.AutoCenterSet = autoCenter.HasValue;
@@ -296,6 +297,8 @@ namespace x360ce.App.DInput
 								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
 								step = Calling(recording, ud, "Unacquire (NonExclusive)");
 								device.Unacquire();
+								// Not held for force any more: the driver's own centering is back in charge.
+								RestoreAutoCenter(ud, device);
 								directInput.KeepChanges();
 								step = Calling(recording, ud, "SetCooperativeLevel (NonExclusive)");
 								device.SetCooperativeLevel(window.Handle, flags);
@@ -400,6 +403,28 @@ namespace x360ce.App.DInput
 											// once it is due, as to a device held again.
 											byte large, small;
 											var forceArrived = MergeForces(route.ForcePads, arrived, _lastLargeMotor, _lastSmallMotor, out large, out small);
+											// While live telemetry drives the centering spring, the game's rumble can be quieter
+											// for a moment while the gear changes, or left out for the telemetry's own feel.
+											var rumbleTelemetry = WheelTelemetrySample.Inactive;
+											var rumbleNowMs = 0L;
+											var ignoreGame = false;
+											var gearChangePercent = 100;
+											if (o.WheelTelemetryEnabled && ps.ForceSpringEnable == "1")
+											{
+												if (!telemetryPolled)
+												{
+													telemetryPolled = true;
+													passTelemetry = ReadWheelTelemetry(o, out passRawTelemetry);
+												}
+												var source = o.WheelRumbleSource;
+												rumbleTelemetry = passTelemetry;
+												rumbleNowMs = WheelTelemetryMath.MonotonicNowMs();
+												ignoreGame = source == x360ce.Plugins.WheelRumbleSource.Telemetry;
+												gearChangePercent = source == x360ce.Plugins.WheelRumbleSource.Game ? 100 : o.WheelGearChangeRumble;
+											}
+											// A force that changed, by its share or its wait, is new, though the game sent nothing new.
+											if (ud.FFState.ShapeGameRumble(rumbleTelemetry, rumbleNowMs, ignoreGame, gearChangePercent, ref large, ref small))
+												forceArrived = true;
 											if (forceArrived || held || ud.ForceFailures > 0 || ud.FFState.Changed(ps))
 											{
 												var v = new Vibration();
@@ -452,9 +477,84 @@ namespace x360ce.App.DInput
 									if (ud.FFState != null && ud.SourceState != null && ud.FFState.SpringAxisIndex >= 0)
 									{
 										var run = ud.SpringCalibration;
+										var springActive = ps != null && ps.ForceSpringEnable == "1";
+										if (springActive)
+											anyWheelSpringActive = true;
+										var needClock = run != null || (springActive && (o.WheelTelemetryEnabled || o.WheelRumbleUndersteer > 0));
+										var nowMs = needClock ? WheelTelemetryMath.MonotonicNowMs() : 0;
+										var telemetry = WheelTelemetrySample.Inactive;
+										if (springActive && o.WheelTelemetryEnabled)
+										{
+											if (!telemetryPolled)
+											{
+												telemetryPolled = true;
+												passTelemetry = ReadWheelTelemetry(o, out passRawTelemetry);
+											}
+											telemetry = passTelemetry;
+											if (telemetry.Active && WheelTelemetryMath.Freshness(telemetry.TimestampMs, nowMs) > 0.0)
+											{
+												ud.WheelTelemetrySource = telemetry.Source;
+												if (!float.IsNaN(telemetry.SpeedKmh) && telemetry.SpeedKmh >= 0f)
+													ud.ForceSpringSpeedOverride = (int)Math.Round(telemetry.SpeedKmh);
+											}
+											else if (ud.WheelTelemetrySource != null)
+											{
+												ud.WheelTelemetrySource = null;
+												ud.ForceSpringSpeedOverride = null;
+											}
+										}
+										else if (ud.WheelTelemetrySource != null)
+										{
+											ud.WheelTelemetrySource = null;
+											ud.ForceSpringSpeedOverride = null;
+										}
+										var softLockRange = (springActive && o.WheelSoftLockEnabled && ps != null
+											&& !LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
+											? ps.GetWheelRange()
+											: 0;
+										var tuning = new WheelTelemetryTuning
+										{
+											AlignStrengthPercent = o.WheelTelemetryAlignStrength,
+											UndersteerStrengthPercent = o.WheelTelemetryUndersteerStrength,
+											CurbStrengthPercent = o.WheelTelemetryCurbStrength,
+											DampingStrengthPercent = o.WheelTelemetryDampingStrength,
+											JoltEnabled = o.WheelRumbleSource == x360ce.Plugins.WheelRumbleSource.Telemetry
+												|| o.WheelRumbleSource == x360ce.Plugins.WheelRumbleSource.Both,
+										};
 										step = Calling(recording, ud, "ud.FFState.UpdateSpring(device)");
-										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0,
-											ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction());
+										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, nowMs,
+											ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction(),
+											telemetry, o.WheelRumbleUndersteer, softLockRange, tuning);
+
+										// Drive wheel RGB/RPM shift LED strip (Logitech G27/G29/G923) off the 1000 Hz thread only on mask change.
+										var testMask = ud.WheelLedTestMask;
+										byte ledMask = 0;
+										if (testMask >= 0)
+											ledMask = (byte)(testMask & 0x1F);
+										else if (o.WheelRgbStripEnabled && telemetry.Active && !float.IsNaN(telemetry.RpmFraction)
+											&& WheelTelemetryMath.Freshness(telemetry.TimestampMs, nowMs) > 0.0)
+											ledMask = LogitechWheel.RpmToLedMask(telemetry.RpmFraction, nowMs);
+										ud.WheelLedMask = ledMask;
+										if (ledMask != ud.LastSentWheelLedMask && LogitechWheel.SupportsLeds(ud.DevVendorId, ud.DevProductId))
+										{
+											var hidPath = ud.HidDevicePath;
+											if (!string.IsNullOrEmpty(hidPath))
+											{
+												ud.LastSentWheelLedMask = ledMask;
+												var sendMask = ledMask;
+												var ledDevice = ud;
+												System.Threading.ThreadPool.QueueUserWorkItem(_ =>
+												{
+													var taken = LogitechWheel.SetLeds(hidPath, sendMask);
+													if (!taken)
+													{
+														ledDevice.WheelLedLastError = LogitechWheel.LastError;
+														System.Threading.Interlocked.Increment(ref ledDevice.WheelLedRefused);
+													}
+													System.Threading.Interlocked.Increment(ref ledDevice.WheelLedSends);
+												});
+											}
+										}
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;
@@ -534,6 +634,15 @@ namespace x360ce.App.DInput
 				}
 
 			}
+			var telemetryMonitored = IsWheelTelemetryMonitored();
+			if (o.WheelTelemetryEnabled && telemetryMonitored && !telemetryPolled)
+				ReadWheelTelemetry(o, out passRawTelemetry);
+			// What the game sent, as the wheels' springs took it this pass.
+			if (recording != null && telemetryPolled)
+				recording.Telemetry(passTelemetry, _wheelTelemetryPacketRateHz, System.Diagnostics.Stopwatch.GetTimestamp());
+			// Release telemetry listeners immediately when telemetry is off or no wheel spring, ticked consumer device or telemetry UI needs them.
+			if (((!anyWheelSpringActive && !anyTelemetryConsumerActive && !telemetryMonitored) || !o.WheelTelemetryEnabled) && HasActiveWheelTelemetry)
+				ReleaseWheelTelemetry();
 		}
 
 		/// <summary>Raw Input devices read since the last engine log sample. Input thread only.</summary>
@@ -685,15 +794,23 @@ namespace x360ce.App.DInput
 		/// <summary>The width of the steps an axis or slider is logged in: an eighth of its range, so a stick resting at the centre or an end logs nothing.</summary>
 		const int LogAxisStep = 8192;
 
-		/// <summary>Writes what changed between a device's state of the pass before and this pass's into the log, when one runs. Input thread only.</summary>
+		/// <summary>Counts each button pressed between a device's state of the pass before and this pass's in <see cref="UserDevice.ButtonPresses"/>, and writes what changed into the log, when one runs. Input thread only.</summary>
 		/// <remarks>
 		/// Every button and hat change is written. An axis or slider is written when the nearest eighth of its range
 		/// changes, so a moving stick writes a handful of lines on its way and none at rest. Makes nothing.
 		/// </remarks>
 		void LogChanges(UserDevice ud, SourceState previous, SourceState state, long ticks)
 		{
+			if (previous == null)
+				return;
+			var was = previous.Buttons;
+			var now = state.Buttons;
+			var presses = ud.ButtonPresses;
+			for (var i = 0; i < now.Length; i++)
+				if (now[i] && !was[i])
+					presses[i]++;
 			var log = System.Threading.Volatile.Read(ref _inputLog);
-			if (log == null || previous == null)
+			if (log == null)
 				return;
 			for (var i = 0; i < state.Buttons.Length; i++)
 				if (state.Buttons[i] != previous.Buttons[i])
@@ -776,6 +893,7 @@ namespace x360ce.App.DInput
 					try
 					{
 						device.Unacquire();
+						RestoreAutoCenter(ud, device);
 					}
 					catch (Exception ex)
 					{
@@ -852,16 +970,44 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
-		static void SetAutoCenter(Joystick device, bool on)
+		/// <remarks>The driver's own setting is read before the first change, so <see cref="RestoreAutoCenter"/> can give it back.</remarks>
+		static void SetAutoCenter(UserDevice ud, Joystick device, bool on)
 		{
 			try
 			{
+				if (!ud.AutoCenterBefore.HasValue)
+					ud.AutoCenterBefore = device.Properties.AutoCenter;
 				device.Properties.AutoCenter = on;
 			}
 			catch (SharpDXException)
 			{
 				// Not every device has a centre of its own to switch.
 			}
+		}
+
+		/// <summary>Gives the device's own centering back as its driver had it, once the device is let go of.</summary>
+		/// <remarks>
+		/// The engine turns it off while its own spring holds the centre, and DirectInput keeps a setting after the program lets go,
+		/// so a wheel let go of, or left when the program closes, would keep no centering of its own. Called after Unacquire: the
+		/// setting can only be changed while the device is not held.
+		/// </remarks>
+		internal static void RestoreAutoCenter(UserDevice ud, Joystick device)
+		{
+			if (!ud.AutoCenterSet || !ud.AutoCenterBefore.HasValue)
+				return;
+			if (ud.AutoCenter != ud.AutoCenterBefore.Value)
+			{
+				try
+				{
+					device.Properties.AutoCenter = ud.AutoCenterBefore.Value;
+				}
+				catch (SharpDXException)
+				{
+					// Not every device has a centre of its own to switch.
+				}
+			}
+			ud.AutoCenter = ud.AutoCenterBefore.Value;
+			ud.AutoCenterSet = false;
 		}
 
 		/// <summary>The device's reserved state the next poll reads into: its two, in turn, so a state is not written until one whole poll after it stops being shown.</summary>

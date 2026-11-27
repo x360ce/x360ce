@@ -27,6 +27,8 @@ namespace x360ce.Tests
 	[TestClass]
 	public class AxisToButtonRowLayoutTest
 	{
+		public TestContext TestContext { get; set; }
+
 		/// <summary>
 		/// A page built the way the Buttons page's designer code builds it: drawn at 150 %, giving
 		/// the row its size in those units, then brought to the running font by auto-scaling.
@@ -82,7 +84,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("critical")]
-		[Description("On a Controller tab's Buttons page, in the program's font, each row is as tall as its tallest content with a control's margin above and below it, so the rows stand a row's gap, 8 at 100 %, apart between their tallest content; the button's picture is drawn at its own size; all 14 rows are shown whole on the page, their group 12 above its bottom; and a row made taller by what holds it goes back to that height")]
+		[Description("On a Controller tab's Buttons page, in the program's font, each row is as tall as its tallest content with a control's margin above and below it, so the rows stand a row's gap, 8 at 100 %, apart between their tallest content; the button's picture is drawn at its own size; all 14 rows are shown whole on the page below its note, the last one the page's room above its bottom; and a row made taller by what holds it goes back to that height")]
 		public void Rows_stand_a_row_apart_between_their_tallest_content()
 		{
 			Ui.OnUiThread(() =>
@@ -114,14 +116,15 @@ namespace x360ce.Tests
 						faults.AddRange(rows.Skip(1).Select((x, i) => new { Row = x, Gap = x.Top - rows[i].Bottom })
 							.Where(x => x.Gap != 0).Select(x => x.Row.Name + " stands " + x.Gap + " px below the row above it."));
 						var page = pad.ButtonsTabPage;
+						var top = page.RectangleToClient(rows[0].RectangleToScreen(rows[0].ClientRectangle));
 						var last = page.RectangleToClient(rows.Last().RectangleToScreen(rows.Last().ClientRectangle));
-						var box = pad.AxisToButtonGroupBox;
-						var room = page.RectangleToClient(box.RectangleToScreen(box.DisplayRectangle));
-						var group = page.RectangleToClient(box.Parent.RectangleToScreen(box.Bounds));
-						// The page's room below its group, as beside it.
+						var note = pad.AxisToButtonNoteLabel;
+						var noteAt = page.RectangleToClient(note.Parent.RectangleToScreen(note.Bounds));
+						// The page's room below the last row, as beside it.
 						var below = (int)Math.Round(8 * ControlsHelper.DpiScale);
-						if (last.Bottom > room.Bottom || group.Bottom + below > page.ClientSize.Height)
-							faults.Add(string.Format("The last row ends at {0}, its group's room at {1}, the group at {2}, the page at {3}: not every row is shown whole, {4} above the page's bottom.", last.Bottom, room.Bottom, group.Bottom, page.ClientSize.Height, below));
+						if (top.Top < noteAt.Bottom || last.Bottom + below > page.ClientSize.Height)
+							faults.Add(string.Format("The note ends at {0}, the rows start at {1} and end at {2}, the page at {3}: not every row is shown whole below the note, {4} above the page's bottom.",
+								noteAt.Bottom, top.Top, last.Bottom, page.ClientSize.Height, below));
 						var first = rows[0];
 						var height = first.Height;
 						first.Height = height * 3;
@@ -160,6 +163,74 @@ namespace x360ce.Tests
 					Assert.AreEqual(sliderA.Left, sliderB.Left, "'A Button' and 'Right Stick Button' rows start their sliders at different places.");
 				}
 			});
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("The letter on the A, B, X and Y pictures stands out from the button's colour, at a contrast of 1.5 or more, in both themes, shown and greyed out, as the page draws them on its colour")]
+		public void Face_button_letters_stand_out_from_their_colour()
+		{
+			var faults = new List<string>();
+			var report = new List<string>();
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => new AxisToButtonUserControl { GamepadButton = SharpDX.XInput.GamepadButtonFlags.A } }, (window, when) =>
+			{
+				var page = window.BackColor;
+				var pictures = new[] { Tuple.Create("A", App.Properties.Resources.Button_A), Tuple.Create("B", App.Properties.Resources.Button_B),
+					Tuple.Create("X", App.Properties.Resources.Button_X), Tuple.Create("Y", App.Properties.Resources.Button_Y) };
+				foreach (var picture in pictures)
+					foreach (var disabled in new[] { false, true })
+						using (var drawn = new Bitmap(picture.Item2.Width, picture.Item2.Height))
+						{
+							using (var g = Graphics.FromImage(drawn))
+							{
+								g.Clear(page);
+								g.DrawImageUnscaled(disabled ? AppHelper.GetDisabledImage(picture.Item2) : picture.Item2, 0, 0);
+							}
+							var contrast = LetterContrast(drawn);
+							var line = string.Format("{0}, {1} {2}: letter to colour {3:0.00}", when, picture.Item1, disabled ? "greyed out" : "shown", contrast);
+							report.Add(line);
+							if (contrast < 1.5)
+								faults.Add(line);
+						}
+			});
+			foreach (var line in report)
+				TestContext.WriteLine(line);
+			Assert.AreEqual(0, faults.Count, faults.Count + " letter(s) do not stand out:" + Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		/// <summary>
+		/// The contrast between a face button's letter and its colour, as WCAG 2 counts it: inside the ring, the commonest grey,
+		/// which is the letter, against the commonest colour that is not a grey, which is the button's.
+		/// </summary>
+		static double LetterContrast(Bitmap drawn)
+		{
+			var middle = drawn.Width / 2.0;
+			var inside = middle * 0.6;
+			var greys = new Dictionary<int, int>();
+			var colours = new Dictionary<int, int>();
+			for (var y = 0; y < drawn.Height; y++)
+				for (var x = 0; x < drawn.Width; x++)
+				{
+					if (Math.Pow(x + 0.5 - middle, 2) + Math.Pow(y + 0.5 - middle, 2) > inside * inside)
+						continue;
+					var c = drawn.GetPixel(x, y);
+					var chroma = Math.Max(c.R, Math.Max(c.G, c.B)) - Math.Min(c.R, Math.Min(c.G, c.B));
+					var counts = chroma <= 8 ? greys : chroma >= 24 ? colours : null;
+					if (counts == null)
+						continue;
+					int n;
+					counts[c.ToArgb()] = counts.TryGetValue(c.ToArgb(), out n) ? n + 1 : 1;
+				}
+			Func<Dictionary<int, int>, Color> commonest = counts => Color.FromArgb(counts.OrderByDescending(x => x.Value).First().Key);
+			Func<Color, double> luminance = c =>
+			{
+				Func<int, double> channel = v => { var s = v / 255.0; return s <= 0.03928 ? s / 12.92 : Math.Pow((s + 0.055) / 1.055, 2.4); };
+				return 0.2126 * channel(c.R) + 0.7152 * channel(c.G) + 0.0722 * channel(c.B);
+			};
+			if (greys.Count == 0 || colours.Count == 0)
+				return 0;
+			var a = luminance(commonest(greys));
+			var b = luminance(commonest(colours));
+			return (Math.Max(a, b) + 0.05) / (Math.Min(a, b) + 0.05);
 		}
 
 		/// <summary>

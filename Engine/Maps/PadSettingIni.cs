@@ -12,7 +12,8 @@ namespace x360ce.Engine
 	/// <remarks>
 	/// One conversion for x360ce 3, which writes and reads a controller's section with it, for the controller database
 	/// writer, which writes a database row with it, and for the server, which builds that database. Values are kept as
-	/// they are: a setting's text is already what x360ce.ini holds.
+	/// they are, a setting's text being what x360ce.ini holds, except that <see cref="Write"/> writes a setting left at
+	/// its default as that default.
 	/// </remarks>
 	public static class PadSettingIni
 	{
@@ -79,11 +80,21 @@ namespace x360ce.Engine
 			return key != null && ByKey.TryGetValue(key, out p) ? p.Name : null;
 		}
 
-		/// <summary>Writes the settings x360ce 3 keeps, each under its key; an empty value is written empty.</summary>
+		/// <summary>Writes the settings x360ce 3 keeps, each under its key; a setting left at its default is written as that default.</summary>
+		/// <remarks>
+		/// A setting holds a value at its default empty (<see cref="PadSetting.CleanAndGetCheckSum"/>), and means the
+		/// default there (<see cref="PadSetting.OrDefault"/>), but x360ce 3's page reads an empty value as nought and saves
+		/// it so, which would turn force feedback at full strength into none. An empty mapping is written empty, which the
+		/// xinput library maps from the controller databases.
+		/// </remarks>
 		public static void Write(PadSetting ps, Action<string, string> set)
 		{
 			foreach (var name in Names)
-				set(Key(name), (string)typeof(PadSetting).GetProperty(name).GetValue(ps, null));
+			{
+				var key = Key(name);
+				var value = (string)typeof(PadSetting).GetProperty(name).GetValue(ps, null);
+				set(key, SettingName.IsMapping(key) ? value : PadSetting.OrDefault(value, name));
+			}
 		}
 
 		/// <summary>Reads the settings x360ce 3 keeps from their keys; a key with no value reads as empty.</summary>

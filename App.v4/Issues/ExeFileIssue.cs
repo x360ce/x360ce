@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -13,10 +14,15 @@ namespace x360ce.App.Issues
 	{
 		public ExeFileIssue() : base()
 		{
-			Name = "EXE File";
-			FixName = "Fix";
 			// Copying into a protected folder raises a prompt. Marked, so it is expected.
 			FixNeedsAdmin = true;
+		}
+
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
+			Name = UiLanguage.T("ExeFileIssue.EXEFile", "EXE File");
+			FixName = UiLanguage.T("ExeFileIssue.Fix", "Fix");
 		}
 
 		/// <summary>The program folder is protected and the process is not elevated.</summary>
@@ -57,7 +63,7 @@ namespace x360ce.App.Issues
 			{
 				SetSeverity(
 					IssueSeverity.Critical, 1,
-					string.Format("Do not run X360CE Application from Windows folder.")
+					string.Format(UiLanguage.T("ExeFileIssue.DoNotRunX360CEApplicationFrom", "Do not run X360CE Application from Windows folder."))
 				);
 				return;
 			}
@@ -65,8 +71,7 @@ namespace x360ce.App.Issues
 			{
 				SetSeverity(
 					IssueSeverity.Important, FixRunElevated,
-					"The program's folder is protected, so settings beside it cannot be saved. " +
-					"Run the program as administrator, or copy it somewhere you can write to."
+					UiLanguage.T("ExeFileIssue.TheProgramSFolderIsProtected", "The program’s folder is protected, so settings beside it cannot be saved. Run the program as administrator, or copy it somewhere you can write to.")
 				);
 				return;
 			}

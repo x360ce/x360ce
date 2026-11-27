@@ -398,9 +398,10 @@ namespace x360ce.App.Recording
 		}
 
 		/// <summary>The start of the process names of programs that read or replace controllers, and can hold a device or play its force themselves.</summary>
+		/// <remarks>Logitech G HUB (lghub) and Logitech Gaming Software (LCore) set a wheel's range and centering by game, and SimHub its LEDs.</remarks>
 		static readonly string[] ControllerPrograms = {
 			"x360ce", "reWASD", "DS4Windows", "DSX", "Steam", "JoyToKey", "AntiMicroX", "PadRevive", "InputMapper", "BetterJoy",
-			"XOutput", "ScpService", "ScpToolkit", "Xpadder", "Gopher", "JoyXoff" };
+			"XOutput", "ScpService", "ScpToolkit", "Xpadder", "Gopher", "JoyXoff", "lghub", "LCore", "SimHub" };
 
 		string _programs;
 

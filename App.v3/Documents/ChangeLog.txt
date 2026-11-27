@@ -1,4 +1,13 @@
-﻿## [3.11.32.0] - 2026-11-14
+﻿## [3.12.6.0] - 2026-11-21
+
+- Fixed: Controllers set up from the built-in databases have force feedback.
+- Fixed: Overall Effects Strength is spelt right on the Force Feedback page.
+- Changed: The record icon is a plain red dot.
+- Changed: Buttons, lists, boxes and tabs are a little shorter.
+- Added: AI assistant access lists and opens every page, and closes windows.
+- Added: The About page shows the licences of the parts x360ce uses.
+
+## [3.11.32.0] - 2026-11-14
 
 - Fixed: Pictures on buttons stand in the middle, and sliders show their whole handle.
 - Fixed: Texts and lists are no longer cut off or crowded, at any display scale.

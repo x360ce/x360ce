@@ -1,0 +1,26 @@
+== XmlSerializer
+<UserComputer xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Id>e8a60a49-cc56-08f2-a054-389e47ce0d06</Id>
+  <ApplicationId>a7989ca4-d2cd-ad3f-2207-8398dcf82783</ApplicationId>
+  <UserId>4fe93347-1151-be32-01e9-2cc23c017d16</UserId>
+  <ComputerId>de9e53d0-35b3-5255-5554-175c8837d94c</ComputerId>
+  <ComputerName>ComputerName</ComputerName>
+  <DateCreated>2001-02-23T16:30:06</DateCreated>
+  <DateUpdated>2001-03-06T06:41:06</DateUpdated>
+  <Checksum>6670f389-c3d4-045e-4311-60d607fb2b46</Checksum>
+</UserComputer>
+== [DataMember] properties, with the key
+ApplicationId=a7989ca4-d2cd-ad3f-2207-8398dcf82783
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+ComputerName=ComputerName
+DateCreated=02/23/2001 16:30:06
+DateUpdated=03/06/2001 06:41:06
+Id=e8a60a49-cc56-08f2-a054-389e47ce0d06
+UserId=4fe93347-1151-be32-01e9-2cc23c017d16
+== [DataMember] properties the checksum is made from
+ApplicationId=a7989ca4-d2cd-ad3f-2207-8398dcf82783
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+ComputerName=ComputerName
+UserId=4fe93347-1151-be32-01e9-2cc23c017d16
+== Checksum
+d9b62e89-22c1-45ba-2800-2a939ed1bb62

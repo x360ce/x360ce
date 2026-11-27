@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -16,9 +17,10 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	class RestartToFinishRemovalIssue : IssueItem
 	{
-		public RestartToFinishRemovalIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
-			Name = "Restart Needed To Finish Removing";
+			Name = UiLanguage.T("RestartToFinishRemovalIssue.RestartNeededToFinishRemoving", "Restart Needed To Finish Removing");
 			// No button. Restarting is the person's decision, and offering one that cannot work is worse
 			// than offering none.
 			FixName = null;
@@ -32,9 +34,7 @@ namespace x360ce.App.Issues
 				return;
 			}
 			SetSeverity(IssueSeverity.Important, 0,
-				"Windows could not finish removing the old virtual controllers because they were " +
-				"still in use, and will finish at the next restart. Until then new virtual " +
-				"controllers may not work. Restart Windows.");
+				UiLanguage.T("RestartToFinishRemovalIssue.WindowsCouldNotFinishRemovingThe", "Windows could not finish removing the old virtual controllers because they were still in use, and will finish at the next restart. Until then new virtual controllers may not work. Restart Windows."));
 		}
 
 	}

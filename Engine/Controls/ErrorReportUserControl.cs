@@ -48,6 +48,7 @@ namespace JocysCom.ClassLibrary.Controls
 			set { ToEmailTextBox.Text = value; }
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		void RefreshErrorsComboBox()
 		{
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
@@ -70,6 +71,7 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		private void MainBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
 			// Only a report gets the greeting. Written into the blank page shown when there is no

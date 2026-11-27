@@ -46,6 +46,12 @@ namespace x360ce.App.Controls
 		/// <summary>Whether <see cref="Anchor"/> has been taken from a reading.</summary>
 		public bool Anchored;
 
+		/// <summary>For a button: the device's count of its presses at the last reading.</summary>
+		public int Presses;
+
+		/// <summary>Whether <see cref="Presses"/> has been taken from a count.</summary>
+		public bool Counted;
+
 		/// <summary>For an axis or a slider: when it last moved, in milliseconds of <see cref="InputChips.Now"/>.</summary>
 		public long MovedAt = long.MinValue / 2;
 
@@ -66,6 +72,10 @@ namespace x360ce.App.Controls
 	/// says which, so a rule about where a control rests lit pedals and sliders all the time. Wobble
 	/// smaller than <see cref="MoveStep"/> is not movement. v5's General tab
 	/// still lights an axis away from the middle and a slider above an eighth of its travel.
+	///
+	/// A button lights while it is pressed, and on the reading after a press that came and went between two
+	/// readings, which the device's count of presses tells (<see cref="x360ce.Engine.Data.UserDevice.ButtonPresses"/>):
+	/// the panel reads ten times a second, and a quick tap, as of a mouse's side button, is shorter than that.
 	///
 	/// v5's General tab over-counts axes from <c>CapAxeCount</c>, numbers a sparse device's axes
 	/// contiguously and reads the wrong POV for the buttons of a second POV
@@ -128,6 +138,39 @@ namespace x360ce.App.Controls
 			return chips;
 		}
 
+		/// <summary>
+		/// The payload of the chip a mapping reads: "IAxis 2" and "HAxis 2" read Axis 2's chip, "IButton 1" Button 1's and
+		/// "POV 1 Up" its own; null when the text names no single control, as an empty box or a formula does.
+		/// </summary>
+		/// <param name="mapping">A mapping box's text.</param>
+		public static string PayloadOf(string mapping)
+		{
+			MapType type;
+			int index;
+			if (!SettingsConverter.TryParseTextValue(mapping, out type, out index))
+				return null;
+			switch (type)
+			{
+				case MapType.IButton:
+					type = MapType.Button;
+					break;
+				case MapType.IAxis:
+				case MapType.HAxis:
+				case MapType.IHAxis:
+					type = MapType.Axis;
+					break;
+				case MapType.ISlider:
+				case MapType.HSlider:
+				case MapType.IHSlider:
+					type = MapType.Slider;
+					break;
+				case MapType.IPOV:
+					type = MapType.POV;
+					break;
+			}
+			return SettingsConverter.ToTextValue(type, index);
+		}
+
 		static InputChip New(InputChipKind kind, int index, int direction, string caption, string payload)
 		{
 			return new InputChip { Kind = kind, Index = index, Direction = direction, Caption = caption, Payload = payload, Value = kind == InputChipKind.Pov || kind == InputChipKind.PovDirection ? PovRest : 0 };
@@ -138,7 +181,8 @@ namespace x360ce.App.Controls
 		/// changed, so the caller repaints only then. A null state puts every chip at rest.
 		/// </summary>
 		/// <param name="nowMs">The time, in milliseconds that never go back: <see cref="Now"/>.</param>
-		public static bool Update(IList<InputChip> chips, SourceState state, long nowMs)
+		/// <param name="presses">The device's count of each button's presses, which the engine keeps; null reads the state alone.</param>
+		public static bool Update(IList<InputChip> chips, SourceState state, long nowMs, int[] presses = null)
 		{
 			var changed = false;
 			for (var i = 0; i < chips.Count; i++)
@@ -146,7 +190,7 @@ namespace x360ce.App.Controls
 				var chip = chips[i];
 				int value;
 				bool lit;
-				Read(chip, state, nowMs, out value, out lit);
+				Read(chip, state, presses, nowMs, out value, out lit);
 				if (chip.Value != value || chip.Lit != lit)
 				{
 					chip.Value = value;
@@ -157,12 +201,14 @@ namespace x360ce.App.Controls
 			return changed;
 		}
 
-		static void Read(InputChip chip, SourceState state, long nowMs, out int value, out bool lit)
+		static void Read(InputChip chip, SourceState state, int[] presses, long nowMs, out int value, out bool lit)
 		{
 			switch (chip.Kind)
 			{
 				case InputChipKind.Button:
-					lit = state != null && chip.Index < state.Buttons.Length && state.Buttons[chip.Index];
+					// The count is taken on every reading, so a press shown while it was held does not light the button again once let go.
+					var pressed = PressedSince(chip, presses);
+					lit = state != null && (pressed || chip.Index < state.Buttons.Length && state.Buttons[chip.Index]);
 					value = lit ? 1 : 0;
 					return;
 				case InputChipKind.Axis:
@@ -183,6 +229,20 @@ namespace x360ce.App.Controls
 					value = lit ? pov : PovRest;
 					return;
 			}
+		}
+
+		/// <summary>Whether the button was pressed since the last reading, by the device's count of its presses.</summary>
+		/// <remarks>The first reading only takes the count, and a count that went down, as for a device listed again, lights nothing.</remarks>
+		static bool PressedSince(InputChip chip, int[] presses)
+		{
+			if (presses == null || chip.Index >= presses.Length)
+				return false;
+			// Written by the engine's thread, which counts the presses.
+			var count = System.Threading.Volatile.Read(ref presses[chip.Index]);
+			var pressed = chip.Counted && unchecked(count - chip.Presses) > 0;
+			chip.Presses = count;
+			chip.Counted = true;
+			return pressed;
 		}
 
 		/// <summary>Whether an axis or a slider has moved within the last <see cref="HoldMs"/>.</summary>

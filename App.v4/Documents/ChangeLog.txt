@@ -1,4 +1,75 @@
-﻿## [4.30.63.0] - 2026-11-15
+﻿## [4.31.68.0] - 2026-11-27
+
+- Fixed: Overall Strength is spelt right on the Force Feedback page.
+- Fixed: A controller's SDL page shows its row from x360ce's database.
+- Fixed: The Buttons page's pictures are easy to see in the dark theme.
+- Fixed: Quick button taps, such as mouse buttons 4 and 5, always light up.
+- Fixed: AI assistant searches and tab switches no longer change a controller's values.
+- Fixed: The General tab's small green values line up with their names.
+- Fixed: A copy started with /Profile leaves the usual settings folder untouched.
+- Fixed: A controller tab works when the tabs before it are not used.
+- Fixed: Scanning a game folder no longer stops with an error on odd folder names.
+- Fixed: The error count in the status bar has its colours as x360ce starts.
+- Fixed: The General page no longer opens shifted down until the window is resized.
+- Fixed: The controller picture's lights sit centred on their buttons.
+- Fixed: Mapping boxes turn yellow while a chip is dragged to them.
+- Fixed: Chart curves and dots grow with the screen's zoom.
+- Fixed: Moving a dead zone or sensitivity slider no longer piles up chart pictures in memory.
+- Fixed: The plugin list on Options > Plugins no longer shrinks to nothing after the window is minimized.
+- Fixed: An unticked box in a list can be seen in the dark theme.
+- Fixed: A click on a box in a list ticks it, so a plugin can be enabled on Options > Plugins.
+- Fixed: The wheel range is sent again when the wheel did not take it, Logitech's software reset it, or it is chosen again.
+- Fixed: Closing x360ce gives the wheel its own centering back.
+- Fixed: Forza curb kicks come from the rumble strips, not from puddle depth.
+- Fixed: A hit no longer pulls the wheel's centre aside; it kicks the wheel away from the hit.
+- Fixed: The wheel range is sent again when a game comes to the front.
+- Fixed: Always on Top and other saved options apply as x360ce starts.
+- Fixed: In Game without gear changes, a gear change's rumble no longer gets through before the shift is seen.
+- Fixed: The Force Feedback page recommends the Constant effect type for wheels.
+- Fixed: The Game Telemetry page shows Gear change whole.
+- Fixed: AI assistant access scrolls to the control it shows.
+- Fixed: Scroll bars take the theme's colours, as on the Game Telemetry page.
+- Fixed: x360ce Test Game's AI assistant access takes yes or no values.
+- Fixed: Issues, messages and plugins show in the chosen language.
+- Changed: A dragged chip keeps the hand cursor and turns red.
+- Changed: Adding a device switches its controller on and shows its XInput state.
+- Changed: Road and impact feel come from telemetry by default; the game's own rumble plays when no telemetry arrives.
+- Changed: While a chip is dragged over a mapping box, only that box stays lit.
+- Changed: The General tab's red, yellow and green, and the charts' red and green lines, are as bright in the dark theme as in the light.
+- Changed: The Mouse page's demo fills the space below the sticks, its mouse starts at the pad's centre, its stick is half the pad's size, and it is greyed out with the page's controls.
+- Changed: The Controller page's tool bar check boxes have a thin edge.
+- Changed: The record icon, as on Remap All, is a plain red dot.
+- Changed: Buttons, lists, boxes and tabs are a little shorter.
+- Changed: The General tab has more room below the bumpers.
+- Changed: A taller window shows more mapped devices.
+- Changed: A plugin device's help is on its own Help page.
+- Changed: Fitness Machine adopts the real machine's identity and disconnects on device switch.
+- Changed: The Mouse page shows only for a mouse or touchpad.
+- Changed: Hints say that inputs and the controller picture can be clicked to map.
+- Changed: Texts use the typographic apostrophe (’).
+- Changed: HID Guardian's Install button is greyed out, not hidden.
+- Changed: The Wheel Telemetry Games page has its buttons at the top and fits without scrolling.
+- Changed: The GTA V guide starts the pedals at 24 % Anti-Dead Zone.
+- Added: AI assistant access lists and opens every page, and closes windows.
+- Added: The About page shows the licences of the parts x360ce uses.
+- Added: Fitness Machine device: an exercise bike drives a controller over Bluetooth. Experimental.
+- Added: A plugin device maps itself as its plugin recommends.
+- Added: Wheel Telemetry tab for live game telemetry, road grade pitch, consumer plugins, tuning and UDP forwarding.
+- Added: Soft lock and RGB/RPM LED strip support on the Wheel tab.
+- Added: Enable or disable individual plugins on Options > Plugins.
+- Added: Virtual Car simulator in x360ce Test Game to test wheel telemetry.
+- Added: Wheel Telemetry Games helps a game send its telemetry to the wheel.
+- Added: A mapping box and its part of the picture light together: red recording, yellow pointed at, green moving.
+- Added: A recording shows the game's telemetry, how the wheel's spring force is made of it, and each range, centring and LED report with whether the wheel took it.
+- Added: "Road and impact feel from" and "Gear change" on the Wheel Telemetry tab quiet the game's rumble while the gear changes.
+- Added: Hits from the front or behind, felt from telemetry, shake the wheel.
+- Added: Wheel telemetry reads the gear, forward-back and up-down G, distance and position, and Forza Horizon's 324-byte packets.
+- Added: GTA V's telemetry script sends the distance driven.
+- Added: Recordings show the gear, G forces, hits, distance and each gear change.
+- Added: The window in 11 languages, picked with the globe beside the Game list (Issue #1667, ravenli059).
+- Added: Play story mode starts GTA V with its mods, then parks them.
+
+## [4.30.63.0] - 2026-11-15
 
 - Fixed: A Raw Input controller hidden by HID Hide is read through DirectInput (Issue #1661, dnlrch10-maker).
 - Fixed: A new copy with HID Hide set to configure itself adds itself to HID Hide's list (Issue #1633, KhaledElSaiad).

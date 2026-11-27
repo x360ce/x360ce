@@ -235,6 +235,64 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("devices"), TestCategory("critical")]
+		[Description("A button pressed and let go between two ticks of the interface, which draws ten times a second while the engine reads up to a thousand, lights its chip on the General tab on the next tick, however short the press; the tick after shows it let go, and a press held across a tick lights it once")]
+		public void A_press_between_two_interface_ticks_lights_its_button()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var helper = new DInputHelper();
+				try
+				{
+					var ud = Wheel(helper);
+					ud.CapButtonCount = 10;
+					var routing = Routing(ud);
+					var read = EngineSteps.UpdateDiStates(helper);
+					Action pass = () => read(null, Game, null, routing);
+					helper.RawInput.ReadInput(RawInputTest.RawInput(Left.Bytes()));
+					pass();
+					using (var panel = new x360ce.App.Controls.InputUserControl())
+					{
+						panel.CreateControl();
+						// The interface's tick: the panel lit from the device as the pad lights it.
+						Func<bool> tick = () =>
+						{
+							panel.UpdateFrom(ud);
+							return panel.ButtonChips.Chips.Single(c => c.Index == 6).Lit;
+						};
+						Assert.IsFalse(tick(), "Button 7 is lit with nothing pressed.");
+						// Held for three passes and let go, all between two ticks, as a quick tap of a side button is.
+						helper.RawInput.ReadInput(RawInputTest.RawInput(Pressed.Bytes()));
+						pass();
+						pass();
+						pass();
+						helper.RawInput.ReadInput(RawInputTest.RawInput(Left.Bytes()));
+						pass();
+						pass();
+						Assert.IsTrue(tick(), "A press between two ticks of the interface did not light its button.");
+						Assert.IsFalse(tick(), "A press let go before the tick before was still shown.");
+						// Pressed and let go inside one pass: the engine shows it for that pass alone.
+						helper.RawInput.ReadInput(RawInputTest.RawInput(Pressed.Bytes(), Left.Bytes()));
+						pass();
+						pass();
+						Assert.IsTrue(tick(), "A press inside one pass, between two ticks, did not light its button.");
+						Assert.IsFalse(tick());
+						// Held across a tick: lit while held, and not lit again once let go.
+						helper.RawInput.ReadInput(RawInputTest.RawInput(Pressed.Bytes()));
+						pass();
+						Assert.IsTrue(tick(), "A held button is not lit.");
+						helper.RawInput.ReadInput(RawInputTest.RawInput(Left.Bytes()));
+						pass();
+						Assert.IsFalse(tick(), "A press already shown lit its button again once it was let go.");
+					}
+				}
+				finally
+				{
+					helper.Dispose();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("devices"), TestCategory("critical")]
 		[Description("A Raw Input device the hub does not have, unplugged or with the hub stopped, rests and reaches its controller as nothing; this is noted once, written nowhere, and costs nothing on later passes; when it is back it is read again")]
 		public void A_device_the_hub_does_not_have_rests_and_is_noted_once()
 		{

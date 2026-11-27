@@ -102,7 +102,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("Every Buttons page picture is one file at twice the size it shows at 100%, and a dark one of the same size or none")]
+		[Description("Every Buttons page picture is one file at twice the size it shows at 100%, and a dark one of the same size")]
 		public void Every_glyph_is_one_picture_at_twice_its_size()
 		{
 			var versions = new ResourceManager("x360ce.App.Properties.Icons", typeof(App.Properties.Resources).Assembly);
@@ -114,12 +114,11 @@ namespace x360ce.Tests
 				Size size;
 				using (var image = Image.FromFile(glyph.Value))
 					size = image.Size;
-				// A picture drawn in the file's own colours only is the same in both themes and has no dark one.
 				var dark = versions.GetObject(glyph.Key + "_dark") as Image;
-				if (size != new Size(48, 48) || (dark != null && dark.Size != size))
+				if (size != new Size(48, 48) || dark == null || dark.Size != size)
 					wrong.Add(glyph.Key);
 			}
-			Assert.AreEqual(0, wrong.Count, "Of the wrong size: " + string.Join(", ", wrong));
+			Assert.AreEqual(0, wrong.Count, "Missing a dark picture or of the wrong size: " + string.Join(", ", wrong));
 		}
 
 		[TestMethod, TestCategory("ui")]
@@ -138,9 +137,9 @@ namespace x360ce.Tests
 					// The arrow is drawn in a colour of the theme.
 					var arrow = App.Properties.Resources.Axis_Arrow;
 					AssertSamePixels(Path.Combine(folder, "dark", "Axis_Arrow_48x48.png"), ControlsHelper.GetOriginal(arrow));
-					// A button is drawn in its own colours, the same in both themes.
+					// A button's dark edge and symbol are drawn light, to show on the dark page.
 					var button = App.Properties.Resources.Button_A;
-					AssertSamePixels(Path.Combine(folder, "Button_A_48x48.png"), ControlsHelper.GetOriginal(button));
+					AssertSamePixels(Path.Combine(folder, "dark", "Button_A_48x48.png"), ControlsHelper.GetOriginal(button));
 				}
 				finally
 				{
@@ -179,8 +178,9 @@ namespace x360ce.Tests
 							{
 								var when = theme + " theme, " + button;
 								var picture = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ButtonImagePictureBox), true).Single();
-								AssertPicture(Path.Combine(folder, "Button_" + button + "_48x48.png"), picture.BackgroundImage, when);
-								AssertPicture(Path.Combine(folder, theme == ThemeType.Dark ? "dark" : "", "Axis_Arrow_48x48.png"), row.ArrowPicture, when + ", arrow");
+								var themeFolder = Path.Combine(folder, theme == ThemeType.Dark ? "dark" : "");
+								AssertPicture(Path.Combine(themeFolder, "Button_" + button + "_48x48.png"), picture.BackgroundImage, when);
+								AssertPicture(Path.Combine(themeFolder, "Axis_Arrow_48x48.png"), row.ArrowPicture, when + ", arrow");
 								var enabled = ControlsHelper.GetOriginal(picture.BackgroundImage);
 								row.Enabled = false;
 								var greyed = ControlsHelper.GetOriginal(picture.BackgroundImage);
@@ -188,6 +188,37 @@ namespace x360ce.Tests
 								Assert.AreNotSame(enabled, greyed, when + ": the picture is not greyed out with its row.");
 							}
 						}
+					}
+				}
+				finally
+				{
+					FormsTheme.SetTheme(ThemeType.Light);
+					field.SetValue(null, before);
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("A Buttons page row open while the theme changes shows the new theme's picture")]
+		public void Buttons_page_pictures_follow_a_theme_change()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var field = typeof(App.Properties.Resources).GetField("resourceMan", BindingFlags.NonPublic | BindingFlags.Static);
+				var before = field.GetValue(null);
+				try
+				{
+					ThemeResourceManager.Install(typeof(App.Properties.Resources), "x360ce.App.Properties.Icons");
+					var folder = Path.Combine(Ui.RepoRoot.FullName, "Resources", "Images", "v4", "xbox");
+					FormsTheme.SetTheme(ThemeType.Light);
+					using (var row = new AxisToButtonUserControl { GamepadButton = GamepadButtonFlags.Back })
+					{
+						var picture = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ButtonImagePictureBox), true).Single();
+						AssertPicture(Path.Combine(folder, "Button_Back_48x48.png"), picture.BackgroundImage, "Light theme");
+						FormsTheme.SetTheme(ThemeType.Dark);
+						AssertPicture(Path.Combine(folder, "dark", "Button_Back_48x48.png"), picture.BackgroundImage, "Changed to the dark theme");
+						FormsTheme.SetTheme(ThemeType.Light);
+						AssertPicture(Path.Combine(folder, "Button_Back_48x48.png"), picture.BackgroundImage, "Changed back to the light theme");
 					}
 				}
 				finally

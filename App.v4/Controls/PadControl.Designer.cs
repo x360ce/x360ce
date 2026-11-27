@@ -158,7 +158,7 @@
             this.PadTabControl = new System.Windows.Forms.TabControl();
             this.ButtonsTabPage = new System.Windows.Forms.TabPage();
             this.AxisToButtonPanel = new System.Windows.Forms.Panel();
-            this.AxisToButtonGroupBox = new System.Windows.Forms.GroupBox();
+            this.AxisToButtonNoteLabel = new System.Windows.Forms.Label();
             this.AxisToButtonTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.AxisToButtonADeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
             this.AxisToDPadRightDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
@@ -245,6 +245,10 @@
             this.ForceSpringSpeedLabel = new System.Windows.Forms.Label();
             this.ForceSpringSpeedTrackBar = new System.Windows.Forms.TrackBar();
             this.ForceSpringSpeedTextBox = new System.Windows.Forms.TextBox();
+            this.WheelSoftLockCheckBox = new System.Windows.Forms.CheckBox();
+            this.WheelRgbStripCheckBox = new System.Windows.Forms.CheckBox();
+            this.WheelRgbStripBar = new x360ce.App.Controls.WheelLedStripControl();
+            this.WheelRgbTestButton = new System.Windows.Forms.Button();
             this.WheelDescriptionLabel = new System.Windows.Forms.Label();
             this.ForceDefaultsButton = new System.Windows.Forms.Button();
             this.LeftMotorGroupBox = new System.Windows.Forms.GroupBox();
@@ -355,7 +359,6 @@
             this.PadTabControl.SuspendLayout();
             this.ButtonsTabPage.SuspendLayout();
             this.AxisToButtonPanel.SuspendLayout();
-            this.AxisToButtonGroupBox.SuspendLayout();
             this.AxisToButtonTableLayoutPanel.SuspendLayout();
             this.DPadTabPage.SuspendLayout();
             this.DPadPanel.SuspendLayout();
@@ -787,8 +790,8 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 263F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.InputPanel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.GeneralTableLayoutPanel, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -828,76 +831,77 @@
             this.GeneralTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.GeneralTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftLabel, 2, 0);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RemapTableLayoutPanel, 4, 0);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RemapTableLayoutPanel, 3, 0);
             this.GeneralTableLayoutPanel.Controls.Add(this.RightLabel, 8, 0);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftTriggerComboBox, 1, 1);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftTriggerNamePanel, 2, 1);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftShoulderComboBox, 1, 2);
             this.GeneralTableLayoutPanel.Controls.Add(this.LeftShoulderNamePanel, 2, 2);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBackComboBox, 1, 3);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBackNamePanel, 2, 3);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonStartComboBox, 1, 4);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonStartNamePanel, 2, 4);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonGuideComboBox, 1, 5);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonGuideNamePanel, 2, 5);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadComboBox, 1, 6);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadNamePanel, 2, 6);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisXComboBox, 1, 8);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisXNamePanel, 2, 8);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisYComboBox, 1, 9);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisYNamePanel, 2, 9);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbButtonComboBox, 1, 10);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbButtonNamePanel, 2, 10);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbUpComboBox, 1, 12);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbUpNamePanel, 2, 12);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbLeftComboBox, 1, 13);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbLeftNamePanel, 2, 13);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbRightComboBox, 1, 14);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbRightNamePanel, 2, 14);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbDownComboBox, 1, 15);
-            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbDownNamePanel, 2, 15);
-            this.GeneralTableLayoutPanel.Controls.Add(this.XboxImage, 4, 1);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadUpComboBox, 5, 12);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadUpNamePanel, 6, 12);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadLeftComboBox, 5, 13);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadLeftNamePanel, 6, 13);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadRightComboBox, 5, 14);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadRightNamePanel, 6, 14);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadDownComboBox, 5, 15);
-            this.GeneralTableLayoutPanel.Controls.Add(this.DPadDownNamePanel, 6, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBackComboBox, 1, 4);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBackNamePanel, 2, 4);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonStartComboBox, 1, 5);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonStartNamePanel, 2, 5);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonGuideComboBox, 1, 6);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonGuideNamePanel, 2, 6);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadComboBox, 1, 7);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadNamePanel, 2, 7);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisXComboBox, 1, 9);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisXNamePanel, 2, 9);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisYComboBox, 1, 10);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbAxisYNamePanel, 2, 10);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbButtonComboBox, 1, 11);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbButtonNamePanel, 2, 11);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbUpComboBox, 1, 13);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbUpNamePanel, 2, 13);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbLeftComboBox, 1, 14);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbLeftNamePanel, 2, 14);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbRightComboBox, 1, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbRightNamePanel, 2, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbDownComboBox, 1, 16);
+            this.GeneralTableLayoutPanel.Controls.Add(this.LeftThumbDownNamePanel, 2, 16);
+            this.GeneralTableLayoutPanel.Controls.Add(this.XboxImage, 3, 1);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadUpComboBox, 5, 13);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadUpNamePanel, 6, 13);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadLeftComboBox, 5, 14);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadLeftNamePanel, 6, 14);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadRightComboBox, 5, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadRightNamePanel, 6, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadDownComboBox, 5, 16);
+            this.GeneralTableLayoutPanel.Controls.Add(this.DPadDownNamePanel, 6, 16);
             this.GeneralTableLayoutPanel.Controls.Add(this.RightTriggerNamePanel, 8, 1);
             this.GeneralTableLayoutPanel.Controls.Add(this.RightTriggerComboBox, 10, 1);
             this.GeneralTableLayoutPanel.Controls.Add(this.RightShoulderNamePanel, 8, 2);
             this.GeneralTableLayoutPanel.Controls.Add(this.RightShoulderComboBox, 10, 2);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonYNamePanel, 8, 3);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonYComboBox, 10, 3);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonXNamePanel, 8, 4);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonXComboBox, 10, 4);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBNamePanel, 8, 5);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBComboBox, 10, 5);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonANamePanel, 8, 6);
-            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonAComboBox, 10, 6);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisXNamePanel, 8, 8);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisXComboBox, 10, 8);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisYNamePanel, 8, 9);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisYComboBox, 10, 9);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbButtonNamePanel, 8, 10);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbButtonComboBox, 10, 10);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbUpNamePanel, 8, 12);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbUpComboBox, 10, 12);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbLeftNamePanel, 8, 13);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbLeftComboBox, 10, 13);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbRightNamePanel, 8, 14);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbRightComboBox, 10, 14);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbDownNamePanel, 8, 15);
-            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbDownComboBox, 10, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonYNamePanel, 8, 4);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonYComboBox, 10, 4);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonXNamePanel, 8, 5);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonXComboBox, 10, 5);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBNamePanel, 8, 6);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonBComboBox, 10, 6);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonANamePanel, 8, 7);
+            this.GeneralTableLayoutPanel.Controls.Add(this.ButtonAComboBox, 10, 7);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisXNamePanel, 8, 9);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisXComboBox, 10, 9);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisYNamePanel, 8, 10);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbAxisYComboBox, 10, 10);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbButtonNamePanel, 8, 11);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbButtonComboBox, 10, 11);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbUpNamePanel, 8, 13);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbUpComboBox, 10, 13);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbLeftNamePanel, 8, 14);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbLeftComboBox, 10, 14);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbRightNamePanel, 8, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbRightComboBox, 10, 15);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbDownNamePanel, 8, 16);
+            this.GeneralTableLayoutPanel.Controls.Add(this.RightThumbDownComboBox, 10, 16);
             this.GeneralTableLayoutPanel.Location = new System.Drawing.Point(260, 0);
             this.GeneralTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
             this.GeneralTableLayoutPanel.Name = "GeneralTableLayoutPanel";
-            this.GeneralTableLayoutPanel.RowCount = 16;
+            this.GeneralTableLayoutPanel.RowCount = 17;
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -911,9 +915,9 @@
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GeneralTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.GeneralTableLayoutPanel.SetColumnSpan(this.RemapTableLayoutPanel, 3);
-            this.GeneralTableLayoutPanel.SetColumnSpan(this.XboxImage, 3);
-            this.GeneralTableLayoutPanel.SetRowSpan(this.XboxImage, 11);
+            this.GeneralTableLayoutPanel.SetColumnSpan(this.RemapTableLayoutPanel, 5);
+            this.GeneralTableLayoutPanel.SetColumnSpan(this.XboxImage, 5);
+            this.GeneralTableLayoutPanel.SetRowSpan(this.XboxImage, 12);
             this.GeneralTableLayoutPanel.Size = new System.Drawing.Size(671, 460);
             this.GeneralTableLayoutPanel.TabIndex = 1;
             // 
@@ -1234,9 +1238,9 @@
             // 
             // XboxImage
             // 
-            this.XboxImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.XboxImage.AutoSize = true;
             this.XboxImage.BackColor = System.Drawing.SystemColors.Control;
+            this.XboxImage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.XboxImage.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
             this.XboxImage.Name = "XboxImage";
             this.XboxImage.Size = new System.Drawing.Size(256, 297);
@@ -1970,13 +1974,15 @@
             // 
             this.AxisToButtonLayoutPanel.ColumnCount = 1;
             this.AxisToButtonLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.AxisToButtonLayoutPanel.Controls.Add(this.AxisToButtonGroupBox, 0, 0);
+            this.AxisToButtonLayoutPanel.Controls.Add(this.AxisToButtonNoteLabel, 0, 0);
+            this.AxisToButtonLayoutPanel.Controls.Add(this.AxisToButtonTableLayoutPanel, 0, 1);
             this.AxisToButtonLayoutPanel.AutoSize = true;
             this.AxisToButtonLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AxisToButtonLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.AxisToButtonLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
             this.AxisToButtonLayoutPanel.Name = "AxisToButtonLayoutPanel";
-            this.AxisToButtonLayoutPanel.RowCount = 1;
+            this.AxisToButtonLayoutPanel.RowCount = 2;
+            this.AxisToButtonLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
             this.AxisToButtonLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
             this.AxisToButtonLayoutPanel.TabIndex = 0;
             // 
@@ -1993,20 +1999,13 @@
             this.AxisToButtonPanel.Size = new System.Drawing.Size(931, 499);
             this.AxisToButtonPanel.TabIndex = 1;
             // 
-            // AxisToButtonGroupBox
-            // 
-            this.AxisToButtonGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.AxisToButtonGroupBox.AutoSize = true;
-            this.AxisToButtonGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.AxisToButtonGroupBox.Controls.Add(this.AxisToButtonTableLayoutPanel);
-            this.AxisToButtonGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.AxisToButtonGroupBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
-            this.AxisToButtonGroupBox.Name = "AxisToButtonGroupBox";
-            this.AxisToButtonGroupBox.Size = new System.Drawing.Size(925, 441);
-            this.AxisToButtonGroupBox.TabIndex = 3;
-            this.AxisToButtonGroupBox.TabStop = false;
-            this.AxisToButtonGroupBox.Text = "DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)";
+            // AxisToButtonNoteLabel
+            //
+            this.AxisToButtonNoteLabel.AutoSize = true;
+            this.AxisToButtonNoteLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.AxisToButtonNoteLabel.Name = "AxisToButtonNoteLabel";
+            this.AxisToButtonNoteLabel.TabIndex = 0;
+            this.AxisToButtonNoteLabel.Text = "DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)";
             // 
             // AxisToButtonTableLayoutPanel
             // 
@@ -2048,7 +2047,7 @@
             this.AxisToButtonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.AxisToButtonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.AxisToButtonTableLayoutPanel.Size = new System.Drawing.Size(554, 392);
-            this.AxisToButtonTableLayoutPanel.TabIndex = 0;
+            this.AxisToButtonTableLayoutPanel.TabIndex = 1;
             // 
             // AxisToButtonADeadZonePanel
             // 
@@ -2593,7 +2592,7 @@
             this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
             this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(77, 13);
             this.OveralEffectsStengthLabel.TabIndex = 0;
-            this.OveralEffectsStengthLabel.Text = "Overal Stength";
+            this.OveralEffectsStengthLabel.Text = "Overall Strength";
             // 
             // ForceOverallTrackBar
             // 
@@ -2644,8 +2643,7 @@
             this.MouseTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MouseTableLayoutPanel.Location = new System.Drawing.Point(3, 3);
             this.MouseTableLayoutPanel.Name = "MouseTableLayoutPanel";
-            this.MouseTableLayoutPanel.RowCount = 4;
-            this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.MouseTableLayoutPanel.RowCount = 3;
             this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -2661,7 +2659,7 @@
             this.MouseNoteLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
             this.MouseNoteLabel.Name = "MouseNoteLabel";
             this.MouseNoteLabel.TabIndex = 0;
-            this.MouseNoteLabel.Text = "For a mouse, or any control that reports movement. Map its axes in the stick's boxes on the General page; this page sets how they move the stick.";
+            this.MouseNoteLabel.Text = "For a mouse, or any control that reports movement. Map its axes in the stick’s boxes on the General page; this page sets how they move the stick.";
             //
             // LeftMouseStickPanel
             //
@@ -2683,12 +2681,10 @@
             //
             // MouseDemoPanel
             //
-            this.MouseDemoPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.MouseDemoPanel.AutoSize = true;
-            this.MouseDemoPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.MouseDemoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MouseDemoPanel.Margin = new System.Windows.Forms.Padding(0);
             this.MouseDemoPanel.Name = "MouseDemoPanel";
-            this.MouseDemoPanel.Size = new System.Drawing.Size(316, 149);
+            this.MouseDemoPanel.Size = new System.Drawing.Size(436, 197);
             this.MouseDemoPanel.TabIndex = 3;
             //
             // WheelTableLayoutPanel
@@ -2750,12 +2746,18 @@
             this.WheelSettingsTableLayoutPanel.Controls.Add(this.ForceSpringSpeedTextBox, 2, 8);
             this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRangeLabel, 0, 9);
             this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRangeComboBox, 1, 9);
-            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelDescriptionLabel, 0, 10);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelSoftLockCheckBox, 0, 10);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRgbStripCheckBox, 0, 11);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRgbStripBar, 1, 11);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelRgbTestButton, 3, 11);
+            this.WheelSettingsTableLayoutPanel.Controls.Add(this.WheelDescriptionLabel, 0, 12);
             this.WheelSettingsTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.WheelSettingsTableLayoutPanel.Location = new System.Drawing.Point(421, 3);
             this.WheelSettingsTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
             this.WheelSettingsTableLayoutPanel.Name = "WheelSettingsTableLayoutPanel";
-            this.WheelSettingsTableLayoutPanel.RowCount = 12;
+            this.WheelSettingsTableLayoutPanel.RowCount = 14;
+            this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.WheelSettingsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -3106,6 +3108,48 @@
             this.WheelRangeComboBox.Size = new System.Drawing.Size(297, 19);
             this.WheelRangeComboBox.TabIndex = 26;
             this.WheelRangeComboBox.SelectedIndexChanged += new System.EventHandler(this.WheelRangeComboBox_SelectedIndexChanged);
+            this.WheelRangeComboBox.SelectionChangeCommitted += new System.EventHandler(this.WheelRangeComboBox_SelectionChangeCommitted);
+            //
+            // WheelSoftLockCheckBox
+            //
+            this.WheelSoftLockCheckBox.AutoSize = true;
+            this.WheelSettingsTableLayoutPanel.SetColumnSpan(this.WheelSoftLockCheckBox, 4);
+            this.WheelSoftLockCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelSoftLockCheckBox.Name = "WheelSoftLockCheckBox";
+            this.WheelSoftLockCheckBox.TabIndex = 27;
+            this.WheelSoftLockCheckBox.Text = "Soft lock";
+            this.WheelSoftLockCheckBox.UseVisualStyleBackColor = true;
+            //
+            // WheelRgbStripCheckBox
+            //
+            this.WheelRgbStripCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.WheelRgbStripCheckBox.AutoSize = true;
+            this.WheelRgbStripCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelRgbStripCheckBox.Name = "WheelRgbStripCheckBox";
+            this.WheelRgbStripCheckBox.TabIndex = 28;
+            this.WheelRgbStripCheckBox.Text = "RGB strip";
+            this.WheelRgbStripCheckBox.UseVisualStyleBackColor = true;
+            //
+            // WheelRgbStripBar
+            //
+            this.WheelSettingsTableLayoutPanel.SetColumnSpan(this.WheelRgbStripBar, 2);
+            this.WheelRgbStripBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.WheelRgbStripBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelRgbStripBar.Name = "WheelRgbStripBar";
+            this.WheelRgbStripBar.Size = new System.Drawing.Size(364, 20);
+            this.WheelRgbStripBar.TabIndex = 29;
+            //
+            // WheelRgbTestButton
+            //
+            this.WheelRgbTestButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.WheelRgbTestButton.AutoSize = true;
+            this.WheelRgbTestButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.WheelRgbTestButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.WheelRgbTestButton.Name = "WheelRgbTestButton";
+            this.WheelRgbTestButton.TabIndex = 30;
+            this.WheelRgbTestButton.Text = "Test";
+            this.WheelRgbTestButton.UseVisualStyleBackColor = true;
+            this.WheelRgbTestButton.Click += new System.EventHandler(this.WheelRgbTestButton_Click);
             //
             // WheelDescriptionLabel
             //
@@ -3118,7 +3162,7 @@
             this.WheelDescriptionLabel.Size = new System.Drawing.Size(501, 27);
             this.WheelDescriptionLabel.TabIndex = 27;
             this.WheelDescriptionLabel.Text = "Auto measures Friction, the least force that turns this wheel; outside the centre t" +
-    "he spring never pushes less, so the wheel comes home from any angle. With the spring off, the wheel\'s own centering is left in charge.";
+    "he spring never pushes less, so the wheel comes home from any angle. With the spring off, the wheel’s own centering is left in charge.";
             // 
             // ForceDefaultsButton
             // 
@@ -4007,8 +4051,6 @@
             this.PadTabControl.ResumeLayout(false);
             this.ButtonsTabPage.ResumeLayout(false);
             this.AxisToButtonPanel.ResumeLayout(false);
-            this.AxisToButtonGroupBox.ResumeLayout(false);
-            this.AxisToButtonGroupBox.PerformLayout();
             this.AxisToButtonTableLayoutPanel.ResumeLayout(false);
             this.DPadTabPage.ResumeLayout(false);
             this.DPadPanel.ResumeLayout(false);
@@ -4228,6 +4270,10 @@
 		internal System.Windows.Forms.TextBox ForceSpringSpeedTextBox;
 		public System.Windows.Forms.Button ForceSpringAutoButton;
 		System.Windows.Forms.Label WheelRangeLabel;
+		public System.Windows.Forms.CheckBox WheelSoftLockCheckBox;
+		public System.Windows.Forms.CheckBox WheelRgbStripCheckBox;
+		public x360ce.App.Controls.WheelLedStripControl WheelRgbStripBar;
+		public System.Windows.Forms.Button WheelRgbTestButton;
 		internal System.Windows.Forms.Label WheelDescriptionLabel;
 		public System.Windows.Forms.ComboBox WheelRangeComboBox;
 		System.Windows.Forms.Timer SpringAutoTimer;
@@ -4316,7 +4362,7 @@
         private System.Windows.Forms.Panel RightThumbLeftNamePanel;
         private System.Windows.Forms.Panel RightThumbRightNamePanel;
         private System.Windows.Forms.Panel RightThumbDownNamePanel;
-        internal System.Windows.Forms.GroupBox AxisToButtonGroupBox;
+        internal System.Windows.Forms.Label AxisToButtonNoteLabel;
         internal System.Windows.Forms.TableLayoutPanel AxisToButtonTableLayoutPanel;
 		private AxisToButtonUserControl AxisToDPadRightDeadZonePanel;
 		private AxisToButtonUserControl AxisToDPadLeftDeadZonePanel;

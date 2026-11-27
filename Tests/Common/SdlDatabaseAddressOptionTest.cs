@@ -131,7 +131,7 @@ namespace x360ce.Tests
 						using (var tab = new SdlUserControl())
 						{
 							tab.UpdateFrom(null, null);
-							StringAssert.Contains(tab.VersionLabel.Text, "downloaded from " + Mirror + ", 2026-12-03");
+							StringAssert.Contains(tab.DeviceLabel.Text, "downloaded from " + Mirror + ", 2026-12-03");
 						}
 						using (var presets = new SdlPresetsUserControl())
 						{

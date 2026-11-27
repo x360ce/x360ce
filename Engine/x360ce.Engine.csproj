@@ -129,6 +129,7 @@
     <Compile Include="Common\MotorModel.cs" />
     <Compile Include="Common\MapExpressionUnits.cs" />
     <Compile Include="Common\MarkdownRtf.cs" />
+    <Compile Include="Common\ThirdPartyLicences.cs" />
     <Compile Include="Common\ServerInfo.cs" />
     <Compile Include="Common\SettingsLocation.cs" />
     <Compile Include="Common\SettingsTransfer.cs" />
@@ -161,12 +162,10 @@
     <Compile Include="Input\Script\ScriptChannel.cs" />
     <Compile Include="Input\States\SourceState.cs" />
     <Compile Include="Common\InputSourceType.cs" />
-    <Compile Include="Common\DatabaseHelper.cs" />
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DeviceStatsSvg.cs" />
     <Compile Include="Common\TopListSvg.cs" />
-    <Compile Include="Common\EngineHelper.Data.cs" />
     <Compile Include="Common\CloudKey.cs" />
     <Compile Include="Common\Enum\DInputMask.cs" />
     <Compile Include="Common\Enum\DPadEnum.cs" />
@@ -185,6 +184,8 @@
     <Compile Include="Common\LogitechWheel.cs" />
     <Compile Include="Common\SpringCalibration.cs" />
     <Compile Include="Common\SpringCurve.cs" />
+    <Compile Include="Common\WheelAxisHelper.cs" />
+    <Compile Include="Common\WheelTelemetrySample.cs" />
     <Compile Include="Common\ForegroundWindowHook.cs" />
     <Compile Include="Common\GamepadOffset.cs" />
     <Compile Include="Common\IChecksum.cs" />
@@ -226,11 +227,25 @@
     <Compile Include="Data\UserInstance.cs" />
     <Compile Include="Data\UserProfile.cs" />
     <Compile Include="Data\Vendor.cs" />
-    <Compile Include="Data\x360ceModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>x360ceModel.edmx</DependentUpon>
-    </Compile>
+    <!-- Written by Data\Generate-Models.ps1 from the database; their context is in the web site. -->
+    <Compile Include="Data\Model\dbo\Layout.cs" />
+    <Compile Include="Data\Model\dbo\PadSetting.cs" />
+    <Compile Include="Data\Model\dbo\Product.cs" />
+    <Compile Include="Data\Model\dbo\Program.cs" />
+    <Compile Include="Data\Model\dbo\Summary.cs" />
+    <Compile Include="Data\Model\dbo\UserComputer.cs" />
+    <Compile Include="Data\Model\dbo\UserDevice.cs" />
+    <Compile Include="Data\Model\dbo\UserGame.cs" />
+    <Compile Include="Data\Model\dbo\UserInstance.cs" />
+    <Compile Include="Data\Model\dbo\UserProfile.cs" />
+    <Compile Include="Data\Model\dbo\UserSetting.cs" />
+    <Compile Include="Data\Model\dbo\Vendor.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryFormat.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryFormatSpec.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGame.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGameFile.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGameMod.cs" />
+    <Compile Include="Data\Model\x360ce\TelemetryGameStep.cs" />
     <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\Collections\CollectionsHelper.cs" />
@@ -248,6 +263,7 @@
     <Compile Include="JocysCom\Common\LinkItem.cs" />
     <Compile Include="JocysCom\Common\TimeUnitType.cs" />
     <Compile Include="JocysCom\ComponentModel\BindingListInvoked.cs" />
+    <Compile Include="JocysCom\ComponentModel\NotifyPropertyChanged.cs" />
     <Compile Include="JocysCom\ComponentModel\PropertyComparer.cs" />
     <Compile Include="JocysCom\ComponentModel\SortableBindingList.cs" />
     <Compile Include="JocysCom\Configuration\Arguments.cs" />
@@ -307,6 +323,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="JocysCom\Controls\UiTree\UiCallout.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiLanguage.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiLanguage.Forms.cs" />
     <Compile Include="JocysCom\Controls\UiTree\UiNode.cs" />
     <Compile Include="JocysCom\Controls\UiTree\UiText.cs" />
     <Compile Include="JocysCom\Controls\UiTree\UiText.Forms.cs" />
@@ -555,30 +573,16 @@
     <Compile Include="SharpDX.XInput\XInput910.x360ce.cs" />
   </ItemGroup>
   <ItemGroup>
-    <!--
-      The model metadata the connection strings in App.Config name (res://*/Data.x360ceModel.csdl
-      and so on). Checked in beside each .edmx and embedded under those exact names, so the build
-      needs no EntityDeploy task, which only Visual Studio's MSBuild carries. The .edmx stays for
-      the designer; after editing it, copy its three sections out again into these files.
-    -->
-    <None Include="Data\x360ceModel.edmx" />
-    <EmbeddedResource Include="Data\x360ceModel.csdl">
-      <LogicalName>Data.x360ceModel.csdl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\x360ceModel.ssdl">
-      <LogicalName>Data.x360ceModel.ssdl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\x360ceModel.msl">
-      <LogicalName>Data.x360ceModel.msl</LogicalName>
-    </EmbeddedResource>
+    <None Include="Data\Generate-Models.ps1" />
+    <None Include="Data\x360ce.ModelGenerator.json" />
     <!--
       SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is
-      (SdlDatabase), and its zlib licence; and x360ce's controller database (X360ceDatabase), carried the same way and
-      written by scripts\Update-X360ceDatabase.ps1. Both programs carry them in the engine, and the xinput library embeds
-      the same two gzip files (Native\x360ce\x360ce.rc).
+      (SdlDatabase); and x360ce's controller database (X360ceDatabase), carried the same way and written by
+      scripts\Update-X360ceDatabase.ps1. Both programs carry them in the engine, and the xinput library embeds the same
+      two gzip files (Native\x360ce\x360ce.rc). Each program carries SDL_GameControllerDB's licence with the others, from
+      ..\Resources\Licenses.
     -->
     <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
-    <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
     <EmbeddedResource Include="Resources\gamecontrollerdb_x360ce.windows.txt.gz" />
   </ItemGroup>
   <ItemGroup>

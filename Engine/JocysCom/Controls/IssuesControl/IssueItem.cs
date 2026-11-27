@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -14,14 +15,21 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public IssueItem()
 		{
 			Description = "";
-			FixName = "Fix";
+			SetTexts();
 		}
 
 		public IssueItem(int orderId)
 		{
 			Description = "";
-			FixName = "Fix";
+			SetTexts();
 			OrderId = orderId;
+		}
+
+		/// <summary>Puts the issue's name and the name of its fix in the language shown: when the issue is made, and again when the language changes.</summary>
+		/// <remarks>Called by the constructor of this class, before the constructor of a class made from it has run.</remarks>
+		public virtual void SetTexts()
+		{
+			FixName = UiLanguage.T("IssueItem.Fix", "Fix");
 		}
 
 		public event EventHandler<EventArgs> Checking;
@@ -103,7 +111,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			catch (Exception ex)
 			{
 				LastException = ex;
-				SetSeverity(IssueSeverity.Moderate, description: "Check failed: " + ex.Message);
+				SetSeverity(IssueSeverity.Moderate, description: string.Format(UiLanguage.T("IssueItem.CheckFailed", "Check failed: {0}"), ex.Message));
 				//throw;
 			}
 			finally
@@ -140,7 +148,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			catch (Exception ex)
 			{
 				LastException = ex;
-				SetSeverity(IssueSeverity.Moderate, description: "Fix failed: " + ex.Message);
+				SetSeverity(IssueSeverity.Moderate, description: string.Format(UiLanguage.T("IssueItem.FixFailed", "Fix failed: {0}"), ex.Message));
 				//throw;
 			}
 			finally

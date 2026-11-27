@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,14 @@ namespace x360ce.App.Controls
 				if (Visible)
 					QueueMonitorTimer_Tick(this, EventArgs.Empty);
 			};
+			EventHandler languageChanged = (s, e) =>
+			{
+				if (Visible)
+					QueueMonitorTimer_Tick(this, EventArgs.Empty);
+				TasksDataGridView.Invalidate();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		public void EnableDataSource(bool enable)
@@ -150,16 +159,13 @@ namespace x360ce.App.Controls
 		{
 			var t = Global.CloudClient.TasksTimer;
 			var nextRunTime = t.NextRunTime;
-			var network = Global.CloudClient.IsNetworkAvailable ? "ON" : "OFF";
+			var network = Global.CloudClient.IsNetworkAvailable ? UiLanguage.T("CloudUserControl.NetworkOn", "ON") : UiLanguage.T("CloudUserControl.NetworkOff", "OFF");
 			// The queue sleeps while no task waits: there is no next run to count down to.
 			var remains = nextRunTime.Subtract(DateTime.Now);
 			var nextRun = nextRunTime.Ticks == 0
-				? string.Format("Next Run {0}: none", network)
-				: string.Format("Next Run {2}: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m), network);
+				? string.Format(UiLanguage.T("CloudUserControl.NoNextRun", "Next Run {0}: none"), network)
+				: string.Format(UiLanguage.T("CloudUserControl.NextRun", "Next Run {0}: {1:00}:{2:00}"), network, remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
 			ControlsHelper.SetText(NextRunLabel, nextRun);
-			var lrt = t.LastActionDoneTime;
-			var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
-			//ControlsHelper.SetText(LastDoneLabel, lastRun);
 			var state = t.IsRunning ? "↑" : " ";
 			ControlsHelper.SetText(RunStateLabel, state);
 			//ControlsHelper.SetText(AddCountLabel, string.Format("Add: {0}", queueTimer.AddCount));
@@ -184,6 +190,19 @@ namespace x360ce.App.Controls
 
 		}
 
+		static string StateText(CloudState state)
+		{
+			switch (state)
+			{
+				case CloudState.None: return UiLanguage.T("CloudUserControl.StateNone", "None");
+				case CloudState.Busy: return UiLanguage.T("CloudUserControl.StateBusy", "Busy");
+				case CloudState.Done: return UiLanguage.T("CloudUserControl.StateDone", "Done");
+				case CloudState.Error: return UiLanguage.T("CloudUserControl.StateError", "Error");
+				case CloudState.Stopped: return UiLanguage.T("CloudUserControl.StateStopped", "Stopped");
+				default: return state.ToString();
+			}
+		}
+
 		private void TasksDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -193,7 +212,9 @@ namespace x360ce.App.Controls
 			if (item is null)
 				return;
 			var column = grid.Columns[e.ColumnIndex];
-			if (column == TryColumn && item.Retries != int.MaxValue)
+			if (column == StateColumn)
+				e.Value = StateText(item.State);
+			else if (column == TryColumn && item.Retries != int.MaxValue)
 				e.Value = string.Format("{0}/{1}", item.Try, item.Retries);
 		}
 	}

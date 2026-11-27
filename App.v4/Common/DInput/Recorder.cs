@@ -55,8 +55,8 @@ namespace x360ce.App
 				var form = MainForm.Current;
 				if (form != null)
 					form.StatusTimerLabel.Text = (CurrentMap?.Code == MapCode.DPad)
-						 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
-						 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
+						 ? JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("Recorder.RecordingDPad", "Recording - press any D-Pad button on your direct input device. Press ESC to cancel...")
+						 : JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("Recorder.Recording", "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...");
 			}
 		}
 
@@ -226,7 +226,7 @@ namespace x360ce.App
 			var reading = SettingsConverter.IsHalf(type)
 				? (inverted ? "below the middle" : "above the middle")
 				: (inverted ? "low" : "high");
-			return string.Format("{0} recorded: pressed while reading {1}. Wrong way round? Choose [Adjust] > [Invert] in the box's menu.",
+			return string.Format("{0} recorded: pressed while reading {1}. Wrong way round? Choose [Adjust] > [Invert] in the box’s menu.",
 				action, reading);
 		}
 

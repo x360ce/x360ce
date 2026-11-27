@@ -70,12 +70,7 @@ namespace x360ce.Tests
 			var domain = (AppDomain)null;
 			try
 			{
-				foreach (var file in new[] { "x360ce.exe", "x360ce.exe.config", "x360ce.Engine.dll", "x360ce.Engine.dll.config" })
-					if (File.Exists(Path.Combine(build, file)))
-						File.Copy(Path.Combine(build, file), Path.Combine(copy.FullName, file));
-				// The libraries the program carries inside itself and finds through its Main, beside it here.
-				foreach (var file in Directory.GetFiles(Path.Combine(Ui.RepoRoot.FullName, "App.v3", "Resources", "SharpDX"), "*.dll"))
-					File.Copy(file, Path.Combine(copy.FullName, Path.GetFileName(file)));
+				CopyV3Build(build, copy.FullName);
 				domain = AppDomain.CreateDomain("V3DirectInputLayoutTest", null, new AppDomainSetup
 				{
 					ApplicationBase = copy.FullName,
@@ -97,8 +92,19 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, faults.Length, faults.Length + " fault(s) at " + scale.ToString("P0") + ":" + Environment.NewLine + string.Join(Environment.NewLine, faults));
 		}
 
+		/// <summary>Copies a version 3 build into a folder, for an application domain of its own to run it from.</summary>
+		internal static void CopyV3Build(string build, string folder)
+		{
+			foreach (var file in new[] { "x360ce.exe", "x360ce.exe.config", "x360ce.Engine.dll", "x360ce.Engine.dll.config" })
+				if (File.Exists(Path.Combine(build, file)))
+					File.Copy(Path.Combine(build, file), Path.Combine(folder, file));
+			// The libraries the program carries inside itself and finds through its Main, beside it here.
+			foreach (var file in Directory.GetFiles(Path.Combine(Ui.RepoRoot.FullName, "App.v3", "Resources", "SharpDX"), "*.dll"))
+				File.Copy(file, Path.Combine(folder, Path.GetFileName(file)));
+		}
+
 		/// <summary>The newest version 3 build this process can load, or null.</summary>
-		static string V3Build()
+		internal static string V3Build()
 		{
 			var bin = new DirectoryInfo(Path.Combine(Ui.RepoRoot.FullName, "App.v3", "bin"));
 			if (!bin.Exists)

@@ -395,10 +395,10 @@ namespace x360ce.Engine
 		[DefaultValue("100"), Description("Strength of force feedback. Range is 0 to 100. Default is 100.")]
 		static public string ForceOverall { get { return "ForcePercent"; } }
 
-		[DefaultValue("0"), Description("Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.")]
+		[DefaultValue("0"), Description("Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel’s own software can hold the centre instead.")]
 		static public string ForceSpringEnable { get { return "SpringEnable"; } }
 
-		[DefaultValue("30"), Description("Strength of the car's steering, which the always-on centering spring adds on top of the wheel's friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.")]
+		[DefaultValue("30"), Description("Strength of the car’s steering, which the always-on centering spring adds on top of the wheel’s friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.")]
 		static public string ForceSpringStrength { get { return "SpringStrength"; } }
 
 		[DefaultValue(DefaultForceSpringCentre), Description("The steering angle in degrees at which the centering spring reaches half its strength, for the car at 100 km/h. Range is 1 to 450. Default is 12, a family car.")]
@@ -406,22 +406,22 @@ namespace x360ce.Engine
 		/// <summary>The family car at 100 km/h, measured in the ISO 13674-1 weave test.</summary>
 		public const string DefaultForceSpringCentre = "12";
 
-		[DefaultValue(DefaultForceSpringPeak), Description("The steering angle in degrees of the centering spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.")]
+		[DefaultValue(DefaultForceSpringPeak), Description("The steering angle in degrees of the centering spring’s strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.")]
 		static public string ForceSpringPeak { get { return "SpringPeak"; } }
 		/// <summary>The family car at 100 km/h: the tyres' grip peaks at about 3 degrees of slip.</summary>
 		public const string DefaultForceSpringPeak = "60";
 
-		[DefaultValue(DefaultForceSpringLightening), Description("How much of the centering spring's strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.")]
+		[DefaultValue(DefaultForceSpringLightening), Description("How much of the centering spring’s strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.")]
 		static public string ForceSpringLightening { get { return "SpringLightening"; } }
 		/// <summary>The family car: the share of its centring that does not come from the tyres.</summary>
 		public const string DefaultForceSpringLightening = "40";
 
-		[DefaultValue(DefaultForceSpringDamping), Description("The centering spring's resistance to the wheel's speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.")]
+		[DefaultValue(DefaultForceSpringDamping), Description("The centering spring’s resistance to the wheel’s speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.")]
 		static public string ForceSpringDamping { get { return "SpringDamping"; } }
 		/// <summary>The light damping of power steering.</summary>
 		public const string DefaultForceSpringDamping = "5";
 
-		[DefaultValue(DefaultForceSpringSpeed), Description("The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.")]
+		[DefaultValue(DefaultForceSpringSpeed), Description("The car’s speed in km/h that the centering spring’s curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car’s speed can later set it live, without saving it. Range is 0 to 250. Default is 100.")]
 		static public string ForceSpringSpeed { get { return "SpringSpeed"; } }
 		/// <summary>The speed of the ISO 13674-1 weave test, which Centre, Peak and Lightening describe.</summary>
 		public const string DefaultForceSpringSpeed = "100";
@@ -449,8 +449,8 @@ namespace x360ce.Engine
 		public const string DefaultMouseButton = "0";
 
 		const string MouseStyleText = " 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. -1 = Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go. Default is 0.";
-		const string MouseSensitivityText = " in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.";
-		const string MouseSmoothingText = " takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.";
+		const string MouseSensitivityText = " in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen’s height from the centre. Range is 1 to 400. Default is 100.";
+		const string MouseSmoothingText = " takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse’s uneven reports. Range is 0 to 500. Default is 30.";
 		const string MouseReturnText = " takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths; in Wheel, the time it takes once the button lets the stick go, 0 at once. Range is 0 to 2000. Default is 0.";
 		const string MouseActiveText = " 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.";
 		const string MouseButtonText = ", counted from 1: the button of the same device. 0 = none. Default is 0.";

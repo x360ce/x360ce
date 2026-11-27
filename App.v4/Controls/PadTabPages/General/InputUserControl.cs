@@ -45,8 +45,10 @@ namespace x360ce.App.Controls
 				Dock = DockStyle.Top,
 				AutoEllipsis = true,
 				Margin = new Padding(8, 8, 0, 0),
-				Text = SourceNone,
+				Text = JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceNone", SourceNone),
 			};
+			// Worded in code for the active language, so UiLanguage.Register must never capture a translation as English.
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Keep(SourceLabel);
 			table.Controls.Add(SourceLabel, 0, 0);
 			table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			ButtonsGroupBox = AddGroup(table, "ButtonsGroupBox", "BUTTON", "ButtonChips", out ButtonChips, false);
@@ -55,6 +57,14 @@ namespace x360ce.App.Controls
 			PovsGroupBox = AddGroup(table, "PovsGroupBox", "POV", "PovChips", out PovChips, true);
 			table.RowCount = table.RowStyles.Count;
 			Controls.Add(table);
+			// The column is as wide as the room the General page leaves, so a wider window makes the chips take fewer rows:
+			// the scroll bar is then weighed again, once the layout that changed the table is over, against the table as
+			// tall as it has become.
+			table.SizeChanged += (sender, e) =>
+			{
+				if (IsHandleCreated)
+					BeginInvoke((Action)PerformLayout);
+			};
 			ResumeLayout(false);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -64,6 +74,9 @@ namespace x360ce.App.Controls
 				group.DragStarted += Group_DragStarted;
 				group.DragEnded += Group_DragEnded;
 			}
+			EventHandler languageChanged = (s, e) => UpdateSourceLabel();
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>The header names the device the chips belong to, the way the grid names it.</summary>
@@ -140,6 +153,19 @@ namespace x360ce.App.Controls
 			return group;
 		}
 
+		/// <summary>Whether the chip with this payload is lit: its control moving or pressed. False for null or a chip the device lacks.</summary>
+		/// <param name="payload">What maps the control, as <see cref="InputChips.PayloadOf"/> gives it.</param>
+		public bool IsLit(string payload)
+		{
+			if (payload == null)
+				return false;
+			foreach (var group in Groups)
+				foreach (var chip in group.Chips)
+					if (chip.Payload == payload)
+						return chip.Lit;
+			return false;
+		}
+
 		void Group_ChipClicked(object sender, EventArgs<InputChip> e)
 		{
 			var handler = ChipClicked;
@@ -149,15 +175,25 @@ namespace x360ce.App.Controls
 
 		Guid _InstanceGuid;
 		int _ButtonCount, _AxisMask, _SliderMask, _PovCount;
+		string _sourceDeviceName;
 
 		static string SourceName(UserDevice ud)
 		{
 			return string.IsNullOrEmpty(ud.ProductName) ? ud.InstanceName : ud.ProductName;
 		}
 
+		void UpdateSourceLabel()
+		{
+			if (_sourceDeviceName == null)
+				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceNone", SourceNone));
+			else
+				ControlsHelper.SetText(SourceLabel, JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.T("InputUserControl.SourceDevice", SourcePrefix + "{0}"), _sourceDeviceName);
+		}
+
 		/// <summary>
 		/// Brings the panel in line with the device: rebuilds the chips when the device or what it
-		/// reports has changed, then lights them from its last published state.
+		/// reports has changed, then lights them from its last published state and the presses the
+		/// engine counted since the last tick.
 		/// </summary>
 		/// <remarks>
 		/// Called on every interface tick from the pad, on the interface thread. The device's
@@ -193,11 +229,14 @@ namespace x360ce.App.Controls
 					// The chips' box, round the table that holds them.
 					group.Parent.Parent.Visible = shown;
 				}
-				ControlsHelper.SetText(SourceLabel, ud == null ? SourceNone : SourcePrefix + SourceName(ud));
 			}
+			// Set on every tick, and on language changes, so it follows a change of language even when updates are paused.
+			_sourceDeviceName = ud == null ? null : SourceName(ud);
+			UpdateSourceLabel();
 			var state = ud == null ? null : ud.SourceState;
+			var presses = ud == null ? null : ud.ButtonPresses;
 			foreach (var group in Groups)
-				group.Refresh(state);
+				group.Refresh(state, presses);
 		}
 	}
 }

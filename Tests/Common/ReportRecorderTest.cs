@@ -296,6 +296,73 @@ namespace x360ce.Tests
 				"The force calls are not written once, when they changed.");
 		}
 
+		[TestMethod, TestCategory("recording")]
+		[Description("A recording of forces shows the game's telemetry, how the spring's force was made of it, each range, centring and LED report sent to the wheel with whether it was taken, and how the game's vibration is played")]
+		public void Telemetry_and_how_it_turns_into_force_are_written()
+		{
+			var wheel = Device("Recording Test Telemetry Wheel", SharpDX.DirectInput.DeviceType.Driving);
+			var ff = new ForceFeedbackState();
+			wheel.FFState = ff;
+			ff.SpringAxisIndex = 0;
+			ff.LastSpringTerms = new SpringTerms
+			{
+				Position = SpringCalibration.Center + SpringCalibration.AxisMax / 18, // 50° right of 900°
+				RangeDegrees = 900,
+				SpeedKmh = 72,
+				Weight = 1.0,
+				AlignDeg = -12.5,
+				CurveForce = -30,
+				Grip = 0.8,
+				ImpulsePercent = 4.0,
+				Percent = -26,
+			};
+			ff.RangeLastDegrees = 900;
+			ff.RangeLastError = 5;
+			ff.Counts.RangeSends = 1;
+			ff.CenteringLastOn = false;
+			ff.Counts.CenteringSends = 1;
+			var gearNow = WheelTelemetryMath.MonotonicNowMs();
+			ff.GameRumblePercent(new WheelTelemetrySample { Active = true, Gear = 2, TimestampMs = gearNow - 20 }, gearNow, false, 30);
+			ff.GameRumblePercent(new WheelTelemetrySample { Active = true, Gear = 3, TimestampMs = gearNow }, gearNow, false, 30);
+			wheel.LastSentWheelLedMask = 0x07;
+			wheel.WheelLedSends = 1;
+			var recorder = Start(RecordParts.Forces);
+			var now = System.Diagnostics.Stopwatch.GetTimestamp();
+			recorder.Telemetry(new WheelTelemetrySample
+			{
+				Active = true,
+				SpeedKmh = 72.4f,
+				LateralG = 0.31f,
+				AlignAngleDeg = -12.5f,
+				FrontGrip = 0.8f,
+				Impulse = 0.1f,
+				Jolt = 0.25f,
+				LongitudinalG = -0.42f,
+				VerticalG = 0.05f,
+				Gear = 3,
+				DistanceMeters = 1234.5f,
+				RpmFraction = 0.55f,
+				DampingScale = 1f,
+				TimestampMs = WheelTelemetryMath.MonotonicNowMs(),
+				Source = "Forza Data Out",
+			}, 60, now);
+			recorder.Device(wheel, now);
+			recorder.Force(wheel, 110, 0);
+			var lines = Finish(recorder);
+			var d = LabelOf(lines, "Recording Test Telemetry Wheel");
+			Func<string, bool> has = text => lines.Any(x => x.EndsWith(text));
+			Assert.IsTrue(has("telemetry from Forza Data Out: speed 72.4 km/h, gear 3, sideways 0.31 G, forward-back -0.42 G, up-down 0.05 G, centre pulled -12.5°, front grip 0.80, kick 0.10, jolt 0.25, engine 55 % of its redline, distance 1234.5 m, 60 packets a second, 100 % fresh"),
+				"The telemetry is not written as the springs took it.");
+			Assert.IsTrue(has(" " + d + " spring: wheel at 50.0° of 900°, force -26 % (curve -30 %, centre pulled -12.5°, front grip 0.80, kick 4.0 %), speed 72 km/h, damper 0, telemetry weight 100 %"),
+				"How the spring's force was made is not written.");
+			Assert.IsTrue(has(" " + d + " gear change to 3: the game's rumble plays at 30 % for 150 ms"), "A gear change is not written.");
+			Assert.IsTrue(has(" " + d + " range 900° sent to its own interface: not taken (0x00000005)"), "A range the wheel did not take is not written.");
+			Assert.IsTrue(has(" " + d + " its own centring switched off on its own interface: taken"), "The centring sent is not written.");
+			Assert.IsTrue(has(" " + d + " LEDs 00111 sent to its own interface"), "The LEDs sent are not written.");
+			Assert.IsTrue(lines.Any(x => x.Contains(" " + d + " force sent: large 110, small 0, played as a constant push at ")),
+				"How the game's vibration is played is not written.");
+		}
+
 		[TestMethod, TestCategory("recording"), TestCategory("devices")]
 		[Description("A device is compared with its own reports as Raw Input reads them: a difference that lasts is written, and so is its end; a passing one is not")]
 		public void Where_Raw_Input_and_DirectInput_part_is_written()

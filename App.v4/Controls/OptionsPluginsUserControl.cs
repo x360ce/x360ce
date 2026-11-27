@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.IO;
 using System;
 using System.Linq;
@@ -35,6 +36,9 @@ namespace x360ce.App.Controls
 			ScriptsNoteLabel.MarginChanged += (s, e) => WrapScriptsNote();
 			ControlsHelper.ApplyBorderStyle(PluginsDataGridView);
 			PluginsDataGridView.AutoGenerateColumns = false;
+			PluginsDataGridView.CurrentCellDirtyStateChanged += PluginsDataGridView_CurrentCellDirtyStateChanged;
+			PluginsDataGridView.CellValueChanged += PluginsDataGridView_CellValueChanged;
+			PluginsDataGridView.CellBeginEdit += PluginsDataGridView_CellBeginEdit;
 			SettingsManager.LoadAndMonitor(x => x.AllowThirdPartyPlugins, AllowThirdPartyPluginsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowAutoHotkeyScripts, AllowAutoHotkeyScriptsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoHotkeyHeartbeat, HeartbeatUpDown);
@@ -56,6 +60,9 @@ namespace x360ce.App.Controls
 				if (manager != null)
 					manager.Changed -= Manager_Changed;
 			};
+			EventHandler languageChanged = (s, e) => RefreshList();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			RefreshList();
 		}
 
@@ -69,9 +76,23 @@ namespace x360ce.App.Controls
 		/// <summary>One row of the list: a plugin DLL and what became of it.</summary>
 		public sealed class PluginRow
 		{
+			public bool Enabled { get; set; }
 			public string Name { get; set; }
 			public string Devices { get; set; }
-			public string State { get; set; }
+			internal PluginFileState FileState { get; set; }
+			public string State
+			{
+				get
+				{
+					switch (FileState)
+					{
+						case PluginFileState.Loaded: return UiLanguage.T("OptionsPluginsUserControl.StateLoaded", "Loaded");
+						case PluginFileState.Disabled: return UiLanguage.T("OptionsPluginsUserControl.StateDisabled", "Disabled");
+						case PluginFileState.WaitingForPermission: return UiLanguage.T("OptionsPluginsUserControl.StateWaitingForPermission", "Waiting for permission");
+						default: return UiLanguage.T("OptionsPluginsUserControl.StateFailed", "Failed");
+					}
+				}
+			}
 			public string Signer { get; set; }
 			public string Source { get; set; }
 			public string Reason { get; set; }
@@ -84,16 +105,27 @@ namespace x360ce.App.Controls
 				return new PluginRow[0];
 			return manager.Files.Select(x => new PluginRow
 			{
+				Enabled = x.Enabled,
 				Name = x.Name,
-				Devices = string.Join(", ", x.DeviceTypes.Select(t => t.Faulted ? t.Name + " (switched off)" : t.Name)),
-				State = x.State == PluginFileState.Loaded ? "Loaded"
-					: x.State == PluginFileState.WaitingForPermission ? "Waiting for permission"
-					: "Failed",
-				Signer = x.Embedded ? "Part of x360ce" : x.Signer ?? "Not signed",
+				Devices = string.Join(", ",
+					x.DeviceTypes.Select(t => t.Faulted ? SwitchedOffDeviceName(t.Name) : t.Name)
+						.Concat(x.TelemetryTypes.Select(t => t.Faulted ? SwitchedOffDeviceName(t.Name) : t.Name))
+						.Concat(x.GameTypes.Select(t => t.Faulted ? SwitchedOffDeviceName(t.Name)
+							: string.Format(UiLanguage.T("OptionsPluginsUserControl.GamesTabDeviceName", "{0} (Games tab)"), t.Name)))),
+				FileState = x.State,
+				Signer = x.Embedded ? UiLanguage.T("OptionsPluginsUserControl.BuiltInSigner", "Part of x360ce") : x.Signer ?? UiLanguage.T("OptionsPluginsUserControl.UnsignedSigner", "Not signed"),
 				// The folder is shown above the list: each row names the file within it.
-				Source = x.Embedded ? "Embedded" : PathHelper.GetRelativePath(manager.Folder.TrimEnd('\\') + "\\", x.Source, false),
-				Reason = x.Reason ?? string.Join(" ", x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)),
+				Source = x.Embedded ? UiLanguage.T("OptionsPluginsUserControl.EmbeddedSource", "Embedded") : PathHelper.GetRelativePath(manager.Folder.TrimEnd('\\') + "\\", x.Source, false),
+				Reason = x.Reason ?? string.Join(" ",
+					x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)
+						.Concat(x.TelemetryTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason))
+						.Concat(x.GameTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason))),
 			}).ToArray();
+		}
+
+		static string SwitchedOffDeviceName(string name)
+		{
+			return string.Format(UiLanguage.T("OptionsPluginsUserControl.SwitchedOffDeviceName", "{0} (switched off)"), name);
 		}
 
 		/// <summary>Lets the scripts' note wrap at the width its group has, so the group is as tall as the wrapped note needs.</summary>
@@ -101,17 +133,66 @@ namespace x360ce.App.Controls
 		/// The group is measured as tall as what it holds needs at no width, and its table measures a note that spans the column
 		/// that takes what the others leave as one line: without a widest size the group would be a line short, and the row of
 		/// number boxes below the note cut off at its edge, the more the narrower the window.
+		///
+		/// A minimized window leaves the group no width. The note then keeps the width it had: one pixel wide, a word to a line,
+		/// it would stand thousands of pixels tall, and the rows it made that tall would stay so when the window is restored,
+		/// leaving the list of plugins a pixel high.
 		/// </remarks>
 		void WrapScriptsNote()
 		{
-			var widest = new System.Drawing.Size(Math.Max(1, AutoHotkeyLayoutPanel.DisplayRectangle.Width - ScriptsNoteLabel.Margin.Horizontal), 0);
+			var width = AutoHotkeyLayoutPanel.DisplayRectangle.Width - ScriptsNoteLabel.Margin.Horizontal;
+			if (width <= 0)
+				return;
+			var widest = new System.Drawing.Size(width, 0);
 			if (ScriptsNoteLabel.MaximumSize != widest)
 				ScriptsNoteLabel.MaximumSize = widest;
 		}
 
+		bool _refreshing;
+
 		void RefreshList()
 		{
-			PluginsDataGridView.DataSource = GetRows(PluginManager.Current);
+			_refreshing = true;
+			try
+			{
+				PluginsDataGridView.DataSource = GetRows(PluginManager.Current);
+			}
+			finally
+			{
+				_refreshing = false;
+			}
+		}
+
+		void PluginsDataGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+		{
+			if (e.RowIndex < 0 || e.ColumnIndex != EnabledColumn.Index)
+			{
+				e.Cancel = true;
+				return;
+			}
+			var rows = PluginsDataGridView.DataSource as PluginRow[];
+			if (rows != null && e.RowIndex < rows.Length && rows[e.RowIndex].FileState == PluginFileState.Failed)
+				e.Cancel = true;
+		}
+
+		void PluginsDataGridView_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+		{
+			if (PluginsDataGridView.IsCurrentCellDirty && PluginsDataGridView.CurrentCell is DataGridViewCheckBoxCell)
+				PluginsDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+		}
+
+		void PluginsDataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		{
+			if (_refreshing || e.RowIndex < 0 || e.ColumnIndex != EnabledColumn.Index)
+				return;
+			var rows = PluginsDataGridView.DataSource as PluginRow[];
+			if (rows == null || e.RowIndex >= rows.Length)
+				return;
+			var row = rows[e.RowIndex];
+			SettingsManager.Options.SetPluginEnabled(row.Name, row.Enabled);
+			var manager = PluginManager.Current;
+			if (manager != null)
+				manager.SetEnabled(row.Name, row.Enabled);
 		}
 
 		void AllowAutoHotkeyScriptsCheckBox_CheckedChanged(object sender, EventArgs e)

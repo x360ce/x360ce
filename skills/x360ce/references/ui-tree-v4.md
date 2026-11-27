@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.30.63.0, built 2026-11-15.
+Version 4.31.68.0, built 2026-11-27.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -48,7 +48,7 @@ not shown in this state of the program.
 [Slider]    │   │   ├── Press point 0..100                                              # How far the control must move before this button counts as pressed.
 [Value]     │   │   ├── Press point                                                     # How far the control must move before this button counts as pressed.
 [Number]    │   │   └── Press point 0..32767                                            # Axis to A Button Dead Zone.
-[Control]   │   ├── AxisToDPadChart                                                     # The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.
+[Control]   │   ├── AxisToDPadChart                                                     # The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device’s reading, and a side it presses is lit.
 [Control]   │   ├── DirectInputUserControl                                              # What the mapped device reports about itself, and its values as they change.
 [Tabs]      │   │   ├── Device detail pages                                             # What the device reports it can do.
 [Tab]       │   │   │   ├── Device Objects                                              # Every axis, button and hat the device reports having.
@@ -73,33 +73,33 @@ not shown in this state of the program.
 [Value]     │   │   ├── Instance identifier                                             # Device instance GUID.
 [Value]     │   │   ├── Device type                                                     # What kind of device Windows considers this to be.
 [Value]     │   │   └── Number of buttons                                               # How many buttons the device has.
-[Control]   │   ├── InputChipGroup                                                      # The device's buttons, numbered as the mapping list numbers them.
+[Control]   │   ├── InputChipGroup                                                      # The device’s buttons, numbered as the mapping list numbers them.
 [Control]   │   ├── InputUserControl                                                    # Every control of the selected device, lit while it is used, before anything is mapped.
 [Label]     │   │   ├── Input source                                                    # The device the chips below belong to, or that none is selected.
 [Section]   │   │   ├── Buttons (hidden)                                                # One chip per button, lit while it is held. Click or drag a chip into a mapping box.
-[Group]     │   │   │   └── Button chips -> InputChipGroup (hidden)                     # The device's buttons, numbered as the mapping list numbers them.
-[Section]   │   │   ├── Axes (hidden)                                                   # One chip per axis with its reading, lit while it moves and for half a second after.
-[Group]     │   │   │   └── Axis chips -> InputChipGroup (hidden)                       # The device's axes, numbered by the slot each answers to, as the mapping list numbers them.
-[Section]   │   │   ├── Sliders (hidden)                                                # One chip per slider with its reading, lit while it moves and for half a second after.
-[Group]     │   │   │   └── Slider chips -> InputChipGroup (hidden)                     # The device's sliders, numbered as the mapping list numbers them.
-[Section]   │   │   └── POVs (hidden)                                                   # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
+[Group]     │   │   │   └── Button chips -> InputChipGroup (hidden)                     # The device’s buttons, numbered as the mapping list numbers them.
+[Section]   │   │   ├── Axes (hidden)                                                   # One chip per axis with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.
+[Group]     │   │   │   └── Axis chips -> InputChipGroup (hidden)                       # The device’s axes, numbered by the slot each answers to, as the mapping list numbers them.
+[Section]   │   │   ├── Sliders (hidden)                                                # One chip per slider with its reading, lit while it moves and for half a second after. Click or drag a chip into a mapping box.
+[Group]     │   │   │   └── Slider chips -> InputChipGroup (hidden)                     # The device’s sliders, numbered as the mapping list numbers them.
+[Section]   │   │   └── POVs (hidden)                                                   # One chip per POV with its reading in degrees, then its four directions, lit while pressed. Click or drag a chip into a mapping box.
 [Group]     │   │       └── POV chips -> InputChipGroup (hidden)                        # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
 [Control]   │   ├── MouseDemoUserControl                                                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
 [Label]     │   │   ├── Demo stick                                                      # The stick group the demo shows and its style, such as Left Stick: Wheel.
-[Picture]   │   │   ├── Demo picture                                                    # The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.
-[Button]    │   │   ├── Play demo                                                       # Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.
-[Label]     │   │   ├── Demo style                                                      # What the style shown does, in the Style list's words.
+[Picture]   │   │   ├── Demo picture                                                    # A mouse walking on its pad, the ear on its button’s side lit while the button is held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.
+[Button]    │   │   ├── Play demo                                                       # Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows’ Show animations is off.
+[Label]     │   │   ├── Demo style                                                      # What the style shown does, in the Style list’s words.
 [Label]     │   │   ├── Demo step                                                       # What the demo shows now, in words, such as Mouse stops: stick returns to the centre.
-[Label]     │   │   └── Demo note (hidden)                                              # Shown when the group's Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.
+[Label]     │   │   └── Demo note (hidden)                                              # Shown when the group’s Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.
 [Control]   │   ├── MouseStickUserControl                                               # How a mouse moves one stick.
 [Section]   │   │   └── Left Stick                                                      # How a mouse moves this stick.
 [List]      │   │       ├── Style                                                       # How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. -1 = Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go. Default is 0.
-[Slider]    │   │       ├── Sensitivity across 1..400                                   # How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
+[Slider]    │   │       ├── Sensitivity across 1..400                                   # How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen’s height from the centre. Range is 1 to 400. Default is 100.
 [Value]     │   │       ├── Sensitivity across value                                    # The sensitivity across the slider is set to, in percent.
-[Slider]    │   │       ├── Sensitivity up and down 1..400                              # How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
+[Slider]    │   │       ├── Sensitivity up and down 1..400                              # How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen’s height from the centre. Range is 1 to 400. Default is 100.
 [Value]     │   │       ├── Sensitivity up and down value                               # The sensitivity up and down the slider is set to, in percent.
-[Slider]    │   │       ├── Smoothing 0..500                                            # How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.
+[Slider]    │   │       ├── Smoothing 0..500                                            # How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse’s uneven reports. Range is 0 to 500. Default is 30.
 [List]      │   │       ├── Active                                                      # When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.
 [Value]     │   │       ├── Smoothing value                                             # The smoothing the slider is set to, in milliseconds.
 [List]      │   │       ├── Button                                                      # The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.
@@ -140,17 +140,17 @@ not shown in this state of the program.
 [Label]     │   │   │   │   ├── Left Thumb Button value                                 # 1 while the game is being given this button pressed, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Left Thumb Up formula -> MapExpressionToggle            # Writes the Left Thumb Up mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Left Thumb Up                                           # Button Id. Disable = 0.
-[Label]     │   │   │   │   ├── Left Thumb Up value                                     # The stick's position the game is being given while the stick points this way, otherwise 0.
+[Label]     │   │   │   │   ├── Left Thumb Up value                                     # The stick’s position the game is being given while the stick points this way, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Left Thumb Left formula -> MapExpressionToggle          # Writes the Left Thumb Left mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Left Thumb Left                                         # Button Id. Disable = 0.
-[Label]     │   │   │   │   ├── Left Thumb Left value                                   # The stick's position the game is being given while the stick points this way, otherwise 0.
+[Label]     │   │   │   │   ├── Left Thumb Left value                                   # The stick’s position the game is being given while the stick points this way, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Left Thumb Right formula -> MapExpressionToggle         # Writes the Left Thumb Right mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Left Thumb Right                                        # Button Id. Disable = 0.
-[Label]     │   │   │   │   ├── Left Thumb Right value                                  # The stick's position the game is being given while the stick points this way, otherwise 0.
+[Label]     │   │   │   │   ├── Left Thumb Right value                                  # The stick’s position the game is being given while the stick points this way, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Left Thumb Down formula -> MapExpressionToggle          # Writes the Left Thumb Down mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Left Thumb Down                                         # Button Id. Disable = 0.
-[Label]     │   │   │   │   ├── Left Thumb Down value                                   # The stick's position the game is being given while the stick points this way, otherwise 0.
-[Group]     │   │   │   │   ├── Controller picture -> XboxImageUserControl              # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
+[Label]     │   │   │   │   ├── Left Thumb Down value                                   # The stick’s position the game is being given while the stick points this way, otherwise 0.
+[Group]     │   │   │   │   ├── Controller picture -> XboxImageUserControl              # Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.
 [CheckBox]  │   │   │   │   ├── D-Pad Up formula -> MapExpressionToggle                 # Writes the D-Pad Up mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── D-Pad Up                                                # D-Pad up button.
 [Label]     │   │   │   │   ├── D-Pad Up value                                          # 1 while the game is being given this button pressed, otherwise 0.
@@ -192,48 +192,48 @@ not shown in this state of the program.
 [Label]     │   │   │   │   ├── Right Thumb Button value                                # 1 while the game is being given this button pressed, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Thumb Up formula -> MapExpressionToggle           # Writes the Right Thumb Up mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Right Thumb Up                                          # Button Id. Disable = 0.
-[Label]     │   │   │   │   ├── Right Thumb Up value                                    # The stick's position the game is being given while the stick points this way, otherwise 0.
+[Label]     │   │   │   │   ├── Right Thumb Up value                                    # The stick’s position the game is being given while the stick points this way, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Thumb Left formula -> MapExpressionToggle         # Writes the Right Thumb Left mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Right Thumb Left                                        # Button Id. Disable = 0.
-[Label]     │   │   │   │   ├── Right Thumb Left value                                  # The stick's position the game is being given while the stick points this way, otherwise 0.
+[Label]     │   │   │   │   ├── Right Thumb Left value                                  # The stick’s position the game is being given while the stick points this way, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Thumb Right formula -> MapExpressionToggle        # Writes the Right Thumb Right mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Right Thumb Right                                       # Button Id. Disable = 0.
-[Label]     │   │   │   │   ├── Right Thumb Right value                                 # The stick's position the game is being given while the stick points this way, otherwise 0.
+[Label]     │   │   │   │   ├── Right Thumb Right value                                 # The stick’s position the game is being given while the stick points this way, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Thumb Down formula -> MapExpressionToggle         # Writes the Right Thumb Down mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Right Thumb Down                                        # Button Id. Disable = 0.
-[Label]     │   │   │   │   └── Right Thumb Down value                                  # The stick's position the game is being given while the stick points this way, otherwise 0.
-[Tab]       │   │   │   ├── Advanced                                                    # Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.
+[Label]     │   │   │   │   └── Right Thumb Down value                                  # The stick’s position the game is being given while the stick points this way, otherwise 0.
+[Tab]       │   │   │   ├── Advanced                                                    # Settings only x360ce 3’s XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3’s settings in the cloud stay as they are.
 [Section]   │   │   │   │   ├── Combining                                               # x360ce 3 only: combined this controller into another virtual controller.
 [CheckBox]  │   │   │   │   │   ├── Combine this controller                             # Allow this controller to be combined into another virtual controller. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   └── Combine Into                                        # The player that virtual controller will be mapped to. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
-[Section]   │   │   │   │   └── Device                                                  # What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.
+[Section]   │   │   │   │   └── Device                                                  # What x360ce 3’s library told a game about the device, and whether it passed the real controller straight through.
 [CheckBox]  │   │   │   │       ├── Pass Through                                        # Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.
 [List]      │   │   │   │       ├── Pass Through ID                                     # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
 [List]      │   │   │   │       └── Device Sub Type                                     # Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.
 [Tab]       │   │   │   ├── Buttons                                                     # How far a stick or pedal must move before a button mapped to it counts as pressed.
-[Section]   │   │   │   │   └── Press points                                            # For each button mapped to a stick or pedal, how far it must move to count as pressed.
-[Group]     │   │   │   │       ├── A Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── B Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── X Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Y Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Left Bumper press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Back press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Start press point -> AxisToButtonUserControl        # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── D-Pad Up press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Right Bumper press point -> AxisToButtonUserControl # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── D-Pad Down press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Left Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Right Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── D-Pad Left press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       └── D-Pad Right press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Tab]       │   │   │   ├── D-Pad                                                       # Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.
-[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns the device's X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: for a pad whose direction buttons report as a stick. The stick's own mappings stay as they are.
-[Value]     │   │   │   │       ├── Dead zone                                           # How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.
+[Label]     │   │   │   │   ├── Press points                                            # For each button mapped to a stick or pedal, how far it must move to count as pressed.
+[Group]     │   │   │   │   ├── A Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── B Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── X Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Y Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Left Bumper press point -> AxisToButtonUserControl      # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Back press point -> AxisToButtonUserControl             # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Start press point -> AxisToButtonUserControl            # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── D-Pad Up press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Right Bumper press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── D-Pad Down press point -> AxisToButtonUserControl       # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Left Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Right Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── D-Pad Left press point -> AxisToButtonUserControl       # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   └── D-Pad Right press point -> AxisToButtonUserControl      # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Tab]       │   │   │   ├── D-Pad                                                       # Axis to D-Pad, which only x360ce 3’s XInput library reads. Greyed out, and kept with the settings.
+[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns the device’s X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: for a pad whose direction buttons report as a stick. The stick’s own mappings stay as they are.
+[Value]     │   │   │   │       ├── Dead zone                                           # How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad’s direction buttons put it even when it falls a little short.
 [Value]     │   │   │   │       ├── Centre offset                                       # Moves the point counted as centre towards the right and the bottom, as part of half the travel, for a device that does not rest in the middle.
 [CheckBox]  │   │   │   │       ├── Enabled                                             # Axis to control DPad. Disabled = 0, Enabled = 1.
 [Slider]    │   │   │   │       ├── Dead zone 0..100                                    # Dead zone for axis. The slider shows it as a percentage: 100 is 256.
 [Slider]    │   │   │   │       ├── Centre offset 0..100                                # Axis to D-Pad offset. The slider shows it as a percentage: 100 is 256.
-[Group]     │   │   │   │       └── Axis to D-Pad chart -> AxisToDPadChart              # The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.
+[Group]     │   │   │   │       └── Axis to D-Pad chart -> AxisToDPadChart              # The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device’s reading, and a side it presses is lit.
 [Tab]       │   │   │   ├── Triggers                                                    # Shapes what the game receives from the two triggers.
 [Group]     │   │   │   │   ├── (LeftTriggerUserControl) -> AxisMapUserControl          # Shapes what the game receives from one control, without changing the device.
 [Group]     │   │   │   │   └── (RightTriggerUserControl) -> AxisMapUserControl         # Shapes what the game receives from one control, without changing the device.
@@ -256,8 +256,8 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
 [Label]     │   │   │   │   │   └── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
 [Button]    │   │   │   │   ├── Defaults                                                # Puts every setting on this page back to its default.
-[Section]   │   │   │   │   ├── Force source (hidden)                                   # Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.
-[Label]     │   │   │   │   │   └── Force source                                        # Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.
+[Section]   │   │   │   │   ├── Force source (hidden)                                   # Where the selected controller’s force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.
+[Label]     │   │   │   │   │   └── Force source                                        # Which controller tab’s settings shape the controller’s force, the lowest enabled tab it is on, and which controllers’ force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
 [Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.
@@ -275,67 +275,119 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
 [Value]     │   │   │   │   └── About force feedback                                    # Explains what the settings on this page do.
-[Tab]       │   │   │   ├── Wheel                                                       # The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.
-[Group]     │   │   │   │   ├── (WheelChartUserControl) -> WheelChartUserControl        # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
-[CheckBox]  │   │   │   │   ├── Centering spring                                        # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
-[List]      │   │   │   │   ├── Car                                                     # Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range for road and sports cars. Friction and Strength are left as they are, and the car is not saved.
+[Tab]       │   │   │   ├── Wheel                                                       # The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel’s steering range.
+[Group]     │   │   │   │   ├── (WheelChartUserControl) -> WheelChartUserControl        # The centering spring’s force at every angle of the wheel, and the wheel’s angle and force now.
+[CheckBox]  │   │   │   │   ├── Centering spring                                        # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel’s own software can hold the centre instead.
+[List]      │   │   │   │   ├── Car                                                     # Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car’s values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range for road and sports cars. Friction and Strength are left as they are, and the car is not saved.
 [Slider]    │   │   │   │   ├── Friction 1..100                                         # The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. Greyed out while no wheel is selected.
 [Value]     │   │   │   │   ├── Friction                                                # The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. Greyed out while no wheel is selected.
-[Button]    │   │   │   │   ├── Auto                                                    # Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.
-[Slider]    │   │   │   │   ├── Strength 0..100                                         # Strength of the car's steering, which the always-on centering spring adds on top of the wheel's friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.
-[Value]     │   │   │   │   ├── Strength                                                # The car's steering force at Peak, in percent of the wheel's force, added to Friction. Nought is off.
+[Button]    │   │   │   │   ├── Auto                                                    # Measures the wheel’s friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.
+[Slider]    │   │   │   │   ├── Strength 0..100                                         # Strength of the car’s steering, which the always-on centering spring adds on top of the wheel’s friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.
+[Value]     │   │   │   │   ├── Strength                                                # The car’s steering force at Peak, in percent of the wheel’s force, added to Friction. Nought is off.
 [Slider]    │   │   │   │   ├── Centre 1..450                                           # The steering angle in degrees at which the centering spring reaches half its strength, for the car at 100 km/h. Range is 1 to 450. Default is 12, a family car.
 [Value]     │   │   │   │   ├── Centre                                                  # The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.
-[Slider]    │   │   │   │   ├── Peak 0..450                                             # The steering angle in degrees of the centering spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.
-[Value]     │   │   │   │   ├── Peak                                                    # The steering angle in degrees of the spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.
-[Slider]    │   │   │   │   ├── Lightening 0..100                                       # How much of the centering spring's strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.
-[Value]     │   │   │   │   ├── Lightening                                              # How much of the spring's strongest force is left at the stop, in percent.
-[Slider]    │   │   │   │   ├── Damping 0..100                                          # The centering spring's resistance to the wheel's speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.
-[Value]     │   │   │   │   ├── Damping                                                 # Resistance to the wheel's speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.
-[Slider]    │   │   │   │   ├── Speed 0..250                                            # The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.
-[Value]     │   │   │   │   ├── Speed                                                   # The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.
+[Slider]    │   │   │   │   ├── Peak 0..450                                             # The steering angle in degrees of the centering spring’s strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.
+[Value]     │   │   │   │   ├── Peak                                                    # The steering angle in degrees of the spring’s strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.
+[Slider]    │   │   │   │   ├── Lightening 0..100                                       # How much of the centering spring’s strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.
+[Value]     │   │   │   │   ├── Lightening                                              # How much of the spring’s strongest force is left at the stop, in percent.
+[Slider]    │   │   │   │   ├── Damping 0..100                                          # The centering spring’s resistance to the wheel’s speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.
+[Value]     │   │   │   │   ├── Damping                                                 # Resistance to the wheel’s speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.
+[Slider]    │   │   │   │   ├── Speed 0..250                                            # The car’s speed in km/h that the centering spring’s curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car’s speed can later set it live, without saving it. Range is 0 to 250. Default is 100.
+[Value]     │   │   │   │   ├── Speed                                                   # The car’s speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car’s speed, such as one reading a game’s own data, can later set it live, without saving it.
 [List]      │   │   │   │   ├── Wheel range                                             # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
-[Label]     │   │   │   │   └── Wheel message                                           # What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.
+[CheckBox]  │   │   │   │   ├── Soft lock                                               # Enforce the selected Wheel range with a software bump stop and scale the steering axis on wheels x360ce cannot set the hardware range of.
+[Label]     │   │   │   │   ├── Wheel message                                           # What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel’s range.
+[CheckBox]  │   │   │   │   ├── RGB LED strip                                           # Drive supported steering wheels’ RGB/RPM shift LED strip from live game telemetry RPM.
+[Group]     │   │   │   │   ├── RGB LED strip preview -> WheelLedStripControl           # Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.
+[Button]    │   │   │   │   └── Test RGB LEDs                                           # Sweeps the RGB/RPM LED strip on screen and on a connected supported Logitech wheel.
+[Tab]       │   │   │   ├── Game Telemetry                                              # Live game telemetry ports, force feel tuning, vehicle readings and protocol help.
+[Group]     │   │   │   │   └── Game Telemetry -> WheelTelemetryPage                    # Live game telemetry connection, UDP port forwarding, force feel tuning and live vehicle readings.
 [Tab]       │   │   │   ├── Mouse                                                       # How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.
-[Label]     │   │   │   │   ├── What the Mouse page sets                                # The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.
+[Label]     │   │   │   │   ├── What the Mouse page sets                                # The mouse’s axes are chosen in the stick’s boxes on the General page; this page sets how they move the stick.
 [Group]     │   │   │   │   ├── (LeftMouseStickPanel) -> MouseStickUserControl          # How a mouse moves one stick.
 [Group]     │   │   │   │   ├── (RightMouseStickPanel) -> MouseStickUserControl         # How a mouse moves one stick.
 [Group]     │   │   │   │   └── (MouseDemoPanel) -> MouseDemoUserControl                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
 [Tab]       │   │   │   ├── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │   │   └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
-[Tab]       │   │   │   └── SDL                                                         # What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.
-[Group]     │   │   │       └── (SdlPanel) -> SdlUserControl                            # What SDL's controller database says about the selected device.
+[Tab]       │   │   │   └── SDL                                                         # The mapping Auto gives the selected device, place by place, from x360ce’s controller database and SDL’s, beside what this controller’s boxes hold, and which copies of the databases are in use.
+[Group]     │   │   │       └── (SdlPanel) -> SdlUserControl                            # The mapping Auto gives the selected device: x360ce’s controller database row, and SDL’s where it maps nothing.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
 [Button]    │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
 [Button]    │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
 [CheckBox]  │   │   │   ├── Auto Map                                                    # Not available yet, so greyed out: the program does not map devices by itself. Add maps a device.
 [CheckBox]  │   │   │   ├── Enable                                                      # Turns this controller on or off for the selected game.
-[CheckBox]  │   │   │   └── Show XInput State                                           # Shows on the General page the values read back from XInput - what the game actually receives - instead of the values worked out from your devices. A trigger's or stick's chart always shows the selected device's reading and what its mapping makes of it. The emulated controller works either way.
+[CheckBox]  │   │   │   └── Show XInput State                                           # Shows on the General page the values read back from XInput - what the game actually receives - instead of the values worked out from your devices. A trigger’s or stick’s chart always shows the selected device’s reading and what its mapping makes of it. The emulated controller works either way.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
 [Button]    │   │   ├── DX Tweak...                                                     # Opens DX Tweak, a separate tool for adjusting the device itself.
-[Button]    │   │   ├── Load Preset...                                                  # Replaces this controller's settings with a saved set.
-[Button]    │   │   ├── Auto Preset                                                     # Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.
+[Button]    │   │   ├── Load Preset...                                                  # Replaces this controller’s settings with a saved set.
+[Button]    │   │   ├── Auto Preset                                                     # Fills the settings from x360ce’s controller database, and the mapping from SDL’s where it maps nothing, when either knows the selected device, otherwise from x360ce’s own guess. The status bar says which.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping on this controller.
 [Button]    │   │   ├── Reset                                                           # Puts every setting on this controller back to its default. Asks first.
-[Button]    │   │   ├── Save Preset...                                                  # Writes this controller's settings to a file, to load again or pass on.
-[Button]    │   │   ├── Copy Preset                                                     # Copies this controller's settings to the clipboard as YAML, the easiest to read.
-[Button]    │   │   ├── Copy Preset as                                                  # Copies this controller's settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.
-[Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.
+[Button]    │   │   ├── Save Preset...                                                  # Writes this controller’s settings to a file, to load again or pass on.
+[Button]    │   │   ├── Copy Preset                                                     # Copies this controller’s settings to the clipboard as YAML, the easiest to read.
+[Button]    │   │   ├── Copy Preset as                                                  # Copies this controller’s settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL’s controller database.
+[Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL’s controller database are recognised.
 [Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
-[Control]   │   ├── SdlUserControl                                                      # What SDL's controller database says about the selected device.
-[Label]     │   │   ├── SDL database version                                            # Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds; and any rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.
-[Label]     │   │   ├── SDL's row for the device                                        # Whether SDL's controller database knows the selected device, its name and GUID there, how the pad labels its buttons, and what of the row x360ce has no place for.
-[Grid]      │   │   ├── Places                                                          # Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the SDL row's binding, the device's control that binding names in x360ce's words, and what the box holds now, with Same or Differs beside it.
-[Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.
-[Button]    │   │   ├── Copy as SDL                                                     # Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.
+[Control]   │   ├── SdlUserControl                                                      # The mapping Auto gives the selected device: x360ce’s controller database row, and SDL’s where it maps nothing.
+[Label]     │   │   ├── Databases and the device’s rows                                 # Which copies of x360ce’s and SDL’s controller databases are in use: built in, or downloaded and from where, SDL’s date and commit, how many Windows rows each holds, and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG. Whether they know the selected device, its name there and, when a database holds several copies, which copy the row is from; which Auto takes first, how the pad labels its buttons, and what of SDL’s row x360ce has no place for.
+[Grid]      │   │   ├── Places                                                          # Each place on the Xbox controller: SDL’s name for it, the place in words, its label on this pad, the row’s binding and the database it is from, x360ce or SDL, the device’s control that binding names in x360ce’s words, and what the box holds now, with Same or Differs beside it.
+[Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller as the page shows it, from x360ce’s row and SDL’s, and empties those they leave out. Dead zones and the other settings stay as they are.
+[Button]    │   │   ├── Copy as SDL                                                     # Copies this controller’s mapping to the clipboard as a row of SDL’s controller database for the device: its buttons, axes and hats, without formulas or other settings.
 [Button]    │   │   ├── Update SDL Database                                             # Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.
-[Label]     │   │   └── SDL update status (hidden)                                      # How the last update of SDL's controller database went.
-[Control]   │   ├── WheelChartUserControl                                               # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
-[Label]     │   │   ├── Wheel angle                                                     # The wheel's angle now, in degrees from the centre; negative is to the left.
-[Label]     │   │   ├── Spring force                                                    # The spring's force at that angle, in percent of the wheel's force, and which way it pushes.
-[Picture]   │   │   └── Centering chart                                                 # The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel's angle and force now.
+[Label]     │   │   └── SDL update status (hidden)                                      # How the last update of SDL’s controller database went.
+[Control]   │   ├── WheelChartUserControl                                               # The centering spring’s force at every angle of the wheel, and the wheel’s angle and force now.
+[Label]     │   │   ├── Wheel angle                                                     # The wheel’s angle now, in degrees from the centre; negative is to the left.
+[Label]     │   │   ├── Spring force                                                    # The spring’s force at that angle, in percent of the wheel’s force, and which way it pushes.
+[Picture]   │   │   └── Centering chart                                                 # The red curve is the spring’s force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel’s angle and force now.
+[Control]   │   ├── WheelLedStripControl                                                # Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.
+[Control]   │   ├── WheelTelemetryPage                                                  # Live game telemetry connection, UDP port forwarding, force feel tuning and live vehicle readings.
+[Tabs]      │   │   └── Game Telemetry sections                                         # Switches between live telemetry settings and protocol help.
+[Tab]       │   │       ├── Telemetry                                                   # Telemetry ports, force feel tuning, live vehicle readings and activity log.
+[Section]   │   │       │   ├── Connection and Ports                                    # Telemetry enable switch, dedicated UDP port, optional standard game ports and UDP IP/port forwarding.
+[CheckBox]  │   │       │   │   ├── Enable live game telemetry                          # Reads live vehicle telemetry from Shared Memory (Assetto Corsa, iRacing) and localhost UDP to drive wheels and telemetry-enabled devices.
+[CheckBox]  │   │       │   │   ├── Listen on standard game ports                       # Also binds standard game UDP ports (5300, 20777, 4123, 5606). Off by default so SimHub, CrewChief and wheel dashboards keep their ports. Occupied ports are always skipped automatically.
+[Number]    │   │       │   │   ├── Listen UDP port 1024..65535                         # Dedicated conflict-free loopback UDP port x360ce listens on (default 37150). Point games or SimHub forwarding here.
+[Button]    │   │       │   │   ├── Reset telemetry defaults                            # Restores telemetry ports and force tuning sliders to their default values.
+[CheckBox]  │   │       │   │   ├── Enable forward telemetry                            # Relays received UDP telemetry datagrams to Forward IP and Port (for example, SimHub on 127.0.0.1 or a dashboard on another PC/tablet).
+[Text]      │   │       │   │   ├── Forward IP address                                  # Destination IP address to relay received UDP telemetry to (127.0.0.1 for local apps like SimHub, or a LAN PC/tablet IP).
+[Number]    │   │       │   │   └── Forward UDP port 0..65535                           # Destination UDP port to relay received telemetry packets to (0 = forwarding off).
+[Section]   │   │       │   ├── Live telemetry                                          # Connection state and newest vehicle physics values received from the running game.
+[Label]     │   │       │   │   ├── Telemetry connection status                         # Current telemetry state and detected game or protocol.
+[Label]     │   │       │   │   ├── Listener ports                                      # Currently bound UDP ports and any skipped port conflicts.
+[Label]     │   │       │   │   ├── Speed                                               # Vehicle speed in km/h.
+[Progress]  │   │       │   │   ├── Speed meter                                         # Vehicle speed in km/h.
+[Label]     │   │       │   │   ├── Aligning angle                                      # Self-aligning / counter-steer equilibrium shift in degrees.
+[Progress]  │   │       │   │   ├── Aligning angle meter                                # Self-aligning / counter-steer equilibrium shift in degrees.
+[Label]     │   │       │   │   ├── Front grip                                          # Estimated front-tire grip (100 % full grip, lower = understeer).
+[Progress]  │   │       │   │   ├── Front grip meter                                    # Estimated front-tire grip (100 % full grip, lower = understeer).
+[Label]     │   │       │   │   ├── Lateral G                                           # Sideways cornering acceleration in G.
+[Progress]  │   │       │   │   ├── Lateral G meter                                     # Sideways cornering acceleration in G.
+[Label]     │   │       │   │   ├── Road pitch                                          # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
+[Progress]  │   │       │   │   ├── Road pitch meter                                    # Vehicle pitch angle in degrees and road grade in percent (nose up positive).
+[Label]     │   │       │   │   ├── Engine RPM                                          # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
+[Progress]  │   │       │   │   └── Engine RPM meter                                    # Normalized engine RPM for steering wheel RGB/RPM shift LEDs.
+[Section]   │   │       │   ├── Force Feel Tuning                                       # Adjusts how strongly live telemetry drives counter-steer aligning torque, understeer lightening, curb bumps, damping, rumble understeer, steering lead, and where road and impact feel comes from.
+[Slider]    │   │       │   │   ├── Aligning torque 0..200                              # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
+[Value]     │   │       │   │   ├── Aligning torque value                               # Scales self-aligning torque and counter-steer pull from live tire slip and lateral G (0 to 200 %).
+[Slider]    │   │       │   │   ├── Understeer 0..100                                   # Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.
+[Value]     │   │       │   │   ├── Understeer value                                    # Scales how much the wheel goes light when the front tires lose grip (0 to 100 %). Friction floor is always preserved.
+[Slider]    │   │       │   │   ├── Curb bumps 0..100                                   # Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %).
+[Value]     │   │       │   │   ├── Curb bumps value                                    # Scales directional curb strikes and suspension bump kicks from live telemetry (0 to 100 %).
+[Slider]    │   │       │   │   ├── Dynamic damping 0..200                              # Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %).
+[Value]     │   │       │   │   ├── Dynamic damping value                               # Scales surface and speed-driven wheel damping changes from telemetry (0 to 200 %).
+[Slider]    │   │       │   │   ├── Rumble understeer 0..60                             # Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).
+[Value]     │   │       │   │   ├── Rumble understeer value                             # Fallback when a game sends no telemetry: lightens the centering spring during sustained rumble while turning (0 to 60 %).
+[Slider]    │   │       │   │   ├── Steering lead 0..80                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
+[Value]     │   │       │   │   ├── Steering lead value                                 # Steering velocity feed-forward in milliseconds (0 to 80 ms) to counteract gamepad steering filter lag in console ports.
+[List]      │   │       │   │   ├── Road and impact feel from                           # Where the wheel's road and impact feel comes from while live telemetry drives the centering spring: the game's rumble as sent, the game's rumble without its gear change kicks, hits felt from telemetry alone, or both. Telemetry is recommended for a wheel; the game's rumble plays unchanged while no telemetry arrives.
+[Slider]    │   │       │   │   ├── Gear change 0..100                                  # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
+[Value]     │   │       │   │   └── Gear change value                                   # How much of the game's rumble plays for a moment while the gear changes, with live telemetry on (0 to 100 %).
+[Section]   │   │       │   └── Telemetry activity                                      # Recent telemetry port binds, protocol switches and setup hints, newest first.
+[Value]     │   │       │       └── Telemetry activity log                              # Recent telemetry port binds, protocol switches and setup hints, newest first.
+[Tab]       │   │       └── Help                                                        # Supported games, standard telemetry protocols, port coexistence and testing instructions.
+[Value]     │   │           └── Game Telemetry help                                     # Supported racing games, UDP ports, SimHub coexistence and Virtual Car testing guide.
 [Control]   │   ├── WidestTextButton                                                    # Clears the mapping, then asks you to press each control in turn.
-[Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
+[Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
 [Status]    │   │   ├── Last action                                                     # The most recent thing the program did.
@@ -354,9 +406,21 @@ not shown in this state of the program.
 [Group]     │   └── (MainControl)                                                       # The game being set up, and the tabs for the four controllers and everything else.
 [Toolbar]   │       ├── Game bar                                                        # Chooses the game being set up, and saves the settings.
 [List]      │       │   ├── Game                                                        # Which game the settings on every page below belong to.
-[Button]    │       │   ├── Save All                                                    # Writes every setting to disk now.
+[Button]    │       │   ├── Add Game...                                                 # Sets this program up for another game.
 [Button]    │       │   ├── Test... (hidden)                                            # Opens a window for trying the emulated controller without a game.
-[Button]    │       │   └── Add Game...                                                 # Sets this program up for another game.
+[Button]    │       │   ├── Save All                                                    # Writes every setting to disk now.
+[Button]    │       │   └── Language                                                    # The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.
+[CheckBox]  │       │       ├── English                                                 # Shows the window in English.
+[CheckBox]  │       │       ├── 中文                                                      # Shows the window in 中文.
+[CheckBox]  │       │       ├── Українська                                              # Shows the window in Українська.
+[CheckBox]  │       │       ├── Español                                                 # Shows the window in Español.
+[CheckBox]  │       │       ├── Português                                               # Shows the window in Português.
+[CheckBox]  │       │       ├── Deutsch                                                 # Shows the window in Deutsch.
+[CheckBox]  │       │       ├── 日本語                                                     # Shows the window in 日本語.
+[CheckBox]  │       │       ├── Français                                                # Shows the window in Français.
+[CheckBox]  │       │       ├── Polski                                                  # Shows the window in Polski.
+[CheckBox]  │       │       ├── 한국어                                                     # Shows the window in 한국어.
+[CheckBox]  │       │       └── Türkçe                                                  # Shows the window in Türkçe.
 [Tabs]      │       └── Main                                                            # The four controllers, and the pages for everything else.
 [Tab]       │           ├── Controller 1                                                # Settings for the first emulated Xbox controller.
 [Group]     │           │   └── (ControlPad1) -> PadControl                             # Everything about one emulated Xbox controller: what works it, and how.
@@ -374,7 +438,7 @@ not shown in this state of the program.
 [CheckBox]  │           │           │   │   ├── Allow only one copy of Application at a time  # Allow only one instance of the application to run at a time.
 [CheckBox]  │           │           │   │   ├── Minimize to Tray                        # Hides the window to the notification area instead of the taskbar.
 [CheckBox]  │           │           │   │   ├── Always on Top                           # Make program Top Window
-[CheckBox]  │           │           │   │   ├── Start with Windows                      # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
+[CheckBox]  │           │           │   │   ├── Start with Windows                      # Starts this copy of the program when you sign in. The tick is Windows’ own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
 [List]      │           │           │   │   └── Start with Windows                      # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
 [Section]   │           │           │   ├── Testing                                     # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
 [CheckBox]  │           │           │   │   ├── Enable XInput                           # Turns the emulated controllers on. Off leaves games with the real ones.
@@ -401,10 +465,10 @@ not shown in this state of the program.
 [Button]    │           │           │   │           ├── Refresh                         # Reads the folder list again.
 [Button]    │           │           │   │           ├── Remove                          # Stops searching the selected folder.
 [Button]    │           │           │   │           └── Add...                          # Adds a folder to search for games.
-[Section]   │           │           │   ├── Appearance                                  # The program's colours, and the font and size its windows are drawn in.
+[Section]   │           │           │   ├── Appearance                                  # The program’s colours, and the font and size its windows are drawn in.
 [List]      │           │           │   │   ├── Theme                                   # Light or dark colours. System follows the Windows setting for apps.
-[List]      │           │           │   │   ├── Font                                    # The font the program's windows are drawn in: the default, Windows' own; Selawik, built in; or an installed font. Takes effect when x360ce starts again.
-[List]      │           │           │   │   ├── Size                                    # The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' own for its own font and Windows' text size for any other, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.
+[List]      │           │           │   │   ├── Font                                    # The font the program’s windows are drawn in: the default, Windows’ own; Selawik, built in; or an installed font. Takes effect when x360ce starts again.
+[List]      │           │           │   │   ├── Size                                    # The size the program’s text is drawn at, in points and in pixels on this screen: the default, Windows’ own for its own font and Windows’ text size for any other, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.
 [Button]    │           │           │   │   └── Restart x360ce (hidden)                 # Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.
 [Section]   │           │           │   ├── Developing                                  # Aids for working on the program itself.
 [CheckBox]  │           │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB        # Enable Form Info (CTRL+SHIFT+RMB)
@@ -423,9 +487,9 @@ not shown in this state of the program.
 [CheckBox]  │           │           │       │   ├── Save Settings to Cloud              # Auto save settings to Internet Database.
 [List]      │           │           │       │   ├── Web service address                 # Internet settings database URL.
 [Button]    │           │           │       │   ├── Test                                # Asks the web service at that address who it is and says whether it answers.
-[List]      │           │           │       │   ├── SDL database address                # Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
-[Button]    │           │           │       │   ├── Update SDL Database                 # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
-[Button]    │           │           │       │   └── Update x360ce Database              # Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.
+[List]      │           │           │       │   ├── SDL database address                # Address every [Update SDL Database] button downloads SDL’s controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
+[Button]    │           │           │       │   ├── Update SDL Database                 # Downloads SDL’s controller database from that address into the settings folder, as the button on each controller’s SDL tab does, and says in the header how it went.
+[Button]    │           │           │       │   └── Update x360ce Database              # Downloads x360ce’s controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.
 [Section]   │           │           │       ├── Online account                          # Identifies this computer to the online database.
 [Text]      │           │           │       │   ├── Computer disk                       # Disk the computer identifier is taken from.
 [Text]      │           │           │       │   ├── Computer identifier                 # Anonymous identifier for this computer.
@@ -460,13 +524,13 @@ not shown in this state of the program.
 [Button]    │           │           │   │   ├── Refresh                                 # Checks HID Hide again.
 [Button]    │           │           │   │   ├── Install HID Hide                        # Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.
 [Button]    │           │           │   │   ├── Open Configuration                      # Opens the HID Hide program, where hidden devices are chosen.
-[Link]      │           │           │   │   ├── HID Hide releases                       # Opens the page HID Hide's setups are downloaded from, to download one by hand.
+[Link]      │           │           │   │   ├── HID Hide releases                       # Opens the page HID Hide’s setups are downloaded from, to download one by hand.
 [CheckBox]  │           │           │   │   └── Configure automatically                 # Hide a device through HID Hide while it is mapped to a controller.
 [Value]     │           │           │   └── HID Hide notes                              # What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.
 [Tab]       │           │           ├── HID Guardian (obsolete)                         # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Section]   │           │           │   ├── HID Guardian                                # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Text]      │           │           │   │   ├── HID Guardian state                      # Whether HID Guardian is still installed.
-[Button]    │           │           │   │   ├── Install (hidden)                        # Installs HID Guardian. Use HID Hide instead.
+[Button]    │           │           │   │   ├── Install                                 # Installs HID Guardian. Only development builds install it, so its removal can be tested: use HID Hide instead.
 [Button]    │           │           │   │   ├── Uninstall                               # Removes HID Guardian. Needs Administrator.
 [Button]    │           │           │   │   └── Refresh                                 # Checks HID Guardian again.
 [Value]     │           │           │   └── HID Guardian notes                          # Explains why HID Guardian is no longer recommended.
@@ -480,7 +544,7 @@ not shown in this state of the program.
 [Tab]       │           │           ├── Update                                          # Looks for a newer version of the program and installs it.
 [Group]     │           │           │   └── Update                                      # Looks for a newer version of the program and installs it, step by step, in the log below.
 [CheckBox]  │           │           │       ├── Check for updates on startup            # Look for a newer version after the program starts. Off means no request is made.
-[Label]     │           │           │       ├── What the check sends                    # When the check runs and the one thing it sends: this program's version, to github.com.
+[Label]     │           │           │       ├── What the check sends                    # When the check runs and the one thing it sends: this program’s version, to github.com.
 [Button]    │           │           │       ├── Check now                               # Looks for a newer version now, downloads it, checks it and installs it.
 [CheckBox]  │           │           │       ├── Check Digital Signature                 # Install only an update whose program file carries a trusted digital signature.
 [CheckBox]  │           │           │       ├── Check Version                           # Install only an update whose program file is newer than this one and is the version its release announces.
@@ -545,7 +609,7 @@ not shown in this state of the program.
 [Label]     │           │                   ├── About plugins                           # Which plugins load by themselves, and why plugins from others need permission.
 [Value]     │           │                   ├── Plugins folder                          # The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.
 [Button]    │           │                   ├── Open Folder                             # Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\MyDevice.dll, loads at once.
-[Grid]      │           │                   ├── Plugins                                 # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
+[Grid]      │           │                   ├── Plugins                                 # Each plugin found: whether it is enabled (built-in plugins load by default and can be unticked to unload), the devices or providers it adds, whether it loaded, who signed it, and why it did not load or was switched off.
 [Section]   │           │                   └── AutoHotkey scripts                      # Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.
 [CheckBox]  │           │                       ├── Allow AutoHotkey scripts            # Let AutoHotkey scripts read devices and change what controllers read.
 [Label]     │           │                       ├── About AutoHotkey scripts            # How a script reaches x360ce, and where the library it includes is written.
@@ -565,57 +629,59 @@ not shown in this state of the program.
 [Button]    │           │       │       ├── Show: All                                   # Lists every game.
 [Button]    │           │       │       ├── Show: Enabled                               # Lists only the games that are switched on.
 [Button]    │           │       │       └── Show: Disabled                              # Lists only the games that are switched off.
-[Group]     │           │       └── (GameDetailsControl)                                # How the selected game is set up.
-[Section]   │           │           ├── Hook mask                                       # Which questions a game asks about controllers this program answers for it.
-[CheckBox]  │           │           │   ├── Hook COM                                    # Answers when the game asks Windows for a controller through COM.
-[CheckBox]  │           │           │   ├── Hook Direct Input                           # Answers when the game asks for a controller through Direct Input.
-[CheckBox]  │           │           │   ├── Hook product and vendor codes               # Reports the fake product and vendor codes instead of the real ones.
-[CheckBox]  │           │           │   ├── Hook name                                   # Reports a different controller name to the game.
-[CheckBox]  │           │           │   ├── Stop                                        # Stops answering once the game has started.
-[CheckBox]  │           │           │   ├── Hook Load Library                           # Answers when the game loads a library, so the replacement is loaded instead.
-[CheckBox]  │           │           │   ├── Hook SetupAPI                               # Answers when the game asks Windows to list devices.
-[CheckBox]  │           │           │   ├── Hook WinVerifyTrust                         # Answers when the game checks a file's signature.
-[CheckBox]  │           │           │   └── Disable                                     # Turns every answer off, leaving the game with the real controllers.
-[Section]   │           │           ├── XInput files                                    # Which XInput library files this program supplies to the game.
-[CheckBox]  │           │           │   ├── XInput 9.1, 32-bit                          # Supplies the 32-bit XInput 9.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 9.1, 64-bit                          # Supplies the 64-bit XInput 9.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.1, 32-bit                          # Supplies the 32-bit XInput 1.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.1, 64-bit                          # Supplies the 64-bit XInput 1.1 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.2, 32-bit                          # Supplies the 32-bit XInput 1.2 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.2, 64-bit                          # Supplies the 64-bit XInput 1.2 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.3, 32-bit                          # Supplies the 32-bit XInput 1.3 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.3, 64-bit                          # Supplies the 64-bit XInput 1.3 library to the game.
-[CheckBox]  │           │           │   ├── XInput 1.4, 32-bit                          # Supplies the 32-bit XInput 1.4 library to the game.
-[CheckBox]  │           │           │   └── XInput 1.4, 64-bit                          # Supplies the 64-bit XInput 1.4 library to the game.
-[Section]   │           │           ├── Auto map                                        # Not available yet, so greyed out: the program does not map devices to controllers by itself.
-[CheckBox]  │           │           │   ├── Auto map controller 1                       # Lets the program assign controller 1 to a device when this game starts.
-[CheckBox]  │           │           │   ├── Auto map controller 2                       # Lets the program assign controller 2 to a device when this game starts.
-[CheckBox]  │           │           │   ├── Auto map controller 3                       # Lets the program assign controller 3 to a device when this game starts.
-[CheckBox]  │           │           │   └── Auto map controller 4                       # Lets the program assign controller 4 to a device when this game starts.
-[Section]   │           │           ├── DInput file                                     # Whether the Direct Input library is supplied to the game as well.
-[CheckBox]  │           │           │   ├── DInput 8, 32-bit                            # Supplies the 32-bit Direct Input library to the game.
-[CheckBox]  │           │           │   └── DInput 8, 64-bit                            # Supplies the 64-bit Direct Input library to the game.
-[Section]   │           │           ├── Help                                            # Searches the web for other people's settings for this game.
-[Button]    │           │           │   ├── Search on Google...                         # Searches the web for this game.
-[Button]    │           │           │   ├── Search on NGemu...                          # Searches the NGemu forum for this game.
-[Button]    │           │           │   └── Open NGemu...                               # Opens the NGemu forum.
-[Section]   │           │           ├── Other options                                   # How the game is started, and what it is told about the controller.
-[Number]    │           │           │   ├── Fake vendor code 0..65535                   # Vendor code reported to a game that only accepts one make of controller.
-[Value]     │           │           │   ├── Fake vendor code                            # Vendor code reported to a game that only accepts one make of controller.
-[Number]    │           │           │   ├── Fake product code 0..65535                  # Product code reported to a game that only accepts one model of controller.
-[Value]     │           │           │   ├── Fake product code                           # Product code reported to a game that only accepts one model of controller.
-[Number]    │           │           │   ├── Timeout -1..65535                           # How long to wait for the game before giving up.
-[Text]      │           │           │   ├── XInput path                                 # Folder the XInput library is written into.
-[List]      │           │           │   ├── Architecture                                # Whether the game is a 32-bit or a 64-bit program.
-[Text]      │           │           │   ├── DInput file                                 # Name of the Direct Input library written for the game.
-[List]      │           │           │   └── Emulation                                   # Whether the controller is presented by the virtual driver or by replaced library files.
-[Section]   │           │           └── Action                                          # Undoes every change made to this game.
-[Button]    │           │               └── Reset to Default                            # Puts this game's settings back the way they started.
+[Tabs]      │           │       └── Game pages                                          # The selected game’s pages: x360ce’s own settings for it, then a page for each game plugin that is for it.
+[Tab]       │           │           └── x360ce                                          # How x360ce sets the selected game up: which libraries are replaced, and how.
+[Group]     │           │               └── (GameDetailsControl)                        # How the selected game is set up.
+[Section]   │           │                   ├── Hook mask                               # Which questions a game asks about controllers this program answers for it.
+[CheckBox]  │           │                   │   ├── Hook COM                            # Answers when the game asks Windows for a controller through COM.
+[CheckBox]  │           │                   │   ├── Hook Direct Input                   # Answers when the game asks for a controller through Direct Input.
+[CheckBox]  │           │                   │   ├── Hook product and vendor codes       # Reports the fake product and vendor codes instead of the real ones.
+[CheckBox]  │           │                   │   ├── Hook name                           # Reports a different controller name to the game.
+[CheckBox]  │           │                   │   ├── Stop                                # Stops answering once the game has started.
+[CheckBox]  │           │                   │   ├── Hook Load Library                   # Answers when the game loads a library, so the replacement is loaded instead.
+[CheckBox]  │           │                   │   ├── Hook SetupAPI                       # Answers when the game asks Windows to list devices.
+[CheckBox]  │           │                   │   ├── Hook WinVerifyTrust                 # Answers when the game checks a file's signature.
+[CheckBox]  │           │                   │   └── Disable                             # Turns every answer off, leaving the game with the real controllers.
+[Section]   │           │                   ├── XInput files                            # Which XInput library files this program supplies to the game.
+[CheckBox]  │           │                   │   ├── XInput 9.1, 32-bit                  # Supplies the 32-bit XInput 9.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 9.1, 64-bit                  # Supplies the 64-bit XInput 9.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.1, 32-bit                  # Supplies the 32-bit XInput 1.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.1, 64-bit                  # Supplies the 64-bit XInput 1.1 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.2, 32-bit                  # Supplies the 32-bit XInput 1.2 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.2, 64-bit                  # Supplies the 64-bit XInput 1.2 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.3, 32-bit                  # Supplies the 32-bit XInput 1.3 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.3, 64-bit                  # Supplies the 64-bit XInput 1.3 library to the game.
+[CheckBox]  │           │                   │   ├── XInput 1.4, 32-bit                  # Supplies the 32-bit XInput 1.4 library to the game.
+[CheckBox]  │           │                   │   └── XInput 1.4, 64-bit                  # Supplies the 64-bit XInput 1.4 library to the game.
+[Section]   │           │                   ├── Auto map                                # Not available yet, so greyed out: the program does not map devices to controllers by itself.
+[CheckBox]  │           │                   │   ├── Auto map controller 1               # Lets the program assign controller 1 to a device when this game starts.
+[CheckBox]  │           │                   │   ├── Auto map controller 2               # Lets the program assign controller 2 to a device when this game starts.
+[CheckBox]  │           │                   │   ├── Auto map controller 3               # Lets the program assign controller 3 to a device when this game starts.
+[CheckBox]  │           │                   │   └── Auto map controller 4               # Lets the program assign controller 4 to a device when this game starts.
+[Section]   │           │                   ├── DInput file                             # Whether the Direct Input library is supplied to the game as well.
+[CheckBox]  │           │                   │   ├── DInput 8, 32-bit                    # Supplies the 32-bit Direct Input library to the game.
+[CheckBox]  │           │                   │   └── DInput 8, 64-bit                    # Supplies the 64-bit Direct Input library to the game.
+[Section]   │           │                   ├── Help                                    # Searches the web for other people’s settings for this game.
+[Button]    │           │                   │   ├── Search on Google...                 # Searches the web for this game.
+[Button]    │           │                   │   ├── Search on NGemu...                  # Searches the NGemu forum for this game.
+[Button]    │           │                   │   └── Open NGemu...                       # Opens the NGemu forum.
+[Section]   │           │                   ├── Other options                           # How the game is started, and what it is told about the controller.
+[Number]    │           │                   │   ├── Fake vendor code 0..65535           # Vendor code reported to a game that only accepts one make of controller.
+[Value]     │           │                   │   ├── Fake vendor code                    # Vendor code reported to a game that only accepts one make of controller.
+[Number]    │           │                   │   ├── Fake product code 0..65535          # Product code reported to a game that only accepts one model of controller.
+[Value]     │           │                   │   ├── Fake product code                   # Product code reported to a game that only accepts one model of controller.
+[Number]    │           │                   │   ├── Timeout -1..65535                   # How long to wait for the game before giving up.
+[Text]      │           │                   │   ├── XInput path                         # Folder the XInput library is written into.
+[List]      │           │                   │   ├── Architecture                        # Whether the game is a 32-bit or a 64-bit program.
+[Text]      │           │                   │   ├── DInput file                         # Name of the Direct Input library written for the game.
+[List]      │           │                   │   └── Emulation                           # Whether the controller is presented by the virtual driver or by replaced library files.
+[Section]   │           │                   └── Action                                  # Undoes every change made to this game.
+[Button]    │           │                       └── Reset to Default                    # Puts this game’s settings back the way they started.
 [Tab]       │           ├── Devices                                                     # Every controller the program can see, whether mapped or not.
 [Group]     │           │   ├── (XInputDevicesPanel)
 [Toolbar]   │           │   │   ├── Emulated controller actions                         # Buttons that act on the emulated controllers shown below.
 [Button]    │           │   │   │   ├── Refresh                                         # Reads the controllers again, for when one has arrived or left.
-[Button]    │           │   │   │   ├── Auto-Order                                      # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
+[Button]    │           │   │   │   ├── Auto-Order                                      # Orders the list so Controller N’s virtual controller takes XInput N and real controllers take the places left, then applies it.
 [Button]    │           │   │   │   └── Apply                                           # Recreates the controllers in the order shown. Needs Administrator.
 [Grid]      │           │   │   ├── XInput devices                                      # Every emulated controller and the XInput place it holds, in the order games see them.
 [Group]     │           │   │   └── Order notice (hidden)                               # Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.
@@ -638,7 +704,7 @@ not shown in this state of the program.
 [Button]    │           │               ├── Show Hidden Devices                         # Lists the devices HID Hide is hiding from games.
 [Button]    │           │               ├── Unhide All Devices                          # Makes every device HID Hide hides visible to games again, and clears every Hide box.
 [Button]    │           │               ├── Synchronize To HID Hide                     # Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.
-[Button]    │           │               └── Open HID Hide                               # Opens HID Hide's own program, or its download page while it is not installed.
+[Button]    │           │               └── Open HID Hide                               # Opens HID Hide’s own program, or its download page while it is not installed.
 [Tab]       │           ├── Cloud                                                       # Settings waiting to be sent to or fetched from the online database.
 [Group]     │           │   └── (CloudPanel)                                            # Settings waiting to be sent to or fetched from the online database.
 [Grid]      │           │       ├── Cloud tasks                                         # Settings waiting to be sent to or fetched from the online database. A task that fails waits longer before each try and stops after its last one; point at it to read why.
@@ -658,8 +724,8 @@ not shown in this state of the program.
 [Value]     │           │           │   └── Program details                             # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
 [Tab]       │           │           ├── Changes                                         # What changed in each release.
 [Text]      │           │           │   └── Change log                                  # What changed in each release.
-[Tab]       │           │           └── License                                         # Terms this program is given under.
-[Text]      │           │               └── Licence text                                # Terms this program is given under.
+[Tab]       │           │           └── License                                         # Terms this program is given under, then the licence of each part it carries from other projects.
+[Text]      │           │               └── Licence text                                # Terms this program is given under, then the licence of each part it carries from other projects.
 [Tab]       │           └── Issues                                                      # Problems the program found, and what to do about each one.
 [Group]     │               ├── Issues list                                             # Problems the program found, and what to do about each one.
 [Grid]      │               │   ├── Issues                                              # Problems the program found, with what to do about each one.
@@ -674,7 +740,7 @@ not shown in this state of the program.
 [Group]     │               └── (RecorderPanel)                                         # Records what the program reads and sends, into a file to post with a bug report.
 [Section]   │                   └── Record for a bug report                             # Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.
 [Label]     │                       ├── What the recording leaves out                   # Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.
-[CheckBox]  │                       ├── Settings and devices                            # A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.
+[CheckBox]  │                       ├── Settings and devices                            # A recording for a bug report holds the options, the game’s settings, each controller’s mapping and every device.
 [CheckBox]  │                       ├── Device input                                    # A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.
 [CheckBox]  │                       ├── Controller output                               # A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.
 [CheckBox]  │                       ├── Force feedback                                  # A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.

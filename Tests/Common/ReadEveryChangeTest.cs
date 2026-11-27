@@ -76,6 +76,24 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A mouse's side buttons, 4 and 5, are DirectInput's buttons 3 and 4: each tapped between two passes is shown pressed for one pass, in the state worked out for a mouse")]
+		public void A_mouse_side_button_tap_between_two_passes_is_shown()
+		{
+			// A mouse as the engine shows it: X, Y and the wheel report movement, and its reading is worked out into the state shown.
+			var mouse = new x360ce.Engine.Data.UserDevice { DiRelativeAxisMask = 0x7 };
+			var previous = State();
+			var read = State();
+			var state = new SourceState();
+			x360ce.App.DInput.DInputHelper.ToMouseState(mouse, read, state, 0);
+			// Button 4 pressed and let go, then button 5, both between the two passes, as DirectInput keeps a mouse's changes.
+			var kept = Kept(Button0 + 3, Pressed, Button0 + 3, 0, Button0 + 4, Pressed, Button0 + 4, 0);
+			Assert.AreEqual(2, kept.ShowIn(previous, state, false), "The two side-button taps the state missed are not counted.");
+			Assert.IsTrue(state.Buttons[3], "A tap of mouse button 4 between two passes was lost.");
+			Assert.IsTrue(state.Buttons[4], "A tap of mouse button 5 between two passes was lost.");
+			Assert.AreEqual(2, state.Buttons.Count(x => x), "A button that did not move was shown pressed.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A hat tapped and a stick flicked between two passes, which DirectInput kept, are shown for one pass; jitter and a device whose axes report movement are not")]
 		public void A_kept_hat_tap_and_stick_flick_are_shown()
 		{

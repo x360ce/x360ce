@@ -28,7 +28,7 @@ namespace x360ce.Web.WebServices
 		[WebMethod(EnableSession = true, Description = "Get the service's version and clock, and whether its database answers. For testing the address.")]
 		public ServerInfo GetServerInfo()
 		{
-			return EngineHelper.GetServerInfo();
+			return DatabaseHelper.GetServerInfo();
 		}
 
 		[WebMethod(EnableSession = true, Description = "Get vendors of controllers.")]
@@ -314,7 +314,7 @@ namespace x360ce.Web.WebServices
 					o.DateCreated = DateTime.Now;
 					o.FileName = p.FileName;
 					o.FileProductName = p.FileProductName;
-					db.Programs.AddObject(o);
+					db.Programs.Add(o);
 				}
 				else
 				{

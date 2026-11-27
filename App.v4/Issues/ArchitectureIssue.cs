@@ -8,15 +8,17 @@ using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
 	public class ArchitectureIssue : OnChangeIssue
 	{
-		public ArchitectureIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
-			Name = "Architecture";
-			FixName = "Download";
+			Name = UiLanguage.T("ArchitectureIssue.Architecture", "Architecture");
+			FixName = UiLanguage.T("ArchitectureIssue.Download", "Download");
 		}
 
 		// Check file only once.
@@ -60,7 +62,7 @@ namespace x360ce.App.Issues
 			{
 				SetSeverity(
 					IssueSeverity.Moderate, 1,
-					"This folder contains 32-bit game. You should use 32-bit X360CE Application:\r\n" +
+					UiLanguage.T("ArchitectureIssue.Use32Bit", "This folder contains 32-bit game. You should use 32-bit X360CE Application:") + "\r\n" +
 					"http://www.x360ce.com/Files/x360ce.zip"
 				);
 				return;
@@ -70,7 +72,7 @@ namespace x360ce.App.Issues
 			{
 				SetSeverity(
 					IssueSeverity.Moderate, 2,
-					"This folder contains 64-bit game. You should use 64-bit X360CE Application:\r\n" +
+					UiLanguage.T("ArchitectureIssue.Use64Bit", "This folder contains 64-bit game. You should use 64-bit X360CE Application:") + "\r\n" +
 					"http://www.x360ce.com/Files/x360ce_x64.zip"
 				);
 				return;

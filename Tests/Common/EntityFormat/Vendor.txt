@@ -1,0 +1,16 @@
+== XmlSerializer
+<Vendor xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <VendorId>646</VendorId>
+  <VendorName>VendorName</VendorName>
+  <ShortName>ShortName</ShortName>
+  <WebSite>WebSite</WebSite>
+</Vendor>
+== [DataMember] properties, with the key
+ShortName=ShortName
+VendorId=646
+VendorName=VendorName
+WebSite=WebSite
+== [DataMember] properties the checksum is made from
+ShortName=ShortName
+VendorName=VendorName
+WebSite=WebSite

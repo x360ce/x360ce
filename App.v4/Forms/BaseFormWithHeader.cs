@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -12,7 +13,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-			defaultBody = HelpBodyLabel.Text;
+			SetHeaderBody(MessageBoxIcon.None);
 			// What the header goes back to before anything has set a subject of its own.
 			restingSubject = HelpSubjectLabel.Text;
 			InitLoadingCircle();
@@ -24,6 +25,13 @@ namespace x360ce.App.Controls
 			EventHandler themeChanged = (s, e) => ColorHeaderBody();
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
 			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
+			EventHandler languageChanged = (s, e) =>
+			{
+				if (headerShowsDefaultBody)
+					HelpBodyLabel.Text = DefaultBody;
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
@@ -151,7 +159,11 @@ namespace x360ce.App.Controls
 
 		#region Help Header
 
-		private readonly string defaultBody;
+		/// <summary>What the header says when there is nothing else to say, in the language chosen.</summary>
+		static string DefaultBody
+		{
+			get { return UiLanguage.T("BaseFormWithHeader.UsefulTip", "Useful Tip: Minimize X360CE Application during gameplay to reduce its load on CPU and GPU. Minimized application automatically turns off CPU heavy tasks like Interface updates or state requests from XInput."); }
+		}
 
 		/// <summary>What the header says when the mouse is over nothing in particular.</summary>
 		private string restingSubject;
@@ -188,28 +200,29 @@ namespace x360ce.App.Controls
 		{
 			// Apply format.
 			if (body == null)
-				body = defaultBody;
+				body = DefaultBody;
 			else if (args.Length > 0)
 				body = string.Format(body, args);
 			// Set info with time.
-			SetHeaderBody(MessageBoxIcon.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
+			SetHeaderBody(MessageBoxIcon.Error, $"{DateTime.Now: yyyy-MM-dd HH:mm:ss}: {body}");
 		}
 
 		public void SetHeaderInfo(string body, params object[] args)
 		{
 			// Apply format.
 			if (body == null)
-				body = defaultBody;
+				body = DefaultBody;
 			else if (args.Length > 0)
 				body = string.Format(body, args);
 			// Set info with time.
-			SetHeaderBody(MessageBoxIcon.Information, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
+			SetHeaderBody(MessageBoxIcon.Information, $"{DateTime.Now: yyyy-MM-dd HH:mm:ss}: {body}");
 		}
 
 		public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)
 		{
+			headerShowsDefaultBody = body == null;
 			if (body == null)
-				body = defaultBody;
+				body = DefaultBody;
 			else if (args.Length > 0)
 				body = string.Format(body, args);
 			HelpBodyLabel.Text = body;
@@ -219,6 +232,7 @@ namespace x360ce.App.Controls
 
 		/// <summary>What the header body says: an error, information, or neither.</summary>
 		MessageBoxIcon headerIcon;
+		bool headerShowsDefaultBody;
 
 		/// <summary>The header body in the theme's warning colour for an error, its information colour for information, and the text colour otherwise.</summary>
 		void ColorHeaderBody()

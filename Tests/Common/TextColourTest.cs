@@ -424,6 +424,7 @@ namespace x360ce.Tests
 				"App.v4/Controls/PadControl.cs",
 				"App.v4/Controls/PadTabPages/General/PadControlImager.cs",
 				"App.v4/Controls/AxisToButtonUserControl.cs",
+				"App.v4/Common/AppHelper.cs", // a chart's reading, for the charts
 				"App.v4/Controls/AxisMapUserControl.cs",
 				"App.v4/Controls/PadTabPages/WheelChartUserControl.cs",
 				"App.v4/Forms/TestDeviceViews.cs",
@@ -444,13 +445,18 @@ namespace x360ce.Tests
 			// A chart's curve.
 			{ "ColorCurve", new[]
 			{
+				"App.v4/Common/AppHelper.cs", // for the charts
 				"App.v4/Controls/AxisMapUserControl.cs",
 				"App.v4/Controls/PadTabPages/WheelChartUserControl.cs",
 				"App.v3/Controls/ThumbUserControl.cs",
 			} },
-			// A control at rest and a control in use, as the controller picture marks them; and progress made.
-			{ "ColorNormal", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs" } },
-			{ "ColorActive", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "Engine/JocysCom/Controls/Themes/Default.Forms.cs" } },
+			// A control at rest and a control in use, as the controller picture marks them, as does the Mouse page's demo, its
+			// stick's dot and a held button's ear; and progress made.
+			{ "ColorNormal", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "App.v4/Controls/PadTabPages/General/PadControlImager.cs" } },
+			{ "ColorActive", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "App.v4/Controls/MouseDemoUserControl.cs", "App.v4/Controls/PadTabPages/General/PadControlImager.cs", "Engine/JocysCom/Controls/Themes/Default.Forms.cs" } },
+			// A mapping under the pointer and a mapping being recorded, on its box and on its mark on the controller picture.
+			{ "ColorOver", new[] { "App.v4/Controls/PadTabPages/General/PadControlImager.cs" } },
+			{ "ColorRecord", new[] { "App.v4/Controls/PadTabPages/General/PadControlImager.cs" } },
 			// The brand is the program's marks, which Windows Forms code does not draw.
 			{ "ColorBrand", new string[0] },
 			{ "ColorBrandCyan", new string[0] },
@@ -620,7 +626,7 @@ namespace x360ce.Tests
 			// The curve is drawn into the picture on another thread, after the theme changed.
 			if (chart is AxisMapUserControl)
 			{
-				var curve = FormsTheme.GetColor("ColorCurve");
+				var curve = x360ce.App.AppHelper.ChartCurveColor;
 				var picture = typeof(AxisMapUserControl).GetField("LastBackgroundImage", BindingFlags.Instance | BindingFlags.NonPublic);
 				// Smoothed onto a clear picture, a colour may come back a few steps off in a channel.
 				Func<Color, bool> isCurve = c => !c.IsEmpty && Math.Abs(c.R - curve.R) <= 4 && Math.Abs(c.G - curve.G) <= 4 && Math.Abs(c.B - curve.B) <= 4;
@@ -711,6 +717,10 @@ namespace x360ce.Tests
 		{
 			var counted = 0;
 			foreach (DataGridViewRow row in grid.Rows)
+			{
+				// A row dimmed because its item is switched off or away has rules of its own, checked by the test of dimmed rows.
+				if (!ControlsHelper.IsItemAvailable(row.DataBoundItem))
+					continue;
 				foreach (DataGridViewCell cell in row.Cells)
 				{
 					if (!cell.Visible || cell.ColumnIndex < 0)
@@ -730,6 +740,7 @@ namespace x360ce.Tests
 					counted += Expect(faults, where, style.ForeColor, "the row", style.BackColor);
 					counted += Expect(faults, where + " selected", style.SelectionForeColor, "the selected row", style.SelectionBackColor);
 				}
+			}
 			return counted;
 		}
 

@@ -65,6 +65,7 @@ namespace x360ce.App
 			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
+			this.LanguageButton = new System.Windows.Forms.ToolStripDropDownButton();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.HelpLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.DevicesLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -422,13 +423,17 @@ namespace x360ce.App
 			// 
 			// GamesToolStrip
 			// 
+			this.GamesToolStrip.CanOverflow = false;
+			this.GamesToolStrip.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.SaveAllButton,
-            this.TestButton,
             this.MappedDevicesLabel,
             this.GameToCustomizeComboBox,
-            this.AddGameButton});
+            this.AddGameButton,
+            this.TestButton,
+            this.SaveAllButton,
+            this.LanguageButton});
+			this.GamesToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Table;
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 64);
 			this.GamesToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
@@ -436,11 +441,9 @@ namespace x360ce.App
 			this.GamesToolStrip.Size = new System.Drawing.Size(804, 26);
 			this.GamesToolStrip.TabIndex = 25;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
-			this.GamesToolStrip.Layout += new System.Windows.Forms.LayoutEventHandler(this.GamesToolStrip_Layout);
 			// 
 			// SaveAllButton
 			// 
-			this.SaveAllButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.SaveAllButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.SaveAllButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.SaveAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -453,7 +456,6 @@ namespace x360ce.App
 			// 
 			// TestButton
 			// 
-			this.TestButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.TestButton.Image = global::x360ce.App.Properties.Resources.test_32x32;
 			this.TestButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.TestButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
@@ -467,19 +469,21 @@ namespace x360ce.App
 			// 
 			// MappedDevicesLabel
 			// 
+			this.MappedDevicesLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.MappedDevicesLabel.Name = "MappedDevicesLabel";
 			this.MappedDevicesLabel.Size = new System.Drawing.Size(38, 21);
 			this.MappedDevicesLabel.Text = "Game";
 			// 
 			// GameToCustomizeComboBox
 			// 
+			this.GameToCustomizeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.GameToCustomizeComboBox.AutoSize = false;
 			this.GameToCustomizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
 			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(360, 24);
 			// 
 			// AddGameButton
 			// 
-			this.AddGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_32x32;
 			this.AddGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.AddGameButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
@@ -490,7 +494,19 @@ namespace x360ce.App
 			this.AddGameButton.Size = new System.Drawing.Size(86, 22);
 			this.AddGameButton.Text = "Add Game...";
 			this.AddGameButton.Click += new System.EventHandler(this.AddGameButton_Click);
-			// 
+			//
+			// LanguageButton
+			//
+			this.LanguageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.LanguageButton.Image = global::x360ce.App.Properties.Resources.language_32x32;
+			this.LanguageButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this.LanguageButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.LanguageButton.Margin = new System.Windows.Forms.Padding(1);
+			this.LanguageButton.Name = "LanguageButton";
+			this.LanguageButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
+			this.LanguageButton.Size = new System.Drawing.Size(29, 22);
+			this.LanguageButton.Text = "Language";
+			//
 			// panel1
 			// 
 			this.panel1.Controls.Add(this.MainTabControl);
@@ -588,6 +604,7 @@ namespace x360ce.App
 		public x360ce.App.Controls.RecorderUserControl RecorderPanel;
 		internal ToolStripButton TestButton;
 		internal ToolStripButton AddGameButton;
+		internal ToolStripDropDownButton LanguageButton;
 		internal Panel panel1;
 		public TabPage OptionsTabPage;
 		private System.Windows.Forms.TableLayoutPanel HelpLayoutPanel;

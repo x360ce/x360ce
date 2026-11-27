@@ -34,6 +34,7 @@
 			this.FolderTextBox = new System.Windows.Forms.TextBox();
 			this.OpenFolderButton = new System.Windows.Forms.Button();
 			this.PluginsDataGridView = new System.Windows.Forms.DataGridView();
+			this.EnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.StateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DevicesColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -251,6 +252,7 @@
 			this.PluginsDataGridView.AllowUserToResizeRows = false;
 			this.PluginsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.PluginsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.EnabledColumn,
 			this.NameColumn,
 			this.StateColumn,
 			this.DevicesColumn,
@@ -262,11 +264,20 @@
 			this.PluginsDataGridView.Location = new System.Drawing.Point(9, 96);
 			this.PluginsDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PluginsDataGridView.Name = "PluginsDataGridView";
-			this.PluginsDataGridView.ReadOnly = true;
+			this.PluginsDataGridView.ReadOnly = false;
 			this.PluginsDataGridView.RowHeadersVisible = false;
 			this.PluginsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.PluginsDataGridView.Size = new System.Drawing.Size(626, 305);
 			this.PluginsDataGridView.TabIndex = 5;
+			//
+			// EnabledColumn
+			//
+			this.EnabledColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.EnabledColumn.DataPropertyName = "Enabled";
+			this.EnabledColumn.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			this.EnabledColumn.HeaderText = "Enabled";
+			this.EnabledColumn.Name = "EnabledColumn";
+			this.EnabledColumn.ReadOnly = false;
 			//
 			// NameColumn
 			//
@@ -352,6 +363,7 @@
 		internal System.Windows.Forms.TextBox FolderTextBox;
 		internal System.Windows.Forms.Button OpenFolderButton;
 		internal System.Windows.Forms.DataGridView PluginsDataGridView;
+		internal System.Windows.Forms.DataGridViewCheckBoxColumn EnabledColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn StateColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DevicesColumn;

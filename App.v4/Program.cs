@@ -157,6 +157,12 @@ namespace x360ce.App
 			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
 			// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			// The build runs the language sync: it shows nothing, and says what went wrong as a build warning.
+			if (IsLanguagesSync(args))
+			{
+				SyncLanguagesWithoutWindows(args);
+				return;
+			}
 			// In debug mode don't try to wrap app into try catch.
 			if (IsDebug)
 			{
@@ -183,6 +189,31 @@ namespace x360ce.App
 		}
 
 		public const string arg_WindowState = "WindowState";
+
+		/// <summary>True when the command line asks for the language sync, <c>-Languages=&lt;folder&gt;</c>.</summary>
+		static bool IsLanguagesSync(string[] args)
+		{
+			return args.Any(x => x.TrimStart('-', '/').StartsWith(AppLanguages.Switch, StringComparison.OrdinalIgnoreCase));
+		}
+
+		/// <summary>
+		/// Runs the language sync for a build. Whatever stops it is printed as a build warning and ends the run with exit code
+		/// 2, never shown in a window: a window would hold the build until somebody closed it.
+		/// </summary>
+		static void SyncLanguagesWithoutWindows(string[] args)
+		{
+			TextWriter output, error;
+			JocysCom.ClassLibrary.Mcp.McpClient.OpenConsole(out output, out error);
+			try
+			{
+				StartApp(args);
+			}
+			catch (Exception ex)
+			{
+				output.WriteLine("{0}(1,1): warning {1}: The language sync stopped: {2}", Application.ExecutablePath, AppLanguages.WarningFailed, ex.ToString().Replace("\r\n", " | "));
+				Environment.ExitCode = 2;
+			}
+		}
 
 		/// <summary>Prints the x360ce skill for AI agents, one of its files, or installs it into a folder.</summary>
 		public const string arg_Skill = "Skill";
@@ -298,10 +329,13 @@ namespace x360ce.App
 			// Recorded only by a start that goes on to build the window. The record is replaced by whatever run
 			// ends last, and a switch that answers and stops would leave its own few methods in it, so the next
 			// start would compile ahead nothing the window needs.
-			if (!ic.Parameters.ContainsKey("Exit"))
+			// The language sync builds the pages to read their words and leaves, in its own new settings folder: it records no
+			// start-up profile and has no settings to check, whose repair would ask the person in a window.
+			var languages = ic.Parameters.ContainsKey(AppLanguages.Switch);
+			if (!ic.Parameters.ContainsKey("Exit") && !languages)
 				StartJitProfile();
 			StartupTrace.Mark("StartApp: before CheckSettings");
-			if (!CheckSettings())
+			if (!languages && !CheckSettings())
 				return;
 			StartupTrace.Mark("StartApp: settings checked");
 			Global.InitializeServices();
@@ -316,6 +350,10 @@ namespace x360ce.App
 			// Known before the window is built: an export opens no door and writes no setting.
 			if (ic.Parameters.ContainsKey(arg_ExportUi))
 				ExportUiFolder = ic.Parameters[arg_ExportUi];
+			// Before the first window, so every control is shown in the language chosen as it is built. The sync and the
+			// export read the English, and leave the language as it is.
+			if (!languages && ExportUiFolder == null)
+				AppLanguages.Use(AppLanguages.For(SettingsManager.Options.Language));
 			// Before the main window, whose making first takes the interface thread's context for posted calls: a recording
 			// then says which posted call the window is in when it stops answering.
 			System.Threading.SynchronizationContext.SetSynchronizationContext(new Recording.ReportRecorder.WatchedContext());
@@ -323,6 +361,24 @@ namespace x360ce.App
 			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(MainForm.Current);
 			StartupTrace.Mark("StartApp: main form built");
+			// Say what each language lacks against the English, and leave; the build runs it. Nothing is shown.
+			if (languages)
+			{
+				TextWriter output, error;
+				JocysCom.ClassLibrary.Mcp.McpClient.OpenConsole(out output, out error);
+				MainForm.Current.ConstructForLanguages();
+				var folder = ic.Parameters[AppLanguages.Switch];
+				if (string.IsNullOrEmpty(folder))
+					folder = Path.Combine(JocysCom.ClassLibrary.Mcp.AiSkill.SourceSkillsFolder(JocysCom.ClassLibrary.Mcp.AiSkill.Name), "..", "App.v4", "Languages");
+				else if (!Path.IsPathRooted(folder))
+					folder = Path.Combine(CallerFolder, folder);
+				var plugins = Plugins.PluginDocs.EmbeddedManager().Files.Where(x => x.Assembly != null).Select(x => x.Assembly);
+				Environment.ExitCode = AppLanguages.Sync(folder, plugins, output);
+				output.Flush();
+				Global.DisposeCloudClient();
+				Global.DisposeServices();
+				return;
+			}
 			// Describe the interface and leave. The program is the only accurate account of its own
 			// features, so it writes that account itself.
 			//

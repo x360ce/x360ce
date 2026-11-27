@@ -1,6 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
-using System.Linq.Expressions;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
@@ -13,11 +13,11 @@ namespace x360ce.Engine.Data
 
 		Guid IUserRecord.Id { get {return SettingId; }  set { SettingId = value; } }
 
-		[XmlIgnore]
+		[XmlIgnore, NotMapped]
 		public bool IsOnline
 		{
 			get { return _IsOnline; }
-			set { _IsOnline = value; ReportPropertyChanged(x => x.IsOnline); }
+			set { SetProperty(ref _IsOnline, value); }
 		}
 		bool _IsOnline;
 
@@ -117,19 +117,5 @@ namespace x360ce.Engine.Data
 			}
 			return points;
 		}
-
-		#region INotifyPropertyChanged
-
-		/// <summary>
-		/// Use: ReportPropertyChanged(x => x.PropertyName);
-		/// </summary>
-		void ReportPropertyChanged(Expression<Func<UserDevice, object>> selector)
-		{
-			var body = (MemberExpression)((UnaryExpression)selector.Body).Operand;
-			var name = body.Member.Name;
-			ReportPropertyChanged(name);
-		}
-
-		#endregion
 	}
 }

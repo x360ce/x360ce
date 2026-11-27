@@ -5,6 +5,7 @@ using System.Linq;
 using x360ce.App.DInput;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -29,9 +30,14 @@ namespace x360ce.App.Issues
 	{
 		public RawInputMissingIssue() : base()
 		{
-			Name = "Games Cannot See Controller";
-			FixName = "Restart Controller";
 			FixNeedsAdmin = true;
+		}
+
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
+			Name = UiLanguage.T("RawInputMissingIssue.GamesCannotSeeController", "Games Cannot See Controller");
+			FixName = UiLanguage.T("RawInputMissingIssue.RestartController", "Restart Controller");
 		}
 
 		/// <summary>The controllers found missing on the round before, by instance.</summary>
@@ -69,8 +75,8 @@ namespace x360ce.App.Issues
 			_restart = named.SelectMany(VirtualDriverInstaller.GetHidHidePaths).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 			var names = string.Join(", ", named.Select(x => string.IsNullOrEmpty(x.ProductName) ? x.InstanceName : x.ProductName).Distinct().ToArray());
 			var text = string.Format(named.Length == 1
-				? "Windows has {0}, but a game that reads controllers through Raw Input cannot see it until it starts again, as after HID Hide stops hiding it. Restart it here, or unplug it and plug it in again."
-				: "Windows has {0}, but a game that reads controllers through Raw Input cannot see them until they start again, as after HID Hide stops hiding them. Restart them here, or unplug them and plug them in again.",
+				? UiLanguage.T("RawInputMissingIssue.WindowsHasButAGameThat", "Windows has {0}, but a game that reads controllers through Raw Input cannot see it until it starts again, as after HID Hide stops hiding it. Restart it here, or unplug it and plug it in again.")
+				: UiLanguage.T("RawInputMissingIssue.WindowsHasButAGameThat2", "Windows has {0}, but a game that reads controllers through Raw Input cannot see them until they start again, as after HID Hide stops hiding them. Restart them here, or unplug them and plug them in again."),
 				names);
 			if (_lastFixResult != null)
 				text += Environment.NewLine + _lastFixResult;
@@ -133,7 +139,7 @@ namespace x360ce.App.Issues
 			using (var devices = new ElevatedDevices())
 			{
 				done = devices.Switch(false, ids, out error) && devices.Switch(true, ids, out error);
-				_lastFixResult = done ? null : "The restart did not finish: " + error;
+				_lastFixResult = done ? null : string.Format(UiLanguage.T("RawInputMissingIssue.RestartNotFinished", "The restart did not finish: {0}"), error);
 			}
 			// Restarted controllers come back as new arrivals, which the device list reads as for any controller plugged in.
 			// A failed restart keeps them named, so the next round shows why it failed.

@@ -27,8 +27,7 @@ namespace x360ce.Web.WebServices
 			if (pDB == null)
 			{
 				pDB = ps;
-				pDB.EntityKey = null;
-				db.PadSettings.AddObject(pDB);
+				db.PadSettings.Add(pDB);
 			}
 			// Look for existing setting.
 			var sDB = db.UserSettings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
@@ -36,7 +35,6 @@ namespace x360ce.Web.WebServices
 			if (sDB == null)
 			{
 				sDB = s;
-				sDB.EntityKey = null;
 				// Assign brand new ID.
 				s.SettingId = Guid.NewGuid();
 				s.DateCreated = n;
@@ -44,7 +42,7 @@ namespace x360ce.Web.WebServices
 				s.DateSelected = n;
 				// Link PadSetting with setting.
 				s.PadSettingChecksum = pDB.PadSettingChecksum;
-				db.UserSettings.AddObject(sDB);
+				db.UserSettings.Add(sDB);
 			}
 			else
 			{
@@ -65,7 +63,7 @@ namespace x360ce.Web.WebServices
 			var db = new x360ceModelContainer();
 			var setting = db.UserSettings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
 			if (setting == null) return "Setting not found";
-			db.UserSettings.DeleteObject(setting);
+			db.UserSettings.Remove(setting);
 			db.SaveChanges();
 			db.Dispose();
 			db = null;

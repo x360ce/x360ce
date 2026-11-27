@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -15,10 +16,11 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	public class VirtualDeviceDriverIssue : OnChangeIssue
 	{
-		public VirtualDeviceDriverIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
-			Name = "Virtual Device Driver";
-			FixName = "Install";
+			Name = UiLanguage.T("VirtualDeviceDriverIssue.VirtualDeviceDriver", "Virtual Device Driver");
+			FixName = UiLanguage.T("VirtualDeviceDriverIssue.Install", "Install");
 		}
 
 		public override void CheckTask()
@@ -30,7 +32,7 @@ namespace x360ce.App.Issues
 			}
 			if (DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion() == null)
 			{
-				SetSeverity(IssueSeverity.Moderate, 0, "You need to install Virtual Driver for emulation to work.");
+				SetSeverity(IssueSeverity.Moderate, 0, UiLanguage.T("VirtualDeviceDriverIssue.YouNeedToInstallVirtualDriver", "You need to install Virtual Driver for emulation to work."));
 				return;
 			}
 			SetSeverity(IssueSeverity.None);

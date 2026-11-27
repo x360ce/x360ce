@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using System;
@@ -29,6 +30,14 @@ namespace x360ce.App.Controls
 			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			UpdateRangeLabels();
 			UpdateValues();
+			EventHandler languageChanged = (s, e) =>
+			{
+				UpdateValues(true);
+				pictureOutOfDate = true;
+				MainPictureBox.Invalidate();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>The curve the chart draws, built from the settings below.</summary>
@@ -126,13 +135,13 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Writes the wheel's angle and force above the chart, when either changed.</summary>
-		void UpdateValues()
+		void UpdateValues(bool reword = false)
 		{
 			curve.Set(strength, centre, peak, lightening, range, speedOverride ?? speed, strength == 0 ? 0 : friction);
 			var known = position >= 0;
 			var angle = known ? AngleOf(position) : int.MinValue;
 			var force = known ? curve.Force(position) : int.MinValue;
-			if (angle == shownAngle && force == shownForce)
+			if (!reword && angle == shownAngle && force == shownForce)
 				return;
 			shownAngle = angle;
 			shownForce = force;
@@ -141,7 +150,8 @@ namespace x360ce.App.Controls
 				? "-"
 				: force == 0
 					? "0 %"
-					: string.Format("{0} % to the {1}", Math.Abs(force), force > 0 ? "right" : "left");
+					: string.Format(force > 0 ? UiLanguage.T("WheelChartUserControl.ForceRight", "{0} % to the right")
+						: UiLanguage.T("WheelChartUserControl.ForceLeft", "{0} % to the left"), Math.Abs(force));
 		}
 
 		/// <summary>The steering angle of a wheel position, in whole degrees from the centre, negative to the left.</summary>
@@ -161,13 +171,14 @@ namespace x360ce.App.Controls
 		void InitPaintObjects()
 		{
 			DisposePaintObjects();
-			curvePen = new Pen(FormsTheme.GetColor("ColorCurve"), 1.5f);
+			// The curve and the dot are as thick as the zoom; the frame and the crosshair stay one pixel, so they stay sharp.
+			curvePen = new Pen(AppHelper.ChartCurveColor, 1.5f * ControlsHelper.DpiScale);
 			curvePen.LineJoin = LineJoin.Round;
 			gridPen = new Pen(AppHelper.ChartLineColor, 1f);
 			// The angle is the reading and the force what the curve gives for it, coloured as the thumb charts colour their
 			// two values; the crosshair takes the force's colour.
 			var forceColor = FormsTheme.GetColor("ForegroundOutput");
-			var angleColor = FormsTheme.GetColor("ForegroundActive");
+			var angleColor = AppHelper.ChartReadingColor;
 			crossPen = new Pen(forceColor, 1f);
 			ForceValueLabel.ForeColor = forceColor;
 			AngleValueLabel.ForeColor = angleColor;
@@ -326,9 +337,9 @@ namespace x360ce.App.Controls
 				g.DrawLine(gridPen, middleX, 0f, middleX, h);
 				g.DrawLine(gridPen, 0f, middleY, w, middleY);
 				g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-				var pushesLeft = "pushes left";
+				var pushesLeft = UiLanguage.T("WheelChartUserControl.PushesLeft", "pushes left");
 				var size = g.MeasureString(pushesLeft, noteFont);
-				g.DrawString("pushes right", noteFont, noteBrush, 4f, 2f);
+				g.DrawString(UiLanguage.T("WheelChartUserControl.PushesRight", "pushes right"), noteFont, noteBrush, 4f, 2f);
 				g.DrawString(pushesLeft, noteFont, noteBrush, w - size.Width - 4f, h - size.Height - 2f);
 				g.SmoothingMode = SmoothingMode.HighQuality;
 				var points = CurvePoints(w, h);
@@ -403,7 +414,7 @@ namespace x360ce.App.Controls
 			g.DrawLine(crossPen, x, 0f, x, h);
 			g.DrawLine(crossPen, 0f, y, w, y);
 			g.SmoothingMode = SmoothingMode.HighQuality;
-			const float radius = 3f;
+			var radius = 3f * ControlsHelper.DpiScale;
 			g.FillEllipse(dotBrush, x - radius + 0.5f, y - radius + 0.5f, radius * 2f, radius * 2f);
 		}
 
@@ -430,6 +441,121 @@ namespace x360ce.App.Controls
 					components.Dispose();
 			}
 			base.Dispose(disposing);
+		}
+	}
+
+	/// <summary>
+	/// Symmetric 10-LED RGB/RPM shift indicator bar matching Logitech G27/G29/G923 wheel LEDs (5 pairs: 2 green, 1 amber,
+	/// 2 red, lighting outside-in). Uses x360ce's shared theme frame colours and scales height cleanly on the 4 px grid.
+	/// </summary>
+	public sealed class WheelLedStripControl : Control
+	{
+		static readonly Color[] PairColors =
+		{
+			Color.FromArgb(46, 196, 86),   // Bit 0: outer green
+			Color.FromArgb(106, 212, 64),  // Bit 1: inner green
+			Color.FromArgb(240, 188, 36),  // Bit 2: amber
+			Color.FromArgb(236, 98, 42),   // Bit 3: orange-red
+			Color.FromArgb(228, 42, 42),   // Bit 4: centre red / shift
+		};
+
+		byte _mask;
+
+		public WheelLedStripControl()
+		{
+			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
+			TabStop = false;
+			var scale = ControlsHelper.DpiScale;
+			var h = Math.Max(16, (int)Math.Round(20 * scale));
+			MinimumSize = new Size((int)Math.Round(80 * scale), h);
+			Height = h;
+			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
+		}
+
+		void FormsTheme_ThemeChanged(object sender, EventArgs e)
+		{
+			if (!IsDisposed)
+				Invalidate();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
+			base.Dispose(disposing);
+		}
+
+		/// <summary>5-bit LED bitmask (bits 0..4 from outer green pair to centre red pair).</summary>
+		public byte Mask
+		{
+			get { return _mask; }
+			set
+			{
+				var clamped = (byte)(value & 0x1F);
+				if (clamped == _mask)
+					return;
+				_mask = clamped;
+				Invalidate();
+			}
+		}
+
+		protected override void OnFontChanged(EventArgs e)
+		{
+			base.OnFontChanged(e);
+			var scale = ControlsHelper.DpiScale;
+			var h = Math.Max((int)Math.Round(20 * scale), ((Font.Height + 7) / 4) * 4);
+			if (MinimumSize.Height != h)
+			{
+				MinimumSize = new Size((int)Math.Round(80 * scale), h);
+				Height = h;
+			}
+		}
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			var g = e.Graphics;
+			var rect = ClientRectangle;
+			if (rect.Width < 24 || rect.Height < 8)
+				return;
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			var face = FormsTheme.FrameFace(this);
+			var borderCol = FormsTheme.GetColor("BorderField");
+			var offCol = FormsTheme.GetColor("BackgroundDark");
+			using (var bg = new SolidBrush(face))
+				g.FillRectangle(bg, rect);
+
+			const int count = 10;
+			var unit = Math.Max(4, (int)Math.Round(4 * ControlsHelper.DpiScale));
+			var pad = unit;
+			var gap = unit;
+			var availW = Math.Max(count * 4, rect.Width - pad * 2 - gap * (count - 1));
+			var segW = (float)availW / count;
+			var segH = Math.Max(4f, rect.Height - pad * 2);
+			var y = (rect.Height - segH) * 0.5f;
+
+			using (var offBrush = new SolidBrush(offCol))
+			using (var borderPen = new Pen(borderCol))
+			{
+				for (var i = 0; i < count; i++)
+				{
+					// Symmetric outside-in mapping: slots 0 & 9 -> bit 0, 1 & 8 -> bit 1, ..., 4 & 5 -> bit 4.
+					var bit = i < 5 ? i : 9 - i;
+					var lit = Enabled && (_mask & (1 << bit)) != 0;
+					var x = pad + i * (segW + gap);
+					var seg = new RectangleF(x, y, segW, segH);
+					if (lit)
+					{
+						using (var onBrush = new SolidBrush(PairColors[bit]))
+							g.FillRectangle(onBrush, seg);
+					}
+					else
+					{
+						g.FillRectangle(offBrush, seg);
+					}
+					g.DrawRectangle(borderPen, seg.X, seg.Y, seg.Width, seg.Height);
+				}
+				g.DrawRectangle(borderPen, 0, 0, rect.Width - 1, rect.Height - 1);
+			}
 		}
 	}
 }

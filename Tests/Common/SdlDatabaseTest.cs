@@ -65,7 +65,10 @@ namespace x360ce.Tests
 			Assert.IsTrue(source.Mappings.Any(x => x.Guid.Form == SdlGuidForm.XInput), "The xinput row is missing.");
 			StringAssert.StartsWith(source.Describe(), "built in, 2026-11-02, 07af1d5, ");
 			Assert.IsNull(source.Address, "The line \"# Source:\" SDL_GameControllerDB writes was read as the address the copy was downloaded from.");
-			StringAssert.Contains(SdlDatabase.ReadLicence(), "Sam Lantinga", "The database's licence is not carried with it.");
+			// Its licence is the one SDL_GameControllerDB gives at the same commit.
+			var list = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, ThirdPartyLicences.ListPath));
+			var licence = ThirdPartyLicences.Parse(list).Single(x => x.Address == SdlDatabase.ProjectUrl);
+			StringAssert.Contains(licence.Provenance, source.Sha, "The licence carried is not taken at the built-in database's commit.");
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("critical")]
@@ -196,7 +199,7 @@ namespace x360ce.Tests
 			// x360ce's own database first, SDL's where its row maps nothing.
 			var x360ce = SdlDatabase.Merge(Source(SdlSourceKind.BuiltIn, XboxGuid + ",Xbox 360 Pad,users:9,A:2,UseForceFeedback:1,platform:Windows,"));
 			var both = AutoMapHelper.GetAutoPreset(XboxPad(), out note, database, x360ce);
-			StringAssert.Contains(note, "x360ce's controller database");
+			StringAssert.Contains(note, "x360ce’s controller database");
 			Assert.AreEqual("2", both.ButtonA, "SDL won over x360ce's database.");
 			Assert.AreEqual("x3", both.LeftTrigger, "SDL did not fill what x360ce's row leaves empty.");
 			Assert.AreEqual("1", both.ForceEnable);
@@ -212,7 +215,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(Guid.Empty, AutoMapHelper.GetAutoPreset(unread, out note, database, none).PadSettingChecksum,
 				"A device only SDL knows was filled before its axes were known.");
 			var ps = AutoMapHelper.GetAutoPreset(XboxPad(), out note, database, none);
-			StringAssert.Contains(note, "SDL's controller database");
+			StringAssert.Contains(note, "SDL’s controller database");
 			StringAssert.Contains(note, "misc1:b10", "What was left out is not said.");
 			Assert.AreEqual("x3", ps.LeftTrigger);
 			Assert.AreEqual("x-3", ps.RightTrigger);

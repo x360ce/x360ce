@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -79,7 +80,7 @@ namespace x360ce.App.Controls
 		{
 			var url = InternetDatabaseUrlComboBox.Text;
 			TestServiceButton.Enabled = false;
-			MainForm.Current.SetHeaderInfo("Testing {0}...", url);
+			MainForm.Current.SetHeaderInfo(UiLanguage.T("OptionsInternetUserControl.TestingService", "Testing {0}..."), url);
 			System.Threading.Tasks.Task.Run(() =>
 			{
 				bool working;
@@ -133,54 +134,48 @@ namespace x360ce.App.Controls
 		private void LoginButton_Click(object sender, EventArgs e)
 		{
 			// Secure login over insecure web services.
-			if (LoginButton.Text == "Log In")
+			var o = SettingsManager.Options;
+			var saveOptions = false;
+			if (o.CheckAndFixUserRsaKeys())
 			{
-				var o = SettingsManager.Options;
-				var saveOptions = false;
-				if (o.CheckAndFixUserRsaKeys())
+				SettingsManager.OptionsData.Save();
+			}
+			var ws = new WebServiceClient();
+			var url = InternetDatabaseUrlComboBox.Text;
+			ws.Url = url;
+			CloudMessage results;
+			// If cloud RSA keys are missing then...
+			if (string.IsNullOrEmpty(o.CloudRsaPublicKey))
+			{
+				// Step 1: Get Server's Public RSA key for encryption.
+				var msg = new CloudMessage(CloudAction.GetPublicRsaKey);
+				CloudHelper.ApplySecurity(msg);
+				msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
+				// Retrieve public RSA key.
+				results = ws.Execute(msg);
+				if (results.ErrorCode == 0)
 				{
-					SettingsManager.OptionsData.Save();
+					o.CloudRsaPublicKey = results.Values.GetValue<string>(CloudKey.RsaPublicKey);
+					saveOptions = true;
 				}
-				var ws = new WebServiceClient();
-				var url = InternetDatabaseUrlComboBox.Text;
-				ws.Url = url;
-				CloudMessage results;
-				// If cloud RSA keys are missing then...
-				if (string.IsNullOrEmpty(o.CloudRsaPublicKey))
-				{
-					// Step 1: Get Server's Public RSA key for encryption.
-					var msg = new CloudMessage(CloudAction.GetPublicRsaKey);
-					CloudHelper.ApplySecurity(msg);
-					msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
-					// Retrieve public RSA key.
-					results = ws.Execute(msg);
-					if (results.ErrorCode == 0)
-					{
-						o.CloudRsaPublicKey = results.Values.GetValue<string>(CloudKey.RsaPublicKey);
-						saveOptions = true;
-					}
-				}
-				if (saveOptions)
-				{
-					SettingsManager.OptionsData.Save();
-				}
-				var cmd2 = new CloudMessage(CloudAction.LogIn);
-				CloudHelper.ApplySecurity(cmd2, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
-				cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
-				cmd2.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
-				results = ws.Execute(cmd2);
-				if (results.ErrorCode != 0)
-				{
-					MessageBoxForm.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-				else
-				{
-					MessageBoxForm.Show(string.Format("Authorized: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
+			}
+			if (saveOptions)
+			{
+				SettingsManager.OptionsData.Save();
+			}
+			var cmd2 = new CloudMessage(CloudAction.LogIn);
+			CloudHelper.ApplySecurity(cmd2, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
+			cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
+			cmd2.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
+			results = ws.Execute(cmd2);
+			var title = UiLanguage.T("OptionsInternetUserControl.LoginResult", "Log In Result");
+			if (results.ErrorCode != 0)
+			{
+				MessageBoxForm.Show(results.ErrorMessage, title, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			else
 			{
-
+				MessageBoxForm.Show(string.Format(UiLanguage.T("OptionsInternetUserControl.LoginAuthorized", "Authorized: {0}"), results.ErrorMessage), title, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 
@@ -194,7 +189,7 @@ namespace x360ce.App.Controls
 			// In pixels at 100%, so enlarged with the screen as the window's own sizes are.
 			var scale = ControlsHelper.DpiScale;
 			form.Size = new Size((int)Math.Round(400 * scale), (int)Math.Round(500 * scale));
-			form.Text = "Create Login";
+			form.Text = UiLanguage.T("OptionsInternetUserControl.CreateLogin", "Create Login");
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;
 			ControlsHelper.CheckTopMost(form);
@@ -212,7 +207,7 @@ namespace x360ce.App.Controls
 			// In pixels at 100%, so enlarged with the screen as the window's own sizes are.
 			var scale = ControlsHelper.DpiScale;
 			form.Size = new Size((int)Math.Round(400 * scale), (int)Math.Round(300 * scale));
-			form.Text = "Reset Login";
+			form.Text = UiLanguage.T("OptionsInternetUserControl.ResetLogin", "Reset Login");
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;
 			ControlsHelper.CheckTopMost(form);

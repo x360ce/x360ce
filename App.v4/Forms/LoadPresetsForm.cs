@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -28,6 +29,9 @@ namespace x360ce.App.Controls
 			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
 			SdlTabPage.Controls.Add(SdlPresetsPanel);
 			MainTabControl.TabPages.Add(SdlTabPage);
+			EventHandler languageChanged = (s, e) => UpdateControls();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>The SDL tab: SDL's controller database, as presets for the selected device.</summary>
@@ -173,7 +177,7 @@ namespace x360ce.App.Controls
 				// Listed by the server without settings it has, so it can never be loaded.
 				SettingsManager.Summaries.Remove(SettingsManager.Summaries.Items.Where(x => x.PadSettingChecksum == checksum).ToArray());
 				SettingsManager.Presets.Remove(SettingsManager.Presets.Items.Where(x => x.PadSettingChecksum == checksum).ToArray());
-				SetHeaderInfo("This preset is no longer on the server, so it was taken off the list.");
+				SetHeaderInfo(UiLanguage.T("LoadPresetsForm.ThisPresetIsNoLongerOn", "This preset is no longer on the server, so it was taken off the list."));
 				return;
 			}
 			SettingsManager.Current.UpsertPadSettings(padSetting);
@@ -218,7 +222,7 @@ namespace x360ce.App.Controls
 		{
 			using (var dialog = new OpenFileDialog())
 			{
-				dialog.Title = "Open Preset";
+				dialog.Title = UiLanguage.T("LoadPresetsForm.OpenPreset", "Open Preset");
 				dialog.Filter = SettingsManager.PresetFileFilter;
 				if (dialog.ShowDialog(this) != DialogResult.OK)
 					return;

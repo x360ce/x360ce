@@ -138,7 +138,7 @@ namespace x360ce.App.DInput
 		/// <summary>Held for each pass of the loop, so what a pass is using is not let go of half way through it.</summary>
 		internal readonly object PassLock = new object();
 
-		/// <summary>The places taken, one bit each, when each controller was last put somewhere other than its own place, or given none; -1 while it is not held back.</summary>
+		/// <summary>The places taken, one bit each, when each controller, or a temporary one made for it, was last put somewhere other than where it had to go, or given none; -1 while it is not held back.</summary>
 		/// <remarks>
 		/// While the places are the same, the plug worker makes nothing for that pad. Kept until a controller is made in its
 		/// own place, the places differ, or <see cref="ForgetBusHealth"/> forgets it with the rest of what the bus did: when
@@ -179,7 +179,7 @@ namespace x360ce.App.DInput
 			return _misplacedWith[padIndex] >= 0 ? _heldAs[padIndex] : VirtualError.None;
 		}
 
-		/// <summary>Where Windows last put each controller that was taken away again for not being in its own place.</summary>
+		/// <summary>Where Windows last put the controller that held each pad back: its own, taken away again for not being in its own place, or a temporary one made for it; -1 for nowhere.</summary>
 		public readonly int[] MisplacedIn = { -1, -1, -1, -1 };
 
 		/// <summary>Whether this controller tab is to have a virtual controller.</summary>
@@ -731,13 +731,28 @@ namespace x360ce.App.DInput
 				_testing = null;
 				var stopped = Stop();
 				Program.StartupTrace.Mark("closing: engine stopped");
-				// The update thread has gone, so nothing else touches the effects. Taken off, they give each wheel its own
-				// centering back, so none is left without it once the program has closed.
+				// The update thread has gone, so nothing else touches the effects or the devices. Taken off, the effects give
+				// each wheel its own centering back, and each device let go of gets its driver's own centering back, as it was
+				// before the spring turned it off, so none is left without it once the program has closed.
 				if (stopped)
 					lock (SettingsManager.UserDevices.SyncRoot)
 						foreach (var ud in SettingsManager.UserDevices.Items)
+						{
 							if (ud.FFState != null)
 								ud.FFState.StopDeviceForces();
+							var device = ud.Device == null ? null : ud.Device.Joystick;
+							if (device == null || !ud.AutoCenterSet)
+								continue;
+							try
+							{
+								device.Unacquire();
+								RestoreAutoCenter(ud, device);
+							}
+							catch (SharpDX.SharpDXException)
+							{
+								// A device unplugged since keeps nothing to give back.
+							}
+						}
 				// The hub outlives every stop of the update thread, and goes with the helper.
 				StopRawInputHub();
 				Program.StartupTrace.Mark("closing: Raw Input stopped");

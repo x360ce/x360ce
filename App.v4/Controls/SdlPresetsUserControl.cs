@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,6 +30,22 @@ namespace x360ce.App.Controls
 	public class SdlPresetsUserControl : UserControl
 	{
 		public SdlPresetsUserControl()
+		{
+			InitializeComponent();
+			// The window it sits in is made after the main window has named and described everything.
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			UiLanguage.Register(this);
+			x360ce.App.UiTree.UiHelp.Attach(this);
+			EventHandler languageChanged = (s, e) =>
+			{
+				if (_filled)
+					Fill();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
+		}
+
+		void InitializeComponent()
 		{
 			Name = "SdlPresetsPanel";
 			SuspendLayout();
@@ -86,24 +103,22 @@ namespace x360ce.App.Controls
 			Controls.Add(MainTableLayoutPanel);
 			ResumeLayout(false);
 			PerformLayout();
-			// The window it sits in is made after the main window has named and described everything.
-			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
-			x360ce.App.UiTree.UiHelp.Attach(this);
 		}
 
-		readonly TableLayoutPanel MainTableLayoutPanel;
-		public readonly Label VersionLabel;
-		public readonly Label FilterLabel;
-		public readonly TextBox FilterTextBox;
-		public readonly DataGridView RowsDataGridView;
-		public readonly Button UpdateButton;
-		public readonly Label StatusLabel;
+		TableLayoutPanel MainTableLayoutPanel;
+		public Label VersionLabel { get; private set; }
+		public Label FilterLabel { get; private set; }
+		public TextBox FilterTextBox { get; private set; }
+		public DataGridView RowsDataGridView { get; private set; }
+		public Button UpdateButton { get; private set; }
+		public Label StatusLabel { get; private set; }
 
 		/// <summary>The row selected changed.</summary>
 		public event EventHandler SelectionChanged;
 
 		/// <summary>The device the rows are for: its own come first, and the row chosen is translated for it.</summary>
 		UserDevice _device;
+		bool _filled;
 
 		void AddColumn(string name, string header, string property, DataGridViewAutoSizeColumnMode mode)
 		{
@@ -133,8 +148,9 @@ namespace x360ce.App.Controls
 		/// <summary>Lists the rows the filter lets through, the device's own first, and selects the first of those.</summary>
 		void Fill()
 		{
+			_filled = true;
 			var database = SdlDatabase.Current;
-			ControlsHelper.SetText(VersionLabel, "SDL controller database: " + database.Describe() + ".");
+			ControlsHelper.SetText(VersionLabel, string.Format(UiLanguage.T("SdlPresetsUserControl.DatabaseVersion", "SDL controller database: {0}."), database.Describe()));
 			var device = SdlDevice.From(_device);
 			var own = new HashSet<SdlMapping>(database.FindAll(device));
 			var filter = FilterTextBox.Text.Trim();
@@ -146,7 +162,7 @@ namespace x360ce.App.Controls
 					Guid = x.Guid.Text,
 					Ids = x.Guid.HasIds ? string.Format(CultureInfo.InvariantCulture, "{0:X4}:{1:X4}", x.Guid.VendorId, x.Guid.ProductId) : "",
 					Source = Source(database.SourceOf(x)),
-					Device = own.Contains(x) ? "This device" : "",
+					Device = own.Contains(x) ? UiLanguage.T("SdlPresetsUserControl.ThisDevice", "This device") : "",
 				})
 				.Where(x => filter.Length == 0
 					|| x.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
@@ -167,10 +183,10 @@ namespace x360ce.App.Controls
 				return "";
 			switch (source.Kind)
 			{
-				case SdlSourceKind.Downloaded: return "Downloaded";
+				case SdlSourceKind.Downloaded: return UiLanguage.T("SdlPresetsUserControl.Downloaded", "Downloaded");
 				case SdlSourceKind.File: return SdlDatabase.FileName;
 				case SdlSourceKind.Environment: return SdlDatabase.EnvironmentVariable;
-				default: return "Built in";
+				default: return UiLanguage.T("SdlPresetsUserControl.BuiltIn", "Built in");
 			}
 		}
 

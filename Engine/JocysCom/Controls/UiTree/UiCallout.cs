@@ -1,5 +1,6 @@
 #nullable disable
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -52,6 +53,36 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		}
 
 		/// <summary>
+		/// Where a part of a control is on screen: an entry on a tool bar, or a row or a cell of a list; null for anything
+		/// else, and for a part whose control is out of sight.
+		/// </summary>
+		public static Rectangle? AroundOfPart(object element)
+		{
+			var item = element as ToolStripItem;
+			if (item != null)
+				return item.Owner == null || !item.Owner.Visible || !item.Visible ? (Rectangle?)null : item.Owner.RectangleToScreen(item.Bounds);
+			var row = element as DataGridViewRow;
+			if (row != null)
+				return row.DataGridView == null || !row.DataGridView.Visible || row.Index < 0 ? (Rectangle?)null
+					: row.DataGridView.RectangleToScreen(row.DataGridView.GetRowDisplayRectangle(row.Index, true));
+			var cell = element as DataGridViewCell;
+			if (cell != null)
+				return cell.DataGridView == null || !cell.DataGridView.Visible || cell.RowIndex < 0 ? (Rectangle?)null
+					: cell.DataGridView.RectangleToScreen(cell.DataGridView.GetCellDisplayRectangle(cell.ColumnIndex, cell.RowIndex, true));
+			return null;
+		}
+
+		/// <summary>Frames a part of a control, as <see cref="AroundOfPart"/> finds it, and shows the words beside it; false when it is not such a part, or not on screen.</summary>
+		public static bool ShowPart(object element, string text, int seconds)
+		{
+			var around = AroundOfPart(element);
+			if (!around.HasValue || around.Value.Width <= 0 || around.Value.Height <= 0)
+				return false;
+			Show(element, around.Value, text, seconds);
+			return true;
+		}
+
+		/// <summary>
 		/// Frames a screen rectangle and shows the words beside it for the given seconds, or, with 0,
 		/// until the person acts: presses a mouse button or a key in the program, or the element moves
 		/// or goes out of sight, when the frame would point at the wrong place. A new call replaces the
@@ -66,7 +97,15 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			_timer = new Timer();
 			Around = around;
 			around.Inflate(4, 4);
-			_frame.Point(around, text);
+			var holder = HolderOf(target);
+			var window = holder == null ? (Form)null : holder.FindForm();
+			var screen = Screen.FromRectangle(around).WorkingArea;
+			var bounds = window == null ? screen : Rectangle.Intersect(window.RectangleToScreen(window.ClientRectangle), screen);
+			var obstacles = new List<Rectangle>();
+			if (window != null)
+				AddObstacles(window, bounds, obstacles);
+			_frame.Point(around, text, bounds, obstacles);
+			Balloon = _frame.Balloon;
 			if (seconds > 0)
 			{
 				_timer.Tick += (s, e) => Hide();
@@ -82,12 +121,125 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			_timer.Start();
 		}
 
+		/// <summary>The screen rectangle of the balloon with the words, as it was last placed.</summary>
+		public static Rectangle Balloon { get; private set; }
+
+		/// <summary>The control an element is drawn in: itself, the bar an entry is on, or the list a row or cell is in; null for anything else.</summary>
+		static Control HolderOf(object target)
+		{
+			var control = target as Control;
+			if (control != null)
+				return control;
+			var item = target as ToolStripItem;
+			if (item != null)
+				return item.Owner;
+			var row = target as DataGridViewRow;
+			if (row != null)
+				return row.DataGridView;
+			var cell = target as DataGridViewCell;
+			return cell == null ? null : cell.DataGridView;
+		}
+
+		/// <summary>
+		/// Adds where the window shows words or values a balloon must not hide: every visible control but the plain holders
+		/// of others, a tab strip's tabs, and a list's headers and rows rather than its empty space; each cut to what its
+		/// holders show.
+		/// </summary>
+		static void AddObstacles(Control parent, Rectangle clip, List<Rectangle> obstacles)
+		{
+			foreach (Control control in parent.Controls)
+			{
+				if (!control.Visible)
+					continue;
+				var shown = Rectangle.Intersect(parent.RectangleToScreen(control.Bounds), clip);
+				if (shown.Width <= 0 || shown.Height <= 0)
+					continue;
+				var tabs = control as TabControl;
+				if (tabs != null)
+					for (var i = 0; i < tabs.TabCount; i++)
+						obstacles.Add(Rectangle.Intersect(tabs.RectangleToScreen(tabs.GetTabRect(i)), shown));
+				var grid = control as DataGridView;
+				if (grid != null)
+				{
+					if (grid.ColumnHeadersVisible)
+						obstacles.Add(Rectangle.Intersect(grid.RectangleToScreen(new Rectangle(0, 0, grid.ClientSize.Width, grid.ColumnHeadersHeight)), shown));
+					for (var i = grid.FirstDisplayedScrollingRowIndex; i >= 0 && i < grid.Rows.Count && grid.Rows[i].Displayed; i++)
+						obstacles.Add(Rectangle.Intersect(grid.RectangleToScreen(grid.GetRowDisplayRectangle(i, true)), shown));
+				}
+				else if (control is Panel || control is TabControl || control is GroupBox || control is ContainerControl || control is SplitContainer)
+					AddObstacles(control, shown, obstacles);
+				else
+					obstacles.Add(shown);
+			}
+		}
+
+		/// <summary>How much of the obstacles a rectangle covers, in square pixels.</summary>
+		static long Covered(Rectangle rectangle, IList<Rectangle> obstacles)
+		{
+			long covered = 0;
+			foreach (var obstacle in obstacles)
+			{
+				var both = Rectangle.Intersect(rectangle, obstacle);
+				if (both.Width > 0 && both.Height > 0)
+					covered += (long)both.Width * both.Height;
+			}
+			return covered;
+		}
+
+		/// <summary>
+		/// Where a balloon of the size goes beside the framed rectangle: the first of below, above, right and left where it
+		/// stays inside the bounds and covers none of the obstacles; otherwise the side where it covers the least, one inside
+		/// the bounds before one that is not. Below and above it starts at the frame's left edge, right and left at its top,
+		/// moved along that edge only as far as the bounds need.
+		/// </summary>
+		/// <param name="side">0 below, 1 above, 2 right, 3 left.</param>
+		public static Rectangle PlaceBalloon(Rectangle around, Size size, Rectangle bounds, IList<Rectangle> obstacles, out int side)
+		{
+			var best = Rectangle.Empty;
+			var bestCover = long.MaxValue;
+			var bestInside = false;
+			side = 0;
+			for (var i = 0; i < 4; i++)
+			{
+				var r = new Rectangle(around.Left, around.Bottom + Stem, size.Width, size.Height);
+				if (i == 1)
+					r.Y = around.Top - Stem - size.Height;
+				else if (i >= 2)
+					r = new Rectangle(i == 2 ? around.Right + Stem : around.Left - Stem - size.Width, around.Top, size.Width, size.Height);
+				if (i < 2)
+					r.X = Math.Max(bounds.Left, Math.Min(r.X, bounds.Right - r.Width));
+				else
+					r.Y = Math.Max(bounds.Top, Math.Min(r.Y, bounds.Bottom - r.Height));
+				var inside = bounds.Contains(r);
+				var cover = Covered(r, obstacles);
+				if (inside && cover == 0)
+				{
+					side = i;
+					return r;
+				}
+				if ((inside && !bestInside) || (inside == bestInside && cover < bestCover))
+				{
+					best = r;
+					bestCover = cover;
+					bestInside = inside;
+					side = i;
+				}
+			}
+			return best;
+		}
+
+		/// <summary>The gap between the frame and the balloon, which the balloon's pointer crosses.</summary>
+		const int Stem = 12;
+
 		/// <summary>True when the element is no longer where the frame is drawn: its window moved, changed size, was minimised or hidden, or the element went out of sight.</summary>
 		static bool Moved()
 		{
 			var control = Target as Control;
 			if (control != null)
 				return control.IsDisposed || !control.Visible || AroundOf(control) != Around;
+			var part = AroundOfPart(Target);
+			if (part.HasValue)
+				return part.Value != Around;
 			// An element this file cannot look at is taken as moved, so the frame goes rather than stays wrong.
 			var moved = true;
 			MovedWpf(ref moved);
@@ -215,7 +367,6 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// <summary>Draws the frame and the balloon on an overlay, which is what keeps it out of the way.</summary>
 		sealed class Frame : OverlayForm
 		{
-			const int Stem = 12;
 			const int Pad = 8;
 			static readonly Color Ink = Color.OrangeRed;
 			static readonly Color Paper = Color.FromArgb(255, 255, 225);
@@ -225,27 +376,42 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			Point[] _stem;
 			string _text;
 
-			/// <summary>Lays the frame around the screen rectangle and the balloon below it, or above when there is no room below.</summary>
-			public void Point(Rectangle around, string text)
+			/// <summary>The balloon on the screen, as <see cref="PlaceBalloon"/> placed it.</summary>
+			public Rectangle Balloon { get; private set; }
+
+			/// <summary>Lays the frame around the screen rectangle and the balloon on the side <see cref="PlaceBalloon"/> chooses, with its pointer to the frame.</summary>
+			/// <param name="bounds">The window's area on the screen, which the balloon stays inside where it can.</param>
+			/// <param name="obstacles">The words and values on screen the balloon should not hide.</param>
+			public void Point(Rectangle around, string text, Rectangle bounds, IList<Rectangle> obstacles)
 			{
 				_text = string.IsNullOrWhiteSpace(text) ? "Here" : text.Trim();
 				var size = TextRenderer.MeasureText(_text, Font, new Size(320, 0), TextFormatFlags.WordBreak);
-				var balloon = new Rectangle(around.Left, around.Bottom + Stem, size.Width + Pad * 2, size.Height + Pad * 2);
-				var screen = Screen.FromRectangle(around).WorkingArea;
-				if (balloon.Right > screen.Right)
-					balloon.X = Math.Max(screen.Left, screen.Right - balloon.Width);
-				var below = balloon.Bottom <= screen.Bottom;
-				if (!below)
-					balloon.Y = around.Top - Stem - balloon.Height;
-				var bounds = Rectangle.Union(around, balloon);
-				bounds.Inflate(2, 2);
-				Bounds = bounds;
-				_around = new Rectangle(around.X - bounds.X, around.Y - bounds.Y, around.Width, around.Height);
-				_balloon = new Rectangle(balloon.X - bounds.X, balloon.Y - bounds.Y, balloon.Width, balloon.Height);
-				var tipX = Math.Min(Math.Max(_around.Left + Math.Min(_around.Width / 2, 24), _balloon.Left + 12), _balloon.Right - 12);
-				_stem = below
-					? new[] { new Point(tipX - 6, _balloon.Top), new Point(tipX, _around.Bottom), new Point(tipX + 6, _balloon.Top) }
-					: new[] { new Point(tipX - 6, _balloon.Bottom), new Point(tipX, _around.Top), new Point(tipX + 6, _balloon.Bottom) };
+				int side;
+				var balloon = PlaceBalloon(around, new Size(size.Width + Pad * 2, size.Height + Pad * 2), bounds, obstacles, out side);
+				Balloon = balloon;
+				var all = Rectangle.Union(around, balloon);
+				all.Inflate(2, 2);
+				Bounds = all;
+				_around = new Rectangle(around.X - all.X, around.Y - all.Y, around.Width, around.Height);
+				_balloon = new Rectangle(balloon.X - all.X, balloon.Y - all.Y, balloon.Width, balloon.Height);
+				if (side < 2)
+				{
+					// Below or above: from the balloon's edge to the frame, near the frame's left end.
+					var tipX = Math.Min(Math.Max(_around.Left + Math.Min(_around.Width / 2, 24), _balloon.Left + 12), _balloon.Right - 12);
+					var edge = side == 0 ? _balloon.Top : _balloon.Bottom;
+					var tip = side == 0 ? _around.Bottom : _around.Top;
+					_stem = new[] { new Point(tipX - 6, edge), new Point(tipX, tip), new Point(tipX + 6, edge) };
+				}
+				else
+				{
+					// Right or left: from the balloon's edge to the frame, at the middle of what they share.
+					var top = Math.Max(_around.Top, _balloon.Top + 8);
+					var bottom = Math.Min(_around.Bottom, _balloon.Bottom - 8);
+					var tipY = bottom >= top ? (top + bottom) / 2 : Math.Min(Math.Max(_around.Top + _around.Height / 2, _balloon.Top + 8), _balloon.Bottom - 8);
+					var edge = side == 2 ? _balloon.Left : _balloon.Right;
+					var tip = side == 2 ? _around.Right : _around.Left;
+					_stem = new[] { new Point(edge, tipY - 6), new Point(tip, tipY), new Point(edge, tipY + 6) };
+				}
 				Show();
 				Invalidate();
 			}

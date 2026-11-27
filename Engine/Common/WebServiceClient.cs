@@ -6,8 +6,6 @@ using JocysCom.ClassLibrary.Web.Services;
 namespace x360ce.Engine
 {
 
-	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(StructuralObject))]
-	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(EntityKeyMember[]))]
 	public partial class WebServiceClient : SoapHttpClientBase, IWebService
 	{
 

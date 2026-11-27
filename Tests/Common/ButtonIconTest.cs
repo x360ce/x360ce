@@ -82,14 +82,19 @@ namespace x360ce.Tests
 		/// True to give a window the theme as the program gives a dialog it opens, when the window first becomes active, after
 		/// it has loaded; otherwise it is themed before it is shown, as the main window is.
 		/// </param>
-		internal static void OnEverySurface(IEnumerable<Func<Control>> surfaces, Action<Form, string> measure, string fontChoice = "", bool themedOnceActive = false)
+		/// <param name="zoom">
+		/// The screen's zoom to make them at, 1 for 100 %; 0 for the screen's own. A zoom reaches the windows as a larger font,
+		/// 9 pt at the zoom given on this screen, which lays them out larger by as much; pictures stay at the screen's own scale.
+		/// </param>
+		internal static void OnEverySurface(IEnumerable<Func<Control>> surfaces, Action<Form, string> measure, string fontChoice = "", bool themedOnceActive = false, float zoom = 0)
 		{
 			Ui.OnUiThread(() =>
 			{
 				var field = typeof(App.Properties.Resources).GetField("resourceMan", BindingFlags.NonPublic | BindingFlags.Static);
 				var before = field.GetValue(null);
 				AppFontsTest.LoadFonts();
-				FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(fontChoice), string.IsNullOrEmpty(fontChoice) ? null : AppFonts.CodeFamily, AppFonts.SizeFor(0));
+				var layout = zoom > 0 ? zoom / ControlsHelper.DpiScale : 1;
+				FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(fontChoice), string.IsNullOrEmpty(fontChoice) ? null : AppFonts.CodeFamily, AppFonts.SizeFor(0) * layout, layout);
 				try
 				{
 					ThemeResourceManager.Install(typeof(App.Properties.Resources), "x360ce.App.Properties.Icons");
@@ -97,7 +102,7 @@ namespace x360ce.Tests
 					{
 						FormsTheme.SetTheme(theme);
 						foreach (var make in surfaces)
-							Show(make, string.Format("{0:P0} {1}", ControlsHelper.DpiScale, theme), measure, themedOnceActive);
+							Show(make, string.Format("{0:P0} {1}", zoom > 0 ? zoom : ControlsHelper.DpiScale, theme), measure, themedOnceActive);
 					}
 				}
 				finally

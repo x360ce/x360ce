@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
@@ -21,6 +22,9 @@ namespace x360ce.App.Controls
 			AutoScaleMode = AutoScaleMode.Font;
 			AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			ResumeLayout(false);
+			EventHandler languageChanged = (s, e) => UpdateControls();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		/// <summary>Fits the panel's height to where its content ends, whatever the font and the display scale.</summary>
@@ -144,6 +148,7 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>How the main window is shown, in the words a recording writes.</summary>
+		[System.ComponentModel.Localizable(false)]
 		static string WindowState()
 		{
 			var form = MainForm.Current;
@@ -161,24 +166,31 @@ namespace x360ce.App.Controls
 			var recording = IsRecording;
 			foreach (var box in new[] { SettingsCheckBox, InputCheckBox, OutputCheckBox, ForcesCheckBox, EngineCheckBox, WindowCheckBox })
 				box.Enabled = !recording;
-			RecordButton.Text = recording ? "Stop Recording" : "Start Recording";
+			RecordButton.Text = recording ? UiLanguage.T("RecorderUserControl.StopRecording", "Stop Recording")
+				: UiLanguage.T("RecorderUserControl.StartRecording", "Start Recording");
 			StatusLabel.Text = StatusText();
 		}
 
 		string StatusText()
 		{
 			if (_error != null)
-				return "The recording could not start: " + _error;
+				return string.Format(UiLanguage.T("RecorderUserControl.StartFailed", "The recording could not start: {0}"), _error);
 			var recorder = _recorder;
 			if (recorder == null)
-				return "Press Start Recording, make the problem happen, then press Stop Recording. It stops by itself after "
-					+ (int)ReportRecorder.MaxDuration.TotalMinutes + " minutes.";
+				return string.Format(UiLanguage.T("RecorderUserControl.RecordingInstructions",
+					"Press Start Recording, make the problem happen, then press Stop Recording. It stops by itself after {0} minutes."),
+					(int)ReportRecorder.MaxDuration.TotalMinutes);
 			var size = SizeText(recorder.Bytes);
 			if (!recorder.IsStopped)
-				return "Recording " + recorder.Elapsed.ToString(@"m\:ss", CultureInfo.InvariantCulture) + ", " + size + ". Make the problem happen now, then press Stop Recording.";
-			return "Saved " + Path.GetFileName(recorder.FilePath) + ", " + size
-				+ (recorder.StopReason == null ? "" : ", stopped because " + recorder.StopReason)
-				+ ". Read it, then attach it to your issue on GitHub.";
+				return string.Format(UiLanguage.T("RecorderUserControl.RecordingStatus",
+					"Recording {0}, {1}. Make the problem happen now, then press Stop Recording."),
+					recorder.Elapsed.ToString(@"m\:ss", CultureInfo.InvariantCulture), size);
+			var file = Path.GetFileName(recorder.FilePath);
+			return recorder.StopReason == null
+				? string.Format(UiLanguage.T("RecorderUserControl.SavedRecording",
+					"Saved {0}, {1}. Read it, then attach it to your issue on GitHub."), file, size)
+				: string.Format(UiLanguage.T("RecorderUserControl.SavedStoppedRecording",
+					"Saved {0}, {1}, stopped because {2}. Read it, then attach it to your issue on GitHub."), file, size, recorder.StopReason);
 		}
 
 		static string SizeText(long bytes)

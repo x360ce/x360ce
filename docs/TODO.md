@@ -15,6 +15,9 @@
 - A removed stale virtual controller record keeps its device open until the program closes, one handle per record.
 - A pad whose force feedback keeps failing on one motor plays neither motor.
 - The online database stores an uploaded setting under a new ID, so the next upload adds another row and a Delete finds nothing.
+- Some parts x360ce carries have no confirmed licence yet, so the About page leaves them out; `Resources/Licenses/README.md` lists them.
+- Some texts built in code are English in every language: issue texts put together from parts, the Wheel Telemetry and Fitness Machine pages, the lists of the Advanced and Directional Input pages, the notes the mapping menu leaves in the status bar and most messages; issue names and a plugin's page follow a change of language only after a restart.
+- The Games page's four columns of x360ce 3 settings lie side by side whatever the window's width, as wide as their group captions; a longer translation is kept within the smallest window only by its words.
 
 ## Settings to finish
 

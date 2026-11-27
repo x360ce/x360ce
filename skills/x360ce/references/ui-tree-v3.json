@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"3.11.32.0",
-	"Built":"2026-11-15",
+	"Version":"3.12.4.0",
+	"Built":"2026-11-16",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1888,7 +1888,7 @@
 													"Items":[
 														{
 															"Name":"License",
-															"Description":"The licence this program is released under.",
+															"Description":"The licence this program is released under, then the licence of each part it carries from other projects.",
 															"Role":"Text",
 															"Id":"LicenseTextBox"
 														}

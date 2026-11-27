@@ -3,6 +3,7 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using x360ce.Engine.Data;
 
 namespace x360ce.Engine
@@ -107,6 +108,118 @@ namespace x360ce.Engine
 
         string old_WheelRange;
         Joystick rangeDevice;
+        /// <summary>The HID interface of the wheel the range is for, or null when it is sent to none.</summary>
+        string rangePath;
+        /// <summary>The range to send, in degrees.</summary>
+        int rangeToSend;
+        /// <summary>True while the range waits to be sent, at <see cref="rangeDueAt"/>.</summary>
+        bool rangeDue;
+        int rangeDueAt;
+        /// <summary>Sends left before a wheel that will not take the range is left as it is.</summary>
+        int rangeTriesLeft;
+        /// <summary>True while a later send waits, at <see cref="rangeLaterAt"/>, behind the one due at <see cref="rangeDueAt"/>.</summary>
+        bool rangeLaterDue;
+        int rangeLaterAt;
+        /// <summary>The shortest and the longest delay, in milliseconds, the range was asked to be sent again after, or -1 while none was.</summary>
+        /// <remarks>Set by the interface, on any thread, and taken by the engine, without a lock.</remarks>
+        int askedSoonestMs = -1;
+        int askedLatestMs = -1;
+
+        /// <summary>How often a range the wheel would not take is sent again, and how many times.</summary>
+        public const int RangeRetryMs = 1000;
+        public const int RangeTries = 5;
+
+        /// <summary>How long after another program comes to the front the range is sent again, first and last.</summary>
+        /// <remarks>
+        /// Logitech's driver puts its own range on the wheel when a game takes it, a moment after the game comes to the front,
+        /// and nothing tells when. The second send puts the chosen range back after the driver's.
+        /// </remarks>
+        public const int RangeAgainSoonMs = 500;
+        public const int RangeAgainLateMs = 2000;
+
+        /// <summary>Sends the range again: the wheel may have been set to another since.</summary>
+        /// <remarks>
+        /// Logitech's software puts its own range on the wheel when a program holds it, and the person sees the list still
+        /// naming the range they chose. Choosing it again sends it, on the engine's next poll. Asked several times before the
+        /// engine takes the asks, the range is sent after the shortest delay and again after the longest.
+        /// </remarks>
+        /// <param name="delayMs">How long after the engine's next poll the range is sent, in milliseconds.</param>
+        public void SendRangeAgain(int delayMs = 0)
+        {
+            delayMs = Math.Max(0, delayMs);
+            KeepAsk(ref askedSoonestMs, delayMs, true);
+            KeepAsk(ref askedLatestMs, delayMs, false);
+        }
+
+        /// <summary>Puts the delay in the slot while the slot holds none, or a longer one for the soonest or a shorter one for the latest.</summary>
+        static void KeepAsk(ref int slot, int delayMs, bool soonest)
+        {
+            while (true)
+            {
+                var held = Volatile.Read(ref slot);
+                if (held >= 0 && (soonest ? held <= delayMs : held >= delayMs))
+                    return;
+                if (Interlocked.CompareExchange(ref slot, delayMs, held) == held)
+                    return;
+            }
+        }
+
+        /// <summary>Takes the range the spring's curve is counted against, and queues the range for the wheel when it is to be sent.</summary>
+        /// <remarks>
+        /// The range goes to the wheel once per setting and once per device, because a wheel plugged in again has forgotten
+        /// it, and each time the device is held again, because Logitech's software puts its own range on the wheel then. Not
+        /// before the device is known by its ids: they come from a read of the machine that finishes after the first polls, and
+        /// a range sent while they were still nought was sent to nothing. Sent once the device settles, as its own centering
+        /// is, and again while the wheel will not take it (<see cref="UpdateCentering"/>).
+        /// </remarks>
+        /// <param name="heldAgain">The device was held again since the last force update.</param>
+        public void UpdateRange(UserDevice ud, Joystick device, PadSetting ps, bool heldAgain, int tickCount)
+        {
+            var range = ps.GetWheelRange();
+            rangeDegrees = SpringRange(range, ud);
+            if (ud.DevVendorId == 0 || !(Changed(ref old_WheelRange, ps.WheelRange) | rangeDevice != device | heldAgain))
+                return;
+            rangeDevice = device;
+            rangeToSend = range;
+            rangePath = range > 0 && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId) ? ud.HidDevicePath : null;
+            rangeDue = false;
+            if (rangePath == null)
+                rangeLaterDue = false;
+            QueueRange(tickCount + (heldAgain ? CenteringSettleMs : 0));
+        }
+
+        /// <summary>Sends the range once it is due, and again a second later while the wheel will not take it.</summary>
+        /// <remarks>
+        /// A send asked for while another waits keeps both: the sooner is sent first and the later after it. Of three or more,
+        /// the soonest and the latest are kept.
+        /// </remarks>
+        /// <param name="dueAt">When to send it, by <see cref="Environment.TickCount"/>.</param>
+        void QueueRange(int dueAt)
+        {
+            if (rangePath == null)
+                return;
+            if (!rangeDue)
+            {
+                rangeDue = true;
+                rangeDueAt = dueAt;
+                rangeTriesLeft = RangeTries;
+                return;
+            }
+            if (dueAt - rangeDueAt < 0)
+            {
+                var later = rangeDueAt;
+                rangeDueAt = dueAt;
+                rangeTriesLeft = RangeTries;
+                dueAt = later;
+            }
+            else if (dueAt == rangeDueAt)
+                return;
+            if (!rangeLaterDue || dueAt - rangeLaterAt > 0)
+            {
+                rangeLaterDue = true;
+                rangeLaterAt = dueAt;
+            }
+        }
 
         // The wheel's own centering, switched on its HID interface on the wheels that take it.
 
@@ -125,13 +238,47 @@ namespace x360ce.Engine
         /// </remarks>
         public const int CenteringSettleMs = 250;
 
-        /// <summary>Sends the wheel's own centering once it is due. Called every poll: a flag and a clock compare until then.</summary>
+        /// <summary>Sends the wheel's range and its own centering once each is due. Called every poll: flags and clock compares until then.</summary>
         public void UpdateCentering(int tickCount)
         {
+            if (Volatile.Read(ref askedSoonestMs) >= 0 || Volatile.Read(ref askedLatestMs) >= 0)
+            {
+                var soonest = Interlocked.Exchange(ref askedSoonestMs, -1);
+                var latest = Interlocked.Exchange(ref askedLatestMs, -1);
+                if (soonest >= 0)
+                    QueueRange(tickCount + soonest);
+                if (latest >= 0)
+                    QueueRange(tickCount + latest);
+            }
+            if (rangeDue && tickCount - rangeDueAt >= 0)
+            {
+                var taken = LogitechWheel.SetRange(rangePath, rangeToSend);
+                RangeLastDegrees = rangeToSend;
+                RangeLastError = taken ? 0 : LogitechWheel.LastError;
+                Counts.RangeSends++;
+                rangeDue = !taken && --rangeTriesLeft > 0;
+                rangeDueAt = tickCount + RangeRetryMs;
+                // A later send takes the place of a retry due after it, as it sends the same range.
+                if (rangeLaterDue && (!rangeDue || rangeLaterAt - rangeDueAt <= 0))
+                {
+                    rangeLaterDue = false;
+                    rangeDue = false;
+                    QueueRange(rangeLaterAt);
+                }
+            }
             if (!centeringDue || tickCount - centeringDueAt < 0)
                 return;
             centeringDue = false;
-            LogitechWheel.SetCentering(centeringPath, centeringOn == true);
+            SendCentering(centeringOn == true);
+        }
+
+        /// <summary>Switches the wheel's own centering on its HID interface, and keeps what came of it for a recording.</summary>
+        void SendCentering(bool on)
+        {
+            var taken = LogitechWheel.SetCentering(centeringPath, on);
+            CenteringLastOn = on;
+            CenteringLastError = taken ? 0 : LogitechWheel.LastError;
+            Counts.CenteringSends++;
         }
 
         #region Force Feedback
@@ -154,6 +301,49 @@ namespace x360ce.Engine
         // Speed sent by the game.
         short old_LeftMotorSpeed;
         short old_RightMotorSpeed;
+        /// <summary>Latest normalised rumble drive (0 to 1) from the game, used for optional zero-telemetry understeer lightening.</summary>
+        double rumbleDrive;
+        /// <summary>Smoothed rumble envelope (0 to 1) updated on each spring poll.</summary>
+        double rumbleEnvelope;
+        long lastSpringClockMs = -1;
+
+        /// <summary>The signed spring force in percent (-100 to +100) computed on the last <see cref="UpdateSpring"/> call.</summary>
+        public int LastSpringPercent { get; private set; }
+
+        /// <summary>The parts the spring's force was made of on the last poll that worked it out, for a recording. Engine thread only.</summary>
+        public SpringTerms LastSpringTerms;
+
+        /// <summary>The damper sent on the last poll, in DirectInput units (0 to 10000).</summary>
+        public int LastDamper { get { return damperCoefficient; } }
+
+        /// <summary>The effect a game's vibration is played with: constant (a push along the axis) or a periodic one (a shake).</summary>
+        public string MotorEffectName
+        {
+            get
+            {
+                return GUID_Force == EffectGuid.ConstantForce ? "constant push" : GUID_Force == EffectGuid.Sine ? "sine shake"
+                    : GUID_Force == EffectGuid.Square ? "square shake" : GUID_Force == EffectGuid.Triangle ? "triangle shake"
+                    : GUID_Force == EffectGuid.SawtoothUp || GUID_Force == EffectGuid.SawtoothDown ? "sawtooth shake" : "other";
+            }
+        }
+
+        /// <summary>The strength the left motor's effect is played at now, in DirectInput units (-10000 to 10000).</summary>
+        public int MotorMagnitudeL
+        {
+            get { return effectL == null ? 0 : GUID_Force == EffectGuid.ConstantForce ? ConstantForceL.Magnitude : PeriodicForceL.Magnitude; }
+        }
+
+        /// <summary>The strength the right motor's effect is played at now, in DirectInput units.</summary>
+        public int MotorMagnitudeR
+        {
+            get { return effectR == null ? 0 : GUID_Force == EffectGuid.ConstantForce ? ConstantForceR.Magnitude : PeriodicForceR.Magnitude; }
+        }
+
+        /// <summary>The last range and own centering sent to the wheel's HID interface, and why each was not taken (0 when it was).</summary>
+        /// <remarks>Read by a recording through <see cref="CallCounts.RangeSends"/> and <see cref="CallCounts.CenteringSends"/>, which tell a new send.</remarks>
+        public int RangeLastDegrees, RangeLastError;
+        public bool CenteringLastOn;
+        public int CenteringLastError;
 
         Guid GUID_Force;
 
@@ -174,10 +364,152 @@ namespace x360ce.Engine
             public int Changes;
             /// <summary>Of <see cref="Changes"/>, those sent with a start, because the driver did not say the effect was playing.</summary>
             public int Started;
+            /// <summary>Steering ranges sent to the wheel, those it would not take included.</summary>
+            public int RangeSends;
+            /// <summary>The wheel's own centering switched on its HID interface, those it would not take included.</summary>
+            public int CenteringSends;
+            /// <summary>Gear changes found in the telemetry, see <see cref="GameRumblePercent"/>.</summary>
+            public int GearChanges;
         }
 
         /// <summary>What force updates asked of the motor effects, for a recording.</summary>
         public readonly CallCounts Counts = new CallCounts();
+
+        #region Game rumble while telemetry drives the spring
+
+        /// <summary>How long after a gear change starts the game's rumble plays at the gear change's share, in milliseconds.</summary>
+        public const long GearChangeRumbleMs = 150;
+
+        /// <summary>The least fall of engine speed between two samples, as a share of the redline, that is a gear change while the car gains speed.</summary>
+        public const float GearChangeRpmDrop = 0.15f;
+
+        /// <summary>The gear of the last telemetry sample, or -1 when the game sends none.</summary>
+        public int LastGear { get; private set; } = -1;
+
+        /// <summary>The share of the game's rumble, in percent, that played for the last gear change found.</summary>
+        public int LastGearChangeRumblePercent { get; private set; }
+
+        /// <summary>When the last gear change was found, by the telemetry's clock in milliseconds, or 0 for none.</summary>
+        public long LastGearChangeMs { get; private set; }
+
+        long gearSampleMs;
+        float gearLastRpm = float.NaN;
+        float gearLastSpeed = float.NaN;
+
+        /// <summary>
+        /// The share of the game's rumble, in percent, that plays this poll while live telemetry drives the centering spring:
+        /// 100 when the telemetry is not fresh, 0 when the game's rumble is ignored, and
+        /// <paramref name="gearChangePercent"/> for <see cref="GearChangeRumbleMs"/> after a gear change starts. Engine thread
+        /// only; makes nothing.
+        /// </summary>
+        /// <param name="telemetry">The pass's telemetry, or <see cref="WheelTelemetrySample.Inactive"/> while the spring or telemetry is off.</param>
+        /// <param name="nowMs">Monotonic clock in milliseconds.</param>
+        /// <param name="ignoreGame">True when the wheel's road and impact feel comes from telemetry alone.</param>
+        /// <param name="gearChangePercent">The share of the game's rumble that plays while the gear changes, 0 to 100; 100 leaves it whole.</param>
+        /// <remarks>
+        /// A gear change is the telemetry's gear changing, or, from a game that sends no gear, the engine speed falling by
+        /// <see cref="GearChangeRpmDrop"/> of the redline or more between two samples while the car gains speed.
+        /// </remarks>
+        public int GameRumblePercent(WheelTelemetrySample telemetry, long nowMs, bool ignoreGame, int gearChangePercent)
+        {
+            if (!telemetry.Active || WheelTelemetryMath.Freshness(telemetry.TimestampMs, nowMs) <= 0.0)
+            {
+                LastGear = -1;
+                gearLastRpm = float.NaN;
+                gearLastSpeed = float.NaN;
+                return 100;
+            }
+            var share = Math.Max(0, Math.Min(100, gearChangePercent));
+            if (telemetry.TimestampMs != gearSampleMs)
+            {
+                gearSampleMs = telemetry.TimestampMs;
+                var changed = false;
+                if (telemetry.Gear >= 0)
+                    changed = LastGear >= 0 && telemetry.Gear != LastGear;
+                else
+                    changed = gearLastRpm - telemetry.RpmFraction >= GearChangeRpmDrop && telemetry.SpeedKmh > gearLastSpeed;
+                LastGear = telemetry.Gear;
+                gearLastRpm = telemetry.RpmFraction;
+                gearLastSpeed = telemetry.SpeedKmh;
+                if (changed)
+                {
+                    LastGearChangeMs = telemetry.TimestampMs;
+                    LastGearChangeRumblePercent = ignoreGame ? 0 : share;
+                    Counts.GearChanges++;
+                }
+            }
+            if (ignoreGame)
+                return 0;
+            if (LastGearChangeMs > 0 && nowMs - LastGearChangeMs < GearChangeRumbleMs)
+                return share;
+            return 100;
+        }
+
+        /// <summary>How long a rise of the game's rumble waits before it plays while gear changes play quieter, in milliseconds.</summary>
+        /// <remarks>
+        /// A game can start its gear change kick before the telemetry sample showing the new gear arrives, one sample or
+        /// more later, so a kick played at once would play its start whole. Waiting lets the gear change found meanwhile
+        /// scale the kick from its start. A rise that ends before the wait is over does not play.
+        /// </remarks>
+        public const long GearChangeHoldMs = 60;
+
+        /// <summary>The game's motors as let through by the wait for a gear change, before the gear change's share.</summary>
+        byte heldLarge;
+        byte heldSmall;
+        /// <summary>True while a rise of the game's rumble waits, since <see cref="riseMs"/>.</summary>
+        bool rising;
+        long riseMs;
+        /// <summary>The motors as last played, so a value that changes is sent though the game sent nothing new.</summary>
+        byte playedLarge;
+        byte playedSmall;
+
+        /// <summary>
+        /// Shapes the game's rumble while live telemetry drives the centering spring: scales it by
+        /// <see cref="GameRumblePercent"/> and, while gear changes play quieter, holds each rise for
+        /// <see cref="GearChangeHoldMs"/>, so a gear change found during the wait scales the rise from its start. Falls play
+        /// at once. Engine thread only; makes nothing.
+        /// </summary>
+        /// <param name="telemetry">The pass's telemetry, or <see cref="WheelTelemetrySample.Inactive"/> while the spring or telemetry is off; the rumble then plays as the game sends it.</param>
+        /// <param name="nowMs">Monotonic clock in milliseconds.</param>
+        /// <param name="ignoreGame">True when the wheel's road and impact feel comes from telemetry alone.</param>
+        /// <param name="gearChangePercent">The share of the game's rumble that plays while the gear changes, 0 to 100; 100 leaves it whole and holds nothing.</param>
+        /// <param name="large">The game's large motor, 0 to 255, made what is to play.</param>
+        /// <param name="small">The game's small motor, 0 to 255, made what is to play.</param>
+        /// <returns>True when what is to play differs from what played on the last call.</returns>
+        public bool ShapeGameRumble(WheelTelemetrySample telemetry, long nowMs, bool ignoreGame, int gearChangePercent,
+            ref byte large, ref byte small)
+        {
+            var percent = GameRumblePercent(telemetry, nowMs, ignoreGame, gearChangePercent);
+            var hold = !ignoreGame && gearChangePercent < 100
+                && telemetry.Active && WheelTelemetryMath.Freshness(telemetry.TimestampMs, nowMs) > 0.0;
+            if (!hold || (large <= heldLarge && small <= heldSmall) || (rising && nowMs - riseMs >= GearChangeHoldMs))
+            {
+                heldLarge = large;
+                heldSmall = small;
+                rising = false;
+            }
+            else
+            {
+                if (!rising)
+                {
+                    rising = true;
+                    riseMs = nowMs;
+                }
+                // A motor that falls while the other rises plays its fall.
+                if (large < heldLarge)
+                    heldLarge = large;
+                if (small < heldSmall)
+                    heldSmall = small;
+            }
+            large = (byte)(heldLarge * percent / 100);
+            small = (byte)(heldSmall * percent / 100);
+            var changed = large != playedLarge || small != playedSmall;
+            playedLarge = large;
+            playedSmall = small;
+            return changed;
+        }
+
+        #endregion
 
         /// <summary>Takes every effect this state made off the device, before the state is dropped.</summary>
         /// <remarks>
@@ -193,7 +525,7 @@ namespace x360ce.Engine
             Dispose(ref effectD);
             // The effects took the wheel's own centering away, so it is given back with them.
             if (centeringPath != null)
-                LogitechWheel.SetCentering(centeringPath, true);
+                SendCentering(true);
             centeringPath = null;
             centeringOn = null;
             centeringDue = false;
@@ -311,7 +643,12 @@ namespace x360ce.Engine
                 motorsRefused &= ~MotorEffects.Right;
 
             // Which of the effects this state holds are stopped and disposed, and which are made.
-            var motors = actuatorR == null ? MotorEffects.Left : MotorEffects.Left | MotorEffects.Right;
+            // On a single-actuator wheel with periodic effects, try two concurrent effects on actuatorL (Left impact + Right texture)
+            // so both motor frequencies and strengths stay distinct; if the driver refuses the second effect, fall back transparently
+            // to combining both motors into effectL.
+            var singleActuatorDual = actuatorR == null && GUID_Force != EffectGuid.ConstantForce && (motorsRefused & MotorEffects.Right) == 0;
+            var hasRightEffect = actuatorR != null || singleActuatorDual;
+            var motors = hasRightEffect ? (MotorEffects.Left | MotorEffects.Right) : MotorEffects.Left;
             var held = (effectL == null ? MotorEffects.None : MotorEffects.Left)
                 | (effectR == null ? MotorEffects.None : MotorEffects.Right);
             MotorEffects drop, make;
@@ -367,6 +704,15 @@ namespace x360ce.Engine
                 {
                     paramsL = GetParameters();
                     paramsL.Axes = new int[1] { actuatorL.ObjectId };
+                    if (singleActuatorDual)
+                    {
+                        paramsR = GetParameters();
+                        paramsR.Axes = new int[1] { actuatorL.ObjectId };
+                    }
+                    else
+                    {
+                        paramsR = null;
+                    }
                 }
             }
 
@@ -387,7 +733,7 @@ namespace x360ce.Engine
             }
 
             // Direction needs to be updated when force or direction change.
-            if (actuatorR != null && (motorsChanged || forceChanged || directionRChanged))
+            if (hasRightEffect && paramsR != null && (motorsChanged || forceChanged || directionRChanged))
             {
                 var directionR = TryParse(old_RightDirection);
                 var dirR = new int[paramsR.Axes.Length];
@@ -408,7 +754,7 @@ namespace x360ce.Engine
                 flagsL |= EffectParameterFlags.Gain;
             }
 
-            if (actuatorR != null && (motorsChanged || forceChanged || strengthChanged || strengthRChanged))
+            if (hasRightEffect && paramsR != null && (motorsChanged || forceChanged || strengthChanged || strengthRChanged))
             {
                 int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
                 int rightGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetRightMotorStrength());
@@ -421,6 +767,7 @@ namespace x360ce.Engine
 
             var speedLChanged = Changed(ref old_LeftMotorSpeed, v.LeftMotorSpeed);
             var speedRChanged = Changed(ref old_RightMotorSpeed, v.RightMotorSpeed);
+            rumbleDrive = Math.Max(Drive(old_LeftMotorSpeed), Drive(old_RightMotorSpeed));
 
             // Convert speed into magnitude/amplitude.
             int leftMagnitudeAdjusted;
@@ -429,8 +776,8 @@ namespace x360ce.Engine
             int leftPeriod;
             int rightPeriod = 0;
 
-            // If device have only one force feedback actuator (probably wheel).
-            var combine = actuatorR == null;
+            // Combine into effectL when the device has only one actuator and does not run a separate right effect.
+            var combine = !hasRightEffect;
 
             // Get right values first for possible combine later.
             if (motorsChanged || forceChanged || periodRChanged || speedRChanged || combine)
@@ -439,7 +786,7 @@ namespace x360ce.Engine
                 // The setting is the period at full drive; a real motor slows as the drive falls, and
                 // so does the period played, along the measured line. Microseconds for the device.
                 rightPeriod = MotorModel.PeriodMs(ps.GetRightMotorPeriod(), false, Drive(old_RightMotorSpeed)) * 1000;
-                if (actuatorR != null)
+                if (hasRightEffect && paramsR != null)
                 {
                     // Update force values.
                     if (GUID_Force == EffectGuid.ConstantForce)
@@ -509,7 +856,7 @@ namespace x360ce.Engine
                     else
                         Counts.Made++;
                 }
-                if (actuatorR != null)
+                if (hasRightEffect && paramsR != null)
                 {
                     // Update Right force
                     paramsR.Parameters = GUID_Force == EffectGuid.ConstantForce
@@ -556,19 +903,7 @@ namespace x360ce.Engine
             // again on the next poll.
             if (motorsChanged || resend)
                 DropSpring();
-            // The range goes to the wheel once per setting and once per device, because a wheel
-            // plugged in again has forgotten it. Not before the device is known by its ids: they
-            // come from a read of the machine that finishes after the first polls, and a range
-            // sent while they were still nought was sent to nothing and never sent again.
-            // The range the spring's curve is counted against, whatever the wheel is.
-            var range = ps.GetWheelRange();
-            rangeDegrees = SpringRange(range, ud);
-            if (ud.DevVendorId != 0 && (Changed(ref old_WheelRange, ps.WheelRange) || rangeDevice != device))
-            {
-                rangeDevice = device;
-                if (range > 0 && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
-                    LogitechWheel.SetRange(ud.HidDevicePath, range);
-            }
+            UpdateRange(ud, device, ps, heldAgain, Environment.TickCount);
             // The wheel switches its own centering off when an effect is made, or played again after the device was
             // let go of, and keeps it off. It is switched on while this program's spring is off, so the wheel centres
             // itself under a game's rumble, and off while the spring holds the centre, so the two do not pull together.
@@ -691,6 +1026,9 @@ namespace x360ce.Engine
         /// <summary>The steering range, lock to lock, the spring is counted against: <see cref="SpringRange"/>.</summary>
         int rangeDegrees = DefaultRangeDegrees;
 
+        /// <summary>The steering range, lock to lock, currently active on this state.</summary>
+        public int RangeDegrees { get { return rangeDegrees; } }
+
         /// <summary>
         /// A DirectInput direction names where a force comes from, so a positive magnitude along the
         /// positive axis pushes towards the low end. A force towards the high end is the negative one.
@@ -698,20 +1036,31 @@ namespace x360ce.Engine
         const int TowardsHighEnd = -1;
 
         /// <summary>Holds a wheel at its centre with a spring the game never asked for. Called every poll.</summary>
-        /// <remarks>
-        /// A game made for a gamepad sends rumble and nothing else, so a wheel driven from that
-        /// rumble has no force at all between bumps and turns freely. The force is looked up in the
-        /// spring's curve (<see cref="Curve"/>), which is built again only when a setting, the wheel
-        /// range or the speed changes. While a calibration is on, it decides the force and the damping
-        /// instead. The device is only spoken to when the force changes by a whole percent, so a poll
-        /// of a still wheel compares a few numbers and returns.
-        /// </remarks>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent)
+        {
+            UpdateSpring(device, position, calibration, nowMs, speedOverride, frictionPercent, WheelTelemetrySample.Inactive, 0, 0);
+        }
+
+        /// <summary>Holds a wheel at its centre with a spring shaped by the car's curve, live vehicle telemetry, optional rumble understeer and software soft-lock. Called every poll.</summary>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent,
+            WheelTelemetrySample telemetry, int rumbleUndersteerPercent, int softLockRangeDegrees)
+        {
+            UpdateSpring(device, position, calibration, nowMs, speedOverride, frictionPercent,
+                telemetry, rumbleUndersteerPercent, softLockRangeDegrees, WheelTelemetryTuning.Default);
+        }
+
+        /// <summary>Holds a wheel at its centre with a spring shaped by the car's curve, live vehicle telemetry, user tuning scales, optional rumble understeer and software soft-lock. Called every poll.</summary>
         /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
         /// <param name="calibration">The Auto button's run, or null.</param>
-        /// <param name="nowMs">The time, for the calibration.</param>
+        /// <param name="nowMs">Monotonic clock in milliseconds.</param>
         /// <param name="speedOverride">The car's speed from a live source, which replaces the Speed setting while it is not null (<see cref="UserDevice.ForceSpringSpeedOverride"/>).</param>
         /// <param name="frictionPercent">The least force that turns the wheel, which the spring never falls below outside the centre (<see cref="UserDevice.ForceSpringFriction"/>).</param>
-        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent)
+        /// <param name="telemetry">Live vehicle telemetry snapshot, or <see cref="WheelTelemetrySample.Inactive"/>.</param>
+        /// <param name="rumbleUndersteerPercent">Zero-telemetry rumble-coupled understeer lightening (0 to 60 %).</param>
+        /// <param name="softLockRangeDegrees">Optional virtual soft-lock range lock to lock (&gt; 0 and narrower than physical range), or 0 for off.</param>
+        /// <param name="tuning">User-configured telemetry channel gain scales.</param>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent,
+            WheelTelemetrySample telemetry, int rumbleUndersteerPercent, int softLockRangeDegrees, WheelTelemetryTuning tuning)
         {
             int percent;
             int damper;
@@ -724,12 +1073,39 @@ namespace x360ce.Engine
             }
             else
             {
+                var effectiveSpeed = WheelTelemetryMath.EffectiveSpeed(springSpeed, speedOverride, telemetry, nowMs);
+                // When software soft-lock narrows a wheel without hardware range control, degrees are counted against its full physical range.
+                var physicalRange = softLockRangeDegrees > 0 && softLockRangeDegrees < DefaultRangeDegrees
+                    ? DefaultRangeDegrees
+                    : rangeDegrees;
                 // The friction is the spring's floor, so it plays only while the spring does.
-                Curve.Set(springStrength, springCentre, springPeak, springLightening, rangeDegrees, speedOverride ?? springSpeed,
-                    springStrength == 0 ? 0 : frictionPercent);
-                percent = Curve.Force(position);
-                damper = springDamper;
+                var activeFriction = springStrength == 0 ? 0 : frictionPercent;
+                Curve.Set(springStrength, springCentre, springPeak, springLightening, physicalRange, effectiveSpeed, activeFriction);
+
+                // Smooth rumble envelope for zero-telemetry tire-scrub lightening (attack ~60 ms, release ~180 ms).
+                double rumbleAttenuation = 0.0;
+                if (rumbleUndersteerPercent > 0 && springStrength > 0)
+                {
+                    var dtMs = lastSpringClockMs >= 0 ? Math.Max(0, Math.Min(100, nowMs - lastSpringClockMs)) : 0;
+                    var tau = rumbleDrive > rumbleEnvelope ? 60.0 : 180.0;
+                    var alpha = dtMs > 0 ? dtMs / (tau + dtMs) : 0.0;
+                    rumbleEnvelope += alpha * (rumbleDrive - rumbleEnvelope);
+                    var maxDrop = Math.Max(0, Math.Min(60, rumbleUndersteerPercent)) / 100.0;
+                    rumbleAttenuation = rumbleEnvelope * maxDrop;
+                }
+                else
+                {
+                    rumbleEnvelope = 0.0;
+                }
+                lastSpringClockMs = nowMs;
+
+                double dampingMultiplier;
+                percent = WheelTelemetryMath.ComputeSpringForce(Curve, position, physicalRange, activeFriction, springStrength,
+                    telemetry, nowMs, rumbleAttenuation, softLockRangeDegrees, tuning, ref LastSpringTerms, out dampingMultiplier);
+                LastSpringTerms.SpeedKmh = effectiveSpeed;
+                damper = springDamper == 0 ? 0 : Math.Max(0, Math.Min(DI_FFNOMINALMAX, (int)Math.Round(springDamper * dampingMultiplier)));
             }
+            LastSpringPercent = percent;
             UpdateDamper(device, damper);
             var magnitude = TowardsHighEnd * percent * (DI_FFNOMINALMAX / 100);
             if (magnitude == springMagnitude && (magnitude == 0 || effectS != null))
@@ -905,7 +1281,7 @@ namespace x360ce.Engine
                 var list = new List<string>();
                 if (paramsL != null && (effectL == null || unsupported.Contains(effectL)))
                     list.Add(actuatorR == null ? "the motor" : "the left motor");
-                if (paramsR != null && (effectR == null || unsupported.Contains(effectR)))
+                if (actuatorR != null && paramsR != null && (effectR == null || unsupported.Contains(effectR)))
                     list.Add("the right motor");
                 if (springRefused)
                     list.Add("the centering spring");

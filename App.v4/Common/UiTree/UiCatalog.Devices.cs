@@ -63,7 +63,7 @@ namespace x360ce.App.UiTree
 			d[nameof(AxisToButtonUserControl)] = new Text(null,
 				"How far a stick or pedal must move before the button mapped to it counts as pressed.");
 			d[nameof(WheelChartUserControl)] = new Text(null,
-				"The centering spring's force at every angle of the wheel, and the wheel's angle and force now.");
+				"The centering spring’s force at every angle of the wheel, and the wheel’s angle and force now.");
 			d[nameof(DirectInputUserControl)] = new Text(null,
 				"What the mapped device reports about itself, and its values as they change.");
 			d[nameof(MapExpressionToggle)] = new Text(null,

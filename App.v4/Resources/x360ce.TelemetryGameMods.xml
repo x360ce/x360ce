@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--The mods each game needs, from their official pages: x360ce neither includes nor downloads them.-->
+<Data Version="0">
+  <Items>
+    <TelemetryGameMod>
+      <TelemetryGameModId>0f123563-1e3a-5444-a406-c2c31a5594b0</TelemetryGameModId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <ModOrder>1</ModOrder>
+      <Name>Script Hook V</Name>
+      <DetectFile>ScriptHookV.dll</DetectFile>
+      <DetectProduct></DetectProduct>
+      <Url>http://www.dev-c.com/gtav/scripthookv/</Url>
+    </TelemetryGameMod>
+    <TelemetryGameMod>
+      <TelemetryGameModId>5ed69562-8b19-5f7d-afcb-b71bdd0a4c3e</TelemetryGameModId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <ModOrder>2</ModOrder>
+      <Name>Script Hook V loader</Name>
+      <DetectFile>dinput8.dll</DetectFile>
+      <DetectProduct></DetectProduct>
+      <Url>http://www.dev-c.com/gtav/scripthookv/</Url>
+    </TelemetryGameMod>
+    <TelemetryGameMod>
+      <TelemetryGameModId>eb357ab4-e43a-5f60-9f7f-5bf45507380d</TelemetryGameModId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <ModOrder>3</ModOrder>
+      <Name>Community Script Hook V .NET 3</Name>
+      <DetectFile>ScriptHookVDotNet3.dll</DetectFile>
+      <DetectProduct></DetectProduct>
+      <Url>https://github.com/scripthookvdotnet/scripthookvdotnet/releases</Url>
+    </TelemetryGameMod>
+    <TelemetryGameMod>
+      <TelemetryGameModId>57ffe45b-2b63-50fc-8946-9f0b5c889c45</TelemetryGameModId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <ModOrder>1</ModOrder>
+      <Name>Script Hook V</Name>
+      <DetectFile>ScriptHookV.dll</DetectFile>
+      <DetectProduct></DetectProduct>
+      <Url>http://www.dev-c.com/gtav/scripthookv/</Url>
+    </TelemetryGameMod>
+    <TelemetryGameMod>
+      <TelemetryGameModId>98a4aec0-ca33-5fe6-b27c-94074f95ef24</TelemetryGameModId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <ModOrder>2</ModOrder>
+      <Name>Script Hook V loader</Name>
+      <DetectFile>xinput1_4.dll</DetectFile>
+      <DetectProduct></DetectProduct>
+      <Url>http://www.dev-c.com/gtav/scripthookv/</Url>
+    </TelemetryGameMod>
+    <TelemetryGameMod>
+      <TelemetryGameModId>4bca658e-ef57-57ca-942f-f439bb889632</TelemetryGameModId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <ModOrder>3</ModOrder>
+      <Name>Script Hook V .NET Enhanced</Name>
+      <DetectFile>ScriptHookVDotNet.asi</DetectFile>
+      <DetectProduct>Enhanced</DetectProduct>
+      <Url>https://www.gta5-mods.com/tools/script-hook-v-net-enhanced</Url>
+    </TelemetryGameMod>
+  </Items>
+</Data>

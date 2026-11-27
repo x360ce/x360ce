@@ -613,6 +613,7 @@ namespace x360ce.App.Controls
 			ControlsHelper.CopyToClipboardOrWarn(sb.ToString());
 		}
 
+		[System.ComponentModel.Localizable(false)]
 		void CopyDiEffectsInformation()
 		{
 			var objects = DiEffectsDataGridView.DataSource as DeviceEffectItem[];

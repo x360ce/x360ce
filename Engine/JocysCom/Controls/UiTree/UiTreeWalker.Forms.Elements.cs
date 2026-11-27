@@ -146,7 +146,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		{
 			return new UiNode
 			{
-				Name = NameOf(item.AccessibleName, UiText.NameFor(item), WithoutAccessKey(item.Text), false),
+				Name = NameOf(item.AccessibleName, UiText.NameFor(item), WithoutAccessKey(UiLanguage.SourceOf(item, "Text", item.Text)), false),
 				Description = Clean(item.AccessibleDescription),
 				Role = RoleOf(item),
 				Id = item.Name,
@@ -243,9 +243,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var list = item as ToolStripComboBox;
 			if (list != null)
 			{
-				var index = ItemIndex(list.Items, list.ComboBox.GetItemText, value);
+				var index = ItemIndex(list.Items, x => ItemText(list.ComboBox, x), value);
 				if (index >= 0) { list.SelectedIndex = index; return null; }
-				return "No such item. Items: " + string.Join(", ", list.Items.Cast<object>().Select(x => list.ComboBox.GetItemText(x)).ToArray());
+				return "No such item. Items: " + string.Join(", ", list.Items.Cast<object>().Select(x => ItemText(list.ComboBox, x)).ToArray());
 			}
 			var text = item as ToolStripTextBox;
 			if (text != null) { text.Text = value; return null; }
@@ -269,6 +269,13 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			if (window == null || !window.Visible)
 				return "The window is hidden, so nothing can be pressed. Restore it first.";
 			Reveal(strip);
+			// A button that only drops a menu opens the menu, as a click on it does.
+			var dropDown = item as ToolStripDropDownButton;
+			if (dropDown != null && dropDown.HasDropDownItems)
+			{
+				dropDown.ShowDropDown();
+				return null;
+			}
 			item.PerformClick();
 			return null;
 		}
@@ -336,7 +343,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return new UiNode
 			{
 				// A check box is named by its column, as a person reads it: its value says whether it is ticked.
-				Name = isCheck ? Clean(column == null ? null : column.HeaderText) ?? (column == null ? null : column.Name) : text ?? Clean(column == null ? null : column.HeaderText),
+				Name = isCheck ? Clean(HeaderOf(column)) ?? (column == null ? null : column.Name) : text ?? Clean(HeaderOf(column)),
 				Role = cell is DataGridViewButtonCell ? "Button" : isCheck ? "CheckBox" : "Value",
 				Id = column == null ? null : column.Name,
 				Hidden = !IsShown(cell),
@@ -355,7 +362,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			foreach (var text in texts)
 			{
 				var column = text.Key;
-				if (string.Equals(column.HeaderText, "Name", StringComparison.OrdinalIgnoreCase)
+				if (string.Equals(HeaderOf(column), "Name", StringComparison.OrdinalIgnoreCase)
 					|| string.Equals(column.Name, "Name", StringComparison.OrdinalIgnoreCase))
 					return text.Value;
 				if (first == null)
@@ -378,10 +385,16 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				if (string.IsNullOrEmpty(text.Value))
 					continue;
 				var column = text.Key;
-				var header = Clean(column.HeaderText) ?? column.Name;
+				var header = Clean(HeaderOf(column)) ?? column.Name;
 				parts.Add(header + ": " + text.Value);
 			}
 			return string.Join("; ", parts.ToArray());
+		}
+
+		/// <summary>A column's heading in English whatever language is shown, so a row reads the same in every language.</summary>
+		static string HeaderOf(DataGridViewColumn column)
+		{
+			return column == null ? null : UiLanguage.SourceOf(column, "HeaderText", column.HeaderText);
 		}
 
 		/// <summary>What each cell that carries words says, with its column, in the row at an index: each formatted once.</summary>

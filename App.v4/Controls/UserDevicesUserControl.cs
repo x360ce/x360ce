@@ -13,6 +13,7 @@ using x360ce.App.DInput;
 using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -344,18 +345,24 @@ namespace x360ce.App.Controls
 				if (count == 0)
 				{
 					CleanupVirtualPadsButton.Enabled = true;
-					MessageBoxForm.Show("No virtual controllers have been left behind.",
-						"Remove Leftover Pads", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxForm.Show(UiLanguage.T("UserDevicesUserControl.NoLeftoverPads", "No virtual controllers have been left behind."),
+						UiLanguage.T("UserDevicesUserControl.RemoveLeftoverPads", "Remove Leftover Pads"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return;
 				}
 				// Say what the trouble is before asking, because the number on its own means nothing to
 				// somebody who does not know that only four XInput places exist.
-				var question = string.Format(
-					"{0} virtual controllers from earlier runs are still present.\r\n\r\n" +
-					"Windows offers only four XInput places, so these take the places this program needs " +
-					"and a controller can appear to move on its own.\r\n\r\n" +
-					"Remove them? Real controllers are not touched.", count);
-				var answer = MessageBoxForm.Show(question, "Remove Leftover Pads",
+				var question = count == 1
+					? UiLanguage.T("UserDevicesUserControl.OneLeftoverController",
+						"One virtual controller from an earlier run is still present.\r\n\r\n" +
+						"Windows offers only four XInput places, so this controller takes a place this program needs " +
+						"and a controller can appear to move on its own.\r\n\r\n" +
+						"Remove it? Real controllers are not touched.")
+					: string.Format(UiLanguage.T("UserDevicesUserControl.LeftoverControllers",
+						"{0} virtual controllers from earlier runs are still present.\r\n\r\n" +
+						"Windows offers only four XInput places, so these take the places this program needs " +
+						"and a controller can appear to move on its own.\r\n\r\n" +
+						"Remove them? Real controllers are not touched."), count);
+				var answer = MessageBoxForm.Show(question, UiLanguage.T("UserDevicesUserControl.RemoveLeftoverPads", "Remove Leftover Pads"),
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				if (answer != DialogResult.Yes)
 				{
@@ -367,7 +374,7 @@ namespace x360ce.App.Controls
 				{
 					CleanupVirtualPadsButton.Enabled = true;
 					var result = removed.IsFaulted ? removed.Exception.GetBaseException().Message : removed.Result;
-					MessageBoxForm.Show(result, "Remove Leftover Pads", MessageBoxButtons.OK,
+					MessageBoxForm.Show(result, UiLanguage.T("UserDevicesUserControl.RemoveLeftoverPads", "Remove Leftover Pads"), MessageBoxButtons.OK,
 						succeeded && !removed.IsFaulted ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
 					Global.DHelper.UpdateDevicesEnabled = true;
 				}, ui);
@@ -381,8 +388,8 @@ namespace x360ce.App.Controls
 			var types = manager == null ? new Plugins.PluginDeviceType[0] : manager.DeviceTypes.Where(x => !x.Faulted).ToArray();
 			if (types.Length == 0)
 			{
-				MessageBox.Show("No plugin offers a device. The Plugins page on the Options tab lists the plugins found and why any did not load.",
-					"Add Plugin Device", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(UiLanguage.T("UserDevicesUserControl.NoPluginOffersADeviceThe", "No plugin offers a device. The Plugins page on the Options tab lists the plugins found and why any did not load."),
+					UiLanguage.T("UserDevicesUserControl.AddPluginDevice", "Add Plugin Device"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 			if (types.Length == 1)
@@ -455,7 +462,7 @@ namespace x360ce.App.Controls
 				ShowHidHideRefused();
 				return;
 			}
-			ShowList(state.HiddenDevices, "Hidden Devices");
+			ShowList(state.HiddenDevices, UiLanguage.T("UserDevicesUserControl.HiddenDevices", "Hidden Devices"));
 		}
 
 		private void GamingDevicesMenuItem_Click(object sender, EventArgs e)
@@ -465,7 +472,7 @@ namespace x360ce.App.Controls
 				ShowHidHideRefused();
 				return;
 			}
-			ShowList(DInput.VirtualDriverInstaller.GetHidHideGamingDevices(), "Gaming Devices");
+			ShowList(DInput.VirtualDriverInstaller.GetHidHideGamingDevices(), UiLanguage.T("UserDevicesUserControl.GamingDevices", "Gaming Devices"));
 		}
 
 		private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)
@@ -507,11 +514,11 @@ namespace x360ce.App.Controls
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			if (!DInput.VirtualDriverInstaller.IsHidHideDevicePresent())
-				form.ShowForm("HID Hide is not installed, so x360ce cannot hide devices.\r\nThe HID Hide page on the Options tab downloads it.",
-					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				form.ShowForm(UiLanguage.T("UserDevicesUserControl.HIDHideIsNotInstalledSo", "HID Hide is not installed, so x360ce cannot hide devices.\r\nThe HID Hide page on the Options tab downloads it."),
+					UiLanguage.T("UserDevicesUserControl.HidHide", "HID Hide"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 			else
-				form.ShowForm("HID Hide did not accept the change.\r\nOpen HID Hide from this menu and make it there.",
-					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				form.ShowForm(UiLanguage.T("UserDevicesUserControl.HIDHideDidNotAcceptThe", "HID Hide did not accept the change.\r\nOpen HID Hide from this menu and make it there."),
+					UiLanguage.T("UserDevicesUserControl.HidHide", "HID Hide"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(true), Browsable(true)]

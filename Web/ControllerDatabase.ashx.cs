@@ -44,7 +44,7 @@ namespace x360ce.Web
 		/// <summary>The file's text, from the settings database.</summary>
 		static string Build()
 		{
-			var entries = X360ceDatabaseServer.Entries(EngineHelper.GetControllerDatabase());
+			var entries = X360ceDatabaseServer.Entries(DatabaseHelper.GetControllerDatabase());
 			return X360ceDatabase.Write(entries, "x360ce's server", DateTime.UtcNow);
 		}
 	}

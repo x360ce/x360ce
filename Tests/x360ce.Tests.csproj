@@ -50,8 +50,8 @@
 		<!-- Untyped JSON for the MCP tests, in-box. -->
 		<Reference Include="System.IO.Compression" />
 		<Reference Include="System.IO.Compression.FileSystem" />
-		<!-- Settings rows are entity objects, so their base type has to resolve here. -->
-		<Reference Include="System.Data.Entity" />
+		<!-- ASMX's own reflector writes the WSDL the data classes make (EntityFormatTest). -->
+		<Reference Include="System.Web.Services" />
 		<!-- The programs reach the settings database through SoapHttpClientProtocol; so do the tests. -->
 		<!-- The test controller reports a DirectInput state, so the type has to resolve here too. -->
 		<Reference Include="SharpDX">

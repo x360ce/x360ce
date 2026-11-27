@@ -38,6 +38,10 @@ namespace x360ce.TestGame
 		readonly Label DoorLabel;
 		readonly DataGridView EventsDataGridView;
 		readonly TextBox StateTextBox;
+		readonly TabControl MainTabControl;
+		readonly TabPage RecorderTabPage;
+		readonly TabPage VirtualCarTabPage;
+		public readonly VirtualCarPanel VirtualCar;
 		readonly Timer PollTimer;
 		readonly string _placeFile;
 		string _shownState;
@@ -227,7 +231,41 @@ namespace x360ce.TestGame
 			root.Controls.Add(LastEventLabel, 0, 1);
 			root.Controls.Add(options, 0, 2);
 			root.Controls.Add(content, 0, 3);
-			Controls.Add(root);
+
+			MainTabControl = new TabControl
+			{
+				Name = "MainTabControl",
+				Dock = DockStyle.Fill,
+				AccessibleName = "Test Game sections",
+				AccessibleDescription = "Switch between the Input Recorder and the drivable Virtual Car telemetry simulator.",
+			};
+			RecorderTabPage = new TabPage
+			{
+				Name = "RecorderTabPage",
+				Text = "Input Recorder",
+				AccessibleName = "Input Recorder",
+				AccessibleDescription = "Records keyboard, mouse, DirectInput and XInput events.",
+				UseVisualStyleBackColor = true,
+			};
+			RecorderTabPage.Controls.Add(root);
+
+			VirtualCar = new VirtualCarPanel();
+			VirtualCarTabPage = new TabPage
+			{
+				Name = "VirtualCarTabPage",
+				Text = "Virtual Car",
+				AccessibleName = "Virtual Car",
+				AccessibleDescription = "Drivable virtual car simulator that transmits live racing telemetry UDP packets to x360ce.",
+				UseVisualStyleBackColor = true,
+			};
+			VirtualCarTabPage.Controls.Add(VirtualCar);
+
+			MainTabControl.TabPages.Add(RecorderTabPage);
+			MainTabControl.TabPages.Add(VirtualCarTabPage);
+			Controls.Add(MainTabControl);
+			KeyPreview = true;
+			KeyDown += (s, e) => { if (MainTabControl.SelectedTab == VirtualCarTabPage) VirtualCar.SetKeyState(e.KeyCode, true); };
+			KeyUp += (s, e) => { VirtualCar.SetKeyState(e.KeyCode, false); };
 
 			Recorder.Added += ShowEvent;
 			PollTimer = new Timer { Interval = 10 };
@@ -300,6 +338,7 @@ namespace x360ce.TestGame
 				Devices.InFront = false;
 			// Keys held when the window went behind may be let go of where a way of reading that stops behind cannot see it.
 			Recorder.ReleaseAll();
+			VirtualCar.ClearKeys();
 			Recorder.Add(new InputEvent { Source = "Window", Kind = "Behind", Name = "Window", Note = "The window went behind another." });
 		}
 
@@ -387,6 +426,14 @@ namespace x360ce.TestGame
 				_shownState = state;
 				StateTextBox.Text = state;
 			}
+			lock (Devices.Sync)
+				VirtualCar.Tick(Devices.XInput, MainTabControl.SelectedTab == VirtualCarTabPage);
+		}
+
+		/// <summary>Selects the Virtual Car tab in the Test Game window.</summary>
+		public void SelectVirtualCarTab()
+		{
+			MainTabControl.SelectedTab = VirtualCarTabPage;
 		}
 
 		void ShowEvent(InputEvent e)

@@ -276,17 +276,59 @@ namespace Nefarius.ViGEm.Client
 			}
 		}
 
+		/// <summary>Makes the controller <see cref="PlugTemporary"/> puts on the bus. Replaced by tests that have no bus.</summary>
+		public static Func<ViGEmClient, Xbox360Controller> NewTemporary = client => new Xbox360Controller(client);
+
+		/// <summary>Puts a temporary controller on the bus: it holds an XInput place while another controller arrives, and is never fed.</summary>
+		/// <remarks>
+		/// None of the four pads' own: no tab sends it a report and nothing it is told reaches a game's force. Recorded as
+		/// ours, like every controller this program makes, so neither it nor the record Windows keeps of it once it has gone
+		/// is listed as a leftover. Used by a plug, for the free places below a pad's own, and by putting controllers in order.
+		/// </remarks>
+		/// <returns>The controller, on the bus.</returns>
+		/// <exception cref="ViGEmException">The bus refused it. Nothing is on the bus, and the controller is freed.</exception>
+		public Xbox360Controller PlugTemporary()
+		{
+			var controller = NewTemporary(this);
+			try
+			{
+				controller.Connect();
+			}
+			catch
+			{
+				controller.Dispose();
+				throw;
+			}
+			RememberSerial(controller);
+			return controller;
+		}
+
+		/// <summary>Takes a temporary controller off the bus and frees it.</summary>
+		/// <exception cref="ViGEmException">The bus would not let go of it. It is freed all the same.</exception>
+		public static void UnplugTemporary(Xbox360Controller controller)
+		{
+			try
+			{
+				controller.Disconnect();
+			}
+			catch (ViGEmException ex) when (BusAnswers.Of(ex.Code) == BusAnswer.Gone)
+			{
+				// Gone already, which is what was asked for.
+			}
+			finally
+			{
+				controller.Dispose();
+			}
+		}
+
 		/// <summary>Connects the controller for this pad, and only that one.</summary>
 		/// <param name="userIndex">The pad, 1 to 4.</param>
 		/// <param name="error">What the bus answered when it refused: its code, or VIGEM_ERROR_NONE when it
 		/// took the controller, was never asked, or failed without giving a code.</param>
 		/// <remarks>
-		/// Windows gives out the XInput place, and cannot be asked for one. The places below used to be
-		/// filled with brief controllers first, so this one would land above them. Those took places that
-		/// belong to other tabs: with a real controller in the first place, the brief one took the second,
-		/// this one landed in the third, and the second was left empty. Some were also left behind,
-		/// holding a place until the program ended. Where this one lands is checked by the caller, which
-		/// keeps it only in its own place.
+		/// Windows gives out the XInput place, and cannot be asked for one. This pad's own controller only: the
+		/// caller holds each free place below its own with a temporary controller first (<see cref="PlugTemporary"/>),
+		/// checks where this one lands, and keeps it only in its own place.
 		/// </remarks>
 		public bool PlugIn(uint userIndex, out VIGEM_ERROR error)
 		{

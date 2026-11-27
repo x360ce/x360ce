@@ -54,14 +54,14 @@ namespace x360ce.Web.WebServices
 			// If get My Settings" then...
 			if (hasInstances)
 			{
-				var ds = EngineHelper.GetSettings(args);
+				var ds = DatabaseHelper.GetSettings(args);
 				sr.Settings = SqlHelper.ConvertToList<UserSetting>(ds.Tables[0]).ToArray();
 				AddToList(ds.Tables[1], ref padSettings);
 			}
 			// If get "Default Settings for My Controllers" then...
 			if (hasProducts)
 			{
-				var ds = EngineHelper.GetPresets(args);
+				var ds = DatabaseHelper.GetPresets(args);
 				sr.Summaries = SqlHelper.ConvertToList<Summary>(ds.Tables[0]).ToArray();
 				AddToList(ds.Tables[1], ref padSettings);
 			}
@@ -88,7 +88,7 @@ namespace x360ce.Web.WebServices
 		/// </summary>
 		static readonly DailyCache<SearchResult> MostPopular = new DailyCache<SearchResult>(served =>
 		{
-			var ds = EngineHelper.GetPresets(new SearchParameter[0], commandTimeout: 120);
+			var ds = DatabaseHelper.GetPresets(new SearchParameter[0], commandTimeout: 120);
 			return new SearchResult
 			{
 				Presets = SqlHelper.ConvertToList<Preset>(ds.Tables[0]).ToArray(),

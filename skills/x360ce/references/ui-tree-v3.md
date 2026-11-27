@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 3.11.32.0, built 2026-11-15.
+Version 3.12.4.0, built 2026-11-16.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -318,7 +318,7 @@ not shown in this state of the program.
 [Tab]       │   │               ├── Changes
 [Text]      │   │               │   └── Changes                                         # What changed in each release of this program.
 [Tab]       │   │               └── License
-[Text]      │   │                   └── License                                         # The licence this program is released under.
+[Text]      │   │                   └── License                                         # The licence this program is released under, then the licence of each part it carries from other projects.
 [Label]     │   ├── Help text                                                           # What whatever the mouse is over is for.
 [List]      │   └── Game                                                                # Which game the emulator is set up for: the folder whose x360ce.ini the pages below edit.
 [Section]   └── Tray                                                                    # The menu behind the icon in the notification area.

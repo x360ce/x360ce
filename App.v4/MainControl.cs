@@ -45,7 +45,8 @@ namespace x360ce.App
 			Pad2TabPage.Text = "Controller 2";
 			Pad3TabPage.Text = "Controller 3";
 			Pad4TabPage.Text = "Controller 4";
-			GamesToolStrip_Layout(null, null);
+			AppLanguages.FillMenu(LanguageButton, ChooseLanguage);
+			LayoutGamesToolStrip();
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 			// Other option.
 			TestButton.Visible = SettingsManager.Options.ShowTestButton;
@@ -53,6 +54,19 @@ namespace x360ce.App
 			foreach (var item in ControlPages)
 				item.ImageKey = "bullet_square_glass_grey.png";
 			BuiltPadControls = new PadControl[1];
+		}
+
+		/// <summary>Shows the interface in a language at once, and keeps the choice in the options.</summary>
+		void ChooseLanguage(AppLanguages.Language language)
+		{
+			if (language != AppLanguages.Current)
+				AppLanguages.Use(language);
+			// A click turns the entry over; the one shown stays the one ticked.
+			AppLanguages.TickMenu(LanguageButton);
+			if (SettingsManager.Options.Language == language.Culture)
+				return;
+			SettingsManager.Options.Language = language.Culture;
+			SettingsManager.OptionsData.Save();
 		}
 
 		List<TabPage> PadTabPages => new List<TabPage> { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
@@ -77,6 +91,7 @@ namespace x360ce.App
 			};
 			Program.StartupTrace.Mark("BuildPages: pad built");
 			ControlPages[0].Controls.Add(BuiltPadControls[0]);
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(BuiltPadControls[0]);
 			BuiltPadControls[0].HoldTables();
 			BuiltPadControls[0].InitPadControl();
 			BuiltPadControls[0].ReleaseTables();
@@ -179,6 +194,7 @@ namespace x360ce.App
 				Dock = DockStyle.Fill
 			};
 			AboutTabPage.Controls.Add(ControlAbout);
+			JocysCom.ClassLibrary.Controls.UiTree.UiLanguage.Register(ControlAbout);
 			Program.StartupTrace.Mark("BuildPages: about built");
 		}
 
@@ -265,36 +281,30 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Gives the game list what the tool bar's other items leave, each time the tool bar lays itself out: when it is
-		/// resized, and when its items change size or are shown or hidden, as the theme, a screen of another scale and the
-		/// options make them, so no item is pushed into the overflow menu. The list ends where neighbours stand apart, 8 pixels
-		/// at 100 %, before the first button to its right.
+		/// Lays the Game bar out as a single-row table grid: each label and button takes its own AutoSize column, and the
+		/// game list fills the remaining 100 % column, so changing languages or window sizes can never push a button off
+		/// the bar.
 		/// </summary>
-		private void GamesToolStrip_Layout(object sender, LayoutEventArgs e)
+		void LayoutGamesToolStrip()
 		{
-			var width = GamesToolStrip.DisplayRectangle.Width;
-			ToolStripItem next = null;
-			foreach (ToolStripItem tsi in GamesToolStrip.Items)
-			{
-				// A hidden item takes no room.
-				if (tsi == GameToCustomizeComboBox || !tsi.Available)
-					continue;
-				// As wide as it stands on the bar: an item in the overflow menu reads the menu's width.
-				width -= tsi.GetPreferredSize(Size.Empty).Width;
-				width -= tsi.Margin.Horizontal;
-				// The items on the right stand from the bar's end in their order, so the last of them is the list's neighbour.
-				if (tsi.Alignment == ToolStripItemAlignment.Right)
-					next = tsi;
-			}
-			var gap = (int)Math.Round(8 * ControlsHelper.DpiScale);
-			// The margins between the list and its neighbour are given to the gap.
-			width -= GameToCustomizeComboBox.Margin.Left + gap - (next?.Margin.Left ?? GameToCustomizeComboBox.Margin.Right);
-			width = Math.Max(0, width);
-			// The width is the box's, and the item sizes itself to its box, as the buttons do: a tool bar places an item of a
-			// size of its own in the middle of the bar, away from the margin above it that the buttons keep. A new width lays
-			// the tool bar out again, which finds the same width and stops.
-			if (GameToCustomizeComboBox.ComboBox.Width != width)
-				GameToCustomizeComboBox.ComboBox.Width = width;
+			var table = (TableLayoutSettings)GamesToolStrip.LayoutSettings;
+			table.RowCount = 1;
+			table.ColumnCount = 6;
+			table.RowStyles.Clear();
+			table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			table.ColumnStyles.Clear();
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			table.SetCellPosition(MappedDevicesLabel, new TableLayoutPanelCellPosition(0, 0));
+			table.SetCellPosition(GameToCustomizeComboBox, new TableLayoutPanelCellPosition(1, 0));
+			table.SetCellPosition(AddGameButton, new TableLayoutPanelCellPosition(2, 0));
+			table.SetCellPosition(TestButton, new TableLayoutPanelCellPosition(3, 0));
+			table.SetCellPosition(SaveAllButton, new TableLayoutPanelCellPosition(4, 0));
+			table.SetCellPosition(LanguageButton, new TableLayoutPanelCellPosition(5, 0));
 		}
 
 		private void SaveAllButton_Click(object sender, EventArgs e)

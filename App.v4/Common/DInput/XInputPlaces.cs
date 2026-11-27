@@ -600,7 +600,7 @@ namespace x360ce.App.DInput
 				case HolderReal:
 					return "a real controller";
 				case HolderVirtual:
-					return "another of this program's own virtual controllers";
+					return "another of this program’s own virtual controllers";
 				case HolderLeftover:
 					return "a virtual controller this program did not make, such as one from DS4Windows or one left behind (the Devices page lists it as Leftover)";
 				default:
@@ -635,6 +635,13 @@ namespace x360ce.App.DInput
 		public static string Waiting(int pad)
 		{
 			return string.Format("Virtual {0} (waiting)", pad);
+		}
+
+		/// <summary>How a place kept free reads in the order list.</summary>
+		/// <param name="place">The place, counting from zero.</param>
+		public static string FreePlace(int place)
+		{
+			return string.Format("Free {0}", place + 1);
 		}
 
 		/// <summary>How the places a device reaches read to a person, as one line.</summary>

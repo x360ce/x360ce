@@ -27,9 +27,9 @@ namespace x360ce.Tests
 		}
 	}
 
-	/// <summary>A plugin device with one setting of each kind, as a controller fed over the network might have.</summary>
+	/// <summary>A plugin device with one setting of each kind, as a controller fed over the network might have, which can choose its address itself, as its own control would.</summary>
 	[Description("A device with settings, for the plugin settings tests.")]
-	public class SettingsPluginDevice : IPluginDevice
+	public class SettingsPluginDevice : IPluginDevice, INotifyPropertyChanged, IDisposable
 	{
 		public static readonly Guid Product = new Guid("0b7d6f43-6a41-4b0c-9d55-2f6c1d9a8e10");
 		public string Name { get { return "Settings Device"; } }
@@ -72,11 +72,41 @@ namespace x360ce.Tests
 		[DisplayName("Packets received"), Description("Packets received since the device was added.")]
 		public int Packets { get; private set; }
 
-		public void Receive() { Packets++; }
+		/// <summary>Counts a packet, and says that its status changed.</summary>
+		public void Receive()
+		{
+			Packets++;
+			OnPropertyChanged(nameof(Packets));
+		}
 
 		public void Read(PluginState state)
 		{
 			state.Axes[0] = Listen ? PluginState.Middle : 0;
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>Chooses the address itself, as a control of its own would, and says so.</summary>
+		public void Choose(string address)
+		{
+			Address = address;
+			OnPropertyChanged(nameof(Address));
+		}
+
+		void OnPropertyChanged(string name)
+		{
+			var changed = PropertyChanged;
+			if (changed != null)
+				changed(this, new PropertyChangedEventArgs(name));
+		}
+
+		/// <summary>True once x360ce let go of the device.</summary>
+		[Browsable(false)]
+		public bool Disposed { get; private set; }
+
+		public void Dispose()
+		{
+			Disposed = true;
 		}
 	}
 

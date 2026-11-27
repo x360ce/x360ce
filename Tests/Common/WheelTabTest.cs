@@ -121,7 +121,10 @@ namespace x360ce.Tests
 
 		static Control Find(Control root, string name)
 		{
-			return root.Controls.Find(name, true).Single();
+			var found = root.Controls.Find(name, true);
+			if (found.Length == 0 && root is PadControl pad && pad.WheelTabPage != null)
+				found = pad.WheelTabPage.Controls.Find(name, true);
+			return found.Single();
 		}
 
 		static int Slider(Control root, string name)
@@ -237,8 +240,9 @@ namespace x360ce.Tests
 					pad.Dock = DockStyle.Fill;
 					form.ClientSize = pad.Size;
 					form.Controls.Add(pad);
+					pad.UpdateWheelTabs(new UserDevice { ProductName = "Logitech G29 Driving Force", CapType = (int)SharpDX.DirectInput.DeviceType.Driving });
 					var tabs = (TabControl)Find(pad, nameof(PadControl.PadTabControl));
-					var page = (TabPage)Find(pad, nameof(PadControl.WheelTabPage));
+					var page = pad.WheelTabPage;
 					Assert.AreEqual(tabs.TabPages.IndexOf((TabPage)Find(pad, nameof(PadControl.ForceFeedbackTabPage))) + 1, tabs.TabPages.IndexOf(page),
 						"The Wheel tab is not right after Force Feedback.");
 					tabs.SelectedTab = page;

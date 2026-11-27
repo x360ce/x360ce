@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--The files the Wheel Telemetry Games plugin installs into a game's folder. {Port} in a file is the port on the page.-->
+<Data Version="0">
+  <Items>
+    <TelemetryGameFile>
+      <TelemetryGameFileId>51cce25b-b1b1-5ebc-a73c-d50fab539457</TelemetryGameFileId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <ResourceName>x360ce.Telemetry.3.cs</ResourceName>
+      <TargetPath>scripts\x360ce.Telemetry.3.cs</TargetPath>
+    </TelemetryGameFile>
+    <TelemetryGameFile>
+      <TelemetryGameFileId>507325a2-8f48-5393-8f38-2fb1f3a750ae</TelemetryGameFileId>
+      <TelemetryGameId>0738983f-b39e-5fc6-981f-74296d85e4a5</TelemetryGameId>
+      <ResourceName>x360ce.Telemetry.ini</ResourceName>
+      <TargetPath>scripts\x360ce.Telemetry.ini</TargetPath>
+    </TelemetryGameFile>
+    <TelemetryGameFile>
+      <TelemetryGameFileId>49302077-9a96-5a59-b83a-26975c36171d</TelemetryGameFileId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <ResourceName>x360ce.Telemetry.3.cs</ResourceName>
+      <TargetPath>scripts\x360ce.Telemetry.3.cs</TargetPath>
+    </TelemetryGameFile>
+    <TelemetryGameFile>
+      <TelemetryGameFileId>56288317-2609-542b-b4a2-52dc3caf2806</TelemetryGameFileId>
+      <TelemetryGameId>6b38a8c8-6c69-5d5e-9b30-d279d87cb180</TelemetryGameId>
+      <ResourceName>x360ce.Telemetry.ini</ResourceName>
+      <TargetPath>scripts\x360ce.Telemetry.ini</TargetPath>
+    </TelemetryGameFile>
+  </Items>
+</Data>

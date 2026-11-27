@@ -22,9 +22,10 @@ of the library, both themes listed in Controls/Themes/ThemeResourceManager.resx:
 the copy of the library in Engine/JocysCom, and with --core into the library's own folder as well.
 
 A colour moves in OKLCH: lightness rises towards white by K_L of the distance, chroma is multiplied
-by K_C, and the hue stays. Four icons G2 does not have are put together from G2 parts: a folder with
-a magnifier, a floppy disk with a plus, a check box with a filled square, and a red record dot drawn
-the way G2 draws a ball. The greyed "off" icons are made from the icon they switch off.
+by K_C, and the hue stays. Three icons G2 does not have are put together from G2 parts: a folder with
+a magnifier, a floppy disk with a plus, and a check box with a filled square. The record dot is a flat
+circle in its own colour, the same in both themes, and is not recoloured. The greyed "off" icons are
+made from the icon they switch off.
 
 The G2 collection is licensed and not part of this repository. Point the script at its PNG folder of
 the standard style, the one holding the 16x16, 24x24, ... folders:
@@ -77,6 +78,7 @@ ICONS = {
     "fix_off_16x16": ("v4", "@off:sign_warning"),
     "hardware_16x16": ("v4", "toolbox"),
     "information_16x16": ("v4", "information"),
+    "language_16x16": ("v4", "earth"),
     "nav_down_16x16": ("v4", "nav_down"),
     "nav_up_16x16": ("v4", "nav_up"),
     "ok_16x16": ("v4", "ok"),
@@ -116,6 +118,12 @@ KEEP_DARK = {"sign_warning", "help_earth", "window_oscillograph"}
 # Check boxes whose white inside would glare in the dark theme: there it takes the dark colour of a
 # text box (#2D2D2D), as the check boxes Windows draws in that theme do.
 DARK_INSIDE = {"checkbox_unchecked", "@undefined"}
+
+# Icons drawn in their final colour, the same in both themes, which are not made pastel.
+AS_DRAWN = {"@record"}
+
+# The record dot's colour: the B button's red of the Buttons page (build_buttons.py).
+RECORD = (0xFF, 0x6B, 0x66)
 
 # Sizes G2 ships, the ones between are reduced from the next larger.
 G2_SIZES = (16, 24, 32, 48, 64, 128, 256)
@@ -232,22 +240,17 @@ class G2:
 
     @staticmethod
     def record_dot(size):
-        """A red ball drawn the way G2 draws one: a darker rim, and the lower-right half in shade."""
+        """A flat dot in RECORD, without a rim or shade, three quarters of the icon wide. Every pixel is RECORD,
+        and its alpha is how much of it the circle covers, counted at eight times the size, so the edge is smooth
+        and takes no other colour."""
         z = 8
         full = size * z
-        big = Image.new("RGBA", (full, full), (0, 0, 0, 0))
         m = round(full * 0.125)
-        outer = [m, m, full - m - 1, full - m - 1]
-        inner = [outer[0] + z, outer[1] + z, outer[2] - z, outer[3] - z]
-        ImageDraw.Draw(big).ellipse(outer, fill=(0xbd, 0x36, 0x0c, 255))
-        ImageDraw.Draw(big).ellipse(inner, fill=(0xf3, 0x50, 0x1e, 255))
-        lower = Image.new("RGBA", big.size, (0, 0, 0, 0))
-        ImageDraw.Draw(lower).ellipse(inner, fill=(0xe5, 0x4a, 0x18, 255))
-        half = Image.new("L", big.size, 0)
-        ImageDraw.Draw(half).polygon([(full, 0), (full, full), (0, full)], fill=255)
-        shade = Image.fromarray(np.minimum(np.asarray(lower.getchannel("A")), np.asarray(half)))
-        big.paste(lower, (0, 0), shade)
-        return big.resize((size, size), Image.LANCZOS)
+        circle = Image.new("L", (full, full), 0)
+        ImageDraw.Draw(circle).ellipse([m, m, full - m - 1, full - m - 1], fill=255)
+        dot = Image.new("RGBA", (size, size), RECORD + (255,))
+        dot.putalpha(circle.resize((size, size), Image.BOX))
+        return dot
 
     def source(self, recipe, size):
         if recipe == "@record":
@@ -264,6 +267,8 @@ class G2:
 
 
 def build(g2, recipe, size, dark):
+    if recipe in AS_DRAWN:
+        return g2.source(recipe, size)
     k_l, k_c = DARK if dark else LIGHT
     lift = dark and recipe.replace("@off:", "") not in KEEP_DARK
     image = pastel(g2.source(recipe, size), k_l, k_c, lift)

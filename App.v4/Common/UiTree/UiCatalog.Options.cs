@@ -63,15 +63,15 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.StartWithWindowsStateComboBox)] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.AppearanceGroupBox)] = new Text("Appearance",
-				"The program's colours, and the font and size its windows are drawn in.");
+				"The program’s colours, and the font and size its windows are drawn in.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.ThemeComboBox)] = new Text("Theme",
 				"Light or dark colours. System follows the Windows setting for apps.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.FontComboBox)] = new Text("Font",
-				"The font the program's windows are drawn in: the default, Windows' own; Selawik, built in; or an installed font. "
+				"The font the program’s windows are drawn in: the default, Windows’ own; Selawik, built in; or an installed font. "
 				+ "Takes effect when x360ce starts again.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.SizeComboBox)] = new Text("Size",
-				"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' own for its "
-				+ "own font and Windows' text size for any other, "
+				"The size the program’s text is drawn at, in points and in pixels on this screen: the default, Windows’ own for its "
+				+ "own font and Windows’ text size for any other, "
 				+ "or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows "
 				+ "grow or shrink with it. Takes effect when x360ce starts again.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.RestartButton)] = new Text("Restart x360ce",
@@ -141,7 +141,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidHideConfigureButton)] = new Text("Open Configuration",
 				"Opens the HID Hide program, where hidden devices are chosen.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidHideDownloadLinkLabel)] = new Text("HID Hide releases",
-				"Opens the page HID Hide's setups are downloaded from, to download one by hand.");
+				"Opens the page HID Hide’s setups are downloaded from, to download one by hand.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidHideHelpRichTextBox)] = new Text("HID Hide notes",
 				"What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidHideConfigureAutomaticallyCheckBox)] = new Text("Configure automatically",
@@ -152,7 +152,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianTextBox)] = new Text("HID Guardian state",
 				"Whether HID Guardian is still installed.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianInstallButton)] = new Text("Install",
-				"Installs HID Guardian. Use HID Hide instead.");
+				"Installs HID Guardian. Only development builds install it, so its removal can be tested: use HID Hide instead.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianUninstallButton)] = new Text("Uninstall",
 				"Removes HID Guardian. Needs Administrator.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.HidGuardianRefreshButton)] = new Text("Refresh",
@@ -178,7 +178,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsPluginsUserControl) + "." + nameof(OptionsPluginsUserControl.ScriptsNoteLabel)] = new Text("About AutoHotkey scripts",
 				"How a script reaches x360ce, and where the library it includes is written.");
 			d[nameof(OptionsPluginsUserControl) + "." + nameof(OptionsPluginsUserControl.HeartbeatUpDown)] = new Text("Heartbeat every (ms)",
-				"How often a script tells x360ce it still runs, in milliseconds. AutoHotkey's timers step every 15.6 ms, so less beats no faster. Greyed out while AutoHotkey scripts are not allowed.");
+				"How often a script tells x360ce it still runs, in milliseconds. AutoHotkey’s timers step every 15.6 ms, so less beats no faster. Greyed out while AutoHotkey scripts are not allowed.");
 			d[nameof(OptionsPluginsUserControl) + "." + nameof(OptionsPluginsUserControl.HangTimeoutUpDown)] = new Text("Let go of a hung script after (ms)",
 				"How long x360ce waits for a heartbeat before it lets go of everything a script that stopped responding held, and at least three heartbeats. " +
 				"Shorter lets go sooner, but a script busy for longer, such as in a long Critical section, then loses what it held. Greyed out while AutoHotkey scripts are not allowed.");
@@ -191,7 +191,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsPluginsUserControl) + "." + nameof(OptionsPluginsUserControl.NoteLabel)] = new Text("About plugins",
 				"Which plugins load by themselves, and why plugins from others need permission.");
 			d[nameof(OptionsPluginsUserControl) + "." + nameof(OptionsPluginsUserControl.PluginsDataGridView)] = new Text("Plugins",
-				"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.");
+				"Each plugin found: whether it is enabled (built-in plugins load by default and can be unticked to unload), the devices or providers it adds, whether it loaded, who signed it, and why it did not load or was switched off.");
 		}
 
 		/// <summary>The Internet page: the online database and the account used with it.</summary>
@@ -206,9 +206,9 @@ namespace x360ce.App.UiTree
 			// What it is for is the option's own description, which the box takes when it is bound.
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.SdlDatabaseUrlComboBox)] = new Text("SDL database address", null);
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.UpdateSdlDatabaseButton)] = new Text("Update SDL Database",
-				"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.");
+				"Downloads SDL’s controller database from that address into the settings folder, as the button on each controller’s SDL tab does, and says in the header how it went.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.UpdateX360ceDatabaseButton)] = new Text("Update x360ce Database",
-				"Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.");
+				"Downloads x360ce’s controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.GamesGroupBox)] = new Text("Default settings",
 				"How settings shared by other people are chosen.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.GetProgramsMinInstancesUpDown)] = new Text(
@@ -240,7 +240,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsUpdateUserControl) + "." + nameof(OptionsUpdateUserControl.CheckForUpdatesCheckBox)] = new Text(null,
 				"Looks for a newer version once a day after the program starts. Off, the program makes no request.");
 			d[nameof(OptionsUpdateUserControl) + "." + nameof(OptionsUpdateUserControl.PrivacyLabel)] = new Text("What the check sends",
-				"When the check runs and the one thing it sends: this program's version, to github.com.");
+				"When the check runs and the one thing it sends: this program’s version, to github.com.");
 			d[nameof(OptionsUpdateUserControl) + "." + nameof(OptionsUpdateUserControl.CheckButton)] = new Text("Check now",
 				"Looks for a newer version now, downloads it, checks it and installs it.");
 			d[nameof(OptionsUpdateUserControl) + "." + nameof(OptionsUpdateUserControl.CheckDigitalSignatureCheckBox)] = new Text(null,

@@ -23,8 +23,8 @@ namespace x360ce.Tests
 		/// <summary>Size the artwork was drawn at, and the floor for every master.</summary>
 		const int AuthoredSize = 512;
 
-		/// <summary>Directions times states, plus the two axis and trigger indicators.</summary>
-		const int ExpectedCount = 17;
+		/// <summary>A mark for each direction, drawn in every state's colour from it, plus the two axis and trigger indicators.</summary>
+		const int ExpectedCount = 7;
 
 		static DirectoryInfo GlyphFolder()
 		{
@@ -65,16 +65,15 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("pad-images"), TestCategory("smoke")]
-		[Description("Each state of each direction ships, so no mapping draws blank")]
-		public void Every_direction_ships_in_every_state()
+		[Description("Each direction's mark ships, so no mapping draws blank in any state")]
+		public void Every_direction_ships()
 		{
 			var names = GlyphFolder().GetFiles("*.png").Select(x => Path.GetFileNameWithoutExtension(x.Name)).ToArray();
 			foreach (var direction in new[] { "", "Up", "Down", "Left", "Right" })
-				foreach (var state in new[] { "Normal", "Active", "Record" })
-				{
-					var expected = "Nav" + direction + state;
-					CollectionAssert.Contains(names, expected, expected + ".png is missing.");
-				}
+			{
+				var expected = "Nav" + direction + "Normal";
+				CollectionAssert.Contains(names, expected, expected + ".png is missing.");
+			}
 			CollectionAssert.Contains(names, "NavAxisActive", "The thumbstick indicator is missing.");
 			CollectionAssert.Contains(names, "NavTriggerActive", "The trigger indicator is missing.");
 		}

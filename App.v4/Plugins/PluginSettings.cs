@@ -47,7 +47,8 @@ namespace x360ce.App.Plugins
 
 	/// <summary>One setting of a kind of plugin device: a public property of its class.</summary>
 	/// <remarks>
-	/// Every public property is one, except the members of <see cref="IPluginDevice"/>, indexers, a declared
+	/// Every public property is one, except the members of the contract's interfaces the class implements, such as
+	/// <see cref="IPluginDevice"/> and <see cref="IPluginMapping"/>, indexers, a declared
 	/// <see cref="PluginMcpServer"/>, and those marked [Browsable(false)]. A property with a public setter is edited, as a
 	/// row of the tab's property grid: a bool and an enum from a drop-down list, a number and a string typed. A type
 	/// converter that offers standard values gives any of them a drop-down list, which takes typed values too unless the
@@ -119,7 +120,9 @@ namespace x360ce.App.Plugins
 		/// <param name="probe">An instance of it, read for the value each setting starts with.</param>
 		public static PluginSetting[] Find(Type type, object probe)
 		{
-			var own = new HashSet<string>(typeof(IPluginDevice).GetProperties().Select(x => x.Name));
+			// What the contract's interfaces ask for, such as the name and the recommended mapping, x360ce reads itself.
+			var own = new HashSet<string>(type.GetInterfaces().Where(x => x.Assembly == typeof(IPluginDevice).Assembly)
+				.SelectMany(x => x.GetProperties()).Select(x => x.Name));
 			var descriptors = TypeDescriptor.GetProperties(type);
 			var list = new List<PluginSetting>();
 			foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance).OrderBy(x => x.MetadataToken))
@@ -310,8 +313,8 @@ namespace x360ce.App.Plugins
 
 	/// <summary>The values kept for plugin devices' settings: what a device's settings tab shows, and the engine gives its plugin.</summary>
 	/// <remarks>
-	/// Only values a person changed are kept; a setting without one has the value a new device starts with. Kept in
-	/// x360ce.PluginSettings.xml, read when first needed, so a program with no plugin device with settings never reads
+	/// Only values a person changed are kept, in the property grid, over MCP or in the plugin's own control; a setting
+	/// without one has the value a new device starts with. Kept in x360ce.PluginSettings.xml, read when first needed, so a program with no plugin device with settings never reads
 	/// it. Read and changed on any thread: each change is made under one lock and raises <see cref="Version"/>, which the
 	/// engine compares on each read to learn there is something to give the plugin.
 	/// </remarks>

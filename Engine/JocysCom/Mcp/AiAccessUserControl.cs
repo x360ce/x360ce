@@ -1,5 +1,6 @@
 #nullable disable
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -35,6 +36,8 @@ namespace JocysCom.ClassLibrary.Mcp
 				if (!IsDisposed)
 					ShowModel();
 			};
+			AiAccessComboBox.FormattingEnabled = true;
+			AiAccessComboBox.Format += (s, e) => e.Value = AiAccessModel.LevelText((string)e.ListItem);
 			AiAccessComboBox.Items.AddRange(AiAccessModel.Levels);
 			AiAccessAddressComboBox.Items.AddRange(AiAccessModel.Addresses);
 			// A box that wraps is as tall as the lines it holds at its width, as the WPF box is.
@@ -52,8 +55,11 @@ namespace JocysCom.ClassLibrary.Mcp
 				Model.Refresh();
 				Model.CheckSkills();
 			};
+			EventHandler languageChanged = (s, e) => ShowModel(relist: true);
+			UiLanguage.Changed += languageChanged;
 			Disposed += (s, e) =>
 			{
+				UiLanguage.Changed -= languageChanged;
 				Model.Close();
 				DisposeFonts();
 				// Off the tabs, the tunnel's tab is not disposed with them.
@@ -74,7 +80,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		}
 
 		/// <summary>Copies the model's state into the controls, without passing the changes it makes back.</summary>
-		void ShowModel()
+		void ShowModel(bool relist = false)
 		{
 			_showing = true;
 			try
@@ -82,6 +88,8 @@ namespace JocysCom.ClassLibrary.Mcp
 				AiHeaderText.Text = AiAccessModel.Header;
 				AiExampleTextBox.Text = AiAccessModel.Example;
 				AiAccessEnabledCheckBox.Checked = Model.Enabled;
+				if (relist)
+					UiLanguage.Relist(AiAccessComboBox);
 				AiAccessComboBox.SelectedItem = Model.Level;
 				AiAccessAddressComboBox.SelectedItem = Model.Address;
 				AiAccessTrustLocalCheckBox.Checked = Model.TrustLocal;
@@ -351,7 +359,7 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		void AiTunnelDeleteButton_Click(object sender, EventArgs e)
 		{
-			var answer = MessageBox.Show(this, Model.TunnelDeleteQuestion, "Delete tunnel", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+			var answer = MessageBox.Show(this, Model.TunnelDeleteQuestion, UiLanguage.T("AiAccessUserControl.DeleteTunnel", "Delete tunnel"), MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
 			if (answer == DialogResult.Yes)
 				Model.DeleteTunnel(AiTunnelAdminKeyTextBox.Text.Trim());
 		}

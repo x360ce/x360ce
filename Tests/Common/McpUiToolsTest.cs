@@ -1,9 +1,10 @@
-// @under-test: Engine/JocysCom/Mcp/McpUiTools.cs, Engine/JocysCom/Mcp/McpUiTools.Forms.cs, Engine/JocysCom/Mcp/McpServer.cs
+// @under-test: Engine/JocysCom/Mcp/McpUiTools.cs, Engine/JocysCom/Mcp/McpUiTools.Forms.cs, Engine/JocysCom/Mcp/McpServer.cs, Engine/JocysCom/Controls/UiTree/UiCallout.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -109,7 +110,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("A press that opens a window answers while the window waits, naming the buttons that answer it, and the window is then answered by path")]
+		[Description("A press that opens a window answers while the window waits, naming the buttons that answer it, and the window is then answered by path or closed as if cancelled")]
 		public void A_press_that_opens_a_window_answers_with_the_window()
 		{
 			McpTools.Register();
@@ -183,6 +184,16 @@ namespace x360ce.Tests
 				StringAssert.Contains((string)one.Result, "Question/Yes (Yes)", "A script that ends with a window waiting does not name it.");
 				Assert.IsNull(Task.Run(() => press.Call(new object[] { "Question/Yes" })).Result);
 				Assert.IsTrue(answered.Wait(TimeSpan.FromSeconds(10)));
+				// Closed as the close button on its title bar closes it: the window goes as if cancelled, and the press carries on.
+				var close = McpCatalog.Tools.First(t => t.Name == "ui_close");
+				answered.Reset();
+				StringAssert.Contains((string)Task.Run(() => press.Call(new object[] { "Ask" })).Result, "Question/Yes");
+				var closed = Task.Run(() => close.Call(new object[] { "Question" }));
+				Assert.IsTrue(closed.Wait(TimeSpan.FromSeconds(10)), "Closing the window did not answer.");
+				Assert.IsNull(closed.Result, "Closing a window is an ordinary call.");
+				Assert.IsTrue(answered.Wait(TimeSpan.FromSeconds(10)), "The press that opened the window did not carry on once it was closed.");
+				Assert.AreEqual(DialogResult.Cancel, answer, "A window closed this way was not taken as cancelled.");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiClose("Question")).Message, "No window");
 			}
 			finally
 			{
@@ -358,6 +369,79 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Every page of every open window is listed in order with the pages above it, a page is opened by path, and each window gives its handle")]
+		public void Pages_are_listed_with_the_way_to_them_and_opened_by_path()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var other = new TabPage { Name = "Other", Text = "Options" };
+				var pad = new TabPage { Name = "Pad", Text = "Controller 1" };
+				var pages = new TabControl { Name = "Pages", Dock = DockStyle.Fill };
+				var general = new TabPage { Name = "General", Text = "General" };
+				var force = new TabPage { Name = "Force", Text = "Force Feedback" };
+				force.Controls.Add(new Button { Name = "Go", Text = "Go" });
+				pages.TabPages.AddRange(new[] { general, force });
+				pad.Controls.Add(pages);
+				tabs.TabPages.AddRange(new[] { other, pad });
+				var spare = new TabControl { Name = "Spare", Visible = false };
+				spare.TabPages.Add(new TabPage { Name = "Lost", Text = "Lost" });
+				form.Controls.AddRange(new Control[] { tabs, spare });
+				form.Show();
+				using (var tool = new Form { Name = "Tool", Text = "Tool" })
+				{
+					var inner = new TabControl { Name = "Inner" };
+					inner.TabPages.AddRange(new[] { new TabPage { Name = "A", Text = "A" }, new TabPage { Name = "B", Text = "B" } });
+					tool.Controls.Add(inner);
+					tool.Show(form);
+					var listed = ((object[])McpUiTools.UiPages()).Cast<Dictionary<string, object>>().ToArray();
+					CollectionAssert.AreEqual(new[] { "Tabs/Other", "Tabs/Pad", "Tabs/Pad/Pages/General", "Tabs/Pad/Pages/Force", "Spare/Lost", "Tool/Inner/A", "Tool/Inner/B" },
+						listed.Select(x => (string)x["Path"]).ToArray(), "The pages are not every tab of every window, in order.");
+					var forcePage = listed.First(x => (string)x["Path"] == "Tabs/Pad/Pages/Force");
+					Assert.AreEqual("Force Feedback", forcePage["Name"]);
+					Assert.AreEqual("", forcePage["Window"], "A page of the main window names a window.");
+					CollectionAssert.AreEqual(new[] { "Tabs/Pad" }, (string[])forcePage["Way"], "The page does not name the page to open first.");
+					Assert.AreEqual(true, listed.First(x => (string)x["Path"] == "Spare/Lost")["Hidden"], "A page in a hidden tab control is said to be shown.");
+					Assert.AreEqual(false, forcePage["Hidden"], "A page behind another tab is said to be hidden, though opening it shows it.");
+					Assert.AreEqual("Tool", listed.First(x => (string)x["Path"] == "Tool/Inner/B")["Window"], "A page of another window does not name its window.");
+					Assert.IsNull(McpUiTools.UiOpen("Tabs/Pad/Pages/Force"));
+					Assert.AreSame(pad, tabs.SelectedTab, "The page on the way was not opened.");
+					Assert.AreSame(force, pages.SelectedTab, "The page itself was not opened.");
+					Assert.IsNull(McpUiTools.UiOpen("Tabs/Other"));
+					Assert.AreSame(other, tabs.SelectedTab, "An outer page was not opened.");
+					Assert.IsNull(McpUiTools.UiOpen("Tabs/Pad/Pages/General"));
+					Assert.AreSame(general, pages.SelectedTab, "The page holding the page was not opened first.");
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiOpen("Nowhere")).Message, "No element");
+					var windows = ((object[])McpUiTools.UiWindows()).Cast<Dictionary<string, object>>().ToArray();
+					Assert.AreEqual(tool.Handle.ToInt64(), windows.Single(x => (string)x["Path"] == "Tool")["Handle"], "A window's handle is not given.");
+					var current = (object[])((Dictionary<string, object>)McpUiTools.UiCurrent())["Windows"];
+					Assert.AreEqual(form.Handle.ToInt64(), ((Dictionary<string, object>)current[0])["Handle"], "The main window's handle is not given.");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Waiting answers once what waits to be drawn is drawn, so a picture taken next shows it")]
+		public void Waiting_draws_what_waits_to_be_drawn()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var canvas = new Panel { Name = "Canvas", Dock = DockStyle.Fill };
+				var painted = 0;
+				canvas.Paint += (s, e) => painted++;
+				form.Controls.Add(canvas);
+				form.Show();
+				form.Update();
+				canvas.Update();
+				painted = 0;
+				canvas.Invalidate();
+				Assert.AreEqual(0, painted, "The panel painted before anything asked it to, so this proves nothing.");
+				Assert.IsNull(McpUiTools.UiWait());
+				Assert.IsTrue(painted > 0, "Waiting answered while the panel still waited to be drawn.");
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("Finding by words lists matching paths, and a script runs its steps in order and names the line that fails")]
 		public void Finding_and_scripting_work_by_path()
 		{
@@ -426,6 +510,33 @@ namespace x360ce.Tests
 				Assert.AreEqual(McpUiTools.FindLimit + 1, many.Count, "The first ones, and a note.");
 				Assert.AreEqual("Note", many.Last()["Role"]);
 				StringAssert.Contains((string)many.Last()["Name"], McpUiTools.FindLimit + " of " + (McpUiTools.FindLimit + 5));
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Finding takes the straight apostrophe a person or an agent types for the typographic one the program writes, and the other way round")]
+		public void Finding_takes_either_apostrophe()
+		{
+			// The program's own words, which write the apostrophe as U+2019.
+			var purpose = UiCatalog.Build()[nameof(InputUserControl) + "." + nameof(InputUserControl.ButtonChips)].Purpose;
+			StringAssert.Contains(purpose, "device’s");
+			WithWindow(AiAccess.Read, form =>
+			{
+				form.Controls.Add(new Button { Name = "Chips", Text = "Button chips", AccessibleDescription = purpose });
+				// Words written with a straight apostrophe, as the shared library's own still are.
+				form.Controls.Add(new Button { Name = "Door", Text = "Door", AccessibleDescription = "The person's alone to change." });
+				form.Show();
+				var searches = new[]
+				{
+					new[] { "device's buttons", "Chips" }, new[] { "device’s buttons", "Chips" }, new[] { "DEVICE'S", "Chips" },
+					new[] { "person's", "Door" }, new[] { "person’s", "Door" },
+				};
+				foreach (var search in searches)
+				{
+					var hits = ((object[])McpUiTools.UiFind(search[0])).Cast<Dictionary<string, object>>().ToList();
+					Assert.AreEqual(1, hits.Count, "ui_find \"" + search[0] + "\" does not find " + search[1] + ".");
+					Assert.AreEqual(search[1], hits[0]["Path"]);
+				}
 			});
 		}
 
@@ -628,6 +739,103 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("The balloon goes below, above, right or left of the frame, the first side where it stays inside the window and hides nothing; else where it hides the least")]
+		public void The_balloon_takes_the_first_side_that_hides_nothing()
+		{
+			var bounds = new Rectangle(0, 0, 1000, 800);
+			var around = new Rectangle(400, 300, 100, 30);
+			var size = new Size(200, 40);
+			int side;
+			var below = UiCallout.PlaceBalloon(around, size, bounds, new Rectangle[0], out side);
+			Assert.AreEqual(0, side, "Nothing in the way: below.");
+			Assert.AreEqual(new Rectangle(400, 342, 200, 40), below);
+			var under = new Rectangle(395, 335, 110, 60);
+			UiCallout.PlaceBalloon(around, size, bounds, new[] { under }, out side);
+			Assert.AreEqual(1, side, "Words below: above.");
+			var over = new Rectangle(380, 230, 300, 60);
+			var right = UiCallout.PlaceBalloon(around, size, bounds, new[] { under, over }, out side);
+			Assert.AreEqual(2, side, "Words below and above: right.");
+			Assert.AreEqual(new Rectangle(512, 300, 200, 40), right);
+			UiCallout.PlaceBalloon(around, size, bounds, new[] { under, over, new Rectangle(505, 290, 300, 60) }, out side);
+			Assert.AreEqual(3, side, "Words below, above and right: left.");
+			// Words on every side: the side that hides the least, here a sliver above.
+			UiCallout.PlaceBalloon(around, size, bounds, new[] { under, new Rectangle(380, 230, 300, 20), new Rectangle(505, 290, 300, 60), new Rectangle(150, 290, 250, 60) }, out side);
+			Assert.AreEqual(1, side, "Not the side that hides the least.");
+			// No room below inside the window, and nothing in the way above.
+			UiCallout.PlaceBalloon(new Rectangle(400, 760, 100, 30), size, bounds, new Rectangle[0], out side);
+			Assert.AreEqual(1, side, "The balloon left the window below.");
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Pointed at in a window, the balloon leaves the words under the element in sight and stays inside the window")]
+		public void The_balloon_leaves_the_words_beside_the_element_in_sight()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				form.ClientSize = new Size(600, 400);
+				var go = new Button { Name = "Go", Text = "Go", Location = new Point(40, 40), Size = new Size(80, 24) };
+				var words = new Label { Name = "Words", Text = "Read these words first.", Location = new Point(40, 70), Size = new Size(80, 60) };
+				form.Controls.Add(go);
+				form.Controls.Add(words);
+				form.Show();
+				Application.DoEvents();
+				try
+				{
+					Assert.IsNull(McpUiTools.UiShow("Go", "1. Press Go.", 0));
+					var balloon = UiCallout.Balloon;
+					Assert.IsFalse(balloon.IntersectsWith(form.RectangleToScreen(words.Bounds)), "The balloon hides the words below the button.");
+					Assert.IsTrue(form.RectangleToScreen(form.ClientRectangle).Contains(balloon), "The balloon left the window.");
+				}
+				finally
+				{
+					UiCallout.Hide();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A button on a tool bar and a row of a list are framed by themselves, not by the whole bar or list, and stay framed until taken away")]
+		public void A_tool_bar_button_and_a_list_row_are_framed_by_themselves()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var bar = new ToolStrip { Name = "Bar" };
+				var scan = new ToolStripButton("Scan") { Name = "Scan" };
+				var add = new ToolStripButton("Add...") { Name = "Add" };
+				bar.Items.Add(scan);
+				bar.Items.Add(add);
+				var grid = new DataGridView { Name = "Grid", Dock = DockStyle.Bottom, AllowUserToAddRows = false };
+				grid.Columns.Add("File", "File");
+				grid.Rows.Add("x360ce.exe");
+				grid.Rows.Add("GTA5_Enhanced.exe");
+				form.Controls.Add(grid);
+				form.Controls.Add(bar);
+				form.Show();
+				Application.DoEvents();
+				try
+				{
+					Assert.IsNull(McpUiTools.UiShow("Bar/Add", "2. Press Add...", 0));
+					Assert.AreSame(add, UiCallout.Target, "The frame is not around the button.");
+					Assert.AreEqual(bar.RectangleToScreen(add.Bounds), UiCallout.Around, "The button is not framed by itself.");
+					var until = DateTime.Now.AddMilliseconds(500);
+					while (DateTime.Now < until)
+					{
+						Application.DoEvents();
+						Thread.Sleep(20);
+					}
+					Assert.AreSame(add, UiCallout.Target, "The frame round the button went before anyone acted.");
+					Assert.IsNull(McpUiTools.UiShow("Grid/rows/1", "4. Select the game", 0));
+					Assert.AreSame(grid.Rows[1], UiCallout.Target, "The frame is not around the row.");
+					Assert.AreEqual(grid.RectangleToScreen(grid.GetRowDisplayRectangle(1, true)), UiCallout.Around, "The row is not framed by itself.");
+				}
+				finally
+				{
+					UiCallout.Hide();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("Every administering control named in the guard is a button or check box of the Options page or an entry of the Devices page's bar, and the catalogue holds the tools")]
 		public void Admin_controls_exist_and_tools_are_catalogued()
 		{
@@ -654,8 +862,128 @@ namespace x360ce.Tests
 			}
 			McpTools.Register();
 			var names = McpCatalog.Tools.Select(t => t.Name).ToArray();
-			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }, names);
-			Assert.IsTrue(new[] { "ui_read", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));
+			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_close", "ui_show", "ui_find", "ui_script", "ui_pages", "ui_open", "ui_wait", "help", "ui_tree" }, names);
+			Assert.AreEqual(AiAccess.Configure, McpCatalog.Tools.First(t => t.Name == "ui_close").Level, "Closing a window answers it, as pressing Cancel does, which needs Configure.");
+			Assert.IsTrue(new[] { "ui_read", "ui_show", "ui_find", "ui_script", "ui_pages", "ui_open", "ui_wait", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A search and a read through the AI door, which put the controller page on every Controller tab in turn, leave every value it shows as it was: a controller with no device shows what it showed at start, and nothing is stored")]
+		public void Reading_the_controller_tabs_changes_no_value()
+		{
+			var faults = new List<string>();
+			Ui.OnUiThread(() =>
+			{
+				McpTools.Register();
+				McpCatalog.Level = () => AiAccess.Read;
+				McpCatalog.OnUiThread = a => a();
+				var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var pads = SettingsManager.PadSettings.ItemsToArraySynchronized();
+				var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
+				var game = SettingsManager.CurrentGame;
+				var status = SettingsManager.Current.NotifySettingsStatus;
+				SettingsManager.Current.NotifySettingsStatus = count => { };
+				// A page adds its boxes to the settings map and nothing takes them out, so the boxes of a page built earlier in
+				// this process would receive the settings instead of this page's own.
+				var settingsMap = SettingsManager.Current.SettingsMap;
+				Predicate<SettingsMapItem> controllers = x => x.MapTo >= x360ce.Engine.MapTo.Controller1 && x.MapTo <= x360ce.Engine.MapTo.Controller4;
+				var earlier = settingsMap.Where(x => controllers(x)).ToArray();
+				settingsMap.RemoveAll(controllers);
+				var hook = UiTreeWalker.BeforeChildren;
+				try
+				{
+					// Controller 1, the tab shown, has no device; Controller 2 has one, whose values the page takes on the way.
+					SettingsManager.UserSettings.Items.Clear();
+					SettingsManager.PadSettings.Items.Clear();
+					var played = DeviceOnTwoTabsTest.NewGame();
+					var wheel = DeviceOnTwoTabsTest.NewDevice("Wheel");
+					SettingsManager.UserDevices.Items.Add(wheel);
+					var ps = new x360ce.Engine.Data.PadSetting { ButtonA = "b1", ButtonBDeadZone = "4000", LeftThumbAxisX = "a1" };
+					ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+					SettingsManager.PadSettings.Items.Add(ps);
+					var row = AppHelper.GetNewSetting(wheel, played, x360ce.Engine.MapTo.Controller2);
+					row.PadSettingChecksum = ps.PadSettingChecksum;
+					SettingsManager.UserSettings.Items.Add(row);
+					SettingsManager.CurrentGame = played;
+					var stored = SettingsManager.PadSettings.ItemsToArraySynchronized().Select(x => x.PadSettingChecksum).ToArray();
+					using (var form = new Form { Name = "Main", StartPosition = FormStartPosition.Manual, Location = new System.Drawing.Point(-3000, -3000), ShowInTaskbar = false, Width = 1400, Height = 1000 })
+					{
+						// The main window's pages, given the controller page as the main window gives it them when it loads.
+						var main = SpacingGridTest.MainWindowPages();
+						main.Dock = DockStyle.Fill;
+						form.Controls.Add(main);
+						main.BuildPad();
+						main.PadControls = main.BuiltPadControls;
+						var pad = main.PadControls[0];
+						pad.UpdateSettingsMap();
+						pad.InitPadData();
+						form.Show();
+						// The page's first selection is posted.
+						Application.DoEvents();
+						UiTreeWalker.BeforeChildren = main.PadForDoor;
+						McpUiTools.Root = form;
+						var before = Values(pad);
+						Assert.IsTrue(before.Any(x => x.Key.Contains("/AxisToButtonADeadZonePanel/") && x.Key.EndsWith("/DeadZoneNumericUpDown")),
+							"The Buttons page's press points are not read, so the test shows nothing.");
+						foreach (var call in new Dictionary<string, Action>
+						{
+							{ "ui_find", () => McpUiTools.UiFind("dead zone") },
+							{ "ui_read", () => McpUiTools.UiRead() },
+						})
+						{
+							call.Value();
+							// The page goes back to the tab shown once the call is over, as posted.
+							Application.DoEvents();
+							Assert.AreSame(main.ControlPages[0], pad.Parent, call.Key + " left the controller page on another tab.");
+							var after = Values(pad);
+							foreach (var pair in before)
+							{
+								string value;
+								after.TryGetValue(pair.Key, out value);
+								if (value != pair.Value)
+									faults.Add(string.Format("{0}: {1} reads \"{2}\", where it read \"{3}\" before.", call.Key, pair.Key, value, pair.Value));
+							}
+						}
+					}
+					CollectionAssert.AreEquivalent(stored, SettingsManager.PadSettings.ItemsToArraySynchronized().Select(x => x.PadSettingChecksum).ToArray(), "Reading changed the stored settings.");
+				}
+				finally
+				{
+					UiTreeWalker.BeforeChildren = hook;
+					McpUiTools.Root = null;
+					settingsMap.RemoveAll(controllers);
+					settingsMap.AddRange(earlier);
+					SettingsManager.Current.NotifySettingsStatus = status;
+					SettingsManager.CurrentGame = game;
+					SettingsManager.UserSettings.Items.Clear();
+					foreach (var item in settings)
+						SettingsManager.UserSettings.Items.Add(item);
+					SettingsManager.PadSettings.Items.Clear();
+					foreach (var item in pads)
+						SettingsManager.PadSettings.Items.Add(item);
+					SettingsManager.UserDevices.Items.Clear();
+					foreach (var item in devices)
+						SettingsManager.UserDevices.Items.Add(item);
+				}
+			});
+			Assert.AreEqual(0, faults.Count, faults.Count + " value(s) changed:" + Environment.NewLine + string.Join(Environment.NewLine, faults.Take(40)));
+		}
+
+		/// <summary>Every value the page shows, by path, as the door reads it.</summary>
+		static Dictionary<string, string> Values(Control page)
+		{
+			var values = new Dictionary<string, string>();
+			Action<UiNode> add = null;
+			add = node =>
+			{
+				if (node.Path != null && node.Value != null)
+					values[node.Path] = node.Value;
+				if (node.Items != null)
+					foreach (var item in node.Items)
+						add(item);
+			};
+			add(UiTreeWalker.Read(page, true, ""));
+			return values;
 		}
 
 		/// <summary>The Options page has a designer field of that name, of one of those kinds.</summary>

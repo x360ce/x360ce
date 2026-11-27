@@ -154,9 +154,38 @@
     <Folder Include="Security\" />
     <Folder Include="dbo\Views\" />
     <Folder Include="dbo\Functions\" />
+    <Folder Include="x360ce\" />
+    <Folder Include="x360ce\Tables\" />
   </ItemGroup>
   <ItemGroup>
     <BuildContributorArgument Include="OutDir=$(OutDir)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Security\x360ce.sql" />
+    <Build Include="x360ce\Tables\TelemetryFormat.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="x360ce\Tables\TelemetryFormatSpec.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="x360ce\Tables\TelemetryGame.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="x360ce\Tables\TelemetryGameStep.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="x360ce\Tables\TelemetryGameMod.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="x360ce\Tables\TelemetryGameFile.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <Build Include="Permissions.sql" />

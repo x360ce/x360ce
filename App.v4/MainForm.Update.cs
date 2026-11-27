@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App
 {
@@ -44,7 +45,7 @@ namespace x360ce.App
 					o.UpdateEtag = check.ETag;
 				// A failure at start says nothing; the update window reports when asked.
 				if (check.Outcome == UpdateOutcome.Available)
-					SetHeaderInfo("Version {0} is available. Options → Update installs it.", check.Version);
+					SetHeaderInfo(UiLanguage.T("MainForm.VersionIsAvailableOptionsUpdateInstalls", "Version {0} is available. Options → Update installs it."), check.Version);
 			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 

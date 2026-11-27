@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseFormWithHeader));
 			this.TopPanel = new System.Windows.Forms.Panel();
 			this.HeaderTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.HelpSubjectLabel = new System.Windows.Forms.Label();
@@ -108,7 +107,6 @@
 			this.HelpBodyLabel.Name = "HelpBodyLabel";
 			this.HelpBodyLabel.Size = new System.Drawing.Size(836, 32);
 			this.HelpBodyLabel.TabIndex = 7;
-			this.HelpBodyLabel.Text = resources.GetString("HelpBodyLabel.Text");
 			//
 			// HeaderPictureBox
 			//

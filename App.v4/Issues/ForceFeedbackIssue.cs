@@ -2,6 +2,7 @@ using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using System.Collections.Generic;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -17,9 +18,10 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	public class ForceFeedbackIssue : IssueItem
 	{
-		public ForceFeedbackIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
-			Name = "Force Feedback";
+			Name = UiLanguage.T("ForceFeedbackIssue.ForceFeedback", "Force Feedback");
 			FixName = "";
 		}
 
@@ -36,15 +38,15 @@ namespace x360ce.App.Issues
 				// said, and only while the device is connected, which is when it is tried again.
 				if (fault != 0 && ud.IsOnline)
 					lines.Add(string.Format(
-						"Force feedback on {0} failed (error 0x{1:X8}), so it is tried again twice a second.",
+						UiLanguage.T("ForceFeedbackIssue.ForceFeedbackOnFailedError0x", "Force feedback on {0} failed (error 0x{1:X8}), so it is tried again twice a second."),
 						name, fault));
 				else if (fault == 0 && refused != null && refused.Length > 0)
 					lines.Add(string.Format(
-						"{0} refused {1}, so it stays still. On a pad with two motors, try the '2' form of the effect type, such as Constant2.",
+						UiLanguage.T("ForceFeedbackIssue.RefusedSoItStaysStillOn", "{0} refused {1}, so it stays still. On a pad with two motors, try the '2' form of the effect type, such as Constant2."),
 						name, string.Join(" and ", refused)));
 				if (ForceFeedbackDriver.FailsOnSawtooth(ud.ForceFeedbackDriver) && AsksForSawtooth(ud))
 					lines.Add(string.Format(
-						"{0} uses the \"USB Vibration\" driver, which closes the program when asked for a sawtooth, so a sine is played instead.",
+						UiLanguage.T("ForceFeedbackIssue.UsesTheUSBVibrationDriverWhich", "{0} uses the \"USB Vibration\" driver, which closes the program when asked for a sawtooth, so a sine is played instead."),
 						name));
 			}
 			if (lines.Count == 0)

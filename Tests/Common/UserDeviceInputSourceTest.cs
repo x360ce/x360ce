@@ -1,12 +1,12 @@
-﻿// @under-test: Engine/Common/DatabaseHelper.cs, App.v4/Common/CloudClient.cs, Engine/Data/x360ceModel.ssdl, Engine/Data/x360ceModel.csdl, Engine/Data/x360ceModel.msl, Data/dbo/Tables/x360ce_UserDevices.sql
+﻿// @under-test: Engine/Data/UserDevice.cs, Engine/Data/Model/dbo/UserDevice.cs, Engine/Common/EngineHelper.cs, App.v4/Common/CloudClient.cs, Data/dbo/Tables/x360ce_UserDevices.sql
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Data.Metadata.Edm;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Serialization;
 using x360ce.App;
 using x360ce.Engine;
@@ -58,7 +58,7 @@ namespace x360ce.Tests
 		{
 			// Every program before 4.25 sends none, and this one sends none for a DirectInput device.
 			var devices = new[] { Device(0), Device(DirectInput), Device(RawInput) };
-			DatabaseHelper.StoreInputSource(devices);
+			UserDevice.StoreInputSource(devices);
 			CollectionAssert.AreEqual(new[] { DirectInput, DirectInput, RawInput }, InputSources(devices));
 		}
 
@@ -69,7 +69,7 @@ namespace x360ce.Tests
 			// Every program before 4.25. A Raw Input device would be one it cannot read, kept in its file for good.
 			// A row at 0 counts as DirectInput, though the column's default and StoreInputSource leave none.
 			var stored = new[] { Device(DirectInput), Device(RawInput), Device(0) };
-			var returned = DatabaseHelper.FilterByInputSource(stored, new KeyValueList());
+			var returned = UserDevice.FilterByInputSource(stored, new KeyValueList());
 			CollectionAssert.AreEqual(new[] { stored[0], stored[2] }, returned,
 				"A program that reads DirectInput only was given: " + string.Join(", ", InputSources(returned)) + ".");
 			CollectionAssert.AreEqual(new[] { 0, 0 }, InputSources(returned),
@@ -80,13 +80,13 @@ namespace x360ce.Tests
 		[Description("A Raw Input device goes only to a program that reads Raw Input")]
 		public void A_Raw_Input_device_goes_only_to_a_program_that_reads_Raw_Input()
 		{
-			var both = DatabaseHelper.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) },
+			var both = UserDevice.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) },
 				Reads(InputSourceType.DirectInput | InputSourceType.RawInput));
 			CollectionAssert.AreEqual(new[] { 0, RawInput }, InputSources(both), "A program that reads both.");
-			var direct = DatabaseHelper.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) },
+			var direct = UserDevice.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) },
 				Reads(InputSourceType.DirectInput));
 			CollectionAssert.AreEqual(new[] { 0 }, InputSources(direct), "A program that reads DirectInput only.");
-			var raw = DatabaseHelper.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) },
+			var raw = UserDevice.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) },
 				Reads(InputSourceType.RawInput));
 			CollectionAssert.AreEqual(new[] { RawInput }, InputSources(raw), "A program that reads Raw Input only.");
 		}
@@ -101,9 +101,9 @@ namespace x360ce.Tests
 			var checksums = EngineHelper.UpdateChecksums(new[] { mine }).ToArray();
 			Assert.AreEqual(UserDeviceTest.FixedDeviceChecksum, mine.Checksum);
 			var stored = new[] { Device(0) };
-			DatabaseHelper.StoreInputSource(stored);
+			UserDevice.StoreInputSource(stored);
 			string error;
-			var sent = DatabaseHelper.FilterByChecksum(DatabaseHelper.FilterByInputSource(stored, new KeyValueList()), checksums, out error);
+			var sent = EngineHelper.FilterByChecksum(UserDevice.FilterByInputSource(stored, new KeyValueList()), checksums, out error);
 			Assert.AreEqual(0, sent.Length, "An unchanged DirectInput device is sent again (" + error + ").");
 		}
 
@@ -125,7 +125,7 @@ namespace x360ce.Tests
 			var value = received.Values.Single(x => Equals(x.Key, CloudKey.InputSourceTypes)).Value;
 			Assert.IsInstanceOfType(value, typeof(int), "The value arrives as " + value.GetType().Name + ".");
 			Assert.AreEqual((int)(InputSourceType.DirectInput | InputSourceType.RawInput), (int)value);
-			var returned = DatabaseHelper.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) }, received.Values);
+			var returned = UserDevice.FilterByInputSource(new[] { Device(DirectInput), Device(RawInput) }, received.Values);
 			CollectionAssert.AreEqual(new[] { 0, RawInput }, InputSources(returned), "What the web service returns to this program.");
 		}
 
@@ -134,32 +134,23 @@ namespace x360ce.Tests
 		#region Model
 
 		[TestMethod, TestCategory("devices"), TestCategory("settings"), TestCategory("critical")]
-		[Description("The model the program runs from reads the input source and friction columns, declared as the table declares them")]
-		public void The_embedded_model_maps_the_device_columns()
+		[Description("The generated device class maps the input source and friction columns, declared as the table declares them")]
+		public void The_generated_model_maps_the_device_columns()
 		{
-			// The program runs from the three files embedded in the engine, not from the .edmx beside them.
-			var engine = typeof(EngineHelper).Assembly;
-			Func<string, XmlReader> open = name => XmlReader.Create(engine.GetManifestResourceStream(name));
-			var conceptual = new EdmItemCollection(new[] { open("Data.x360ceModel.csdl") });
-			var storage = new StoreItemCollection(new[] { open("Data.x360ceModel.ssdl") });
-			new System.Data.Mapping.StorageMappingItemCollection(conceptual, storage, new[] { open("Data.x360ceModel.msl") });
-			// The mapping, measured by the query the web service runs. It is only compiled; no server is named.
-			string sql;
-			using (var db = new x360ceModelContainer("metadata=res://*/Data.x360ceModel.csdl|res://*/Data.x360ceModel.ssdl|res://*/Data.x360ceModel.msl;provider=System.Data.SqlClient;provider connection string=\"\""))
-				sql = db.UserDevices.ToTraceString();
+			// Data\Generate-Models.ps1 writes the class from the live database; the web service's context maps it by its
+			// [Table] and its properties.
+			var type = typeof(UserDevice);
+			var mapped = (TableAttribute)Attribute.GetCustomAttribute(type, typeof(TableAttribute));
+			Assert.AreEqual("x360ce_UserDevices", mapped?.Name, "The class does not name the table it maps.");
 			var table = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "Data", "dbo", "Tables", "x360ce_UserDevices.sql"));
 			// Each column with the value the database gives a row a program sends without it. The program keeps both
 			// defaults at 0, so their files and checksums stay as they were; a model default would change both.
 			foreach (var c in new[] { new { Name = "InputSourceType", Stored = 1 }, new { Name = "ForceSpringFriction", Stored = 0 } })
 			{
-				var column = storage.GetItems<EntityType>().Single(x => x.Name == "x360ce_UserDevices").Properties[c.Name];
-				Assert.AreEqual("int", column.TypeUsage.EdmType.Name, c.Name);
-				Assert.IsFalse(column.Nullable, c.Name + ": the column refuses null.");
-				var property = conceptual.GetItems<EntityType>().Single(x => x.Name == "UserDevice").Properties[c.Name];
-				Assert.AreEqual("Int32", property.TypeUsage.EdmType.Name, c.Name);
-				Assert.IsFalse(property.Nullable, c.Name + ": the property refuses null.");
-				Assert.IsNull(property.DefaultValue, c.Name + ": a default would start every new device away from 0, which changes its checksum.");
-				StringAssert.Contains(sql, "[" + c.Name + "]", "The query of devices does not read the column: " + sql);
+				var property = type.GetProperty(c.Name);
+				Assert.AreEqual(typeof(int), property.PropertyType, c.Name + ": the property refuses null, as the column does.");
+				Assert.IsFalse(Attribute.IsDefined(property, typeof(NotMappedAttribute)), c.Name + ": the context does not read the column.");
+				Assert.IsTrue(Attribute.IsDefined(property, typeof(DataMemberAttribute)), c.Name + ": the checksum and the copies between records leave it out.");
 				StringAssert.Matches(table, new Regex(@"\[" + c.Name + @"\]\s+INT\s+CONSTRAINT \[DF_x360ce_UserDevices_" + c.Name + @"\] DEFAULT \(\(" + c.Stored + @"\)\) NOT NULL,"),
 					"The table file declares " + c.Name + " otherwise than the live database has it.");
 			}

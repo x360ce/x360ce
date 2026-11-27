@@ -723,19 +723,15 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>
-		/// The driver package for the version of Windows this is running on, as a path inside the
-		/// folder the files are unpacked into.
+		/// The older driver's package, as a path inside the folder the files are unpacked into.
 		/// </summary>
 		/// <remarks>
-		/// The two packages hold the same driver and differ in how they are signed, which is what
-		/// decides whether Windows will accept them. Windows 10 and later take the one signed for
-		/// Windows 10; everything older takes the other.
+		/// Only Windows before 10 installs from it (<see cref="TakesModernViGEmBus"/>); Windows 10 and later
+		/// run the newer driver's setup instead.
 		/// </remarks>
 		static string GetViGEmBusInfPath()
 		{
-			var forWindows10 = JocysCom.ClassLibrary.Controls.IssuesControl.IssueHelper
-				.GetRealOSVersion().Major >= 10;
-			return (forWindows10 ? "Win10" : "WinVS") + "\\ViGEmBus.inf";
+			return "WinVS\\ViGEmBus.inf";
 		}
 
 		/// <summary>

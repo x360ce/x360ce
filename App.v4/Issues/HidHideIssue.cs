@@ -7,6 +7,7 @@ using System.Linq;
 using x360ce.App.DInput;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -36,10 +37,11 @@ namespace x360ce.App.Issues
 		/// <summary>Fix type that opens HID Hide's configuration program.</summary>
 		public const int FixConfigure = 2;
 
-		public HidHideIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
-			Name = "Game Sees Two Controllers";
-			FixName = "Open HID Hide";
+			Name = UiLanguage.T("HidHideIssue.GameSeesTwoControllers", "Game Sees Two Controllers");
+			FixName = UiLanguage.T("HidHideIssue.OpenHIDHide", "Open HID Hide");
 		}
 
 		/// <summary>Why the last install did not finish; null when it ran to its end or has not run.</summary>
@@ -68,7 +70,7 @@ namespace x360ce.App.Issues
 				return;
 			}
 			var install = fixType == FixInstall;
-			var fixName = install ? "Install HID Hide" : "Open HID Hide";
+			var fixName = install ? UiLanguage.T("HidHideIssue.InstallHIDHide", "Install HID Hide") : UiLanguage.T("HidHideIssue.OpenHIDHide", "Open HID Hide");
 			if (FixName != fixName)
 				FixName = fixName;
 			// Its setup asks Windows for administrator rights; More... is the release page, to download it by hand.
@@ -137,7 +139,9 @@ namespace x360ce.App.Issues
 					return null;
 				fixType = FixInstall;
 				var install = new List<string>();
-				AddSeenTwice(install, xbox, "Install HID Hide to hide {0} from games.");
+				AddSeenTwice(install, xbox,
+					UiLanguage.T("HidHideIssue.InstallToHideIt", "Install HID Hide to hide it from games."),
+					UiLanguage.T("HidHideIssue.InstallToHideThem", "Install HID Hide to hide them from games."));
 				return string.Join(Environment.NewLine, install.ToArray());
 			}
 			// Installed but its program did not answer: nothing can be said about its settings.
@@ -146,20 +150,29 @@ namespace x360ce.App.Issues
 			var lines = new List<string>();
 			var hidden = hideable.Where(x => IsHidden(state, x)).ToArray();
 			var refused = state.CloakOn && !state.IsAllowed(exePath);
-			var allow = state.Inverse
-				? "Remove " + Path.GetFileName(exePath) + " from the application list in HID Hide."
-				: "Add " + Path.GetFileName(exePath) + " to the application list in HID Hide.";
+			var allow = string.Format(state.Inverse
+				? UiLanguage.T("HidHideIssue.RemoveFromList", "Remove {0} from the application list in HID Hide.")
+				: UiLanguage.T("HidHideIssue.AddToList", "Add {0} to the application list in HID Hide."),
+				Path.GetFileName(exePath));
+			// One whole sentence for one and another for many, so each language can say it its own way.
 			if (refused && hidden.Length > 0)
-				lines.Add(string.Format("HID Hide hides {0} from this program as well, so it cannot read {1}. {2}",
-					Names(hidden), hidden.Length == 1 ? "it" : "them", allow));
+				lines.Add(string.Format(hidden.Length == 1
+					? UiLanguage.T("HidHideIssue.HidesItFromThisProgram", "HID Hide hides {0} from this program as well, so it cannot read it.")
+					: UiLanguage.T("HidHideIssue.HidesThemFromThisProgram", "HID Hide hides {0} from this program as well, so it cannot read them."),
+					Names(hidden)) + " " + allow);
 			else if (refused && state.HiddenDevices.Length > 0)
-				lines.Add(string.Format("HID Hide hides {0} from this program, so {1} missing from its lists. {2}",
-					state.HiddenDevices.Length == 1 ? "a device" : state.HiddenDevices.Length + " devices",
-					state.HiddenDevices.Length == 1 ? "it is" : "they are", allow));
+				lines.Add((state.HiddenDevices.Length == 1
+					? UiLanguage.T("HidHideIssue.HidesADevice", "HID Hide hides a device from this program, so it is missing from its lists.")
+					: string.Format(UiLanguage.T("HidHideIssue.HidesDevices", "HID Hide hides {0} devices from this program, so they are missing from its lists."), state.HiddenDevices.Length))
+					+ " " + allow);
 			if (!state.CloakOn)
-				AddSeenTwice(lines, xbox, "HID Hide is installed, but hiding is off: turn hiding on in HID Hide to hide {0} from games.");
+				AddSeenTwice(lines, xbox,
+					UiLanguage.T("HidHideIssue.HidingOffForIt", "HID Hide is installed, but hiding is off: turn hiding on in HID Hide to hide it from games."),
+					UiLanguage.T("HidHideIssue.HidingOffForThem", "HID Hide is installed, but hiding is off: turn hiding on in HID Hide to hide them from games."));
 			var shown = state.CloakOn ? xbox.Where(x => !IsHidden(state, x)).ToArray() : new UserDevice[0];
-			AddSeenTwice(lines, shown, "HID Hide does not hide {0} yet: tick {0} under Devices in HID Hide to hide {0} from games.");
+			AddSeenTwice(lines, shown,
+				UiLanguage.T("HidHideIssue.NotHiddenYetIt", "HID Hide does not hide it yet: tick it under Devices in HID Hide to hide it from games."),
+				UiLanguage.T("HidHideIssue.NotHiddenYetThem", "HID Hide does not hide them yet: tick them under Devices in HID Hide to hide them from games."));
 			if (lines.Count == 0)
 				return null;
 			fixType = FixConfigure;
@@ -169,15 +182,16 @@ namespace x360ce.App.Issues
 		/// <summary>Says that every game sees the Xbox controllers twice, then what hides them from games.</summary>
 		/// <param name="lines">The lines to add to.</param>
 		/// <param name="xbox">The Xbox controllers to name; nothing is added when empty.</param>
-		/// <param name="action">What HID Hide is set to and what to do, with {0} for "it" or "them".</param>
-		static void AddSeenTwice(List<string> lines, UserDevice[] xbox, string action)
+		/// <param name="actionOne">What HID Hide is set to and what to do, said of one controller.</param>
+		/// <param name="actionMany">The same, said of more than one.</param>
+		static void AddSeenTwice(List<string> lines, UserDevice[] xbox, string actionOne, string actionMany)
 		{
 			if (xbox.Length == 0)
 				return;
 			lines.Add(string.Format(xbox.Length == 1
-				? "Every game sees {0} twice: the real controller and the virtual one made from it. "
-				: "Every game sees {0} twice: the real controllers and the virtual ones made from them. ",
-				Names(xbox)) + string.Format(action, xbox.Length == 1 ? "it" : "them"));
+				? UiLanguage.T("HidHideIssue.SeenTwiceOne", "Every game sees {0} twice: the real controller and the virtual one made from it.")
+				: UiLanguage.T("HidHideIssue.SeenTwiceMany", "Every game sees {0} twice: the real controllers and the virtual ones made from them."),
+				Names(xbox)) + " " + (xbox.Length == 1 ? actionOne : actionMany));
 		}
 
 		static bool IsHidden(VirtualDriverInstaller.HidHideState state, UserDevice ud)

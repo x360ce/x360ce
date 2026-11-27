@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using System;
 using System.Windows.Forms;
 using x360ce.App.DInput;
 
@@ -27,20 +28,27 @@ namespace x360ce.App.Controls
 				box.DisplayMember = nameof(KeyValuePair.Key);
 				box.ValueMember = nameof(KeyValuePair.Value);
 			}
-			StyleComboBox.Items.Add(new KeyValuePair("Position: follows how far the mouse moved", ((int)MouseStyle.Position).ToString()));
-			StyleComboBox.Items.Add(new KeyValuePair("Speed: follows how fast the mouse moves", ((int)MouseStyle.Speed).ToString()));
-			StyleComboBox.Items.Add(new KeyValuePair("Screen: follows where the pointer is", ((int)MouseStyle.Screen).ToString()));
-			StyleComboBox.Items.Add(new KeyValuePair("Wheel: like Position, then back to centre", ((int)MouseStyle.Wheel).ToString()));
-			StyleComboBox.SelectedIndex = 0;
-			ActiveComboBox.Items.Add(new KeyValuePair("Always", ((int)MouseActive.Always).ToString()));
-			ActiveComboBox.Items.Add(new KeyValuePair("While the button is held, then centre", ((int)MouseActive.HeldCentre).ToString()));
-			ActiveComboBox.Items.Add(new KeyValuePair("While the button is held, then stay", ((int)MouseActive.HeldStay).ToString()));
-			ActiveComboBox.Items.Add(new KeyValuePair("The button turns it on and off", ((int)MouseActive.Toggle).ToString()));
-			ActiveComboBox.SelectedIndex = 0;
-			ButtonComboBox.Items.Add(new KeyValuePair("None", "0"));
-			for (var i = 1; i <= 32; i++)
-				ButtonComboBox.Items.Add(new KeyValuePair("Button " + i + (i == 1 ? " (mouse left)" : i == 2 ? " (mouse right)" : i == 3 ? " (mouse middle)" : ""), i.ToString()));
-			ButtonComboBox.SelectedIndex = 0;
+			foreach (var style in new[] { MouseStyle.Position, MouseStyle.Speed, MouseStyle.Screen, MouseStyle.Wheel })
+				StyleComboBox.Items.Add(new KeyValuePair("", ((int)style).ToString()));
+			foreach (var active in new[] { MouseActive.Always, MouseActive.HeldCentre, MouseActive.HeldStay, MouseActive.Toggle })
+				ActiveComboBox.Items.Add(new KeyValuePair("", ((int)active).ToString()));
+			for (var i = 0; i <= 32; i++)
+				ButtonComboBox.Items.Add(new KeyValuePair("", i.ToString()));
+			StyleComboBox.Format += (s, e) =>
+			{
+				var style = (MouseStyle)ValueOf(e.ListItem);
+				e.Value = string.Format(UiLanguage.T("MouseStickUserControl.StyleChoice", "{0}: {1}"), StyleName(style), StyleExplanation(style));
+			};
+			ActiveComboBox.Format += (s, e) => e.Value = ActiveText((MouseActive)ValueOf(e.ListItem));
+			ButtonComboBox.Format += (s, e) => e.Value = ButtonText(ValueOf(e.ListItem));
+			foreach (var box in new[] { StyleComboBox, ActiveComboBox, ButtonComboBox })
+			{
+				box.FormattingEnabled = true;
+				box.SelectedIndex = 0;
+			}
+			EventHandler languageChanged = (s, e) => UiLanguage.Relist(StyleComboBox, ActiveComboBox, ButtonComboBox);
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			StyleComboBox.SelectedIndexChanged += (s, e) => UpdateEnabled();
 			ActiveComboBox.SelectedIndexChanged += (s, e) => UpdateEnabled();
 			foreach (var box in new[] { StyleComboBox, ActiveComboBox, ButtonComboBox })
@@ -92,10 +100,48 @@ namespace x360ce.App.Controls
 			};
 		}
 
-		/// <summary>The style chosen, in the words of the Style list: its name, and what it does.</summary>
-		public string StyleText
+		internal static string StyleName(MouseStyle style)
 		{
-			get { return StyleComboBox.Text; }
+			switch (style)
+			{
+				case MouseStyle.Speed: return UiLanguage.T("MouseStickUserControl.Speed", "Speed");
+				case MouseStyle.Screen: return UiLanguage.T("MouseStickUserControl.Screen", "Screen");
+				case MouseStyle.Wheel: return UiLanguage.T("MouseStickUserControl.Wheel", "Wheel");
+				default: return UiLanguage.T("MouseStickUserControl.Position", "Position");
+			}
+		}
+
+		internal static string StyleExplanation(MouseStyle style)
+		{
+			switch (style)
+			{
+				case MouseStyle.Speed: return UiLanguage.T("MouseStickUserControl.SpeedExplanation", "follows how fast the mouse moves");
+				case MouseStyle.Screen: return UiLanguage.T("MouseStickUserControl.ScreenExplanation", "follows where the pointer is");
+				case MouseStyle.Wheel: return UiLanguage.T("MouseStickUserControl.WheelExplanation", "like Position, then back to centre");
+				default: return UiLanguage.T("MouseStickUserControl.PositionExplanation", "follows how far the mouse moved");
+			}
+		}
+
+		static string ActiveText(MouseActive active)
+		{
+			switch (active)
+			{
+				case MouseActive.HeldCentre: return UiLanguage.T("MouseStickUserControl.HeldCentre", "While the button is held, then centre");
+				case MouseActive.HeldStay: return UiLanguage.T("MouseStickUserControl.HeldStay", "While the button is held, then stay");
+				case MouseActive.Toggle: return UiLanguage.T("MouseStickUserControl.Toggle", "The button turns it on and off");
+				default: return UiLanguage.T("MouseStickUserControl.Always", "Always");
+			}
+		}
+
+		static string ButtonText(int button)
+		{
+			if (button == 0)
+				return UiLanguage.T("MouseStickUserControl.NoButton", "None");
+			var format = button == 1 ? UiLanguage.T("MouseStickUserControl.LeftMouseButton", "Button {0} (mouse left)")
+				: button == 2 ? UiLanguage.T("MouseStickUserControl.RightMouseButton", "Button {0} (mouse right)")
+				: button == 3 ? UiLanguage.T("MouseStickUserControl.MiddleMouseButton", "Button {0} (mouse middle)")
+				: UiLanguage.T("MouseStickUserControl.ButtonNumber", "Button {0}");
+			return string.Format(format, button);
 		}
 
 		/// <summary>The stick the control sets, shown as the group's title.</summary>
@@ -107,7 +153,12 @@ namespace x360ce.App.Controls
 
 		static int Selected(ComboBox box)
 		{
-			var item = box.SelectedItem as KeyValuePair;
+			return ValueOf(box.SelectedItem);
+		}
+
+		static int ValueOf(object valueItem)
+		{
+			var item = valueItem as KeyValuePair;
 			int value;
 			return item != null && int.TryParse(item.Value, out value) ? value : 0;
 		}

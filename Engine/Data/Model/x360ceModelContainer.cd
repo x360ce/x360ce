@@ -1,0 +1,110 @@
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="x360ce.Engine.Data.Layout" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.00" />
+    <TypeIdentifier>
+      <FileName>dbo\Layout.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.PadSetting" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>dbo\PadSetting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.Product" Collapsed="true">
+    <Position X="3.25" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>dbo\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.Program" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>dbo\Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.UserSetting" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="1.50" />
+    <TypeIdentifier>
+      <FileName>dbo\UserSetting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.Summary" Collapsed="true">
+    <Position X="8.00" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>dbo\Summary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.UserComputer" Collapsed="true">
+    <Position X="9.50" Y="0.5" Width="1.50" />
+    <TypeIdentifier>
+      <FileName>dbo\UserComputer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.UserDevice" Collapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>dbo\UserDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.UserGame" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>dbo\UserGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.UserInstance" Collapsed="true">
+    <Position X="14.25" Y="0.5" Width="1.50" />
+    <TypeIdentifier>
+      <FileName>dbo\UserInstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.UserProfile" Collapsed="true">
+    <Position X="16.00" Y="0.5" Width="1.50" />
+    <TypeIdentifier>
+      <FileName>dbo\UserProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.Vendor" Collapsed="true">
+    <Position X="17.75" Y="0.5" Width="1.00" />
+    <TypeIdentifier>
+      <FileName>dbo\Vendor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryFormat" Collapsed="true">
+    <Position X="19.00" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryFormat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryFormatSpec" Collapsed="true">
+    <Position X="21.00" Y="0.5" Width="2.00" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryFormatSpec.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGame" Collapsed="true">
+    <Position X="23.25" Y="0.5" Width="1.50" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGameFile" Collapsed="true">
+    <Position X="25.00" Y="0.5" Width="2.00" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGameFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGameMod" Collapsed="true">
+    <Position X="27.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGameMod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="x360ce.Engine.Data.TelemetryGameStep" Collapsed="true">
+    <Position X="29.25" Y="0.5" Width="2.00" />
+    <TypeIdentifier>
+      <FileName>x360ce\TelemetryGameStep.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+</ClassDiagram>

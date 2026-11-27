@@ -142,6 +142,16 @@ namespace x360ce.App
 		/// <summary>MapNames - Most popular layouts for Games.</summary>
 		public static XSettingsData<Layout> Layouts = new XSettingsData<Layout>("Layouts.xml", "Most popular layouts for Games.");
 
+		/// <summary>Telemetry formats x360ce reads, and their official specifications.</summary>
+		public static XSettingsData<Engine.Data.TelemetryFormat> TelemetryFormats = new XSettingsData<Engine.Data.TelemetryFormat>("TelemetryFormats.xml", "Telemetry formats x360ce reads.");
+		public static XSettingsData<Engine.Data.TelemetryFormatSpec> TelemetryFormatSpecs = new XSettingsData<Engine.Data.TelemetryFormatSpec>("TelemetryFormatSpecs.xml", "Each telemetry format's official specifications.");
+
+		/// <summary>Games x360ce helps send telemetry to its Wheel Telemetry plugin: each game's warnings and steps, the mods it needs and the files a plugin installs.</summary>
+		public static XSettingsData<Engine.Data.TelemetryGame> TelemetryGames = new XSettingsData<Engine.Data.TelemetryGame>("TelemetryGames.xml", "Games x360ce helps send telemetry to its Wheel Telemetry plugin.");
+		public static XSettingsData<Engine.Data.TelemetryGameStep> TelemetryGameSteps = new XSettingsData<Engine.Data.TelemetryGameStep>("TelemetryGameSteps.xml", "The warnings and the steps on each game's page. {Port} is the port on the page.");
+		public static XSettingsData<Engine.Data.TelemetryGameMod> TelemetryGameMods = new XSettingsData<Engine.Data.TelemetryGameMod>("TelemetryGameMods.xml", "The mods each game needs, from their official pages: x360ce neither includes nor downloads them.");
+		public static XSettingsData<Engine.Data.TelemetryGameFile> TelemetryGameFiles = new XSettingsData<Engine.Data.TelemetryGameFile>("TelemetryGameFiles.xml", "The files the Wheel Telemetry Games plugin installs into a game's folder. {Port} in a file is the port on the page.");
+
 		// User settings.
 
 		/// <summary>User Games.</summary>
@@ -285,6 +295,14 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
+			// x360ce's own data, which no one edits: read from the copy this program carries each time, so a new version's games,
+			// steps and columns reach a person who ran an older one, whose settings folder may hold an older copy.
+			TelemetryFormats.ResetToDefault();
+			TelemetryFormatSpecs.ResetToDefault();
+			TelemetryGames.ResetToDefault();
+			TelemetryGameSteps.ResetToDefault();
+			TelemetryGameMods.ResetToDefault();
+			TelemetryGameFiles.ResetToDefault();
 			PadSettings.ValidateData = PadSettings_ValidateData;
 			PadSettings.Load();
 			UserDevices.Load();
@@ -1157,9 +1175,9 @@ namespace x360ce.App
 		/// starts with the same settings, force feedback included; false moves it here.
 		/// </param>
 		/// <remarks>
-		/// A device already on this tab stays on every tab it is on. A tab that gets its first device is
-		/// switched on, and a tab a move leaves with no device is switched off, so the game is not offered a
-		/// controller nothing drives. Two rows of one device keep their settings apart: settings are stored
+		/// A device already on this tab stays on every tab it is on, and is ticked. A tab that gets a device is
+		/// switched on, with Show XInput State, and a tab a move leaves with no device is switched off, so the game is not
+		/// offered a controller nothing drives. Two rows of one device keep their settings apart: settings are stored
 		/// by checksum, and a change on one tab gives that tab's row a new checksum.
 		///
 		/// A device new to the game starts with the settings of its twin on this tab (<see cref="GetTwinSetting"/>),
@@ -1167,7 +1185,6 @@ namespace x360ce.App
 		/// </remarks>
 		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, UserDevice[] devices, bool configureHidHide, bool keep)
 		{
-			var hadDevices = GetSettings(game.FileName, mappedTo).Count > 0;
 			// The tabs a device moved away from.
 			var left = new List<MapTo>();
 			foreach (var ud in devices)
@@ -1240,8 +1257,15 @@ namespace x360ce.App
 						other.MapTo = (int)MapTo.Disabled;
 				left.AddRange(elsewhereTabs);
 			}
-			if (!hadDevices && devices.Length > 0 && (game.EnableMask & (int)AppHelper.GetMapFlag(mappedTo)) == 0)
-				SetTabEnabled(game, mappedTo, true);
+			// A device put on a controller is meant to work it: the controller is switched on for the game, and the General page
+			// shows what the game reads, so the person sees at once that the device reaches it.
+			if (devices.Length > 0)
+			{
+				if ((game.EnableMask & (int)AppHelper.GetMapFlag(mappedTo)) == 0)
+					SetTabEnabled(game, mappedTo, true);
+				if (!Options.GetXInputStates)
+					Options.GetXInputStates = true;
+			}
 			SwitchOffEmptyTabs(game, left);
 			if (configureHidHide)
 				HideMappedDevices(game, devices.Select(x => x.InstanceGuid).ToArray());

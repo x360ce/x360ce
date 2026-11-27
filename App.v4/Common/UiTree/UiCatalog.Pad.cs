@@ -18,10 +18,10 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.ButtonsTabPage)] = new Text("Buttons",
 				"How far a stick or pedal must move before a button mapped to it counts as pressed.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AdvancedTabPage)] = new Text("Advanced",
-				"Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. "
-				+ "Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.");
+				"Settings only x360ce 3’s XInput library reads, from the x360ce.ini file this version does not write. "
+				+ "Greyed out, and kept with the settings so x360ce 3’s settings in the cloud stay as they are.");
 			d[nameof(PadControl) + "." + nameof(PadControl.DeviceGroupBox)] = new Text("Device",
-				"What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.");
+				"What x360ce 3’s library told a game about the device, and whether it passed the real controller straight through.");
 			// The settings these are bound to describe them.
 			d[nameof(PadControl) + "." + nameof(PadControl.PassThroughIndexComboBox)] = new Text("Pass Through ID", null);
 			d[nameof(PadControl) + "." + nameof(PadControl.DeviceSubTypeComboBox)] = new Text("Device Sub Type", null);
@@ -29,7 +29,7 @@ namespace x360ce.App.UiTree
 				"x360ce 3 only: combined this controller into another virtual controller.");
 			d[nameof(PadControl) + "." + nameof(PadControl.CombinedIndexComboBox)] = new Text("Combine Into", null);
 			d[nameof(PadControl) + "." + nameof(PadControl.DPadTabPage)] = new Text("D-Pad",
-				"Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.");
+				"Axis to D-Pad, which only x360ce 3’s XInput library reads. Greyed out, and kept with the settings.");
 			d[nameof(PadControl) + "." + nameof(PadControl.TriggersTabPage)] = new Text("Triggers",
 				"Shapes what the game receives from the two triggers.");
 			d[nameof(PadControl) + "." + nameof(PadControl.LeftThumbTabPage)] = new Text("Left Stick",
@@ -39,11 +39,11 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceFeedbackTabPage)] = new Text("Force Feedback",
 				"Turns vibration on and sets how strong it is.");
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelTabPage)] = new Text("Wheel",
-				"The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.");
+				"The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel’s steering range.");
 			d[nameof(PadControl) + "." + nameof(PadControl.MouseTabPage)] = new Text("Mouse",
 				"How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.");
 			d[nameof(PadControl) + "." + nameof(PadControl.MouseNoteLabel)] = new Text("What the Mouse page sets",
-				"The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.");
+				"The mouse’s axes are chosen in the stick’s boxes on the General page; this page sets how they move the stick.");
 			d[nameof(MouseStickUserControl)] = new Text(null,
 				"How a mouse moves one stick.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.StickGroupBox)] = new Text(null,
@@ -51,7 +51,7 @@ namespace x360ce.App.UiTree
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.StyleComboBox)] = new Text("Style",
 				"Position: the stick follows how far the mouse has moved, and stays there, for steering or flying. Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops, for a camera or aiming. Screen: the stick follows where the pointer is on the screen, as a mouse yoke. Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go or turns it off, as a steering wheel.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SensitivityXTrackBar)] = new Text("Sensitivity across",
-				"How far the stick moves for a movement across, 1 to 400 percent. 100 is the whole stick for 2,048 counts in Position, for 4,096 counts a second in Speed, and half the screen's height in Screen.");
+				"How far the stick moves for a movement across, 1 to 400 percent. 100 is the whole stick for 2,048 counts in Position, for 4,096 counts a second in Speed, and half the screen’s height in Screen.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SensitivityXTextBox)] = Live("Sensitivity across value",
 				"The sensitivity across the slider is set to, in percent.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SensitivityYTrackBar)] = new Text("Sensitivity up and down",
@@ -59,7 +59,7 @@ namespace x360ce.App.UiTree
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SensitivityYTextBox)] = Live("Sensitivity up and down value",
 				"The sensitivity up and down the slider is set to, in percent.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SmoothingTrackBar)] = new Text("Smoothing",
-				"How long the stick takes to follow a change in Speed and Screen, 0 to 500 milliseconds, which evens out a mouse's uneven reports. Greyed out in Position and Wheel.");
+				"How long the stick takes to follow a change in Speed and Screen, 0 to 500 milliseconds, which evens out a mouse’s uneven reports. Greyed out in Position and Wheel.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SmoothingTextBox)] = Live("Smoothing value",
 				"The smoothing the slider is set to, in milliseconds.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.ActiveComboBox)] = new Text("Active",
@@ -75,36 +75,35 @@ namespace x360ce.App.UiTree
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.CaptionLabel)] = Live("Demo stick",
 				"The stick group the demo shows and its style, such as Left Stick: Wheel.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.DemoPictureBox)] = new Text("Demo picture",
-				"The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.");
+				"A mouse walking on its pad, the ear on its button’s side lit while the button is held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.PhaseLabel)] = Live("Demo step",
 				"What the demo shows now, in words, such as Mouse stops: stick returns to the centre.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.NoteLabel)] = Live("Demo note",
-				"Shown when the group's Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.");
+				"Shown when the group’s Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.PlayButton)] = new Text("Play demo",
-				"Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.");
+				"Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows’ Show animations is off.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.DescriptionLabel)] = Live("Demo style",
-				"What the style shown does, in the Style list's words.");
+				"What the style shown does, in the Style list’s words.");
 			d[nameof(PadControl) + "." + nameof(PadControl.DirectInputTabPage)] = new Text("Direct Input",
 				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
 			d[nameof(PadControl) + "." + nameof(PadControl.SdlTabPage)] = new Text("SDL",
-				"What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.");
+				"The mapping Auto gives the selected device, place by place, from x360ce’s controller database and SDL’s, beside what this controller’s boxes hold, and which copies of the databases are in use.");
 			d[nameof(SdlUserControl)] = new Text(null,
-				"What SDL's controller database says about the selected device.");
-			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.VersionLabel)] = Live("SDL database version",
-				"Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds; and any rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.");
-			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.DeviceLabel)] = Live("SDL's row for the device",
-				"Whether SDL's controller database knows the selected device, its name and GUID there, how the pad labels its buttons, and what of the row x360ce has no place for.");
+				"The mapping Auto gives the selected device: x360ce’s controller database row, and SDL’s where it maps nothing.");
+			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.DeviceLabel)] = Live("Databases and the device’s rows",
+				"Which copies of x360ce’s and SDL’s controller databases are in use: built in, or downloaded and from where, SDL’s date and commit, how many Windows rows each holds, and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG. "
+				+ "Whether they know the selected device, its name there and, when a database holds several copies, which copy the row is from; which Auto takes first, how the pad labels its buttons, and what of SDL’s row x360ce has no place for.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.PositionsDataGridView)] = new Text("Places",
-				"Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the SDL row's binding, the device's control that binding names in x360ce's words, "
+				"Each place on the Xbox controller: SDL’s name for it, the place in words, its label on this pad, the row’s binding and the database it is from, x360ce or SDL, the device’s control that binding names in x360ce’s words, "
 				+ "and what the box holds now, with Same or Differs beside it.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.ApplyButton)] = new Text("Apply SDL Mapping",
-				"Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.");
+				"Fills every mapping box of this controller as the page shows it, from x360ce’s row and SDL’s, and empties those they leave out. Dead zones and the other settings stay as they are.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.CopyButton)] = new Text("Copy as SDL",
-				"Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.");
+				"Copies this controller’s mapping to the clipboard as a row of SDL’s controller database for the device: its buttons, axes and hats, without formulas or other settings.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.UpdateButton)] = new Text("Update SDL Database",
 				"Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.StatusLabel)] = Live("SDL update status",
-				"How the last update of SDL's controller database went.");
+				"How the last update of SDL’s controller database went.");
 
 			// General page.
 			AddGeneralValues(d);
@@ -114,25 +113,25 @@ namespace x360ce.App.UiTree
 				"Clears the mapping, then asks you to press each control in turn.");
 
 			// Buttons page.
-			d[nameof(PadControl) + "." + nameof(PadControl.AxisToButtonGroupBox)] = new Text("Press points",
+			d[nameof(PadControl) + "." + nameof(PadControl.AxisToButtonNoteLabel)] = new Text("Press points",
 				"For each button mapped to a stick or pedal, how far it must move to count as pressed.");
 
 			// D-Pad page.
 			d[nameof(PadControl) + "." + nameof(PadControl.AxisToDPadGroupBox)] = new Text("Axis to D-Pad",
-				"Turns the device's X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: "
-				+ "for a pad whose direction buttons report as a stick. The stick's own mappings stay as they are.");
+				"Turns the device’s X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: "
+				+ "for a pad whose direction buttons report as a stick. The stick’s own mappings stay as they are.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AxisToDPadEnabledCheckBox)] = new Text("Enabled",
 				"Turns the X and Y axes into D-Pad presses: right and left from X, down and up from Y, two at once on a diagonal.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AxisToDPadDeadZoneTextBox)] = new Text("Dead zone",
-				"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.");
+				"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad’s direction buttons put it even when it falls a little short.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AxisToDPadDeadZoneTrackBar)] = new Text("Dead zone",
-				"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.");
+				"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad’s direction buttons put it even when it falls a little short.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AxisToDPadOffsetTextBox)] = new Text("Centre offset",
 				"Moves the point counted as centre towards the right and the bottom, as part of half the travel, for a device that does not rest in the middle.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AxisToDPadOffsetTrackBar)] = new Text("Centre offset",
 				"Moves the point counted as centre towards the right and the bottom, as part of half the travel, for a device that does not rest in the middle.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AxisToDPadChart)] = new Text("Axis to D-Pad chart",
-				"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.");
+				"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device’s reading, and a side it presses is lit.");
 
 			// Force feedback page.
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceFeedbackGroupBox)] = new Text("Force feedback",
@@ -140,14 +139,14 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.EffectDescriptionLabel)] = Live("Effect description",
 				"What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSourceGroupBox)] = new Text("Force source",
-				"Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.");
+				"Where the selected controller’s force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSourceLabel)] = Live("Force source",
-				"Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: "
+				"Which controller tab’s settings shape the controller’s force, the lowest enabled tab it is on, and which controllers’ force it plays: "
 				+ "on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceEnableCheckBox)] = new Text("Enable",
-				"Passes this controller's vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
+				"Passes this controller’s vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSwapMotorCheckBox)] = new Text("Swap Motors",
-				"Sends each motor's vibration to the other one.");
+				"Sends each motor’s vibration to the other one.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceTypeComboBox)] = new Text("Effect type",
 				"How vibration is produced: held steady, or repeated as a pulse.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceOverallTextBox)] = new Text("Overall strength",
@@ -161,7 +160,7 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceDefaultsButton)] = new Text("Defaults",
 				"Puts every setting on this page back to its default.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForcePassThroughIndexComboBox)] = new Text("Pass through to",
-				"Which XInput place receives the game's vibration when it is passed through.");
+				"Which XInput place receives the game’s vibration when it is passed through.");
 			d[nameof(PadControl) + "." + nameof(PadControl.InforTextBox)] = new Text("About force feedback",
 				"Explains what the settings on this page do.");
 			AddMotor(d, "Left", nameof(PadControl.LeftMotorGroupBox), "Left motor",
@@ -171,9 +170,9 @@ namespace x360ce.App.UiTree
 
 			// Wheel page.
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringEnableCheckBox)] = new Text("Centering spring",
-				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting.");
+				"Turns the centering spring on. Off by default, so a wheel’s own software can hold the centre without the two fighting.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringCarComboBox)] = new Text("Car",
-				"Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car's values, and shows the car the values match, or Custom. "
+				"Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car’s values, and shows the car the values match, or Custom. "
 				+ "No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out "
 				+ "from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the "
 				+ "heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range "
@@ -184,38 +183,46 @@ namespace x360ce.App.UiTree
 				+ "a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. "
 				+ "Greyed out while no wheel is selected.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringStrengthTextBox)] = d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringStrengthTrackBar)] = new Text("Strength",
-				"The car's steering force at Peak, in percent of the wheel's force, added to Friction. Nought is off.");
+				"The car’s steering force at Peak, in percent of the wheel’s force, added to Friction. Nought is off.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringCentreTextBox)] = d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringCentreTrackBar)] = new Text("Centre",
 				"The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringPeakTextBox)] = d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringPeakTrackBar)] = new Text("Peak",
-				"The steering angle in degrees of the spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.");
+				"The steering angle in degrees of the spring’s strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringLighteningTextBox)] = d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringLighteningTrackBar)] = new Text("Lightening",
-				"How much of the spring's strongest force is left at the stop, in percent.");
+				"How much of the spring’s strongest force is left at the stop, in percent.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringDampingTextBox)] = d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringDampingTrackBar)] = new Text("Damping",
-				"Resistance to the wheel's speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.");
+				"Resistance to the wheel’s speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringSpeedTextBox)] = d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringSpeedTrackBar)] = new Text("Speed",
-				"The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. "
-				+ "A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.");
+				"The car’s speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. "
+				+ "A program that knows the car’s speed, such as one reading a game’s own data, can later set it live, without saving it.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ForceSpringAutoButton)] = new Text("Auto",
-				"Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.");
+				"Measures the wheel’s friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.");
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelRangeComboBox)] = new Text("Wheel range",
-				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against. "
+				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring’s angles are counted against. "
 				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing, "
 				+ "and is for a wheel without the centering spring: ticking the spring picks 900. Any other wheel turns the range its own software sets; "
 				+ "the page then says so, and a formula in the steering box, such as =a1*900/270, steers a shorter range.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelSoftLockCheckBox)] = new Text("Soft lock",
+				"Enforces the chosen Wheel range with a software bump stop and scales the steering axis on wheels x360ce cannot set the hardware range of.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbStripCheckBox)] = new Text("RGB LED strip",
+				"Shows the engine's revs from live game telemetry on the shift lights of a Logitech G27, G29 or G923: off below half revs, then pairs from green at the ends to red in the middle, all flashing at the rev limit to shift up.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbStripBar)] = Live("RGB LED strip preview",
+				"Live 10-LED symmetric RGB/RPM shift indicator preview matching Logitech G27, G29 and G923 wheel shift LEDs.");
+			d[nameof(PadControl) + "." + nameof(PadControl.WheelRgbTestButton)] = new Text("Test RGB LEDs",
+				"Sweeps the RGB/RPM LED strip on screen and on a connected supported Logitech wheel.");
 			d[nameof(PadControl) + "." + nameof(PadControl.WheelDescriptionLabel)] = Live("Wheel message",
-				"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.");
+				"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel’s range.");
 
 			// The chart on the Wheel page.
 			d[nameof(WheelChartUserControl) + "." + nameof(WheelChartUserControl.MainPictureBox)] = new Text("Centering chart",
-				"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle "
+				"The red curve is the spring’s force towards the centre at every angle, from one stop to the other, as it is played: above the middle "
 				+ "it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere "
 				+ "but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are "
-				+ "the wheel's angle and force now.");
+				+ "the wheel’s angle and force now.");
 			d[nameof(WheelChartUserControl) + "." + nameof(WheelChartUserControl.AngleValueLabel)] = Live("Wheel angle",
-				"The wheel's angle now, in degrees from the centre; negative is to the left.");
+				"The wheel’s angle now, in degrees from the centre; negative is to the left.");
 			d[nameof(WheelChartUserControl) + "." + nameof(WheelChartUserControl.ForceValueLabel)] = Live("Spring force",
-				"The spring's force at that angle, in percent of the wheel's force, and which way it pushes.");
+				"The spring’s force at that angle, in percent of the wheel’s force, and which way it pushes.");
 
 			// Devices and presets.
 			d[nameof(PadControl) + "." + nameof(PadControl.MappedDevicesDataGridView)] = new Text("Mapped devices",
@@ -232,49 +239,49 @@ namespace x360ce.App.UiTree
 				"Turns this controller on or off for the selected game.");
 			d[nameof(PadControl) + "." + nameof(PadControl.GetXInputStatesCheckBox)] = new Text("Show XInput State",
 				"Shows on the General page the values read back from XInput - what the game actually receives - instead "
-				+ "of the values worked out from your devices. A trigger's or stick's chart always shows the selected device's "
+				+ "of the values worked out from your devices. A trigger’s or stick’s chart always shows the selected device’s "
 				+ "reading and what its mapping makes of it. The emulated controller works either way.");
 			d[nameof(PadControl) + "." + nameof(PadControl.GameControllersButton)] = new Text("Game Controllers...",
 				"Opens the Windows game controller panel for the selected device.");
 			d[nameof(PadControl) + "." + nameof(PadControl.DxTweakButton)] = new Text("DX Tweak...",
 				"Opens DX Tweak, a separate tool for adjusting the device itself.");
 			d[nameof(PadControl) + "." + nameof(PadControl.LoadPresetButton)] = new Text("Load Preset...",
-				"Replaces this controller's settings with a saved set.");
+				"Replaces this controller’s settings with a saved set.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AutoPresetButton)] = new Text("Auto Preset",
-				"Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.");
+				"Fills the settings from x360ce’s controller database, and the mapping from SDL’s where it maps nothing, when either knows the selected device, otherwise from x360ce’s own guess. The status bar says which.");
 			d[nameof(PadControl) + "." + nameof(PadControl.SavePresetButton)] = new Text("Save Preset...",
-				"Writes this controller's settings to a file, to load again or pass on.");
+				"Writes this controller’s settings to a file, to load again or pass on.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ClearPresetButton)] = new Text("Clear",
 				"Empties every mapping on this controller.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ResetPresetButton)] = new Text("Reset",
 				"Puts every setting on this controller back to its default. Asks first.");
 			d[nameof(PadControl) + "." + nameof(PadControl.CopyPresetButton)] = new Text("Copy Preset",
-				"Copies this controller's settings to the clipboard as YAML, the easiest to read.");
+				"Copies this controller’s settings to the clipboard as YAML, the easiest to read.");
 			d[nameof(PadControl) + "." + nameof(PadControl.CopyPresetFormatButton)] = new Text("Copy Preset as",
-				"Copies this controller's settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.");
+				"Copies this controller’s settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL’s controller database.");
 			d[nameof(PadControl) + "." + nameof(PadControl.PastePresetButton)] = new Text("Paste Preset",
-				"Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.");
+				"Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL’s controller database are recognised.");
 			d[nameof(LoadPresetsForm) + "." + nameof(LoadPresetsForm.OpenFileButton)] = new Text("Open File...",
 				"Loads a preset from a file written by Save Preset.");
 			d[nameof(LoadPresetsForm) + "." + nameof(LoadPresetsForm.CopyPresetButton)] = new Text("Copy Preset",
 				"Copies the selected preset to the clipboard as YAML, to read it before loading.");
 			d[nameof(LoadPresetsForm) + "." + nameof(LoadPresetsForm.CopyPresetFormatButton)] = new Text("Copy Preset as",
-				"Copies the selected preset in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.");
+				"Copies the selected preset in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL’s controller database.");
 			d[nameof(LoadPresetsForm) + "." + nameof(LoadPresetsForm.SdlTabPage)] = new Text("SDL",
-				"The rows of SDL's controller database, the selected device's first. The row chosen is loaded or copied translated for the device.");
+				"The rows of SDL’s controller database, the selected device’s first. The row chosen is loaded or copied translated for the device.");
 			d[nameof(SdlPresetsUserControl)] = new Text(null,
-				"The rows of SDL's controller database.");
+				"The rows of SDL’s controller database.");
 			d[nameof(SdlPresetsUserControl) + "." + nameof(SdlPresetsUserControl.VersionLabel)] = Live("SDL database version",
-				"Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds.");
+				"Which copy of SDL’s controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds.");
 			d[nameof(SdlPresetsUserControl) + "." + nameof(SdlPresetsUserControl.FilterLabel)] = new Text("Filter", null);
 			d[nameof(SdlPresetsUserControl) + "." + nameof(SdlPresetsUserControl.FilterTextBox)] = new Text("Filter",
 				"Lists only the rows whose name, vendor and product, or GUID hold this text.");
 			d[nameof(SdlPresetsUserControl) + "." + nameof(SdlPresetsUserControl.RowsDataGridView)] = new Text("SDL rows",
-				"The rows of SDL's controller database: the selected device's first, marked This device, then the rest by name.");
+				"The rows of SDL’s controller database: the selected device’s first, marked This device, then the rest by name.");
 			d[nameof(SdlPresetsUserControl) + "." + nameof(SdlPresetsUserControl.UpdateButton)] = new Text("Update SDL Database",
 				"Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.");
 			d[nameof(SdlPresetsUserControl) + "." + nameof(SdlPresetsUserControl.StatusLabel)] = Live("SDL update status",
-				"How the last update of SDL's controller database went.");
+				"How the last update of SDL’s controller database went.");
 		}
 
 		/// <summary>The number under each name on the General page, for every part of the controller the page maps.</summary>
@@ -310,7 +317,7 @@ namespace x360ce.App.UiTree
 				case MapCode.RightThumbLeft:
 				case MapCode.RightThumbRight:
 				case MapCode.RightThumbDown:
-					return "The stick's position the game is being given while the stick points this way, otherwise 0.";
+					return "The stick’s position the game is being given while the stick points this way, otherwise 0.";
 				case MapCode.DPad:
 					return "The D-Pad directions the game is being given, added up: up 1, down 2, left 4, right 8; 0 while none is pressed.";
 				default:

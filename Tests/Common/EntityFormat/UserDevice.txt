@@ -1,0 +1,155 @@
+== XmlSerializer
+<UserDevice xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Id>e8a60a49-cc56-08f2-a054-389e47ce0d06</Id>
+  <ComputerId>de9e53d0-35b3-5255-5554-175c8837d94c</ComputerId>
+  <ProfileId>ab90df05-7c3b-0718-664f-5f7a922990c2</ProfileId>
+  <InstanceGuid>e12b93e2-8ad9-c8da-abf5-d6ccb280f67a</InstanceGuid>
+  <InstanceName>InstanceName</InstanceName>
+  <ProductGuid>116d4db7-f098-912e-32d2-fe4c161e47a4</ProductGuid>
+  <ProductName>ProductName</ProductName>
+  <ConnectionClass>01fbb2aa-c9de-f340-90b4-362881aa43b5</ConnectionClass>
+  <CapAxeCount>388</CapAxeCount>
+  <CapButtonCount>358</CapButtonCount>
+  <CapDriverVersion>337</CapDriverVersion>
+  <CapFirmwareRevision>537</CapFirmwareRevision>
+  <CapFlags>480</CapFlags>
+  <CapForceFeedbackMinimumTimeResolution>58</CapForceFeedbackMinimumTimeResolution>
+  <CapForceFeedbackSamplePeriod>572</CapForceFeedbackSamplePeriod>
+  <CapHardwareRevision>14</CapHardwareRevision>
+  <CapPovCount>19</CapPovCount>
+  <CapIsHumanInterfaceDevice>true</CapIsHumanInterfaceDevice>
+  <CapSubtype>979</CapSubtype>
+  <CapType>405</CapType>
+  <DiAxeMask>918</DiAxeMask>
+  <DiSliderMask>813</DiSliderMask>
+  <DiActuatorMask>597</DiActuatorMask>
+  <DiActuatorCount>538</DiActuatorCount>
+  <HidManufacturer>HidManufacturer</HidManufacturer>
+  <HidVendorId>991</HidVendorId>
+  <HidProductId>306</HidProductId>
+  <HidRevision>759</HidRevision>
+  <HidDescription>HidDescription</HidDescription>
+  <HidDeviceId>HidDeviceId</HidDeviceId>
+  <HidDevicePath>HidDevicePath</HidDevicePath>
+  <HidParentDeviceId>HidParentDeviceId</HidParentDeviceId>
+  <HidClassGuid>7d9e5643-0eec-2e9c-ce75-5a3c5293d056</HidClassGuid>
+  <HidClassDescription>HidClassDescription</HidClassDescription>
+  <DevManufacturer>DevManufacturer</DevManufacturer>
+  <DevVendorId>889</DevVendorId>
+  <DevProductId>128</DevProductId>
+  <DevRevision>9</DevRevision>
+  <DevDescription>DevDescription</DevDescription>
+  <DevDeviceId>DevDeviceId</DevDeviceId>
+  <DevDevicePath>DevDevicePath</DevDevicePath>
+  <DevParentDeviceId>DevParentDeviceId</DevParentDeviceId>
+  <DevClassGuid>bc566e60-98dd-9ba5-1ccb-252f2064a760</DevClassGuid>
+  <DevClassDescription>DevClassDescription</DevClassDescription>
+  <DateCreated>2001-02-23T16:30:06</DateCreated>
+  <DateUpdated>2001-03-06T06:41:06</DateUpdated>
+  <IsHidden>true</IsHidden>
+  <IsEnabled>true</IsEnabled>
+  <Checksum>6670f389-c3d4-045e-4311-60d607fb2b46</Checksum>
+  <InputSourceType>600</InputSourceType>
+  <ForceSpringFriction>779</ForceSpringFriction>
+</UserDevice>
+== [DataMember] properties, with the key
+CapAxeCount=388
+CapButtonCount=358
+CapDriverVersion=337
+CapFirmwareRevision=537
+CapFlags=480
+CapForceFeedbackMinimumTimeResolution=58
+CapForceFeedbackSamplePeriod=572
+CapHardwareRevision=14
+CapIsHumanInterfaceDevice=True
+CapPovCount=19
+CapSubtype=979
+CapType=405
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+ConnectionClass=01fbb2aa-c9de-f340-90b4-362881aa43b5
+DateCreated=02/23/2001 16:30:06
+DateUpdated=03/06/2001 06:41:06
+DevClassDescription=DevClassDescription
+DevClassGuid=bc566e60-98dd-9ba5-1ccb-252f2064a760
+DevDescription=DevDescription
+DevDeviceId=DevDeviceId
+DevDevicePath=DevDevicePath
+DevManufacturer=DevManufacturer
+DevParentDeviceId=DevParentDeviceId
+DevProductId=128
+DevRevision=9
+DevVendorId=889
+DiActuatorCount=538
+DiActuatorMask=597
+DiAxeMask=918
+DiSliderMask=813
+ForceSpringFriction=779
+HidClassDescription=HidClassDescription
+HidClassGuid=7d9e5643-0eec-2e9c-ce75-5a3c5293d056
+HidDescription=HidDescription
+HidDeviceId=HidDeviceId
+HidDevicePath=HidDevicePath
+HidManufacturer=HidManufacturer
+HidParentDeviceId=HidParentDeviceId
+HidProductId=306
+HidRevision=759
+HidVendorId=991
+Id=e8a60a49-cc56-08f2-a054-389e47ce0d06
+InputSourceType=600
+InstanceGuid=e12b93e2-8ad9-c8da-abf5-d6ccb280f67a
+InstanceName=InstanceName
+IsEnabled=True
+IsHidden=True
+ProductGuid=116d4db7-f098-912e-32d2-fe4c161e47a4
+ProductName=ProductName
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+== [DataMember] properties the checksum is made from
+CapAxeCount=388
+CapButtonCount=358
+CapDriverVersion=337
+CapFirmwareRevision=537
+CapFlags=480
+CapForceFeedbackMinimumTimeResolution=58
+CapForceFeedbackSamplePeriod=572
+CapHardwareRevision=14
+CapIsHumanInterfaceDevice=True
+CapPovCount=19
+CapSubtype=979
+CapType=405
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+ConnectionClass=01fbb2aa-c9de-f340-90b4-362881aa43b5
+DevClassDescription=DevClassDescription
+DevClassGuid=bc566e60-98dd-9ba5-1ccb-252f2064a760
+DevDescription=DevDescription
+DevDeviceId=DevDeviceId
+DevDevicePath=DevDevicePath
+DevManufacturer=DevManufacturer
+DevParentDeviceId=DevParentDeviceId
+DevProductId=128
+DevRevision=9
+DevVendorId=889
+DiActuatorCount=538
+DiActuatorMask=597
+DiAxeMask=918
+DiSliderMask=813
+ForceSpringFriction=779
+HidClassDescription=HidClassDescription
+HidClassGuid=7d9e5643-0eec-2e9c-ce75-5a3c5293d056
+HidDescription=HidDescription
+HidDeviceId=HidDeviceId
+HidDevicePath=HidDevicePath
+HidManufacturer=HidManufacturer
+HidParentDeviceId=HidParentDeviceId
+HidProductId=306
+HidRevision=759
+HidVendorId=991
+InputSourceType=600
+InstanceGuid=e12b93e2-8ad9-c8da-abf5-d6ccb280f67a
+InstanceName=InstanceName
+IsEnabled=True
+IsHidden=True
+ProductGuid=116d4db7-f098-912e-32d2-fe4c161e47a4
+ProductName=ProductName
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+== Checksum
+e51f3e76-97c7-4fde-59df-f2aaf5aba25a

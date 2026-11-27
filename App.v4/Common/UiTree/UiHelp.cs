@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 
@@ -34,7 +35,7 @@ namespace x360ce.App.UiTree
 			// Nothing to say about it, and its parent may still have something.
 			if (string.IsNullOrEmpty(control.AccessibleDescription))
 				return;
-			control.MouseEnter += (sender, e) => Show(control, control.AccessibleName, control.AccessibleDescription);
+			control.MouseEnter += (sender, e) => Show(control, control, control.AccessibleName, control.AccessibleDescription);
 			control.MouseLeave += (sender, e) => Clear(control);
 		}
 
@@ -42,15 +43,16 @@ namespace x360ce.App.UiTree
 		{
 			if (string.IsNullOrEmpty(item.AccessibleDescription))
 				return;
-			item.MouseEnter += (sender, e) => Show(item.Owner, item.AccessibleName, item.AccessibleDescription);
+			item.MouseEnter += (sender, e) => Show(item.Owner, item, item.AccessibleName, item.AccessibleDescription);
 			item.MouseLeave += (sender, e) => Clear(item.Owner);
 		}
 
-		static void Show(Control control, string name, string purpose)
+		/// <summary>Shows an element's name and purpose in the language chosen; the element keeps them in English for a screen reader and an AI assistant.</summary>
+		static void Show(Control control, object element, string name, string purpose)
 		{
 			var form = HeaderOf(control);
 			if (form != null)
-				form.ShowHelp(name, purpose);
+				form.ShowHelp(UiLanguage.HelpOf(element, "AccessibleName", name), UiLanguage.HelpOf(element, "AccessibleDescription", purpose));
 		}
 
 		static void Clear(Control control)

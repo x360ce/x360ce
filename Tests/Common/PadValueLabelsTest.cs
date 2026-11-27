@@ -28,7 +28,7 @@ namespace x360ce.Tests
 		public TestContext TestContext { get; set; }
 
 		[TestMethod, TestCategory("ui"), TestCategory("interface")]
-		[Description("Every name on the General tab has a small green number under it, both at the edge next to its box and the number 2 px in from it at 100 %, its digits 4 px under the name's baseline at 100 % with the empty top of the number's line under the name and every digit whole, the names of a column lined up at that edge, the pair in the middle of its box's row and clear of every other control, in both themes, in Windows' fonts and in the program's")]
+		[Description("Every name on the General tab has a small green number under it, both at the edge next to its box, its digits 4 px under the name's baseline at 100 % with the empty top of the number's line under the name and every digit whole, the names of a column lined up at that edge, the pair as tall as its box in the program's font, in the middle of its box's row and clear of every other control, in both themes, in Windows' fonts and in the program's")]
 		public void General_tab_shows_a_value_under_each_name()
 		{
 			AppFontsTest.LoadFonts();
@@ -58,8 +58,6 @@ namespace x360ce.Tests
 								var green = FormsTheme.GetColor("ForegroundActive");
 								var table = (TableLayoutPanel)Find(pad, nameof(PadControl.GeneralTableLayoutPanel));
 								Func<Control, Rectangle> at = c => table.RectangleToClient(c.Parent.RectangleToScreen(c.Bounds));
-								// The owner's 2 px at 100 %, which the page scales as it scales its other sizes.
-								var inset = (int)Math.Round(2 * ControlsHelper.DpiScale, MidpointRounding.AwayFromZero);
 								var valueGap = (int)Math.Round(4 * ControlsHelper.DpiScale, MidpointRounding.AwayFromZero);
 								var edges = new Dictionary<int, HashSet<int>>();
 								var gaps = new SortedSet<int>();
@@ -95,15 +93,15 @@ namespace x360ce.Tests
 									if (right)
 									{
 										Assert.AreEqual(ContentAlignment.TopRight, name.TextAlign, where + code + "'s name is not drawn at its right edge.");
-										Assert.AreEqual(name.Right - name.Padding.Right - inset, value.Right - value.Padding.Right,
-											where + code + "'s number does not end " + inset + " px in from its name's end.");
+										Assert.AreEqual(name.Right - name.Padding.Right, value.Right - value.Padding.Right,
+											where + code + "'s number does not end where its name ends.");
 										Assert.AreEqual(ContentAlignment.TopRight, value.TextAlign, where + code + "'s number is not drawn at its right edge.");
 									}
 									else
 									{
 										Assert.AreEqual(ContentAlignment.TopLeft, name.TextAlign, where + code + "'s name is not drawn at its left edge.");
-										Assert.AreEqual(name.Left + name.Padding.Left + inset, value.Left + value.Padding.Left,
-											where + code + "'s number does not start " + inset + " px in from its name's start.");
+										Assert.AreEqual(name.Left + name.Padding.Left, value.Left + value.Padding.Left,
+											where + code + "'s number does not start where its name starts.");
 										Assert.AreEqual(ContentAlignment.TopLeft, value.TextAlign, where + code + "'s number is not drawn at its left edge.");
 									}
 									HashSet<int> edge;
@@ -117,9 +115,15 @@ namespace x360ce.Tests
 									Assert.IsTrue(contrast >= 4.5, string.Format("{0}{1}'s number has a contrast of {2:0.00}, under 4.5.", where, code, contrast));
 									var offCentre = (at(name).Top + at(value).Bottom) / 2.0 - (box.Top + box.Bottom) / 2.0;
 									Assert.IsTrue(Math.Abs(offCentre) <= 1, string.Format("{0}{1}'s name and number are {2} px off the middle of its box's row.", where, code, offCentre));
+									// In the program's font no taller than its box, so the pair does not push the rows apart: the rows are as
+									// tall as a row of boxes. In another font the pair may need more rows for its ink, and takes them.
+									if (programFonts)
+										Assert.AreEqual(box.Height, name.Parent.Height, where + code + "'s name and number are not as tall as its box.");
+									// The pair as drawn: its panel, past whose edges the lines' empty rows may reach.
 									var height = table.ClientSize.Height;
-									Assert.IsTrue(at(name).Top >= 0 && at(value).Bottom <= height && box.Bottom <= height, string.Format(
-										"{0}{1}'s row runs past the bottom of its table, {2} high: box {3}, name {4}, number {5}.", where, code, height, box.Bounds, at(name), at(value)));
+									var drawn = name.Parent.Bounds;
+									Assert.IsTrue(drawn.Top >= 0 && drawn.Bottom <= height && box.Bottom <= height, string.Format(
+										"{0}{1}'s row runs past the bottom of its table, {2} high: box {3}, name and number {4}.", where, code, height, box.Bounds, drawn));
 								}
 								foreach (var pair in edges)
 									Assert.AreEqual(1, pair.Value.Count, string.Format("{0}the names in column {1} do not line up at the edge next to their boxes: {2}.",
@@ -166,7 +170,7 @@ namespace x360ce.Tests
 							label.UseCompatibleTextRendering = false;
 						// Sized again, as the page sizes each pair, now that the names are measured as they are drawn.
 						foreach (var code in Codes())
-							PadControl.FitPair((Label)Find(pad, code + "Label"), (Label)Find(pad, code + "ValueLabel"), expected);
+							PadControl.FitPair((Label)Find(pad, code + "Label"), (Label)Find(pad, code + "ValueLabel"), expected, Find(pad, code + "ComboBox").Height);
 						form.ClientSize = pad.Size;
 						form.Controls.Add(pad);
 						foreach (var theme in new[] { ThemeType.Light, ThemeType.Dark })
@@ -197,7 +201,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("critical")]
-		[Description("A name and the number under it, built and sized as the General tab builds them, in Segoe UI at the size each Windows scale gives its 9 points, stand 4, 5, 6, 7 and 8 ink-free pixel rows apart at 100, 125, 150, 175 and 200 %, for every name of the General tab, in both themes, names and digits drawn whole")]
+		[Description("A name and the number under it, built and sized as the General tab builds them, in Segoe UI at the size each Windows scale gives its 9 points, stand 4, 5, 6, 7 and 8 ink-free pixel rows apart at 100, 125, 150, 175 and 200 %, for every name of the General tab, in both themes, names and digits drawn whole in a pair as tall as a box, 24 px at 100 %")]
 		public void Names_stand_four_ink_free_rows_a_hundred_per_cent_above_their_numbers_at_every_scale()
 		{
 			var faults = new List<string>();
@@ -224,15 +228,12 @@ namespace x360ce.Tests
 								foreach (var named in names)
 								{
 									var panel = new Panel { Margin = new Padding(4) };
-									var right = named.Item3 == ContentAlignment.TopRight;
-									var name = new Label { Font = nameFont, AutoSize = false, Dock = DockStyle.Top, TextAlign = named.Item3, UseMnemonic = named.Item2, UseCompatibleTextRendering = false, Text = named.Item1 };
+									var name = new Label { Font = nameFont, AutoSize = false, TextAlign = named.Item3, UseMnemonic = named.Item2, UseCompatibleTextRendering = false, Text = named.Item1 };
 									var value = new Label
 									{
 										Font = valueFont,
 										AutoSize = false,
-										Dock = DockStyle.Bottom,
 										TextAlign = named.Item3,
-										Padding = right ? new Padding(0, 0, (int)Math.Round(2 * scale), 0) : new Padding((int)Math.Round(2 * scale), 0, 0, 0),
 										UseMnemonic = false,
 										UseCompatibleTextRendering = false,
 										Text = "0",
@@ -240,7 +241,8 @@ namespace x360ce.Tests
 									panel.Controls.Add(name);
 									panel.Controls.Add(value);
 									flow.Controls.Add(panel);
-									PadControl.FitPair(name, value, PadControl.GapAt(scale));
+									// As tall as the box beside it: the theme's 24 px at 100 %.
+									PadControl.FitPair(name, value, PadControl.GapAt(scale), (int)Math.Round(24 * scale));
 									pairs.Add(Tuple.Create(name, value));
 								}
 								FormsTheme.Apply(form);
@@ -285,7 +287,8 @@ namespace x360ce.Tests
 		/// and every pixel of the name's ink and of the number's on it, so nothing is cut.
 		/// <para>
 		/// The pair is put together as Windows puts the two windows on the screen: each label draws itself, the number first and
-		/// the name, which is above it, over it. Drawn as one with DrawToBitmap, the panel draws its children in the opposite order.
+		/// the name, which is above it, over it, and the panel cuts what reaches past its edges. Drawn as one with DrawToBitmap,
+		/// the panel draws its children in the opposite order.
 		/// </para>
 		/// </remarks>
 		static int InkFreeRows(Label name, Label value, string at, List<string> faults)
@@ -294,8 +297,12 @@ namespace x360ce.Tests
 			Assert.IsTrue(panel.Controls.GetChildIndex(name) < panel.Controls.GetChildIndex(value), at + "the name is not above its number.");
 			using (var pair = new Bitmap(panel.Width, panel.Height))
 			{
-				value.DrawToBitmap(pair, value.Bounds);
-				name.DrawToBitmap(pair, name.Bounds);
+				using (var g = Graphics.FromImage(pair))
+				{
+					g.Clear(panel.BackColor);
+					DrawOn(g, value);
+					DrawOn(g, name);
+				}
 				var back = MostCommon(pair);
 				var letters = new string(name.Text.Where(x => Descenders.IndexOf(x) < 0).ToArray());
 				int nameTop, nameBottom, digitsTop, digitsBottom;
@@ -334,6 +341,16 @@ namespace x360ce.Tests
 						faults.Add(at + "the number is cut: ink rows " + top + " to " + bottom + " of " + value.Height + ".");
 				}
 				return last - first + 1;
+			}
+		}
+
+		/// <summary>Draws a label where it stands on its panel, on a surface the panel's size, which cuts what reaches past it.</summary>
+		static void DrawOn(Graphics g, Label label)
+		{
+			using (var drawn = new Bitmap(label.Width, label.Height))
+			{
+				label.DrawToBitmap(drawn, new Rectangle(Point.Empty, label.Size));
+				g.DrawImageUnscaled(drawn, label.Location);
 			}
 		}
 

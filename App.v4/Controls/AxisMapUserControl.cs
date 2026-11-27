@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls.UiTree;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Threading;
 using SharpDX.XInput;
@@ -41,9 +42,20 @@ namespace x360ce.App.Controls
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			PresetComboBox.FormattingEnabled = true;
+			PresetComboBox.Format += (sender, e) =>
+				e.Value = (e.ListItem as Preset)?.ToString() ?? UiLanguage.T("AxisMapUserControl.ApplyPreset", "Apply Preset");
 			PresetComboBox.Items.AddRange(Presets);
 			PresetComboBox.SelectedIndex = 0;
 			RefreshBackgroundImageAsync();
+			EventHandler languageChanged = (sender, e) =>
+			{
+				UiLanguage.Relist(PresetComboBox);
+				UpdateHeader();
+				RefreshBackgroundImageAsync();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (sender, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		void deadzoneLink_ValueChanged(object sender, EventArgs e)
@@ -119,7 +131,16 @@ namespace x360ce.App.Controls
 		{
 			if (_HeaderText == null)
 				_HeaderText = MainGroupBox.Text;
-			MainGroupBox.Text = _TuningEnabled ? _HeaderText : _HeaderText + " (settings only for a mapped axis or slider)";
+			var header = _HeaderText;
+			switch (header)
+			{
+				case "Left Trigger": header = UiLanguage.T("AxisMapUserControl.LeftTrigger", "Left Trigger"); break;
+				case "Right Trigger": header = UiLanguage.T("AxisMapUserControl.RightTrigger", "Right Trigger"); break;
+				case "X - Horizontal Axis": header = UiLanguage.T("AxisMapUserControl.HorizontalAxis", "X - Horizontal Axis"); break;
+				case "Y - Vertical Axis": header = UiLanguage.T("AxisMapUserControl.VerticalAxis", "Y - Vertical Axis"); break;
+			}
+			MainGroupBox.Text = _TuningEnabled ? header : string.Format(UiLanguage.T("AxisMapUserControl.TuningUnavailable",
+				"{0} (settings only for a mapped axis or slider)"), header);
 		}
 
 		TargetType _TargetType;
@@ -166,8 +187,8 @@ namespace x360ce.App.Controls
 			var param = (int)SensitivityTrackBar.Value;
 			updateTimer.DoActionNow(param);
 			SensitivityNoteLabel.Text = SensitivityCheckBox.Checked
-				? "Make more sensitive in the center"
-				: "Make less sensitive in the center";
+				? UiLanguage.T("AxisMapUserControl.MoreSensitive", "Make more sensitive in the center")
+				: UiLanguage.T("AxisMapUserControl.LessSensitive", "Make less sensitive in the center");
 		}
 
 		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)
@@ -200,6 +221,8 @@ namespace x360ce.App.Controls
 					xInputPoint.Dispose();
 				if (xInputLine != null)
 					xInputLine.Dispose();
+				if (LastBackgroundImage != null)
+					LastBackgroundImage.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -296,7 +319,7 @@ namespace x360ce.App.Controls
 		void ApplyValueColors()
 		{
 			var xColor = FormsTheme.GetColor("ForegroundOutput");
-			var dColor = FormsTheme.GetColor("ForegroundActive");
+			var dColor = AppHelper.ChartReadingColor;
 			XInputValueLabel.ForeColor = xColor;
 			DInputValueLabel.ForeColor = dColor;
 			if (xInputLine != null)
@@ -331,67 +354,73 @@ namespace x360ce.App.Controls
 				deadZone = (int)DeadZoneNumericUpDown.Value;
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
 				sensitivity = (int)SensitivityNumericUpDown.Value;
-				curveColor = FormsTheme.GetColor("ColorCurve");
+				curveColor = AppHelper.ChartCurveColor;
 			}));
 			var chart = AppHelper.ChartBounds(MainPictureBox);
 			var w = chart.Width;
 			var h = chart.Height;
 			var bmp = new Bitmap(w, h);
-			var g = Graphics.FromImage(bmp);
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			var wF = (float)w;
-			var hF = (float)h;
-			//DrawDLineLine(g, 74.5f);
-			//DrawXLineLine(g, 74.5f);
-			//DrawDot(g, 74.5f, 74.5f, 0.5f, xInputPath);
-			// The chart's frame, its middle lines and both diagonals, in a faint grey.
-			g.DrawRectangle(nInputLine, 0, 0, w - 1, h - 1);
-			g.DrawLine(nInputLine, 0f, (h - 1) / 2f, w - 1f, (h - 1) / 2f);
-			g.DrawLine(nInputLine, (w - 1) / 2f, 0f, (w - 1) / 2f, h - 1f);
-			g.DrawLine(nInputLine, 0f, (float)h - 1f, (float)w - 1f, 0f);
-			g.DrawLine(nInputLine, 0f, 0f, (float)w - 1f, (float)h - 1f);
-			// The mapping is not continuous: dead zone and anti-dead zone make it jump,
-			// so stamped dots leave gaps. Collect the samples and stroke them as one
-			// path, which bridges every jump with a segment of the same line.
-			var path = new List<PointF>();
-			for (float i = 0; i <= wF; i += 0.5f)
+			using (var g = Graphics.FromImage(bmp))
 			{
-				var min = IsThumb ? -32768f : 0f;
-				var max = IsThumb ? 32767f : 255f;
-				// Convert Image X position [0;w] to DInput position [0;65535].
-				var dInputValue = ConvertHelper.ConvertRangeF(0f, wF, ushort.MinValue, ushort.MaxValue, i);
-				float result;
-				float formula;
-				if (_SweptSource.HasValue && MapExpressionUnits.TrySweep(
-					_Expression, _SweptSource.Value, (int)dInputValue, IsThumb, _ExpressionValues, out formula))
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+				g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+				var wF = (float)w;
+				var hF = (float)h;
+				//DrawDLineLine(g, 74.5f);
+				//DrawXLineLine(g, 74.5f);
+				//DrawDot(g, 74.5f, 74.5f, 0.5f, xInputPath);
+				// The chart's frame, its middle lines and both diagonals, in a faint grey.
+				g.DrawRectangle(nInputLine, 0, 0, w - 1, h - 1);
+				g.DrawLine(nInputLine, 0f, (h - 1) / 2f, w - 1f, (h - 1) / 2f);
+				g.DrawLine(nInputLine, (w - 1) / 2f, 0f, (w - 1) / 2f, h - 1f);
+				g.DrawLine(nInputLine, 0f, (float)h - 1f, (float)w - 1f, 0f);
+				g.DrawLine(nInputLine, 0f, 0f, (float)w - 1f, (float)h - 1f);
+				// The mapping is not continuous: dead zone and anti-dead zone make it jump,
+				// so stamped dots leave gaps. Collect the samples and stroke them as one
+				// path, which bridges every jump with a segment of the same line.
+				var path = new List<PointF>();
+				for (float i = 0; i <= wF; i += 0.5f)
 				{
-					// Turned into the destination's own units by the same pair the device loop uses, so
-					// the line and the controller picture agree about what the formula produces.
-					result = IsThumb
-						? MapExpressionUnits.ToThumb(formula)
-						: MapExpressionUnits.ToTrigger(formula);
+					var min = IsThumb ? -32768f : 0f;
+					var max = IsThumb ? 32767f : 255f;
+					// Convert Image X position [0;w] to DInput position [0;65535].
+					var dInputValue = ConvertHelper.ConvertRangeF(0f, wF, ushort.MinValue, ushort.MaxValue, i);
+					float result;
+					float formula;
+					if (_SweptSource.HasValue && MapExpressionUnits.TrySweep(
+						_Expression, _SweptSource.Value, (int)dInputValue, IsThumb, _ExpressionValues, out formula))
+					{
+						// Turned into the destination's own units by the same pair the device loop uses, so
+						// the line and the controller picture agree about what the formula produces.
+						result = IsThumb
+							? MapExpressionUnits.ToThumb(formula)
+							: MapExpressionUnits.ToTrigger(formula);
+					}
+					else
+					{
+						result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, IsThumb);
+					}
+					// Convert XInput Y position [min;max] to image size [0;h].
+					var y = ConvertHelper.ConvertRangeF(min, max, 0f, hF, result);
+					// An inverted axis is mirrored left to right, so its DInput minimum sits
+					// on the right and the path rises like every other chart. Image Y grows
+					// downward, so flip the value.
+					path.Add(new PointF(_invert ? wF - i : i, hF - y));
 				}
-				else
-				{
-					result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, IsThumb);
-				}
-				// Convert XInput Y position [min;max] to image size [0;h].
-				var y = ConvertHelper.ConvertRangeF(min, max, 0f, hF, result);
-				// An inverted axis is mirrored left to right, so its DInput minimum sits
-				// on the right and the path rises like every other chart. Image Y grows
-				// downward, so flip the value.
-				path.Add(new PointF(_invert ? wF - i : i, hF - y));
+				// Dead zones turn the path into near-right angles. Round the joins so those
+				// corners do not grow mitre spikes. The line is as thick as the zoom, as the dot is.
+				using (var curvePen = new Pen(curveColor, ControlsHelper.DpiScale) { LineJoin = System.Drawing.Drawing2D.LineJoin.Round })
+					if (path.Count > 1)
+						g.DrawLines(curvePen, path.ToArray());
 			}
-			// Dead zones turn the path into near-right angles. Round the joins so those
-			// corners do not grow mitre spikes.
-			using (var curvePen = new Pen(curveColor, 1f) { LineJoin = System.Drawing.Drawing2D.LineJoin.Round })
-				if (path.Count > 1)
-					g.DrawLines(curvePen, path.ToArray());
 			Invoke(new Action(() =>
 			{
+				// The picture it replaces is no longer painted: free it now rather than at the next collection.
+				var old = LastBackgroundImage;
 				LastBackgroundImage = bmp;
+				if (old != null)
+					old.Dispose();
 				MainPictureBox.Invalidate();
 			}));
 		}
@@ -496,7 +525,7 @@ namespace x360ce.App.Controls
 			DrawDLineLine(g, dx);
 			DrawXLineLine(g, xi);
 			// Draw dot.
-			var radius = 2.5f;
+			var radius = 2.5f * ControlsHelper.DpiScale;
 			DrawDot(g, dx, xi, radius, xInputPoint, true);
 		}
 
@@ -571,34 +600,40 @@ namespace x360ce.App.Controls
 		/// <summary>A ready-made dead zone, anti-dead zone and sensitivity, each in percent.</summary>
 		sealed class Preset
 		{
-			public Preset(string name, int deadZone, int antiDeadZone, int sensitivity)
+			public Preset(int deadZone, int antiDeadZone, int sensitivity)
 			{
-				Name = name;
 				DeadZone = deadZone;
 				AntiDeadZone = antiDeadZone;
 				Sensitivity = sensitivity;
 			}
 
-			public readonly string Name;
 			public readonly int DeadZone;
 			public readonly int AntiDeadZone;
 			public readonly int Sensitivity;
 
-			public override string ToString() => Name;
+			public override string ToString()
+			{
+				if (DeadZone > 0)
+					return string.Format(UiLanguage.T("AxisMapUserControl.DeadZoneAndAntiDeadZone",
+						"{0}% DeadZone, {1}% Controller Anti-DeadZone"), DeadZone, AntiDeadZone);
+				if (AntiDeadZone > 0)
+					return string.Format(UiLanguage.T("AxisMapUserControl.AntiDeadZone", "{0}% Controller Anti-DeadZone"), AntiDeadZone);
+				return UiLanguage.T("AxisMapUserControl.ClearPreset", "Clear");
+			}
 		}
 
 		/// <summary>The list's own name, then the presets: picking one applies it, and the list shows its name again.</summary>
 		static readonly object[] Presets =
 		{
-			"Apply Preset",
-			new Preset("Clear", 0, 0, 0),
-			new Preset("5% DeadZone, 100% Controller Anti-DeadZone", 5, 100, 0),
-			new Preset("1% DeadZone, 100% Controller Anti-DeadZone", 1, 100, 0),
-			new Preset("100% Controller Anti-DeadZone", 0, 100, 0),
-			new Preset("80% Controller Anti-DeadZone", 0, 80, 0),
-			new Preset("60% Controller Anti-DeadZone", 0, 60, 0),
-			new Preset("40% Controller Anti-DeadZone", 0, 40, 0),
-			new Preset("20% Controller Anti-DeadZone", 0, 20, 0),
+			string.Empty,
+			new Preset(0, 0, 0),
+			new Preset(5, 100, 0),
+			new Preset(1, 100, 0),
+			new Preset(0, 100, 0),
+			new Preset(0, 80, 0),
+			new Preset(0, 60, 0),
+			new Preset(0, 40, 0),
+			new Preset(0, 20, 0),
 		};
 
 		private void PresetComboBox_SelectedIndexChanged(object sender, EventArgs e)

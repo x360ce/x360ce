@@ -134,11 +134,26 @@ when parking. Below 10 km/h the steering axis inclination still pulls the wheel 
 formula uses.
 
 The speed is a setting. Beside it the program keeps a live speed, never saved, which replaces the setting whenever
-something sets it; nothing sets it yet. Something that knows the car's real speed can fill it later. That cannot be
-the game's force feedback:
-the emulated controller receives two motor values of 8 bits each, and both are the rumble the game plays. A racing
-game's own telemetry, which many games publish over the network or in shared memory, could be read by a small
-program that sets the live speed through x360ce's AI assistant access or its remote UDP server.
+live telemetry arrives. While **Game telemetry** is ticked on the Wheel tab and the centering spring is on, x360ce's
+built-in **Wheel Telemetry** plugin automatically reads standard telemetry from running games and shapes the spring
+with the car's live speed, self-aligning counter-steer angle, front tyre grip loss, directional curb kicks, and surface
+damping:
+
+- **Shared Memory (zero configuration, multi-reader):** Assetto Corsa, Assetto Corsa Competizione, Assetto Corsa Evo
+  (`Local\acpmf_physics`) and iRacing (`Local\IRSDKMemMapFileName`). Read-only, so it never conflicts with SimHub,
+  CrewChief, or wheel software.
+- **Standard UDP formats on `127.0.0.1:37150`:** Forza Data Out (Sled 232 B, FM7 311 B, FH4/FH5 323 B, FM23 331 B —
+  recommended format for SimHub forwarding and custom bridges), EA F1 2020+, Codemasters / EA classic 264 B (DiRT
+  Rally, GRID, WRC), OutSim (Live for Speed, BeamNG.drive), and Project CARS / AMS2 UDP.
+- **Port safety:** By default x360ce listens only on its own loopback port `37150` so it never overtakes standard game
+  ports (`5300`, `20777`, `4123`, `5606`) used by SimHub, CrewChief, Pit House, or other dashboards. If you run no
+  other telemetry app, tick **Standard game ports** on the Wheel tab to also listen on those ports directly.
+- **Software soft lock:** On wheels whose hardware range x360ce cannot set directly (such as MOZA, Fanatec,
+  Thrustmaster, or Logitech G920/G923), tick **Soft lock** on the Wheel tab to enforce the chosen **Wheel range** with
+  a virtual bump stop and automatically scale the steering axis to match.
+- **No telemetry available:** Even in gamepad-only games that publish no telemetry, x360ce plays separate Left and Right
+  periodic motor effects on single-actuator wheels (falling back to combined mode if the driver refuses a second effect)
+  and supports optional rumble-coupled understeer lightening and steering velocity lead compensation in `x360ce.xml`.
 
 ### The chart on the Wheel tab
 
@@ -226,6 +241,26 @@ aligning torque, which fades past the peak, the less is left at the stop.
 a tenth above it, so it starts the wheel every time. Strength is left as it is. Until it runs, Friction is 20 %. A
 geared or belt wheel needs much: a G27 about 30 %. A direct drive wheel turns freely and needs little, so Auto finds little; lower Friction by hand when
 the wheel comes home harder than you like.
+
+### Live game telemetry and Soft lock
+
+- **Soft lock** enforces the chosen **Wheel range** with a software bump stop and auto-scales the steering axis on
+  wheels whose hardware range x360ce cannot set.
+- **RGB LED strip** drives the 5-pair Green/Amber/Red RPM shift LED strip on supported Logitech wheels (G27, G29, G923)
+  from live game telemetry RPM with a redline shift flash, and shows a live preview with a **Test** sweep on the **Wheel** tab.
+- **Wheel** and **Wheel Telemetry** tabs appear automatically when a steering wheel / driving device is selected and stay
+  hidden for non-wheel devices (gamepads, mice, keyboards, fitness machines).
+- **Wheel Telemetry** is hosted by the built-in `WheelTelemetry` plugin (loaded by default; can be disabled or re-enabled
+  on **Options** → **Plugins**). Its dedicated **Wheel Telemetry** tab provides **Listen port**, **Forward IP** and
+  **Forward port** relay settings, force tuning sliders (**Aligning torque**, **Understeer lightening**, **Curb & road
+  bumps**, **Dynamic damping**, **Rumble understeer**, **Steering lead**), live telemetry gauges and a protocol Help page.
+- While live telemetry is ticked, x360ce reads vehicle speed, slip angle, grip and curb impulses over Windows Shared
+  Memory (Assetto Corsa, iRacing) and its own dedicated loopback UDP port (`127.0.0.1:37150`) using standard game formats
+  (Forza Data Out, EA F1, Codemasters, OutSim, Project CARS). **Standard game ports** (`5300`, `20777`, `4123`, `5606`) stay
+  off by default so SimHub, CrewChief, Pit House and other telemetry apps never lose their ports.
+- **Testing without a racing game:** Launch `x360ce.TestGame.exe`, switch to the **Virtual Car** tab, drive with a wheel,
+  gamepad, keyboard or **Remote MCP Controller** (or tick **Auto-Drive**), and stream any standard UDP protocol to
+  `127.0.0.1:37150`.
 
 ## Sources
 

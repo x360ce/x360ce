@@ -88,7 +88,7 @@ namespace x360ce.Tests
 			Assert.IsNotNull(release, "A release without a setup for the processor is still the latest release.");
 			Assert.IsNull(release.Url);
 			var refusal = client.Install(release, null);
-			StringAssert.Contains(refusal, "no setup for this computer's processor");
+			StringAssert.Contains(refusal, "no setup for this computer’s processor");
 			Assert.AreEqual(3, asked.Count, "A release without a setup was downloaded from.");
 		}
 
@@ -196,7 +196,7 @@ namespace x360ce.Tests
 				for (var i = 0; i < 2; i++)
 				{
 					var result = client.Install(release, steps.Add);
-					StringAssert.StartsWith(result, "HID Hide's setup was refused: ", "The second install was not let start.");
+					StringAssert.StartsWith(result, "HID Hide’s setup was refused: ", "The second install was not let start.");
 					StringAssert.Contains(result, "no signature");
 				}
 				Assert.IsTrue(steps.Any(x => x.StartsWith("Downloading HID Hide 1.5.230.0", StringComparison.Ordinal)), string.Join(" | ", steps));

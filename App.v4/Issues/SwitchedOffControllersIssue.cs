@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.IO;
 using System.Linq;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -18,9 +19,10 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	class SwitchedOffControllersIssue : OnChangeIssue
 	{
-		public SwitchedOffControllersIssue() : base()
+		/// <inheritdoc/>
+		public override void SetTexts()
 		{
-			Name = "Controllers Switched Off";
+			Name = UiLanguage.T("SwitchedOffControllersIssue.ControllersSwitchedOff", "Controllers Switched Off");
 			FixName = null;
 		}
 
@@ -43,12 +45,9 @@ namespace x360ce.App.Issues
 				return known.TryGetValue(id, out name) && !string.IsNullOrEmpty(name) ? name + " (" + id + ")" : id;
 			}).ToArray();
 			SetSeverity(IssueSeverity.Low, 0,
-				"This program switched off " + (off.Length == 1 ? "a controller" : off.Length + " controllers")
-				+ " to put controllers in order and has not switched "
-				+ (off.Length == 1 ? "it" : "them") + " back on, so no game sees "
-				+ (off.Length == 1 ? "it" : "them") + ". Start this program as Administrator and "
-				+ (off.Length == 1 ? "it is" : "they are") + " switched back on, or switch "
-				+ (off.Length == 1 ? "it" : "them") + " on in Device Manager."
+				(off.Length == 1
+					? UiLanguage.T("SwitchedOffControllersIssue.OneOff", "This program switched off a controller to put controllers in order. Games cannot see it until you start this program as administrator or enable it in Device Manager.")
+					: string.Format(UiLanguage.T("SwitchedOffControllersIssue.ManyOff", "This program switched off {0} controllers to put them in order. Games cannot see them until you start this program as administrator or enable them in Device Manager."), off.Length))
 				+ System.Environment.NewLine + System.Environment.NewLine
 				+ string.Join(System.Environment.NewLine, names.Select(x => "    " + x).ToArray()));
 		}

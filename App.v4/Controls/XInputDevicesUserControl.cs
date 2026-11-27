@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +31,15 @@ namespace x360ce.App.Controls
 			SettingsManager.UserSettings.Items.ListChanged += UserSettings_ListChanged;
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+			EventHandler languageChanged = (sender, e) => ShowMapped();
+			UiLanguage.Changed += languageChanged;
 			// Let go of, because the lists outlive every panel that listens to them.
 			Disposed += (sender, e) =>
 			{
 				SettingsManager.UserSettings.Items.ListChanged -= UserSettings_ListChanged;
 				SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
 				SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+				UiLanguage.Changed -= languageChanged;
 			};
 		}
 
@@ -89,7 +93,7 @@ namespace x360ce.App.Controls
 			if (!entry.IsVirtual || !entry.IsOurs || entry.Pad < 1 || entry.Pad > 4)
 				return "";
 			var names = XInputReorderPlan.ProductNames(entry.Pad);
-			return names.Length == 0 ? "Nothing mapped" : names;
+			return names.Length == 0 ? UiLanguage.T("XInputDevicesUserControl.NothingMapped", "Nothing mapped") : names;
 		}
 
 		/// <summary>The shield Windows puts on anything that asks for Administrator, at a small icon's size on this screen.</summary>
@@ -149,7 +153,9 @@ namespace x360ce.App.Controls
 				var index = DevicesDataGridView.Rows.Add(
 					i > 0 ? Properties.Resources.nav_up_32x32 : null,
 					i < _entries.Count - 1 ? Properties.Resources.nav_down_32x32 : null,
-					entry.Waiting
+					entry.Free
+						? XInputPlaces.FreePlace(entry.Place)
+						: entry.Waiting
 						? XInputPlaces.Waiting(entry.Pad)
 						: XInputPlaces.Describe(entry.Place, entry.IsVirtual, entry.IsOurs),
 					entry.Controller > 0 ? string.Format("Controller {0}", entry.Controller) : "",
@@ -230,15 +236,15 @@ namespace x360ce.App.Controls
 		{
 			var plan = XInputReorderPlan.For(_entries);
 			if (plan.Refusal != null)
-				ShowNotice("Cannot put them in that order", plan.ToString(), false);
+				ShowNotice(UiLanguage.T("XInputDevicesUserControl.ReorderRefused", "Cannot put them in that order"), plan.ToString(), false);
 			else if (plan.Steps.Count == 0)
-				ShowNotice("Nothing to do", plan.ToString(), false);
+				ShowNotice(UiLanguage.T("XInputDevicesUserControl.NothingToDo", "Nothing to do"), plan.ToString(), false);
 			else
 			{
 				// Shown before anything is touched, because a controller switched off cannot be taken
 				// back by pressing Cancel.
 				_proposed = plan;
-				ShowNotice("Put controllers in this order?", plan.ToString(), true);
+				ShowNotice(UiLanguage.T("XInputDevicesUserControl.ConfirmControllerOrder", "Put controllers in this order?"), plan.ToString(), true);
 				// The shield says, the way it does everywhere in Windows, that OK asks for Administrator.
 				if (plan.NeedsElevation && !JocysCom.ClassLibrary.Security.PermissionHelper.IsElevated)
 					PlanOkButton.Image = AdministratorImage;
@@ -349,9 +355,9 @@ namespace x360ce.App.Controls
 			runner.Progress = what => BeginInvoke((Action)(() =>
 			{
 				said.Add(what);
-				ShowNotice("Putting controllers in order...", string.Join(Environment.NewLine, said), false, false);
+				ShowNotice(UiLanguage.T("XInputDevicesUserControl.PuttingControllersInOrder", "Putting controllers in order..."), string.Join(Environment.NewLine, said), false, false);
 			}));
-			ShowNotice("Putting controllers in order...", "", false, false);
+			ShowNotice(UiLanguage.T("XInputDevicesUserControl.PuttingControllersInOrder", "Putting controllers in order..."), "", false, false);
 			_running = true;
 			var task = System.Threading.Tasks.Task.Run(() => runner.Run(plan));
 			// Off this thread, because it is the thread that paints. Run here, nothing is drawn for the

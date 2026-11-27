@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Issues
 {
@@ -9,14 +10,17 @@ namespace x360ce.App.Issues
 
 		public CppX86RuntimeInstallIssue() : base()
 		{
-			Name = "Software";
-			FixName = "Download and Install";
 			MoreInfo = new Uri(CppRuntimeDetector.LatestUrl);
 			// Microsoft's installer changes the whole machine, so Windows asks for Administrator first.
 			FixNeedsAdmin = true;
 		}
 
-		string program1 = "Microsoft Visual C++ v14 Redistributable (x86)";
+		/// <inheritdoc/>
+		public override void SetTexts()
+		{
+			Name = UiLanguage.T("CppRuntimeInstallIssue.Software", "Software");
+			FixName = UiLanguage.T("CppRuntimeInstallIssue.DownloadAndInstall", "Download and Install");
+		}
 
 		/// <summary>The installer's exit code from the last Download and Install; null until it has run.</summary>
 		int? LastExitCode;
@@ -26,7 +30,7 @@ namespace x360ce.App.Issues
 			var installed = CppRuntimeDetector.GetInstalledVersion(false) != null;
 			string description;
 			bool troubleshoot;
-			var severity = CppRuntimeDetector.ExplainInstall(LastExitCode, installed, program1, out description, out troubleshoot);
+			var severity = CppRuntimeDetector.ExplainInstall(LastExitCode, installed, CppRuntimeDetector.DisplayName("x86"), out description, out troubleshoot);
 			var page = troubleshoot ? CppRuntimeDetector.TroubleshootUrl : CppRuntimeDetector.LatestUrl;
 			if (MoreInfo == null || MoreInfo.AbsoluteUri != page)
 				MoreInfo = new Uri(page);

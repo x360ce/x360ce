@@ -26,6 +26,66 @@ namespace x360ce.Tests
 			return state;
 		}
 
+		[TestMethod, TestCategory("mapping")]
+		[Description("A mapping box lights with the chip of the control it reads, whichever way round or half it reads it; a formula or an empty box with none")]
+		public void A_mapping_reads_the_chip_of_its_control()
+		{
+			var chips = InputChips.Create(4, 0x3, 0x1, 1);
+			foreach (var pair in new[]
+			{
+				new[] { "Button 3", "Button 3" }, new[] { "IButton 3", "Button 3" },
+				new[] { "Axis 2", "Axis 2" }, new[] { "IAxis 2", "Axis 2" }, new[] { "HAxis 2", "Axis 2" }, new[] { "IHAxis 2", "Axis 2" },
+				new[] { "Slider 1", "Slider 1" }, new[] { "ISlider 1", "Slider 1" }, new[] { "HSlider 1", "Slider 1" }, new[] { "IHSlider 1", "Slider 1" },
+				new[] { "POV 1", "POV 1" }, new[] { "IPOV 1", "POV 1" }, new[] { "POV 1 Up", "POV 1 Up" }, new[] { "POV 1 Left", "POV 1 Left" },
+			})
+			{
+				var payload = InputChips.PayloadOf(pair[0]);
+				Assert.AreEqual(pair[1], payload, pair[0] + " reads the wrong chip.");
+				Assert.IsTrue(chips.Any(c => c.Payload == payload), pair[0] + " reads " + payload + ", which no chip carries.");
+			}
+			foreach (var text in new[] { null, "", "Axis 1 * 2", "Button" })
+				Assert.IsNull(InputChips.PayloadOf(text), "\"" + text + "\" names no single control, yet reads a chip.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("ui")]
+		[Description("A chip being dragged is drawn red and a chip whose control moves green, the General tab's colours, alike in both themes")]
+		public void A_dragged_chip_is_red_and_a_moving_one_green()
+		{
+			Ui.OnUiThread(() =>
+			{
+				try
+				{
+					foreach (var theme in new[] { JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light, JocysCom.ClassLibrary.Controls.Themes.ThemeType.Dark })
+					{
+						JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(theme);
+						using (var group = new InputChipGroup { Width = 600 })
+						{
+							group.Chips = InputChips.Create(3, 0, 0, 0);
+							var dragged = group.Chips[0];
+							var moving = group.Chips[1];
+							moving.Lit = true;
+							typeof(InputChipGroup).GetField("_Dragging", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+								.SetValue(group, dragged);
+							using (var bitmap = new System.Drawing.Bitmap(group.Width, group.Height))
+							{
+								group.DrawToBitmap(bitmap, new System.Drawing.Rectangle(0, 0, group.Width, group.Height));
+								foreach (var pair in new[] { new { Chip = dragged, Colour = PadControlImager.RecordColor, Name = "dragged" }, new { Chip = moving, Colour = PadControlImager.ActiveColor, Name = "moving" } })
+								{
+									var face = group.BoundsOf(pair.Chip);
+									var drawn = bitmap.GetPixel(face.X + 3, face.Y + 6);
+									Assert.AreEqual(pair.Colour.ToArgb(), drawn.ToArgb(), theme + ": the " + pair.Name + " chip is drawn " + System.Drawing.ColorTranslator.ToHtml(drawn) + ".");
+								}
+							}
+						}
+					}
+				}
+				finally
+				{
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light);
+				}
+			});
+		}
+
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
 		[Description("A stick with X, Y and RZ shows axes 1, 2 and 6, as the mapping list does")]
 		public void Axes_are_numbered_by_slot_not_by_count()
@@ -100,6 +160,40 @@ namespace x360ce.Tests
 			CollectionAssert.AreEqual(new[] { false, true, false, false }, directions.Select(c => c.Lit).ToArray(), "9000 is right.");
 			Assert.AreEqual(9000, directions[1].Value);
 			Assert.AreEqual(InputChips.PovRest, directions[0].Value);
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A button whose count of presses grew since the last reading lights on this one, though it reads let go: a tap shorter than the time between two readings; the first count and a count that went down light nothing")]
+		public void A_press_counted_between_two_readings_lights_once()
+		{
+			var chips = InputChips.Create(5, 0, 0, 0);
+			System.Func<InputChip> side = () => chips.Single(c => c.Index == 3);
+			var state = Rest();
+			var presses = new int[128];
+			presses[3] = 7;
+			InputChips.Update(chips, state, 0, presses);
+			Assert.IsFalse(side().Lit, "The presses counted before the first reading lit the button.");
+			presses[3]++;
+			Assert.IsTrue(InputChips.Update(chips, state, 100, presses), "A press between two readings is not a change.");
+			Assert.IsTrue(side().Lit, "A press between two readings, let go by the second, did not light the button.");
+			Assert.AreEqual(1, chips.Count(c => c.Lit), "A button that was not pressed lit.");
+			InputChips.Update(chips, state, 200, presses);
+			Assert.IsFalse(side().Lit, "A press was shown on two readings.");
+			// Held across a reading: lit by the state, and not again once let go.
+			presses[3]++;
+			state.Buttons[3] = true;
+			InputChips.Update(chips, state, 300, presses);
+			Assert.IsTrue(side().Lit);
+			state.Buttons[3] = false;
+			InputChips.Update(chips, state, 400, presses);
+			Assert.IsFalse(side().Lit, "A press shown while held lit the button again once let go.");
+			// A device listed again counts from nought.
+			presses[3] = 0;
+			InputChips.Update(chips, state, 500, presses);
+			Assert.IsFalse(side().Lit, "A count that went down lit the button.");
+			presses[3] = 1;
+			InputChips.Update(chips, null, 600, presses);
+			Assert.IsFalse(side().Lit, "No state lit a button.");
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]

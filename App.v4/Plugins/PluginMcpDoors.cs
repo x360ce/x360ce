@@ -38,7 +38,7 @@ namespace x360ce.App.Plugins
 			};
 			Listener = new McpListener(tools, Subject + " door")
 			{
-				Unauthorised = "Send the token from " + Subject + "'s MCP server settings, " + SettingsPlace + ", as Authorization: Bearer <token>.",
+				Unauthorised = "Send the token from " + Subject + "’s MCP server settings, " + SettingsPlace + ", as Authorization: Bearer <token>.",
 			};
 		}
 
@@ -217,20 +217,23 @@ namespace x360ce.App.Plugins
 		public static void Apply()
 		{
 			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			var manager = PluginManager.Current;
 			lock (_lock)
 			{
-				foreach (var gone in _doors.Values.Where(x => !devices.Any(d => d.InstanceGuid == x.InstanceGuid)).ToArray())
+				foreach (var gone in _doors.Values.Where(x =>
+					!devices.Any(d => d.InstanceGuid == x.InstanceGuid)
+					|| manager == null
+					|| manager.FindDeviceType(x.Type.ProductGuid) == null).ToArray())
 				{
 					gone.Listener.Stop();
 					_doors.Remove(gone.InstanceGuid);
 				}
 			}
-			var manager = PluginManager.Current;
 			if (manager == null)
 				return;
 			foreach (var ud in devices)
 			{
-				var door = Get(ud.InstanceGuid, manager.FindDeviceType(ud.ProductGuid), PluginSettings.Current);
+				var door = Get(ud.InstanceGuid, PluginDevices.FindType(ud, manager), PluginSettings.Current);
 				if (door != null && door.Enabled && door.OpenPort != door.Port)
 					door.Apply();
 			}

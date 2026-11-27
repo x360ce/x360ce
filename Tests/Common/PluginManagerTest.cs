@@ -27,6 +27,21 @@ namespace x360ce.Tests
 		}
 	}
 
+	/// <summary>A plugin device that recommends its mapping as a whole SDL row, another device's GUID and name in it: a stick and a button.</summary>
+	public class MappedPluginDevice : IPluginDevice, IPluginMapping
+	{
+		public static readonly Guid Product = new Guid("3c6f0a1e-8d2b-4e7a-b5c9-1f2e3d4c5b6a");
+		public string Name { get { return "Mapped Plugin Device"; } }
+		public Guid ProductGuid { get { return Product; } }
+		public int AxisCount { get { return 2; } }
+		public int SliderCount { get { return 0; } }
+		public int PovCount { get { return 0; } }
+		public int ButtonCount { get { return 1; } }
+		public string Mapping { get { return " 03000000341200007856000000000000,Other Pad,a:b0,b:b5,leftx:a0,lefty:a1,platform:Windows, "; } }
+		public bool Ready { get; set; }
+		public void Read(PluginState state) { }
+	}
+
 	/// <summary>A plugin device that cannot be made, as one whose hardware is missing might be written.</summary>
 	public class ThrowingPluginDevice : IPluginDevice
 	{
@@ -109,6 +124,32 @@ namespace x360ce.Tests
 			var throwing = types.Single(x => x.Type == typeof(ThrowingPluginDevice));
 			Assert.IsTrue(throwing.Faulted);
 			StringAssert.Contains(throwing.FaultReason, "No hardware.");
+			Assert.IsNull(sample.Mapping, "A device that recommends no mapping has one.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("mapping"), TestCategory("critical")]
+		[Description("A plugin's recommended mapping is read as it loads, is no setting, and maps its device as SDL reads the row, under the device's own GUID and name, leaving out what the device lacks")]
+		public void A_recommended_mapping_maps_the_device_as_sdl_reads_it()
+		{
+			var types = PluginManager.FindDeviceTypes(typeof(MappedPluginDevice).Assembly, new PluginFile("test", false));
+			var type = types.Single(x => x.Type == typeof(MappedPluginDevice));
+			Assert.IsFalse(type.Faulted, type.FaultReason);
+			StringAssert.StartsWith(type.Mapping, "03000000341200007856000000000000,Other Pad,", "The mapping was not read, or not trimmed.");
+			CollectionAssert.AreEqual(new[] { "Ready" }, type.Settings.Select(x => x.Name).ToArray(), "A member of the contract's interfaces is a setting.");
+			var ud = PluginDevices.NewUserDevice(type);
+			var mapping = x360ce.App.AutoMapHelper.GetPluginMapping(ud, type);
+			Assert.IsNotNull(mapping, "The row mapped nothing.");
+			Assert.AreEqual(x360ce.Engine.SdlDevice.From(ud).Guid, mapping.Mapping.Guid.Text, "The row keeps another device's GUID.");
+			Assert.AreEqual("Mapped Plugin Device", mapping.Mapping.Name);
+			Assert.AreEqual("1", mapping.Setting.ButtonA);
+			Assert.AreEqual("a1", mapping.Setting.LeftThumbAxisX);
+			Assert.AreEqual("a-2", mapping.Setting.LeftThumbAxisY, "SDL's Y grows downward, the Xbox controller's upward.");
+			Assert.IsTrue(string.IsNullOrEmpty(mapping.Setting.ButtonB), "A button the device lacks was mapped.");
+			StringAssert.Contains(mapping.Note, "b:b5", "What was left out is not said.");
+			Assert.AreEqual(x360ce.Engine.SdlTranslation.FromPlugin, mapping.From[x360ce.Engine.MapCode.ButtonA]);
+			var sample = types.Single(x => x.Type == typeof(SamplePluginDevice));
+			Assert.IsNull(x360ce.App.AutoMapHelper.GetPluginMapping(PluginDevices.NewUserDevice(sample), sample),
+				"A device that recommends nothing was given a mapping.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
@@ -185,6 +226,99 @@ namespace x360ce.Tests
 			finally
 			{
 				Directory.Delete(folder, true);
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("Built-in plugins are enabled and loaded by default, can be disabled and re-enabled live, and stay unloaded across restarts while disabled")]
+		public void Built_in_plugins_load_by_default_and_can_be_disabled_and_reenabled()
+		{
+			var appAssembly = typeof(PluginManager).Assembly;
+			using (var manager = new PluginManager(null, null, () => false, appAssembly))
+			{
+				manager.LoadEmbedded();
+				Assert.IsTrue(manager.Files.Length >= 4, "Expected embedded built-in plugins.");
+				Assert.IsTrue(manager.Files.All(f => f.Embedded && f.Enabled && f.State == PluginFileState.Loaded),
+					"All built-in plugins must be enabled and loaded by default.");
+				Assert.IsTrue(manager.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"),
+					"WheelTelemetry provider should be active by default.");
+
+				manager.SetEnabled("WheelTelemetry", false);
+				var wt = manager.Files.Single(f => f.Name == "WheelTelemetry");
+				Assert.IsFalse(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Disabled, wt.State);
+				Assert.IsFalse(manager.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"),
+					"Disabling WheelTelemetry must remove its provider from TelemetryTypes immediately.");
+
+				manager.SetEnabled("WheelTelemetry", true);
+				Assert.IsTrue(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Loaded, wt.State);
+				Assert.IsTrue(manager.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"),
+					"Re-enabling WheelTelemetry must restore its provider immediately.");
+			}
+
+			// Simulate next start with WheelTelemetry listed in DisabledPlugins: assembly must not load until re-enabled.
+			using (var restarted = new PluginManager(null, null, () => false, appAssembly, name => !string.Equals(name, "WheelTelemetry", StringComparison.OrdinalIgnoreCase)))
+			{
+				restarted.LoadEmbedded();
+				var wt = restarted.Files.Single(f => f.Name == "WheelTelemetry");
+				Assert.IsFalse(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Disabled, wt.State);
+				Assert.IsNull(wt.Assembly, "A plugin disabled at startup must not load its assembly.");
+				Assert.AreEqual(0, restarted.TelemetryTypes.Length);
+
+				restarted.SetEnabled("WheelTelemetry", true);
+				Assert.IsTrue(wt.Enabled);
+				Assert.AreEqual(PluginFileState.Loaded, wt.State);
+				Assert.IsNotNull(wt.Assembly, "Enabling a plugin that started disabled must load its assembly.");
+				Assert.IsTrue(restarted.TelemetryTypes.Any(t => t.File.Name == "WheelTelemetry"));
+			}
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A Fitness Machine device is blocked from cloud upload until connected to a real machine, then adopts its real manufacturer, product name and ProductGuid")]
+		public void Fitness_machine_adopts_real_hardware_identity_and_gates_cloud_upload()
+		{
+			var appAssembly = typeof(PluginManager).Assembly;
+			using (var manager = new PluginManager(null, null, () => false, appAssembly))
+			{
+				manager.LoadEmbedded();
+				var fitnessType = manager.DeviceTypes.Single(t => t.File.Name == "FitnessMachine");
+				Assert.IsTrue(fitnessType.RequiresHardwareIdentity, "FitnessMachine must require real hardware identity before cloud upload.");
+
+				var ud = PluginDevices.NewUserDevice(fitnessType);
+				Assert.IsFalse(PluginDevices.IsReadyForCloudUpload(ud, manager),
+					"An unconnected Fitness Machine placeholder must not be ready for cloud upload.");
+
+				// Build a real Bluetooth Device Information identity with PnP ID (VID=0x1234, PID=0x5678).
+				var sessionType = fitnessType.Type.Assembly.GetType("x360ce.Plugins.Samples.FitnessSession", true);
+				var build = sessionType.GetMethod("BuildHardwareIdentity", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+				Assert.IsNotNull(build);
+				var pnp = new byte[] { 1, 0x34, 0x12, 0x78, 0x56, 0x01, 0x00 };
+				var identity = (PluginDeviceIdentity)build.Invoke(null, new object[] { "E60R-1234", "Tunturi", "E60R", pnp });
+				Assert.IsNotNull(identity);
+				Assert.IsTrue(identity.IsConnected);
+				Assert.AreEqual("Tunturi", identity.Manufacturer);
+				Assert.AreEqual("Tunturi E60R", identity.ProductName);
+				Assert.AreEqual(0x1234, identity.VendorId);
+				Assert.AreEqual(0x5678, identity.ProductId);
+				Assert.AreEqual(new Guid("56781234-0000-0000-0000-504944564944"), identity.ProductGuid);
+
+				// Applying real hardware identity updates UserDevice and makes it ready for cloud / TOP Controllers.
+				Assert.IsTrue(PluginDevices.ApplyHardwareIdentity(ud, fitnessType, identity));
+				Assert.AreEqual("Tunturi", ud.DevManufacturer);
+				Assert.AreEqual("Tunturi", ud.HidManufacturer);
+				Assert.AreEqual("Tunturi E60R", ud.ProductName);
+				Assert.AreEqual(0x1234, ud.DevVendorId);
+				Assert.AreEqual(0x5678, ud.DevProductId);
+				Assert.AreEqual(identity.ProductGuid, ud.ProductGuid);
+				Assert.AreSame(fitnessType, PluginDevices.FindType(ud, manager),
+					"x360ce must still resolve the owning FitnessMachine plugin after ProductGuid switches to the real machine.");
+				Assert.IsTrue(PluginDevices.IsReadyForCloudUpload(ud, manager),
+					"Once connected with real hardware identity, the machine is ready to upload to the cloud.");
+
+				// Clean up PluginSettings entry written for the temporary test InstanceGuid.
+				PluginSettings.Current.Reset(ud.InstanceGuid);
 			}
 		}
 	}

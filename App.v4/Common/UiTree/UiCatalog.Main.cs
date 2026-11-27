@@ -66,7 +66,7 @@ namespace x360ce.App.UiTree
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.NoteLabel)] = new Text("What the recording leaves out",
 				"Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.");
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.SettingsCheckBox)] = new Text(null,
-				"The recording holds the options, the game's settings, each controller's mapping and every device.");
+				"The recording holds the options, the game’s settings, each controller’s mapping and every device.");
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.InputCheckBox)] = new Text(null,
 				"The recording holds what each device reports: buttons, axes, sliders and hats as they change, devices going offline, and failed reads.");
 			d[nameof(RecorderUserControl) + "." + nameof(RecorderUserControl.OutputCheckBox)] = new Text(null,
@@ -93,6 +93,8 @@ namespace x360ce.App.UiTree
 				"Writes every setting to disk now.");
 			d[nameof(MainControl) + "." + nameof(MainControl.AddGameButton)] = new Text("Add Game...",
 				"Sets this program up for another game.");
+			d[nameof(MainControl) + "." + nameof(MainControl.LanguageButton)] = new Text("Language",
+				"The language of the window: each is listed in its own words with its flag, and the one picked shows at once and is kept.");
 			d[nameof(MainControl) + "." + nameof(MainControl.TestButton)] = new Text("Test...",
 				"Opens a window for trying the emulated controller without a game.");
 

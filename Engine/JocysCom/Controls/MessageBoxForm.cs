@@ -203,9 +203,25 @@ namespace JocysCom.ClassLibrary.Controls
 			TextLabel.Resize += Message_Resize;
 		}
 
+		/// <summary>The words on the button of an answer, in the language chosen (<see cref="UiTree.UiLanguage"/>).</summary>
+		public static string ButtonText(DialogResult result)
+		{
+			switch (result)
+			{
+				case DialogResult.OK: return UiTree.UiLanguage.T("MessageBoxForm.OK", "&OK");
+				case DialogResult.Cancel: return UiTree.UiLanguage.T("MessageBoxForm.Cancel", "&Cancel");
+				case DialogResult.Abort: return UiTree.UiLanguage.T("MessageBoxForm.Abort", "&Abort");
+				case DialogResult.Retry: return UiTree.UiLanguage.T("MessageBoxForm.Retry", "&Retry");
+				case DialogResult.Ignore: return UiTree.UiLanguage.T("MessageBoxForm.Ignore", "&Ignore");
+				case DialogResult.Yes: return UiTree.UiLanguage.T("MessageBoxForm.Yes", "&Yes");
+				case DialogResult.No: return UiTree.UiLanguage.T("MessageBoxForm.No", "&No");
+				default: return "&" + result;
+			}
+		}
+
 		public void EnableButton(ref Button button, DialogResult r1)
 		{
-			button.Text = "&" + r1.ToString();
+			button.Text = ButtonText(r1);
 			button.DialogResult = r1;
 			button.Visible = true;
 			button.Click += Button_Click;

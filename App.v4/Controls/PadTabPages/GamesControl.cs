@@ -2,14 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using x360ce.App.Plugins;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using x360ce.Plugins;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -24,9 +28,17 @@ namespace x360ce.App.Controls
 			if (IsDesignMode)
 				return;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesDataGridView);
-			GamesDataGridView.AutoGenerateColumns = false;
 			ScanProgressLevel0Label.Text = "";
 			ScanProgressLevel1Label.Text = "";
+			HandleCreated += (s, e) => AttachPluginManager(PluginManager.Current);
+			HandleDestroyed += (s, e) => AttachPluginManager(null);
+			EventHandler languageChanged = (s, e) => RewordPluginTabs();
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
+			// The game's pages lay themselves out with the window of their tabs, which can make this control's window, and
+			// raise its Load, while InitializeComponent runs.
+			if (IsHandleCreated)
+				AttachPluginManager(PluginManager.Current);
 		}
 
 		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
@@ -38,6 +50,8 @@ namespace x360ce.App.Controls
 			SettingsManager.UserGames.Items.ListChanged += Games_Items_ListChanged;
 			// WORKAROUND: Remove SelectionChanged event.
 			GamesDataGridView.SelectionChanged -= GamesDataGridView_SelectionChanged;
+			// Set where the list is bound: Load, which binds it, can come before the constructor's own lines.
+			GamesDataGridView.AutoGenerateColumns = false;
 			GamesDataGridView.DataSource = SettingsManager.UserGames.Items;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			ControlsHelper.BeginInvoke(() =>
@@ -60,14 +74,14 @@ namespace x360ce.App.Controls
 		{
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Scan for games on your computer?", "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			var result = form.ShowForm(UiLanguage.T("GamesControl.ScanForGamesOnYourComputer", "Scan for games on your computer?"), UiLanguage.T("GamesGridUserControl.Scan", "Scan"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK)
 			{
 				ScanStarted = DateTime.Now;
 				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames);
 				if (!success)
 				{
-					ScanProgressLevel0Label.Text = "Scan failed!";
+					ScanProgressLevel0Label.Text = UiLanguage.T("GamesGridUserControl.ScanFailed", "Scan failed!");
 					ScanProgressLevel1Label.Text = "";
 				}
 			}
@@ -105,7 +119,7 @@ namespace x360ce.App.Controls
 			switch (e.State)
 			{
 				case XInputMaskScannerState.Started:
-					label.Text = "Scanning...";
+					label.Text = UiLanguage.T("GamesGridUserControl.Scanning", "Scanning...");
 					break;
 				case XInputMaskScannerState.GameFound:
 					lock (GameAddLock)
@@ -183,18 +197,18 @@ namespace x360ce.App.Controls
 			var sb = new StringBuilder();
 			sb.AppendLine(e.Message);
 			if (e.State == XInputMaskScannerState.DirectoryUpdate && e.Directories != null && e.DirectoryIndex >= 0 && e.DirectoryIndex < e.Directories.Count)
-				sb.AppendFormat("Current Folder: {0}", e.Directories[e.DirectoryIndex].FullName);
+				sb.AppendFormat(UiLanguage.T("GamesGridUserControl.CurrentFolder", "Current Folder: {0}"), e.Directories[e.DirectoryIndex].FullName);
 			if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null && e.FileIndex >= 0 && e.FileIndex < e.Files.Count)
 			{
 				var file = e.Files[e.FileIndex];
 				// A name the folder lists but Windows cannot open has no size to give; asking ended the scan.
 				var size = file.Exists ? file.Length / 1024 / 1024 : 0;
-				sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
+				sb.AppendFormat(UiLanguage.T("GamesGridUserControl.CurrentFile", "Current File ({0:0.0} MB): {1} "), size, file.FullName);
 			}
 			if (e.Level == 0)
 			{
 				sb.AppendLine();
-				sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);
+				sb.AppendFormat(UiLanguage.T("GamesGridUserControl.ScanCounts", "Skipped = {0}, Added = {1}, Updated = {2}"), e.Skipped, e.Added, e.Updated);
 			}
 			sb.AppendLine();
 			return sb.ToString();
@@ -289,6 +303,7 @@ namespace x360ce.App.Controls
 			{
 				GameDetailsControl.CurrentItem = item;
 			}
+			ShowGamePlugins(item);
 			ControlsHelper.SetEnabled(OpenGameButton, selected && exists);
 			ControlsHelper.SetEnabled(StartGameButton, selected && exists);
 			ControlsHelper.SetEnabled(SaveGamesButton, selected);
@@ -319,13 +334,13 @@ namespace x360ce.App.Controls
 					path = fi.Directory.FullName;
 				AddGameOpenFileDialog.FileName = fi.Name;
 			}
-			AddGameOpenFileDialog.Filter = EngineHelper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
+			AddGameOpenFileDialog.Filter = string.Format(UiLanguage.T("GamesGridUserControl.ExecutableFilter", "{0} (*.exe)|*.exe|All files (*.*)|*.*"), EngineHelper.GetFileDescription(".exe"));
 			AddGameOpenFileDialog.FilterIndex = 1;
 			AddGameOpenFileDialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(path))
 				path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 			AddGameOpenFileDialog.InitialDirectory = path;
-			AddGameOpenFileDialog.Title = "Browse for Executable";
+			AddGameOpenFileDialog.Title = UiLanguage.T("GamesGridUserControl.BrowseForExecutable", "Browse for Executable");
 			var result = AddGameOpenFileDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
@@ -333,7 +348,8 @@ namespace x360ce.App.Controls
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
-					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxForm.Show(UiLanguage.T("GamesGridUserControl.WindowsFoldersNotAllowed", "Windows folders are not allowed."),
+						UiLanguage.T("GamesGridUserControl.WindowsFolder", "Windows Folder"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 				else
 				{
@@ -348,9 +364,9 @@ namespace x360ce.App.Controls
 						form.StartPosition = FormStartPosition.CenterParent;
 						ControlsHelper.CheckTopMost(form);
 						var answer = form.ShowForm(
-							string.Format("{0} is already in the list:\r\n{1}\r\n\r\nAdd this folder as a separate game, or use the existing entry?", other.FileName, other.FullPath),
-							"Add Game", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2,
-							new[] { "Add Separate", "Use Existing" });
+							string.Format(UiLanguage.T("GamesGridUserControl.AlreadyInList", "{0} is already in the list:\r\n{1}\r\n\r\nAdd this folder as a separate game, or use the existing entry?"), other.FileName, other.FullPath),
+							UiLanguage.T("GamesGridUserControl.AddGame", "Add Game"), MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2,
+							new[] { UiLanguage.T("GamesGridUserControl.AddSeparate", "Add Separate"), UiLanguage.T("GamesGridUserControl.UseExisting", "Use Existing") });
 						form.Dispose();
 						_AddSeparateGame = answer == DialogResult.Yes;
 					}
@@ -358,7 +374,7 @@ namespace x360ce.App.Controls
 					var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames, AddGameOpenFileDialog.FileName);
 					if (!success)
 					{
-						ScanProgressLevel0Label.Text = "Scan failed!";
+						ScanProgressLevel0Label.Text = UiLanguage.T("GamesGridUserControl.ScanFailed", "Scan failed!");
 						ScanProgressLevel1Label.Text = "";
 					}
 				}
@@ -463,15 +479,15 @@ namespace x360ce.App.Controls
 			if (userGames.Length == 1)
 			{
 				var item = userGames[0];
-				message = string.Format("Are you sure you want to delete settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
+				message = string.Format(UiLanguage.T("GamesGridUserControl.DeleteOneGame", "Are you sure you want to delete settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}"),
 					item.FileName,
 					item.FileProductName);
 			}
 			else
 			{
-				message = string.Format("Delete {0} setting(s)?", userGames.Length);
+				message = string.Format(UiLanguage.T("GamesGridUserControl.DeleteGames", "Delete {0} settings?"), userGames.Length);
 			}
-			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+			var result = form.ShowForm(message, UiLanguage.T("GamesGridUserControl.Delete", "Delete"), MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 			if (result == DialogResult.OK)
 			{
 				// Remove from local settings.
@@ -534,6 +550,213 @@ namespace x360ce.App.Controls
 						break;
 				}
 			}
+		}
+
+		#endregion
+
+		#region Game plugins
+
+		/// <summary>The game plugins whose tabs follow x360ce's own, and the game file they were made for.</summary>
+		PluginGameType[] _pluginTypes = new PluginGameType[0];
+		string _pluginGamePath;
+
+		/// <summary>The tab of each game plugin shown, and the instance made for it, both let go of with the next game.</summary>
+		readonly List<TabPage> _pluginTabs = new List<TabPage>();
+		readonly List<IPluginGame> _pluginGames = new List<IPluginGame>();
+
+		PluginManager _pluginManager;
+
+		/// <summary>Shows a tab, after x360ce's own settings, for each loaded game plugin that is for the game selected.</summary>
+		/// <remarks>Made again only when the game's file or the plugins for it changed, so a list redrawn keeps the tabs as they are.</remarks>
+		void ShowGamePlugins(UserGame game)
+		{
+			var manager = PluginManager.Current;
+			var path = game == null ? null : game.FullPath;
+			var types = manager == null || game == null
+				? new PluginGameType[0]
+				: manager.GameTypes.Where(x => !x.Faulted && x.IsFor(game.FileName)).ToArray();
+			if (types.SequenceEqual(_pluginTypes) && string.Equals(path, _pluginGamePath, StringComparison.OrdinalIgnoreCase))
+				return;
+			var selected = GameTabControl.SelectedTab == null ? null : GameTabControl.SelectedTab.Name;
+			RemoveGamePlugins();
+			_pluginTypes = types;
+			_pluginGamePath = path;
+			foreach (var type in types)
+			{
+				var tab = NewPluginTab(type, path);
+				_pluginTabs.Add(tab);
+				GameTabControl.TabPages.Add(tab);
+				// Once on the strip: the theme draws a page as the strip round it is drawn.
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(tab);
+				UiTree.UiHelp.Attach(tab);
+			}
+			var again = GameTabControl.TabPages.Cast<TabPage>().FirstOrDefault(x => x.Name == selected);
+			if (again != null)
+				GameTabControl.SelectedTab = again;
+			RootLayoutPanel.PerformLayout();
+		}
+
+		/// <summary>Takes away the game plugins' tabs, and disposes their pages and the instances made for them.</summary>
+		void RemoveGamePlugins()
+		{
+			foreach (var tab in _pluginTabs)
+			{
+				GameTabControl.TabPages.Remove(tab);
+				tab.Dispose();
+			}
+			_pluginTabs.Clear();
+			foreach (var game in _pluginGames.OfType<IDisposable>())
+				game.Dispose();
+			_pluginGames.Clear();
+			_pluginTypes = new PluginGameType[0];
+			_pluginGamePath = null;
+		}
+
+		/// <summary>A game plugin's tab: its page, made with an instance for the game, then Help, its class's description.</summary>
+		/// <remarks>
+		/// As a plugin device's tab holds its pages. A page that cannot be made says why in its place. The tab is as tall as
+		/// x360ce's own page of the game, so a longer page scrolls itself.
+		/// </remarks>
+		TabPage NewPluginTab(PluginGameType type, string path)
+		{
+			Control page = null;
+			Exception fault = null;
+			try
+			{
+				var game = type.NewInstance();
+				_pluginGames.Add(game);
+				game.GamePath = path;
+				if (type.ControlType != null)
+					page = (Control)Activator.CreateInstance(type.ControlType, game);
+			}
+			catch (Exception ex)
+			{
+				fault = ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
+			}
+			var pages = new TabControl { Name = "PluginTabControl", Dock = DockStyle.Fill };
+			// The room its tabs take is known once Windows has made them, as the plugin's tab is first shown.
+			pages.HandleCreated += (s, e) => RootLayoutPanel.PerformLayout();
+			var content = page ?? new Label
+			{
+				Name = PluginNoteLabelName,
+				AutoSize = true,
+				Padding = AppHelper.ScaledPadding(8, 8, 8, 8),
+				// The fault is kept, so the note can be worded again in another language.
+				Tag = fault,
+				Text = PluginNote(fault),
+			};
+			content.Dock = DockStyle.Fill;
+			var controlTab = AddPluginPage(pages, "PluginPageTabPage", page?.AccessibleName ?? page?.Text ?? "Control",
+				"The page the plugin adds for the game.", content);
+			controlTab.Text = PluginTabText(page);
+			if (page != null)
+				page.TextChanged += (s, e) => controlTab.Text = PluginTabText(page);
+			if (!string.IsNullOrWhiteSpace(type.Description))
+			{
+				// As a plugin device's Help page shows its help.
+				var help = new RichTextBox
+				{
+					Name = "PluginHelpRichTextBox",
+					Dock = DockStyle.Fill,
+					BackColor = SystemColors.Window,
+					BorderStyle = BorderStyle.None,
+					ReadOnly = true,
+					AccessibleName = "Help",
+					AccessibleDescription = "The game plugin’s help, from its plugin: what it does for the game, and how to use it.",
+				};
+				AppHelper.ShowHelp(help, type.Description.Trim());
+				AddPluginPage(pages, "PluginHelpTabPage", "Help", "The game plugin’s help, from its plugin.", help).Text =
+					UiLanguage.T("GamesGridUserControl.PluginHelpTab", "Help");
+			}
+			var tab = new TabPage
+			{
+				Name = type.Type.Name + "TabPage",
+				Text = type.Name,
+				AccessibleName = type.Name,
+				AccessibleDescription = "What the " + type.Name + " plugin adds for the selected game, and its help.",
+				UseVisualStyleBackColor = true,
+				Padding = AppHelper.ScaledPadding(8, 8, 8, 8),
+			};
+			tab.Controls.Add(pages);
+			return tab;
+		}
+
+		/// <summary>The name of the note a game plugin's tab shows when it has no page, or its page could not be made.</summary>
+		const string PluginNoteLabelName = "PluginNoteLabel";
+
+		/// <summary>The note in place of a game plugin's page: that it has none, or why it could not be made.</summary>
+		/// <param name="fault">What stopped the page being made, or null when the plugin has no page.</param>
+		static string PluginNote(Exception fault)
+		{
+			return fault == null
+				? UiLanguage.T("GamesGridUserControl.PluginHasNoPage", "The plugin has no page of its own.")
+				: string.Format(UiLanguage.T("GamesGridUserControl.PluginPageFailed", "The plugin’s page could not be made: {0}: {1}"), fault.GetType().Name, fault.Message);
+		}
+
+		static string PluginTabText(Control page)
+		{
+			return string.IsNullOrWhiteSpace(page?.Text) ? UiLanguage.T("GamesGridUserControl.PluginControlTab", "Control") : page.Text;
+		}
+
+		/// <summary>Words the game plugins' own tabs and notes again, in the language chosen.</summary>
+		void RewordPluginTabs()
+		{
+			foreach (var tab in _pluginTabs)
+			{
+				var pages = (TabControl)tab.Controls[0];
+				var controlTab = pages.TabPages["PluginPageTabPage"];
+				var content = controlTab.Controls[0];
+				if (content.Name == PluginNoteLabelName)
+				{
+					content.Text = PluginNote(content.Tag as Exception);
+					content = null;
+				}
+				controlTab.Text = PluginTabText(content);
+				var helpTab = pages.TabPages["PluginHelpTabPage"];
+				if (helpTab != null)
+					helpTab.Text = UiLanguage.T("GamesGridUserControl.PluginHelpTab", "Help");
+			}
+		}
+
+		[System.ComponentModel.Localizable(false)]
+		static TabPage AddPluginPage(TabControl pages, string name, string accessibleName, string description, Control content)
+		{
+			var page = new TabPage { Name = name, AccessibleName = accessibleName, AccessibleDescription = description, UseVisualStyleBackColor = true };
+			UiLanguage.Keep(page);
+			page.Controls.Add(content);
+			pages.TabPages.Add(page);
+			return page;
+		}
+
+		void AttachPluginManager(PluginManager manager)
+		{
+			if (ReferenceEquals(_pluginManager, manager))
+				return;
+			if (_pluginManager != null)
+				_pluginManager.Changed -= PluginManager_Changed;
+			_pluginManager = manager;
+			if (_pluginManager != null)
+				_pluginManager.Changed += PluginManager_Changed;
+		}
+
+		/// <summary>A plugin switched on or off: the selected game's tabs follow. Raised on any thread.</summary>
+		void PluginManager_Changed(object sender, EventArgs e)
+		{
+			if (IsDisposed)
+				return;
+			if (InvokeRequired)
+			{
+				if (IsHandleCreated)
+					BeginInvoke((Action)ShowSelectedGamePlugins);
+				return;
+			}
+			ShowSelectedGamePlugins();
+		}
+
+		void ShowSelectedGamePlugins()
+		{
+			if (!IsDisposed)
+				ShowGamePlugins(GameDetailsControl.CurrentItem as UserGame);
 		}
 
 		#endregion
@@ -602,10 +825,57 @@ namespace x360ce.App.Controls
 				{
 					gs.IsStopping = true;
 				}
+				AttachPluginManager(null);
+				RemoveGamePlugins();
 			}
 			base.Dispose(disposing);
 		}
 
 		#endregion
+	}
+
+	/// <summary>Tabs as tall as their tallest page needs, so a table row sized to what it holds gives the rest of the height to the rows beside it.</summary>
+	/// <remarks>
+	/// A table row sized to what it holds asks each control for its preferred size, and a tab control otherwise answers with
+	/// the size it was given. This one answers with its tabs and frame, and its tallest page as <see cref="AppHelper.ContentHeight"/>
+	/// measures it: the page's padding and what it holds, at the page's width. On the Games tab the first page is x360ce's
+	/// own settings of the game, so a game without a plugin looks as it always has; a plugin's page takes the room it needs
+	/// from the list above, and scrolls only when the window has none to give.
+	///
+	/// The room the tabs leave their pages is known only once the tabs' window exists, and asking for it makes the window,
+	/// with every window round it, before the control that holds the tabs is ready. So until then it answers with its own
+	/// size, and asks the table round it to lay it out again once the window is made.
+	/// </remarks>
+	public class GameTabControl : TabControl
+	{
+		/// <summary>The room the tabs leave their pages, or the whole control until the tabs' window exists.</summary>
+		/// <remarks>
+		/// The page round the tabs lays them out while it scales what it holds. Asked then, the base makes the tabs' window,
+		/// which scales the pages for the screen a second time.
+		/// </remarks>
+		public override Rectangle DisplayRectangle
+		{
+			get { return IsHandleCreated ? base.DisplayRectangle : ClientRectangle; }
+		}
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			if (Parent != null)
+				Parent.PerformLayout(this, nameof(Bounds));
+		}
+
+		public override Size GetPreferredSize(Size proposedSize)
+		{
+			if (!IsHandleCreated || TabPages.Count == 0)
+				return base.GetPreferredSize(proposedSize);
+			var display = DisplayRectangle;
+			// A minimized window leaves the page no width, and what it holds, measured a word to a line, would stand
+			// thousands of pixels tall: the tabs keep their size until there is room again.
+			if (TabPages.Cast<TabPage>().Any(x => display.Width - x.Padding.Horizontal <= 0))
+				return Size;
+			var content = TabPages.Cast<TabPage>().Max(x => AppHelper.ContentHeight(x, display.Width));
+			return new Size(Width, Height - display.Height + content);
+		}
 	}
 }

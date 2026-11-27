@@ -23,11 +23,13 @@ namespace x360ce.Tests
 		public TestContext TestContext { get; set; }
 
 		[TestMethod, TestCategory("ui")]
-		[Description("The main window's smallest size, in its designer file at 100 %, is a multiple of 4 the Controller page's General tab and bottom buttons show whole in, no smaller than measured here; at that size, at the screen's scale, in both themes, nothing on them is cut")]
+		[Description("The main window's smallest size, in its designer file at 100 %, is a multiple of 4 the Controller page's pages, the tallest of them included, and bottom buttons show whole in, with the device list at its fewest rows, no smaller than measured here; at that size, at the screen's scale, in both themes, nothing on them is cut")]
 		public void The_smallest_window_shows_the_general_tab_and_the_buttons_whole()
 		{
 			var faults = new List<string>();
 			var report = new List<string>();
+			// What the tallest page needs, measured on every page at the screen's scale.
+			var measured = PadPageShortWindowTest.Measured(TestContext);
 			ButtonIconTest.OnEverySurface(new Func<Control>[] { MainWindowWithControllerPage }, (form, when) =>
 			{
 				var window = (Form)form;
@@ -39,8 +41,10 @@ namespace x360ce.Tests
 				var table = page.GeneralTableLayoutPanel;
 				var columns = (TableLayoutPanel)table.Parent;
 				var buttons = page.ButtonsPanel;
-				// The narrowest and shortest window the General tab is whole in: made smaller a pixel at a time until two of its
-				// controls overlap, which they do once its columns are squeezed, or its rows need more height than the tab has.
+				var tallest = PadPageShortWindowTest.TallestNeed(measured, ControlsHelper.DpiScale, when.Split(' ').Last());
+				// The narrowest and shortest window the pages are whole in: made smaller a pixel at a time until two of the General
+				// tab's controls overlap, which they do once its columns are squeezed, or the tallest page needs more height than
+				// the pages have.
 				var smallest = window.MinimumSize;
 				window.MinimumSize = Size.Empty;
 				var scale = ControlsHelper.DpiScale;
@@ -58,7 +62,8 @@ namespace x360ce.Tests
 					window.Size = new Size(smallest.Width + (int)(200 * scale), h);
 					Application.DoEvents();
 					var tableAtNow = general.RectangleToClient(table.Parent.RectangleToScreen(table.Bounds));
-					if (tableAtNow.Top + table.GetPreferredSize(new Size(table.Width, 0)).Height > general.ClientSize.Height - general.Padding.Bottom)
+					if (tableAtNow.Top + table.GetPreferredSize(new Size(table.Width, 0)).Height > general.ClientSize.Height - general.Padding.Bottom
+						|| tallest.Value > general.ClientSize.Height)
 						break;
 					needed.Height = h;
 				}
@@ -72,18 +77,20 @@ namespace x360ce.Tests
 				var at100 = new Size((int)Math.Ceiling(needed.Width / scale), (int)Math.Ceiling(needed.Height / scale));
 				var rounded = new Size((at100.Width + 3) / 4 * 4, (at100.Height + 3) / 4 * 4);
 				var overlap = Overlap(table);
-				var line = string.Format("{0}: the smallest window {1}; the General tab is whole down to {2}, {3} at 100 %, {4} rounded up; the buttons need {5} px across, at {6}",
-					when, window.Size, needed, at100, rounded, buttonsNeed, buttonsAt);
+				var line = string.Format("{0}: the smallest window {1}; the pages are whole down to {2}, {3} at 100 %, {4} rounded up, the tallest, {5}, needing {6} px; the buttons need {7} px across, at {8}",
+					when, window.Size, needed, at100, rounded, tallest.Key, tallest.Value, buttonsNeed, buttonsAt);
 				report.Add(line);
-				// Measured in the real program at 100 %, 1024 x 936: the controller picture 8 pixels from the names beside it and the
-				// last row 8 above the tab's frame. This window, which stands in for the main one, needs no more, and no less than
-				// a step of 4 under it.
+				// Measured in the real program at 150 %, 1024 x 908 at 100 %, which the Buttons tab needs with three rows in the
+				// device list: the controller picture 8 pixels from the names beside it and the last row 8 above the tab's frame.
+				// This window, which stands in for the main one, needs no more, and no less than two steps of 4 under it.
 				var designed = DesignerMinimumSize();
 				if (designed.Width < rounded.Width || designed.Height < rounded.Height || designed.Height - rounded.Height > 8
 					|| designed.Width % 4 != 0 || designed.Height % 4 != 0)
 					faults.Add(line + ": the designer's smallest size " + designed + " is not the measured size rounded up to 4 px at 100 %.");
 				if (overlap != null || tableAt.Top + table.GetPreferredSize(new Size(table.Width, 0)).Height > general.ClientSize.Height - general.Padding.Bottom)
 					faults.Add(line + ": the General tab is cut" + (overlap == null ? "." : ": " + overlap + "."));
+				if (tallest.Value > general.ClientSize.Height)
+					faults.Add(line + ": " + tallest.Key + " is cut, in pages " + general.ClientSize.Height + " px tall.");
 				if (buttonsAt.Right > page.ClientSize.Width || buttonsAt.Bottom > page.ClientSize.Height)
 					faults.Add(line + ": the bottom buttons are cut.");
 			});

@@ -35,7 +35,7 @@
 	<SolidColorBrush x:Key="BorderField" Color="#212121" />
 	<!--  Field edge: the line round a box to type in while the mouse and the focus are elsewhere: the light theme's edge (#DEDEDE) with its lightness inverted  -->
 	<SolidColorBrush x:Key="BorderCheck" Color="#131313" />
-	<!--  Check box edge: the line round a check box or radio button that is not ticked or chosen, at rest: the box's own colour (BackgroundWhite), so it shows no edge until it is ticked (the field edge), pointed at or focused (the selection colour), as a box to type in  -->
+	<!--  Check box edge: the line round a check box or radio button that is not ticked or chosen, at rest: the box's own colour (BackgroundWhite), so it shows no edge until it is ticked (the field edge), pointed at or focused (the selection colour), as a box to type in. A box on the field colour, as in a grid's cell, keeps the field edge, or it would not show at all  -->
 	<SolidColorBrush x:Key="BorderShadow" Color="#2D2D2D" />
 	<!--  Shadow line: the outer line of a sunken edge, such as a group's frame, darker than the highlight line inside it  -->
 	<SolidColorBrush x:Key="BorderHighlight" Color="#424242" />

@@ -111,10 +111,11 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, faults.Count, faults.Count + " box(es) are off:" + Environment.NewLine + string.Join(Environment.NewLine, faults));
 		}
 
-		/// <summary>The left column of the General tab's boxes, by part, in its groups, each top to bottom.</summary>
+		/// <summary>The left column of the General tab's boxes, by part, in its groups, each top to bottom: the trigger and bumper, the buttons, the stick and its directions.</summary>
 		static readonly string[][] GeneralLeft =
 		{
-			new[] { "LeftTrigger", "LeftShoulder", "ButtonBack", "ButtonStart", "ButtonGuide", "DPad" },
+			new[] { "LeftTrigger", "LeftShoulder" },
+			new[] { "ButtonBack", "ButtonStart", "ButtonGuide", "DPad" },
 			new[] { "LeftThumbAxisX", "LeftThumbAxisY", "LeftThumbButton" },
 			new[] { "LeftThumbUp", "LeftThumbLeft", "LeftThumbRight", "LeftThumbDown" },
 		};
@@ -122,7 +123,8 @@ namespace x360ce.Tests
 		/// <summary>The right column, row for row beside the left one.</summary>
 		static readonly string[][] GeneralRight =
 		{
-			new[] { "RightTrigger", "RightShoulder", "ButtonY", "ButtonX", "ButtonB", "ButtonA" },
+			new[] { "RightTrigger", "RightShoulder" },
+			new[] { "ButtonY", "ButtonX", "ButtonB", "ButtonA" },
 			new[] { "RightThumbAxisX", "RightThumbAxisY", "RightThumbButton" },
 			new[] { "RightThumbUp", "RightThumbLeft", "RightThumbRight", "RightThumbDown" },
 		};

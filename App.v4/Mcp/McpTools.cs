@@ -48,7 +48,7 @@ namespace x360ce.App.Mcp
 		public const string SettingsPlace = "under AI assistant access on the Options tab";
 
 		/// <summary>What a caller without the token is told: the command line needs none, and the skill says how to use the program.</summary>
-		public const string Unauthorised = "Send the token from the program's AI assistant access settings as Authorization: Bearer <token>. "
+		public const string Unauthorised = "Send the token from the program’s AI assistant access settings as Authorization: Bearer <token>. "
 			+ "A program on this computer can call x360ce.exe -Ai instead, which needs no token. x360ce.exe -Skill explains how to use the program.";
 
 		/// <summary>
@@ -83,7 +83,7 @@ namespace x360ce.App.Mcp
 			McpServer.Instructions = "X360CE (Xbox 360 Controller Emulator) maps real controllers, wheels and pedals to virtual Xbox 360 controllers that games read. "
 				+ "Begin with devices_list and ui_current; find a setting with ui_find, point the person at it with ui_show, change it with ui_set, and keep changes with settings_save. "
 				+ "When ui_find finds nothing, search the help before saying the program cannot do it: a formula in a mapping box does what no single setting does. "
-				+ "A refusal names the access level the person must choose on the Options tab's AI page; the AI access controls themselves are the person's alone to change.";
+				+ "A refusal names the access level the person must choose on the Options tab’s AI page; the AI access controls themselves are the person’s alone to change.";
 			McpCatalog.SettingsPlace = SettingsPlace;
 			McpListener.Program.Unauthorised = Unauthorised;
 			// The Fix runs the same reservation elevated, for every user: Program.AdminCommands.cs.
@@ -117,7 +117,7 @@ namespace x360ce.App.Mcp
 			AiSkill.HelpPrefix = "references/help-";
 			AiSkill.ProgramAssembly = typeof(McpTools).Assembly;
 			AiAccessModel.Subject = "this program";
-			AiAccessModel.Example = "In the running x360ce, map the Thrustmaster device to Controller 2, show me where Controller 2's left stick is mapped, "
+			AiAccessModel.Example = "In the running x360ce, map the Thrustmaster device to Controller 2, show me where Controller 2’s left stick is mapped, "
 				+ "then round the corners of its square range.";
 			AiAccessModel.PromptRequest = "Connect to my Jocys.com X360 Controller Emulator (x360ce) as an MCP server, then list my controllers.";
 			AiAccessModel.PromptFirstTool = "devices_list";
@@ -126,7 +126,7 @@ namespace x360ce.App.Mcp
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 
-		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Vendor (its maker, as the controller tab's Vendor Name column shows it), Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces (the places games read it in: Real N for the device itself, Virtual N for a controller this program makes from it, Virtual N (waiting) while another controller holds that controller's place), Source (how the program reads it: DirectInput, or RawInput, which reads an Xbox One controller while a game has the focus; a controller read both ways is listed once for each, so map one of the two, and force feedback reaches it from either; Plugin for a device a plugin adds), Tools (what device_call can ask of a plugin device: read, which returns its settings with their values, and a set_ tool for each setting it can change, such as set_state; empty for any other device).")]
+		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Vendor (its maker, as the controller tab’s Vendor Name column shows it), Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces (the places games read it in: Real N for the device itself, Virtual N for a controller this program makes from it, Virtual N (waiting) while another controller holds that controller’s place), Source (how the program reads it: DirectInput, or RawInput, which reads an Xbox One controller while a game has the focus; a controller read both ways is listed once for each, so map one of the two, and force feedback reaches it from either; Plugin for a device a plugin adds), Tools (what device_call can ask of a plugin device: read, which returns its settings with their values, and a set_ tool for each setting it can change, such as set_state; empty for any other device).")]
 		public static object DevicesList()
 		{
 			var game = SettingsManager.CurrentGame;
@@ -151,12 +151,12 @@ namespace x360ce.App.Mcp
 		{
 			if (manager == null || device.InputSourceType != (int)InputSourceType.Plugin)
 				return null;
-			var type = manager.FindDeviceType(device.ProductGuid);
+			var type = Plugins.PluginDevices.FindType(device, manager);
 			return type == null || type.Faulted ? null : type;
 		}
 
-		[McpTool(AiAccess.Read, "Calls a tool of a plugin device, one devices_list lists in its Tools: read returns every setting of the device with its value, as JSON by name; a set_ tool sets one setting to value, and needs Configure. The device's tab can also open these tools as an MCP server of the device's own; the plugin's help in plugins_list says what each setting does.", Changes = true)]
-		public static object DeviceCall([Description("InstanceGuid from devices_list.")] string instanceGuid, [Description("One of the device's Tools in devices_list, such as read or set_state.")] string tool, [Description("The value a set_ tool sets, as text; read takes none.")] string value = "")
+		[McpTool(AiAccess.Read, "Calls a tool of a plugin device, one devices_list lists in its Tools: read returns every setting of the device with its value, as JSON by name; a set_ tool sets one setting to value, and needs Configure. The device’s tab can also open these tools as an MCP server of the device’s own; the plugin’s help in plugins_list says what each setting does.", Changes = true)]
+		public static object DeviceCall([Description("InstanceGuid from devices_list.")] string instanceGuid, [Description("One of the device’s Tools in devices_list, such as read or set_state.")] string tool, [Description("The value a set_ tool sets, as text; read takes none.")] string value = "")
 		{
 			Guid guid;
 			var device = Guid.TryParse(instanceGuid, out guid) ? SettingsManager.GetDevice(guid) : null;
@@ -174,7 +174,7 @@ namespace x360ce.App.Mcp
 			return found.Body(found.Parameters.Length == 0 ? new object[0] : new object[] { value });
 		}
 
-		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, State (Loaded; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab's Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL's path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin's documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, as does picking one in the list a controller tab's Add opens, and devices_list and device_map work on it as on any device, and device_call on its tools. How to write a plugin: x360ce.exe -Skill=plugins.")]
+		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, Enabled, State (Loaded; Disabled, switched off on the Options tab’s Plugins page; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab’s Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL’s path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin’s documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, as does picking one in the list a controller tab’s Add opens, and devices_list and device_map work on it as on any device, and device_call on its tools. How to write a plugin: x360ce.exe -Skill=plugins.")]
 		public static object PluginsList()
 		{
 			var manager = Plugins.PluginManager.Current;
@@ -184,6 +184,7 @@ namespace x360ce.App.Mcp
 			return manager.Files.Select(f => (object)new Dictionary<string, object>
 			{
 				{ "Name", f.Name },
+				{ "Enabled", f.Enabled },
 				{ "State", f.State.ToString() },
 				{ "Reason", f.Reason },
 				{ "Signer", f.Embedded ? "part of x360ce" : f.Signer },
@@ -229,7 +230,7 @@ namespace x360ce.App.Mcp
 			// The Add button asks about this; here the assistant is told, and decides with the person.
 			var twin = DInput.XInputPlaces.ReadsOnlyInFront(device) ? device.RawInputTwin(SettingsManager.UserDevices.ItemsToArraySynchronized()) : null;
 			return twin == null ? null : string.Format(
-				"Done. Windows feeds an Xbox controller's DirectInput row only to the program in front, so it works in x360ce and stops once a game is in front. "
+				"Done. Windows feeds an Xbox controller’s DirectInput row only to the program in front, so it works in x360ce and stops once a game is in front. "
 				+ "Its Raw Input row, InstanceGuid {0}, keeps working in games: map that one instead, and take this one off with controller 0.", twin.InstanceGuid);
 		}
 
@@ -269,7 +270,7 @@ namespace x360ce.App.Mcp
 		/// <summary>The engine whose passes <see cref="InputLog"/> logs. The program's own unless a test says otherwise.</summary>
 		public static Func<DInput.DInputHelper> Engine = () => Global.DHelper;
 
-		[McpTool(AiAccess.Configure, "Logs every change the engine reads from the controllers on the tabs for the seconds given, in order, as JSON: Changes, one line each, with the milliseconds since the log began, the device and the control, named as the Record button names them: each button pressed and let go, each hat direction, and each axis or slider as it reaches another eighth of its range. Logged inside each engine pass, so even a press shorter than a pass is there, as the controller got it. ShownBetweenPasses counts, by source, the changes that came and went between two passes, which reading each pass's state alone would have missed. Dropped counts changes that did not fit.", OnUiThread = false)]
+		[McpTool(AiAccess.Configure, "Logs every change the engine reads from the controllers on the tabs for the seconds given, in order, as JSON: Changes, one line each, with the milliseconds since the log began, the device and the control, named as the Record button names them: each button pressed and let go, each hat direction, and each axis or slider as it reaches another eighth of its range. Logged inside each engine pass, so even a press shorter than a pass is there, as the controller got it. ShownBetweenPasses counts, by source, the changes that came and went between two passes, which reading each pass’s state alone would have missed. Dropped counts changes that did not fit.", OnUiThread = false)]
 		public static object InputLog([Description("How long to log, 1 to 60 seconds.")] int seconds = 10, [Description("InstanceGuid from devices_list to log one device; omit for all.")] string instanceGuid = null)
 		{
 			seconds = Math.Max(1, Math.Min(60, seconds));
@@ -328,7 +329,7 @@ namespace x360ce.App.Mcp
 			return lines.ToArray();
 		}
 
-		[McpTool(AiAccess.Configure, "Applies a preset to the device selected on controller 1 to 4's tab, as the Load Preset button does, by the product name the Load Preset window lists. Select a row with ui_set on the tab's grid first.")]
+		[McpTool(AiAccess.Configure, "Applies a preset to the device selected on controller 1 to 4’s tab, as the Load Preset button does, by the product name the Load Preset window lists. Select a row with ui_set on the tab’s grid first.")]
 		public static string PresetApply([Description("1 to 4.")] int controller, [Description("Product name of the preset, as listed.")] string productName)
 		{
 			if (controller < 1 || controller > 4)

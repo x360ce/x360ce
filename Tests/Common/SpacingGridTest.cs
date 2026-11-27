@@ -257,6 +257,14 @@ namespace x360ce.Tests
 				{
 					var bounds = Slot(child);
 					var seen = child.Parent.RectangleToScreen(child.Bounds);
+					// A plain panel that does not scroll cuts what it holds at its edges, as the General tab's name over its
+					// number, whose empty rows reach past them: only what is inside is seen, and only that stands anywhere.
+					if (child.Parent is Panel holder && !(holder is TableLayoutPanel || holder is FlowLayoutPanel) && !holder.AutoScroll)
+					{
+						var clip = holder.RectangleToScreen(holder.ClientRectangle);
+						bounds = Rectangle.Intersect(bounds, clip);
+						seen = Rectangle.Intersect(seen, clip);
+					}
 					// Two buttons side by side with nothing between them, as tall as each other, are one split button: the
 					// second opens the first's choices.
 					var joined = child is Button ? items.FirstOrDefault(x => x.Button && (x.Bounds.Right == bounds.Left || bounds.Right == x.Bounds.Left)

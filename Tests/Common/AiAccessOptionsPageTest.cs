@@ -119,7 +119,7 @@ namespace x360ce.Tests
 					StringAssert.Contains(header, "Nothing can reach this program until you tick AI assistant access.");
 					Assert.AreEqual("Example", Find<Label>(ai, nameof(AiAccessUserControl.AiExampleLabel)).Text);
 					var example = Find<TextBox>(ai, nameof(AiAccessUserControl.AiExampleTextBox));
-					Assert.AreEqual("In the running x360ce, map the Thrustmaster device to Controller 2, show me where Controller 2's left stick is mapped, "
+					Assert.AreEqual("In the running x360ce, map the Thrustmaster device to Controller 2, show me where Controller 2’s left stick is mapped, "
 						+ "then round the corners of its square range.", example.Text);
 					Assert.IsTrue(example.ReadOnly, "The example is to read and copy, not to edit.");
 					Assert.IsTrue(example.Multiline && example.WordWrap, "The example does not wrap.");

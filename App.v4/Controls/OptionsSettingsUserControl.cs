@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.App.Controls
 {
@@ -33,13 +34,14 @@ namespace x360ce.App.Controls
 			ResumeLayout(false);
 			if (IsDesignMode)
 				return;
-			MoveModeComboBox.Items.AddRange(new object[]
+			ShowMoveModes();
+			EventHandler languageChanged = (s, e) =>
 			{
-				"Move them here, once every file is checked",
-				"Copy them, and leave the originals",
-				"Move them here and point the old folder at this one",
-			});
-			MoveModeComboBox.SelectedIndex = 0;
+				ShowMoveModes();
+				ShowStatus();
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 			// A drop-down list sizes to the width it was given, not to what is in it, so
 			// the widest entry is measured and it is made that wide. Anchoring it to the
 			// edge instead would stretch a list of three phrases across the window. The room
@@ -49,11 +51,31 @@ namespace x360ce.App.Controls
 				box.HandleCreated += (s, e) => FitToContent((ComboBox)s);
 				box.FontChanged += (s, e) => FitToContent((ComboBox)s);
 			}
-			FitToContent(MoveModeComboBox);
-			Refresh2();
+			// Each folder is checked by writing a file into it, so only once the page is shown: a start that never opens the
+			// page, such as one with /Profile, leaves the other folders as they were.
+			VisibleChanged += (s, e) =>
+			{
+				if (Visible && _locations == null)
+					Refresh2();
+			};
 		}
 
 		internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
+
+		/// <summary>Lists the ways to move the settings in the language chosen, keeping the way chosen.</summary>
+		private void ShowMoveModes()
+		{
+			var index = Math.Max(0, MoveModeComboBox.SelectedIndex);
+			MoveModeComboBox.Items.Clear();
+			MoveModeComboBox.Items.AddRange(new object[]
+			{
+				UiLanguage.T("OptionsSettingsUserControl.MoveThemHereOnceEveryFile", "Move them here, once every file is checked"),
+				UiLanguage.T("OptionsSettingsUserControl.CopyThemAndLeaveTheOriginals", "Copy them, and leave the originals"),
+				UiLanguage.T("OptionsSettingsUserControl.MoveThemHereAndPointThe", "Move them here and point the old folder at this one"),
+			});
+			MoveModeComboBox.SelectedIndex = index;
+			FitToContent(MoveModeComboBox);
+		}
 
 		/// <summary>Makes a list exactly as wide as its longest entry needs, as it is drawn.</summary>
 		private static void FitToContent(ComboBox box)
@@ -88,13 +110,17 @@ namespace x360ce.App.Controls
 				return;
 			PathLabel.Text = Path.Combine(location.Path, "Settings");
 			var problem = location.WriteProblem;
-			var holds = location.HasSettings ? "Holds settings." : "Empty.";
-			StatusLabel.Text = problem == null
-				? holds + " Can be written."
-				: holds + " Cannot be written: " + problem;
+			if (problem == null)
+				StatusLabel.Text = location.HasSettings
+					? UiLanguage.T("OptionsSettingsUserControl.HoldsSettingsWritable", "Holds settings. Can be written.")
+					: UiLanguage.T("OptionsSettingsUserControl.EmptyWritable", "Empty. Can be written.");
+			else
+				StatusLabel.Text = string.Format(location.HasSettings
+					? UiLanguage.T("OptionsSettingsUserControl.HoldsSettingsNotWritable", "Holds settings. Cannot be written: {0}")
+					: UiLanguage.T("OptionsSettingsUserControl.EmptyNotWritable", "Empty. Cannot be written: {0}"), problem);
 			var inUse = string.Equals(location.Path, EngineHelper.AppDataPath, StringComparison.OrdinalIgnoreCase);
 			ApplyButton.Enabled = !inUse && problem == null;
-			ApplyButton.Text = inUse ? "In use" : "&Keep settings here";
+			ApplyButton.Text = inUse ? UiLanguage.T("OptionsSettingsUserControl.InUse", "In use") : UiLanguage.T("OptionsSettingsUserControl.KeepSettingsHere", "&Keep settings here");
 		}
 
 		private SettingsLocation Selected()
@@ -131,14 +157,13 @@ namespace x360ce.App.Controls
 			var to = Path.Combine(target.Path, "Settings");
 
 			var warning = mode == SettingsTransferMode.Copy
-				? "The settings will be copied. Both folders keep a copy, and they will " +
-					"drift apart from now on."
-				: "Every file is copied and then checked against the original before " +
-					"anything is removed. If one does not match, nothing is removed at all.";
+				? UiLanguage.T("OptionsSettingsUserControl.CopiesDriftApart", "The settings will be copied. Both folders keep a copy, and they will " +
+					"drift apart from now on.")
+				: UiLanguage.T("OptionsSettingsUserControl.CheckedBeforeRemoved", "Every file is copied and then checked against the original before " +
+					"anything is removed. If one does not match, nothing is removed at all.");
 			var confirm = MessageBoxForm.Show(
-				"Settings will be kept in:" + Environment.NewLine + to + Environment.NewLine + Environment.NewLine +
-				warning + Environment.NewLine + Environment.NewLine + "Continue?",
-				"Move settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				string.Format(UiLanguage.T("OptionsSettingsUserControl.SettingsWillBeKeptIn", "Settings will be kept in:\r\n{0}\r\n\r\n{1}\r\n\r\nContinue?"), to, warning),
+				UiLanguage.T("OptionsSettingsUserControl.MoveSettings", "Move settings"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (confirm != DialogResult.Yes)
 				return;
 
@@ -146,8 +171,8 @@ namespace x360ce.App.Controls
 			if (!result.Success)
 			{
 				MessageBoxForm.Show(
-					"Nothing was changed." + Environment.NewLine + Environment.NewLine + result.Problem,
-					"Settings not moved", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					string.Format(UiLanguage.T("OptionsSettingsUserControl.NothingWasChanged", "Nothing was changed.\r\n\r\n{0}"), result.Problem),
+					UiLanguage.T("OptionsSettingsUserControl.SettingsNotMoved", "Settings not moved"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 				Refresh2();
 				return;
 			}
@@ -155,9 +180,11 @@ namespace x360ce.App.Controls
 			EngineHelper.AppDataPath = target.Path;
 			SettingsManager.ReloadSettingsFiles();
 			MessageBoxForm.Show(
-				string.Format("{0} file(s) copied, {1} checked, {2} removed from the old folder.",
+				string.Format(result.Copied == 1
+					? UiLanguage.T("OptionsSettingsUserControl.OneFileCopied", "{0} file copied, {1} checked, {2} removed from the old folder.")
+					: UiLanguage.T("OptionsSettingsUserControl.FilesCopied", "{0} files copied, {1} checked, {2} removed from the old folder."),
 					result.Copied, result.Verified, result.Removed),
-				"Settings moved", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				UiLanguage.T("OptionsSettingsUserControl.SettingsMoved", "Settings moved"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 			Refresh2();
 		}
 

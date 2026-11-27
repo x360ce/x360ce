@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.Drawing;
@@ -107,6 +108,7 @@ namespace x360ce.App.Forms
 		}
 
 		/// <summary>Names the view by what it shows, once it changed.</summary>
+		[System.ComponentModel.Localizable(false)]
 		protected void Say(string text)
 		{
 			if (AccessibleName != text)
@@ -206,19 +208,19 @@ namespace x360ce.App.Forms
 			get
 			{
 				if (Item.Unstable)
-					return "unstable";
+					return UiLanguage.T("DeviceTestControlView.Unstable", "unstable");
 				if (Item.Skipped)
-					return "skipped";
+					return UiLanguage.T("DeviceTestControlView.Skipped", "skipped");
 				if (Item.NotMoved)
-					return "not moved";
-				return Item.Complete ? "\u2713 full" : (int)Math.Floor(Item.Progress * 100) + " %";
+					return UiLanguage.T("DeviceTestControlView.NotMoved", "not moved");
+				return Item.Complete ? UiLanguage.T("DeviceTestControlView.Full", "\u2713 full") : (int)Math.Floor(Item.Progress * 100) + " %";
 			}
 		}
 
 		/// <summary>Draws the control as it is now.</summary>
 		public void Redraw()
 		{
-			Say(Item.Name + ": " + Status);
+			Say(Item.Name + ": " + UiLanguage.InSource(() => Status));
 			Invalidate();
 		}
 
@@ -280,7 +282,7 @@ namespace x360ce.App.Forms
 					var r = (float)Math.Min(pair.Radius[s], 1.42) * radius;
 					return new PointF(centre.X + r * (float)Math.Cos(angle), centre.Y - r * (float)Math.Sin(angle));
 				}).ToArray();
-				using (var shape = new Pen(full ? DeviceTestPaint.Full : DeviceTestPaint.Filling, 2))
+				using (var shape = new Pen(full ? DeviceTestPaint.Full : DeviceTestPaint.Filling, 2f * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale))
 					if (reached.Length == DeviceTestSteps.Sectors)
 						g.DrawPolygon(shape, points);
 					else
@@ -349,11 +351,11 @@ namespace x360ce.App.Forms
 		static string ChipText(DeviceTestButton button)
 		{
 			if (button.Unstable)
-				return button.Number + " unstable";
+				return string.Format(UiLanguage.T("DeviceTestButtonsView.Unstable", "{0} unstable"), button.Number);
 			if (button.Skipped)
-				return button.Number + " skipped";
+				return string.Format(UiLanguage.T("DeviceTestButtonsView.Skipped", "{0} skipped"), button.Number);
 			if (button.Twice)
-				return "\u2713 " + button.Number + " twice";
+				return string.Format(UiLanguage.T("DeviceTestButtonsView.DoublePress", "\u2713 {0} twice"), button.Number);
 			return button.Pressed ? "\u2713 " + button.Number : button.Number.ToString();
 		}
 

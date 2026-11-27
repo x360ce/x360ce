@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Processes;
 using System;
 using System.Data;
@@ -18,6 +19,19 @@ namespace JocysCom.ClassLibrary.Controls
 			InitializeComponent();
 			// The icon of the program that shows it.
 			Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+			if (IsDesignMode)
+				return;
+			EventHandler languageChanged = (s, e) =>
+			{
+				if (SelectedControl == null)
+					return;
+				SetFormTitle(SelectedControl.Name);
+				SetPropertiesTitle(ControlsDataGridView.SelectedRows.Count == 0
+					? SelectedControl.ToString()
+					: ControlsDataGridView[0, ControlsDataGridView.SelectedRows[0].Index].Value.ToString());
+			};
+			UiLanguage.Changed += languageChanged;
+			Disposed += (s, e) => UiLanguage.Changed -= languageChanged;
 		}
 
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
@@ -50,7 +64,7 @@ namespace JocysCom.ClassLibrary.Controls
 			dtControls.Columns.Add(typeColumn);
 			DataRow dr = null;
 			dr = dtControls.NewRow();
-			Text = c.Name + "Form Info";
+			SetFormTitle(c.Name);
 			dr["name"] = c.Name;
 			dr["type"] = c.GetType().ToString();
 			dtControls.Rows.Add(dr);
@@ -86,7 +100,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (ControlsDataGridView.SelectedRows.Count == 0)
 				return;
 			int idx = ControlsDataGridView.SelectedRows[0].Index;
-			PropertiesTabPage.Text = string.Format("Properties - {0}", ControlsDataGridView[0, idx].Value.ToString());
+			SetPropertiesTitle(ControlsDataGridView[0, idx].Value.ToString());
 			if (idx == 0)
 			{
 				ItemPropertyGrid.SelectedObject = SelectedControl;
@@ -119,10 +133,20 @@ namespace JocysCom.ClassLibrary.Controls
 		public void ResetFormButton_Click(object sender, EventArgs e)
 		{
 			ControlsDataGridView.ClearSelection();
-			PropertiesTabPage.Text = string.Format("Properties - {0}", SelectedControl.ToString());
+			SetPropertiesTitle(SelectedControl.ToString());
 			ItemPropertyGrid.SelectedObject = SelectedControl;
 		}
 
+
+		void SetFormTitle(string name)
+		{
+			Text = string.Format(UiLanguage.T("InfoForm.FormTitle", "{0} Form Info"), name);
+		}
+
+		void SetPropertiesTitle(string name)
+		{
+			PropertiesTabPage.Text = string.Format(UiLanguage.T("InfoForm.PropertiesTabTitle", "Properties - {0}"), name);
+		}
 
 		static InfoForm _infoForm;
 

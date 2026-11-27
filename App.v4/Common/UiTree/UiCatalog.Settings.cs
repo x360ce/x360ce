@@ -28,7 +28,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.AlwaysOnTopCheckBox)] = new Text(null,
 				"Keeps this window in front of other windows.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.StartWithWindowsCheckBox)] = new Text(null,
-				"Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, " +
+				"Starts this copy of the program when you sign in. The tick is Windows’ own setting, the one Task Manager shows on its Startup apps page, " +
 				"so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.ShowFormInfoCheckBox)] = new Text(null,
 				"Shows what a control is called when you Ctrl+Shift+right-click it.");
@@ -73,7 +73,7 @@ namespace x360ce.App.UiTree
 		static void AddRemainingCommands(Dictionary<string, Text> d)
 		{
 			d[nameof(XboxImageUserControl)] = new Text("Controller picture",
-				"Lights up each part of the controller as it is used, so a mapping can be checked by eye.");
+				"Lights up each part of the controller as it is used, so a mapping can be checked by eye. Click a part, then press or move the control on your device to map it.");
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowAllGamesMenuItem)] = new Text(null,
 				"Lists every game.");
 			d[nameof(GamesGridUserControl) + "." + nameof(GamesGridUserControl.ShowEnabledGamesMenuItem)] = new Text(null,

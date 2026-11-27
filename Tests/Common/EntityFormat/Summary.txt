@@ -1,0 +1,30 @@
+== XmlSerializer
+<Summary xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SummaryId>2a1c6076-dcf9-14cd-0ea1-f146e773311a</SummaryId>
+  <Users>529</Users>
+  <PadSettingChecksum>b5a589a2-b232-07b1-07e6-bf1ee7175ba7</PadSettingChecksum>
+  <ProductGuid>116d4db7-f098-912e-32d2-fe4c161e47a4</ProductGuid>
+  <ProductName>ProductName</ProductName>
+  <FileName>FileName</FileName>
+  <FileProductName>FileProductName</FileProductName>
+  <DateCreated>2001-02-23T16:30:06</DateCreated>
+  <DateUpdated>2001-03-06T06:41:06</DateUpdated>
+  <Weight>531</Weight>
+</Summary>
+== [DataMember] properties, with the key
+DateCreated=02/23/2001 16:30:06
+DateUpdated=03/06/2001 06:41:06
+FileName=FileName
+FileProductName=FileProductName
+ProductGuid=116d4db7-f098-912e-32d2-fe4c161e47a4
+ProductName=ProductName
+SummaryId=2a1c6076-dcf9-14cd-0ea1-f146e773311a
+Users=529
+Weight=531
+== [DataMember] properties the checksum is made from
+FileName=FileName
+FileProductName=FileProductName
+ProductGuid=116d4db7-f098-912e-32d2-fe4c161e47a4
+ProductName=ProductName
+Users=529
+Weight=531

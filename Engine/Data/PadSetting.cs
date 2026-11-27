@@ -1,6 +1,7 @@
 ﻿using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -23,7 +24,7 @@ namespace x360ce.Engine.Data
 		bool MapsChanged;
 		internal object MapsLock = new object();
 
-		[XmlIgnore]
+		[XmlIgnore, NotMapped]
 		public List<Map> Maps
 		{
 			get

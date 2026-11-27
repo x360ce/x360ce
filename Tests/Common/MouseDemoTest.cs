@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.DInput;
+using x360ce.Engine.Data;
 
 namespace x360ce.Tests
 {
@@ -90,7 +91,10 @@ namespace x360ce.Tests
 						return string.Format("at {0:0.00} s the stick is not as far as the mouse moved", off.Seconds);
 					return rests.Any(x => x.Stick > 0.3) ? null : "the stick never stays away from the centre while the mouse rests";
 				case MouseStyle.Screen:
-					// The stick is where the pointer is from the screen's centre.
+					// The stick is where the pointer is from the screen's centre, away from it before the pointer has moved at all.
+					var still = rests.FirstOrDefault(x => Distance(x.MouseX, x.MouseY, first.MouseX, first.MouseY) < 1e-9);
+					if (still == null || still.Stick < 0.3)
+						return "before the pointer moves the stick is at the centre, not where the pointer is";
 					var apart = rests.FirstOrDefault(x => Distance(x.StickX, x.StickY, x.MouseX, x.MouseY) > 0.05);
 					if (apart != null)
 						return string.Format("at {0:0.00} s the stick is not where the pointer is", apart.Seconds);
@@ -191,7 +195,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("The demo rests until Play, and its timer runs only while it plays on a page that is shown, in a window that is not minimised; Play while it plays stops it")]
+		[Description("The demo rests until Play, and its timer runs only while it plays on a page that is shown and enabled, in a window that is not minimised; Play while it plays stops it")]
 		public void The_timer_is_off_while_the_page_is_hidden()
 		{
 			Ui.OnUiThread(() =>
@@ -216,6 +220,13 @@ namespace x360ce.Tests
 					page.Visible = true;
 					Application.DoEvents();
 					Assert.IsTrue(demo.IsRunning, "Shown again, the demo does not move.");
+					// The page disables its controls when the controller has no device.
+					page.Enabled = false;
+					Application.DoEvents();
+					Assert.IsFalse(demo.IsRunning, "The demo moves while the page's controls are disabled.");
+					page.Enabled = true;
+					Application.DoEvents();
+					Assert.IsTrue(demo.IsRunning, "Enabled again, the demo does not move.");
 					form.WindowState = FormWindowState.Minimized;
 					Application.DoEvents();
 					Assert.IsFalse(demo.IsRunning, "The demo moves while its window is minimised.");
@@ -229,31 +240,44 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("The Mouse page shows the demo under its two stick groups, whole, with its picture, caption and Play button")]
+		[Description("In the main window at its smallest size, in the program's font and both themes, the Mouse page shows the demo under its two stick groups, whole, with its picture, caption and Play button")]
 		public void The_mouse_page_shows_the_demo_under_the_sticks()
+		{
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(x360ce.Engine.MapTo.Controller1), "Controller 1") }, (window, when) =>
+			{
+				window.MinimumSize = PadPageShortWindowTest.MinimumWindowSize();
+				window.Size = window.MinimumSize;
+				Application.DoEvents();
+				var page = PadPageShortWindowTest.Descendants(window).OfType<PadControl>().Single();
+				// The Mouse page is there only while a mouse is selected.
+				page.UpdateWheelTabs(new UserDevice { ProductName = "Mouse", CapType = (int)SharpDX.DirectInput.DeviceType.Mouse });
+				page.PadTabControl.SelectedTab = page.MouseTabPage;
+				Application.DoEvents();
+				var demo = page.MouseDemoPanel;
+				var tab = page.MouseTabPage;
+				var at = tab.RectangleToClient(demo.Parent.RectangleToScreen(demo.Bounds));
+				var groups = tab.RectangleToClient(page.LeftMouseStickPanel.Parent.RectangleToScreen(page.LeftMouseStickPanel.Bounds));
+				var line = string.Format("{0}: the demo is at {1} on a tab {2}, the stick group at {3}, its picture {4}.", when, at, tab.ClientSize, groups, demo.DemoPictureBox.Size);
+				Assert.IsTrue(demo.Visible && at.Width > 0 && at.Height > 0 && demo.DemoPictureBox.Width > 0 && demo.DemoPictureBox.Height > 0, "The demo is not shown. " + line);
+				Assert.IsTrue(at.Top >= groups.Bottom && at.Bottom <= tab.ClientSize.Height, "The demo is not whole under the stick groups. " + line);
+			});
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("The Mouse page is on a controller tab only while the selected device is a mouse")]
+		public void The_mouse_page_shows_only_for_a_mouse()
 		{
 			Ui.OnUiThread(() =>
 			{
-				using (var form = OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(x360ce.Engine.MapTo.Controller1), "Controller 1"))
+				using (var pad = new PadControl(x360ce.Engine.MapTo.Controller1))
 				{
-					var window = (Form)form;
-					window.MinimumSize = PadPageShortWindowTest.MinimumWindowSize();
-					window.Size = window.MinimumSize;
-					window.StartPosition = FormStartPosition.Manual;
-					window.Location = new Point(-3000, -3000);
-					window.ShowInTaskbar = false;
-					window.Show();
-					var page = (PadControl)window.Controls.Find("ControlPad1", true).FirstOrDefault() ?? PadPageShortWindowTest.Descendants(window).OfType<PadControl>().Single();
-					page.PadTabControl.SelectedTab = page.MouseTabPage;
-					Application.DoEvents();
-					var demo = page.MouseDemoPanel;
-					var tab = page.MouseTabPage;
-					var at = tab.RectangleToClient(demo.Parent.RectangleToScreen(demo.Bounds));
-					var groups = tab.RectangleToClient(page.LeftMouseStickPanel.Parent.RectangleToScreen(page.LeftMouseStickPanel.Bounds));
-					var line = string.Format("The demo is at {0} on a tab {1}, the stick group at {2}, its picture {3}.", at, tab.ClientSize, groups, demo.DemoPictureBox.Size);
-					Assert.IsTrue(demo.Visible && at.Width > 0 && at.Height > 0 && demo.DemoPictureBox.Width > 0 && demo.DemoPictureBox.Height > 0, "The demo is not shown. " + line);
-					Assert.IsTrue(at.Top >= groups.Bottom && at.Bottom <= tab.ClientSize.Height, "The demo is not whole under the stick groups. " + line);
-					window.Close();
+					var pages = pad.PadTabControl.TabPages;
+					pad.UpdateWheelTabs(new UserDevice { ProductName = "Mouse", CapType = (int)SharpDX.DirectInput.DeviceType.Mouse });
+					Assert.IsTrue(pages.Contains(pad.MouseTabPage), "A mouse has no Mouse page.");
+					pad.UpdateWheelTabs(new UserDevice { ProductName = "Gamepad", CapType = (int)SharpDX.DirectInput.DeviceType.Gamepad });
+					Assert.IsFalse(pages.Contains(pad.MouseTabPage), "A gamepad has a Mouse page.");
+					pad.UpdateWheelTabs(null);
+					Assert.IsFalse(pages.Contains(pad.MouseTabPage), "No device, yet a Mouse page.");
 				}
 			});
 		}

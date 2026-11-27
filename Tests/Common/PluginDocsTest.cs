@@ -38,7 +38,7 @@ namespace x360ce.Tests
 			StringAssert.Contains(text, "- Shape (Movement, one of: Swing and ramp, Circle, starts at Swing and ramp): ");
 			StringAssert.Contains(text, "- Moving time (s) (Movement, a number from 0.5 to 20, starts at 4): ");
 			StringAssert.Contains(text, "- Reads per second (Status, read only): ");
-			StringAssert.Contains(text, "- The plugin's own control, TestControllerPad, on the first page, before Properties.");
+			StringAssert.Contains(text, "- The plugin’s own control, TestControllerPad, on the first page, before Properties.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
@@ -129,7 +129,7 @@ namespace x360ce.Tests
 				var built = Run("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -File Build-Plugins.ps1 -Output \"" + plugins + "\"", source);
 				Assert.AreEqual(0, built.Item1, "Build-Plugins.ps1 failed: " + built.Item2);
 				var files = Directory.GetFiles(plugins, "*", SearchOption.AllDirectories).Select(x => x.Substring(plugins.Length + 1)).OrderBy(x => x).ToArray();
-				CollectionAssert.AreEqual(new[] { @"RemoteMcpController\RemoteMcpController.dll", @"TestController\TestController.dll" }, files,
+				CollectionAssert.AreEqual(new[] { @"FitnessMachine\FitnessMachine.dll", @"RemoteMcpController\RemoteMcpController.dll", @"TestController\TestController.dll", @"WheelTelemetry.Games\WheelTelemetry.Games.dll", @"WheelTelemetry\WheelTelemetry.dll" }, files,
 					"A plugin builds into one file in a folder of its own; the contract stays out.");
 			}
 			finally

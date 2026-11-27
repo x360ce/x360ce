@@ -60,7 +60,7 @@ A few devices do not tell Windows what their controls are, so Windows does not l
 
 ## Plugin devices
 
-A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. So is the Remote MCP Controller, whose controls a program or an AI assistant sets over MCP, through x360ce's own AI assistant access or an MCP server of its own that its tab opens. A plugin device has a tab of its own on the controller page it is mapped to, with a page for each part: the plugin's own control, `[Properties]`, its settings in a grid like Visual Studio's Properties window, and `[MCP Server]` for a device with an MCP server of its own. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](https://github.com/x360ce/x360ce/wiki/Help.Plugins).
+A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. So is the Remote MCP Controller, whose controls a program or an AI assistant sets over MCP, through x360ce's own AI assistant access or an MCP server of its own that its tab opens. So is the Fitness Machine, which reads an exercise bike, treadmill, rower or cross trainer over Bluetooth: see "An exercise bike as a controller" below. Wheel Telemetry is also embedded and feeds live vehicle physics from racing games into the Wheel tab's centering spring without taking over other telemetry apps' ports: see [How a real car centres its steering wheel](https://github.com/x360ce/x360ce/wiki/Help.WheelCentering). Wheel Telemetry Games adds a tab to the `[Games]` tab for each game it helps send telemetry to Wheel Telemetry, such as GTA V, Forza Horizon 6 and F1 25: see [Wheel Telemetry Games](https://github.com/x360ce/x360ce/wiki/Help.Plugins#wheel-telemetry-games). A plugin device has a tab of its own on the controller page it is mapped to, with a page for each part: the plugin's own control, `[MCP Server]` for a device with an MCP server of its own, `[Properties]`, its settings in a grid like Visual Studio's Properties window, and `[Help]`, what the plugin says about the device. A plugin can recommend how its device is mapped: the device put on a controller tab, and `[Auto Preset]`, fill the tab from it, and the `[SDL]` page shows it. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](https://github.com/x360ce/x360ce/wiki/Help.Plugins).
 
 ## One device on several controller tabs
 
@@ -87,6 +87,8 @@ A device can drive up to four emulated controllers at once.
 5. Click `[Save All]` button (at top right corner of application) when done.
 6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 7. Launch the game and see how it works.
+
+A mapping box and its mark on the controller picture light together, in one colour: green while the control in the box moves or is pressed, as the `[Input]` column lights it, yellow while the pointer is on the box or the mark, and red while the box is being recorded. Red wins over yellow, and yellow over green.
 
 The small green number under each name on the `[General]` tab is what the game is being given for that part right now, the same as the controller picture shows: `1` while a button is pressed and `0` while not, `0` to `255` for a trigger, and `-32768` to `32767` for a stick axis. A stick direction, such as `[Stick Up]`, shows the stick's position while it points that way and `0` otherwise. The D-Pad shows its directions added up: up `1`, down `2`, left `4`, right `8`.
 
@@ -155,6 +157,14 @@ The emulated controllers can be switched off without closing the program, so a g
 5. A font removed from Windows is forgotten when x360ce starts, and the default is used.
 6. The scroll bars follow Windows. To always see their arrows and a full-size thumb, turn on Windows `Settings` → `Accessibility` → `Visual effects` → `Always show scroll bars`.
 
+## Language
+
+1. The globe at the right end of the `[Game]` row lists the languages x360ce is shown in, each in its own words with its flag: English, 中文, Українська, Español, Português, Deutsch, 日本語, Français, Polski, 한국어 and Türkçe.
+2. Pick one, and the window changes at once. The choice is kept in the settings. Until one is picked, x360ce follows the display language of Windows when it offers it, and English otherwise.
+3. A text not yet translated shows in English. A few texts change only when x360ce starts again: the names of the problems on the `[Issues]` tab, and the pages a plugin built before the change.
+4. An AI assistant reads the pages in English whatever language is shown, so its searches and paths do not change.
+5. To correct a translation or add the missing ones, see [Languages](https://github.com/x360ce/x360ce/wiki/Help.Languages).
+
 ## Saving and loading a preset as a file
 
 1. `[Controller #]` tab → `[Save Preset...]` writes the controller's settings to an `XML` file.
@@ -195,6 +205,12 @@ Each tab owns one of the four XInput places, and the place never moves: `[Contro
 is XInput 1. Three things can be in it - the controller this program makes, a real
 controller you plugged in, or nothing.
 
+A tab works without the tabs before it. Windows gives a new controller the lowest free
+place, so while a place below a tab's own is free, the program holds it for a moment with a
+temporary controller, until the tab's controller has arrived in its own place, and then takes
+the temporary one away. A game already running may see a controller come and go in that
+place. A temporary controller is never sent any input.
+
 | Half | Colour | Meaning |
 | --- | --- | --- |
 | Left (your device) | Green | A device mapped here is connected. |
@@ -226,7 +242,8 @@ another of this program's own virtual controllers, or a virtual controller this 
 not make, such as one from DS4Windows or one left behind, which the `[Devices]` page lists
 as Leftover. Until its place is free, the `[Devices]` page lists the tab's own controller as
 `Virtual N (waiting)`. `[Auto-Order]` on the `[Devices]` page moves a real controller or another of
-this program's own virtual controllers out of the way; a Leftover has to be removed with
+this program's own virtual controllers out of the way, and lists the place of a tab that makes no
+controller as `Free N`; a Leftover has to be removed with
 `[Remove Leftover Pads]` on the same page instead. While a tab waits, its controller picture
 stays grey: the controller in its place is not the tab's own.
 
@@ -307,6 +324,8 @@ With the usual emulation, `Virtual`, a game reads an Xbox 360 gamepad whatever t
 
 Note: Some games have control issues when the anti-dead zone is `100%`.
 
+Best settings for steering, wheel range and pedals, step by step and with tested values for each game: [Best settings for driving games](https://github.com/x360ce/x360ce/wiki/Help.GameSettings).
+
 ## Gas and brake pedals are combined. How can I separate them?
 
 Solution 1: If you have `Logitech wheel`:
@@ -349,6 +368,10 @@ Do not calibrate the emulated controller in Windows or with a tool such as DXTwe
 
 To leave the wheel at its range and steer as a shorter one, put a formula in the box that steers, usually `Left Thumb Axis X`: `=a1*900/270` steers as 270° on a wheel set to 900°, so the game reaches full lock at 135° each way. Past that the wheel turns on and nothing more happens. Write the wheel's range in place of 900, the range you want in place of 270, and keep the axis the box held: `=a1*900/270` for `Axis 1`. See "Expressions" below.
 
+## Shift lights
+
+`[RGB strip]` on the `[Wheel]` page shows the engine's revs on the shift lights of a Logitech G27, G29 or G923, while a game sends telemetry. Below half revs the lights are off. As the revs rise, they come on in pairs, from green at both ends to red in the middle. All of them flash at the rev limit: time to shift up. The lights show only the revs, not whether the gear is the best one. `[Test]` sweeps them without a game.
+
 ## Wheel centering spring
 
 A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. On the wheel's controller tab, open the `[Wheel]` page and tick `[Centering spring]` to hold it at its centre. Take your hands off the wheel and press `[Auto]`. It measures the wheel's friction, the least force that turns it, and sets `[Friction]` a tenth above it.
@@ -374,6 +397,27 @@ controller, so a game that reads only a gamepad can be flown with the real stick
 5. The arm switch works as a button. Record it by flipping the switch into the armed position: the status bar then says which position presses the button. If the bumper is held while you are disarmed, click the box and choose `[Adjust]` → `[Invert]`. The preset presses the bumper only in the last quarter of the switch's travel, so the middle of a three-position switch leaves it released; that point is the Left Bumper's press point on the `[Buttons]` tab.
 6. Hide the radio from the game with HID Hide, as in "Hiding the real controller from games (HID Hide)", so the game reads only the emulated controller.
 7. Click `[Save All]`, then keep x360ce running while you fly. Minimise it rather than closing it: the game sees the controller only while x360ce runs.
+
+## An exercise bike as a controller
+
+Experimental: walk, drive or row in games with a fitness machine. Tested on a Tunturi E60R exercise bike only. Use it
+with care and at your own risk.
+
+An exercise bike, treadmill, rower or cross trainer that uses Bluetooth's standard Fitness Machine Service, as most
+smart bikes and trainers do, can drive a game: pedal to drive a car, or to run on foot, as in GTA. x360ce reads it with
+its Fitness Machine plugin, on Windows 10 or later. The device's tab on the controller page, `[Fitness Machine]`, has
+three pages: `[Connection]` finds the machine, `[Properties]` holds its settings and what it reads now, and `[Help]`
+explains every axis, slider and button.
+
+1. Turn the machine on, and Bluetooth on the computer.
+2. On a controller tab click `[Add...]`, select `Fitness Machine` and click `[Add Selected Device]`. That fills the triggers, as `[Auto Preset]` does: `[Right Trigger]` takes `Axis 1`, your speed forward, and `[Left Trigger]` takes `Axis 2`, your speed in reverse. At `[Max speed (km/h)]` a trigger is pressed all the way. To walk or run on foot, map `[Left Thumb Axis Y]` to `IAxis 3`.
+3. On the `[Fitness Machine]` tab's `[Connection]` page click `[Scan]` and select the machine in the list. That chooses it for this device; it does not connect by itself. If the machine is not listed, tick `[Show all Bluetooth devices]`.
+4. The device's `[Enabled]` box connects: ticked, in the controller's list and on the `[Devices]` tab, x360ce connects to the machine, trying again until it connects, and does so by itself whenever x360ce starts. If it asks to pair, accept only if both show the same number. Its values appear on the right, and `[Start]`, `[Pause]` and the target `[Set]` buttons send it standard commands.
+5. Unticking the device, removing it, taking it off every controller, or closing x360ce lets go of the machine, which goes back to the level you set on it. Each device connects to its own machine: two devices can read two machines.
+6. Reverse: tick `[Reverse]`; or set `[Reverse gear]` to a resistance level, and turning the machine's own resistance down to it drives backwards. A cross trainer pedalled backwards drives backwards by itself. A button of another device can shift into reverse while it is held, with formulas: for button 1 of device 2 on Controller 1, write `=s1*(1-c1.d2.b1)` in `[Right Trigger]` and `=s1*c1.d2.b1` in `[Left Trigger]`, where `Slider 1` is your speed either way. See "Expressions" below.
+7. Force feedback: on the `[Force Feedback]` page tick `[Enable]`. The game's rumble then makes the machine harder to pedal, by up to `[Extra resistance (levels)]`, or makes the road climb, by up to `[Road grade (%)]`, as `[Force feedback to]` says. When the rumble stops, or x360ce lets go of the machine, it goes back to the level you set on it.
+8. `[Heart rate limit (bpm)]`: while your heart rate is at or above it, the rumble adds nothing and `Button 4` is held.
+9. A computer's Bluetooth cannot connect to itself, so a transmitter such as the Virtual Fitness Machine Transmitter must run on another device, not on the computer that runs x360ce.
 
 ## Expressions: working out a value from other controls
 
@@ -533,6 +577,10 @@ frames the control and shows a balloon with its words beside it for a few second
 such steps into a short script, pointing, pausing, pressing and setting in turn, so it walks you
 through a task rather than describing it, and it can find any control by words from its name or
 purpose, in any order, rather than reading the whole interface first.
+
+A script can list every page of every window the program has open, open each page and wait until
+it is drawn, close the windows it opened, and read each window's handle, so it can take a picture
+of every page with no mouse, no keyboard and no AI.
 
 Everything done through the door is written down: Open log on the AI page shows each call,
 its arguments and what came of it, with the time, so you can see afterwards what an assistant did.

@@ -1,3 +1,4 @@
+using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using System;
@@ -103,7 +104,7 @@ namespace x360ce.App.Controls
 		bool _Enabled = true;
 
 		readonly Dictionary<MapCode, GlyphState> _States = new Dictionary<MapCode, GlyphState>();
-		readonly Dictionary<string, Rectangle> _Groups = new Dictionary<string, Rectangle>();
+		readonly Dictionary<string, RectangleF> _Groups = new Dictionary<string, RectangleF>();
 
 		struct GlyphState
 		{
@@ -116,8 +117,6 @@ namespace x360ce.App.Controls
 
 		/// <summary>Raised to end recording; returns true when something was captured.</summary>
 		public Func<bool> StopRecording;
-
-		public string MappingDone = "Mapping Done";
 
 		#region Setup
 
@@ -161,14 +160,14 @@ namespace x360ce.App.Controls
 			var top = points.Min(p => p.Y) - GlyphSize;
 			var right = points.Max(p => p.X) + GlyphSize;
 			var bottom = points.Max(p => p.Y) + GlyphSize;
-			_Groups[name] = Rectangle.FromLTRB(left, top, right, bottom);
+			_Groups[name] = RectangleF.FromLTRB(left, top, right, bottom);
 		}
 
-		/// <summary>Raw position of a mapping on the canvas. X and Y in the table are centres.</summary>
-		static Point CanvasPoint(ImageInfo info)
+		/// <summary>Raw position of a mapping on the canvas. X and Y in the table are the middles of the buttons, kept to a fraction of a unit.</summary>
+		static PointF CanvasPoint(ImageInfo info)
 		{
 			var y = info.Image == 1 ? info.Y : TopImageHeight + ImageGap + info.Y;
-			return new Point((int)Math.Round(info.X), (int)Math.Round(y));
+			return new PointF((float)info.X, (float)y);
 		}
 
 		/// <summary>Where a glyph is drawn, which is not always where the mapping sits.</summary>
@@ -179,16 +178,16 @@ namespace x360ce.App.Controls
 		/// along the same line until the glyphs clear each other. Groups already spaced wider than
 		/// a glyph, such as the face buttons, are left exactly where they are.
 		/// </remarks>
-		Point GlyphPoint(ImageInfo info)
+		PointF GlyphPoint(ImageInfo info)
 		{
-			Point resolved;
+			PointF resolved;
 			return _GlyphPoints.TryGetValue(info.Code, out resolved) ? resolved : CanvasPoint(info);
 		}
 
 		/// <summary>Centre to centre distance that keeps neighbouring glyphs apart.</summary>
 		public const int MinimumGlyphSpacing = GlyphSize + 1;
 
-		Dictionary<MapCode, Point> _GlyphPoints = new Dictionary<MapCode, Point>();
+		Dictionary<MapCode, PointF> _GlyphPoints = new Dictionary<MapCode, PointF>();
 
 		/// <summary>
 		/// Where every glyph is drawn, given the mapping table.
@@ -196,9 +195,9 @@ namespace x360ce.App.Controls
 		/// <remarks>
 		/// Pure, so the spacing can be checked without building a controller picture.
 		/// </remarks>
-		public static Dictionary<MapCode, Point> BuildGlyphPoints(ImageInfos infos)
+		public static Dictionary<MapCode, PointF> BuildGlyphPoints(ImageInfos infos)
 		{
-			var points = new Dictionary<MapCode, Point>();
+			var points = new Dictionary<MapCode, PointF>();
 			if (infos == null)
 				return points;
 			foreach (var info in infos)
@@ -210,7 +209,7 @@ namespace x360ce.App.Controls
 			return points;
 		}
 
-		static void SpreadGroup(ImageInfos infos, List<MapCode> codes, Dictionary<MapCode, Point> points)
+		static void SpreadGroup(ImageInfos infos, List<MapCode> codes, Dictionary<MapCode, PointF> points)
 		{
 			var members = infos.Where(x => codes.Contains(x.Code)).ToArray();
 			// The centre is the mapping with no direction in its name, such as DPad itself.
@@ -226,10 +225,8 @@ namespace x360ce.App.Controls
 				var distance = Math.Sqrt(dx * dx + dy * dy);
 				if (distance < 0.5 || distance >= MinimumGlyphSpacing)
 					continue;
-				var factor = MinimumGlyphSpacing / distance;
-				points[info.Code] = new Point(
-					centre.X + (int)Math.Round(dx * factor),
-					centre.Y + (int)Math.Round(dy * factor));
+				var factor = (float)(MinimumGlyphSpacing / distance);
+				points[info.Code] = new PointF(centre.X + dx * factor, centre.Y + dy * factor);
 			}
 		}
 
@@ -241,14 +238,12 @@ namespace x360ce.App.Controls
 		public void SetImage(MapCode code, NavImageType type, bool show)
 		{
 			code = NavImages.GetNameCode(code);
-			var name = NavImages.GetName(code, type);
 			var target = _States.ContainsKey(code) ? _States[code] : new GlyphState();
-			// Nothing to repaint when neither the artwork nor its visibility moved.
+			// Nothing to repaint when neither the colour nor the visibility moved.
 			if (target.Type == type && target.Show == show)
 				return;
 			_States[code] = new GlyphState { Type = type, Show = show };
-			if (NavImages.Exists(name))
-				Invalidate();
+			Invalidate();
 		}
 
 		/// <summary>Fades the controller while the emulated controller is not connected.</summary>
@@ -301,20 +296,23 @@ namespace x360ce.App.Controls
 		#region Help text
 
 		/// <summary>Show a short instruction under the controller; it clears itself.</summary>
-		public void SetHelpText(string text = null)
+		public void SetHelpText(string text = null, bool mappingDone = false)
 		{
 			_HelpText = text ?? "";
+			_MappingDone = mappingDone;
 			Invalidate();
-			if (string.IsNullOrEmpty(_HelpText))
+			if (!_MappingDone && string.IsNullOrEmpty(_HelpText))
 				return;
 			ControlsHelper.BeginInvoke(() =>
 			{
 				_HelpText = "";
+				_MappingDone = false;
 				Invalidate();
 			}, 4000);
 		}
 
 		string _HelpText = "";
+		bool _MappingDone;
 
 		#endregion
 
@@ -322,12 +320,19 @@ namespace x360ce.App.Controls
 
 		/// <summary>The artwork's width at the screen's scale, and no height of its own.</summary>
 		/// <remarks>
-		/// On the General page the picture stands beside the rows of boxes and is drawn to fit the height they make, so it
-		/// never pushes them apart.
+		/// On the General page the picture has a column of its own between the two columns of boxes and names, which take
+		/// the width their words need in every language, and it is drawn to fit the height the rows make, in the middle of
+		/// the room it is given, so it never pushes the boxes apart or lies under a name.
 		/// </remarks>
 		public override Size GetPreferredSize(Size proposedSize)
 		{
 			return new Size((int)Math.Round(CanvasWidth * ControlsHelper.DpiScale), 0);
+		}
+
+		/// <summary>How far right the artwork is drawn, so it stands in the middle of the room it is given.</summary>
+		int OffsetX
+		{
+			get { return Math.Max(0, (Width - (int)Math.Round(CanvasWidth * CanvasScale)) / 2); }
 		}
 
 		/// <summary>Canvas units to control pixels, keeping the artwork's proportions.</summary>
@@ -341,13 +346,43 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		Rectangle ToScreen(Point centre, int sizeInCanvasUnits)
+		/// <summary>Where the top view is drawn, in whole pixels.</summary>
+		Rectangle TopBounds
 		{
-			var scale = CanvasScale;
-			var size = Math.Max(1, (int)Math.Round(sizeInCanvasUnits * scale));
-			var x = (int)Math.Round(centre.X * scale) - size / 2;
-			var y = (int)Math.Round(centre.Y * scale) - size / 2;
-			return new Rectangle(x, y, size, size);
+			get
+			{
+				var scale = CanvasScale;
+				return new Rectangle(OffsetX, 0, (int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale));
+			}
+		}
+
+		/// <summary>Where the front view is drawn, in whole pixels.</summary>
+		Rectangle FrontBounds
+		{
+			get
+			{
+				var scale = CanvasScale;
+				return new Rectangle(OffsetX, (int)Math.Round((TopImageHeight + ImageGap) * scale),
+					(int)Math.Round(CanvasWidth * scale), (int)Math.Round(FrontImageHeight * scale));
+			}
+		}
+
+		const int FrontImageHeight = CanvasHeight - TopImageHeight - ImageGap;
+
+		/// <summary>The square a glyph of the given size is drawn in, its middle on the canvas point given.</summary>
+		/// <remarks>
+		/// The point is carried to the screen through the bounds its picture is drawn in, which are rounded to whole pixels, so
+		/// a mark lands on the pixels its button is drawn on; the square is then rounded once, which keeps its middle within half
+		/// a pixel of the point at any scale.
+		/// </remarks>
+		Rectangle ToScreen(PointF centre, int sizeInCanvasUnits)
+		{
+			var size = Math.Max(1, (int)Math.Round(sizeInCanvasUnits * CanvasScale));
+			var front = centre.Y >= TopImageHeight + ImageGap;
+			var bounds = front ? FrontBounds : TopBounds;
+			var x = bounds.X + centre.X * bounds.Width / CanvasWidth;
+			var y = bounds.Y + (front ? centre.Y - TopImageHeight - ImageGap : centre.Y) * bounds.Height / (front ? FrontImageHeight : TopImageHeight);
+			return new Rectangle((int)Math.Round(x - size / 2f), (int)Math.Round(y - size / 2f), size, size);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -358,15 +393,10 @@ namespace x360ce.App.Controls
 			// The theme repaints every window when it changes, so the pictures follow it here.
 			if (_PicturesDark != FormsTheme.IsDark)
 				LoadPictures(FormsTheme.IsDark);
-			var scale = CanvasScale;
 			try
 			{
-				var topBounds = new Rectangle(0, 0,
-					(int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale));
-				var frontBounds = new Rectangle(0,
-					(int)Math.Round((TopImageHeight + ImageGap) * scale),
-					(int)Math.Round(CanvasWidth * scale),
-					(int)Math.Round((CanvasHeight - TopImageHeight - ImageGap) * scale));
+				var topBounds = TopBounds;
+				var frontBounds = FrontBounds;
 				// Pixel for pixel: each picture is already the size it fills.
 				e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 				e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
@@ -425,7 +455,7 @@ namespace x360ce.App.Controls
 			if (opacity <= 0f)
 				return;
 			var bounds = ToScreen(GlyphPoint(info), GlyphSize);
-			var glyph = NavImages.Get(info.Code, state.Type, bounds.Width);
+			var glyph = NavImages.Get(info.Code, PadControlImager.LightColor(state.Type), bounds.Width);
 			ControlsHelper.DrawImageWithOpacity(g, glyph, bounds, opacity);
 		}
 
@@ -459,7 +489,7 @@ namespace x360ce.App.Controls
 			var info = _Infos.FirstOrDefault(x => x.Code == code);
 			if (info == null)
 				return;
-			var bounds = ToScreen(ThumbMarkPoint(CanvasPoint(info), position), IndicatorSize);
+			var bounds = ToScreen(ThumbMarkPoint(Point.Round(CanvasPoint(info)), position), IndicatorSize);
 			ControlsHelper.DrawImageWithOpacity(g,
 				NavImages.Get("NavAxisActive", bounds.Width), bounds, ShownOpacity);
 		}
@@ -494,20 +524,21 @@ namespace x360ce.App.Controls
 			var info = _Infos.FirstOrDefault(x => x.Code == code);
 			if (info == null)
 				return;
-			var bounds = ToScreen(TriggerBarPoint(CanvasPoint(info), level), IndicatorSize);
+			var bounds = ToScreen(TriggerBarPoint(Point.Round(CanvasPoint(info)), level), IndicatorSize);
 			ControlsHelper.DrawImageWithOpacity(g,
 				NavImages.Get("NavTriggerActive", bounds.Width), bounds, ShownOpacity);
 		}
 
 		void DrawHelpText(Graphics g)
 		{
-			if (string.IsNullOrEmpty(_HelpText))
+			if (!_MappingDone && string.IsNullOrEmpty(_HelpText))
 				return;
 			// An instruction is a notice, and the end of the mapping a success.
-			var key = _HelpText == MappingDone ? "ForegroundSuccess" : "ForegroundInformation";
+			var key = _MappingDone ? "ForegroundSuccess" : "ForegroundInformation";
+			var text = _MappingDone ? UiLanguage.T("XboxImageUserControl.MappingDone", "Mapping Done") : _HelpText;
 			using (var brush = new SolidBrush(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor(key)))
 			using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Far })
-				g.DrawString(_HelpText, Font, brush, new RectangleF(0, 0, Width, Height), format);
+				g.DrawString(text, Font, brush, new RectangleF(0, 0, Width, Height), format);
 		}
 
 		#endregion
@@ -520,7 +551,7 @@ namespace x360ce.App.Controls
 			if (_Imager == null || ControlsHelper.IsDesignMode(this))
 				return;
 			var scale = CanvasScale;
-			var point = new Point((int)Math.Round(e.X / scale), (int)Math.Round(e.Y / scale));
+			var point = new PointF((e.X - OffsetX) / scale, e.Y / scale);
 			var before = HoverSignature();
 			_Imager.ShowLeftThumbButtons = InGroup(nameof(SettingsConverter.LeftThumbCodes), point);
 			_Imager.ShowRightThumbButtons = InGroup(nameof(SettingsConverter.RightThumbCodes), point);
@@ -529,8 +560,11 @@ namespace x360ce.App.Controls
 			_Imager.ShowMenuButtons = InGroup(nameof(SettingsConverter.MenuButtonCodes), point);
 			_Imager.ShowTriggerButtons = InGroup(nameof(SettingsConverter.TriggerButtonCodes), point);
 			_Imager.ShowShoulderButtons = InGroup(nameof(SettingsConverter.ShoulderButtonCodes), point);
+			// The mark a click records is the one the pointer is on, and it lights its box.
+			var pointed = _Infos == null ? null : HitTest(e.Location);
+			_Imager.PointedMark = pointed == null ? (MapCode?)null : NavImages.GetNameCode(pointed.Code);
 			if (HoverSignature() != before)
-				Invalidate();
+				_Imager.UpdateLights();
 		}
 
 		string HoverSignature()
@@ -540,12 +574,12 @@ namespace x360ce.App.Controls
 			return string.Concat(
 				_Imager.ShowLeftThumbButtons, _Imager.ShowRightThumbButtons, _Imager.ShowDPadButtons,
 				_Imager.ShowMainButtons, _Imager.ShowMenuButtons, _Imager.ShowTriggerButtons,
-				_Imager.ShowShoulderButtons);
+				_Imager.ShowShoulderButtons, _Imager.PointedMark);
 		}
 
-		bool InGroup(string name, Point canvasPoint)
+		bool InGroup(string name, PointF canvasPoint)
 		{
-			Rectangle bounds;
+			RectangleF bounds;
 			return _Groups.TryGetValue(name, out bounds) && bounds.Contains(canvasPoint);
 		}
 
@@ -561,7 +595,8 @@ namespace x360ce.App.Controls
 			_Imager.ShowMenuButtons = false;
 			_Imager.ShowTriggerButtons = false;
 			_Imager.ShowShoulderButtons = false;
-			Invalidate();
+			_Imager.PointedMark = null;
+			_Imager.UpdateLights();
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)

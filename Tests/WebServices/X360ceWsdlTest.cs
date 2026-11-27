@@ -82,19 +82,48 @@ namespace x360ce.Tests
 		/// <summary>Operations 4.23 adds to the contract, by name.</summary>
 		static readonly string[] PlannedOperations = { "GetServerInfo" };
 
+		/// <summary>
+		/// Types of the live contract a service built on the generated data classes does not have: the Entity Framework
+		/// designer's base types. The generated classes derive from <c>NotifyPropertyChanged</c> instead.
+		/// </summary>
+		/// <remarks>
+		/// Their one element, <c>EntityKey</c>, was in the replies only for rows read through the context, and every
+		/// program clears it before it saves. XmlSerializer passes over an element its class does not have, so a released
+		/// program reads the replies without it, and the service reads a request that still carries it. The deployed
+		/// service keeps the designer's classes until the new one replaces it, so the target may be either: with all of
+		/// these types and no <c>NotifyPropertyChanged</c>, or with <c>NotifyPropertyChanged</c> and none of them.
+		/// </remarks>
+		static readonly string[] PlannedRemovals = { "EntityObject", "StructuralObject", "EntityKey", "ArrayOfEntityKeyMember", "EntityKeyMember" };
+
+		/// <summary>The one new type of a service built on the generated data classes, as the additions list it.</summary>
+		const string GeneratedBaseType = "NotifyPropertyChanged: new type";
+
+		/// <summary>True when the target is built on the generated data classes, false when on the designer's.</summary>
+		static bool IsBuiltOnGeneratedClasses(Dictionary<string, string[]> actual)
+		{
+			var designer = PlannedRemovals.Count(actual.ContainsKey);
+			Assert.IsTrue(designer == 0 || designer == PlannedRemovals.Length,
+				"The target has only some of the designer's types: " + string.Join(", ", PlannedRemovals.Where(actual.ContainsKey)));
+			var generated = designer == 0;
+			Console.WriteLine("The target is built on the " + (generated ? "generated" : "designer's") + " data classes.");
+			return generated;
+		}
+
 		[TestMethod, TestCategory("webservice"), TestCategory("wsdl")]
 		[Description("No type, element or element type a released program knows has been removed, renamed or retyped")]
 		public void No_known_element_is_removed_renamed_or_retyped()
 		{
 			var expected = Types(Snapshot());
 			var actual = Types(WebServiceTarget.Wsdl());
+			IsBuiltOnGeneratedClasses(actual);
 			var problems = new List<string>();
 			foreach (var pair in expected)
 			{
 				string[] actualElements;
 				if (!actual.TryGetValue(pair.Key, out actualElements))
 				{
-					problems.Add(pair.Key + ": type missing");
+					if (!PlannedRemovals.Contains(pair.Key))
+						problems.Add(pair.Key + ": type missing");
 					continue;
 				}
 				foreach (var element in pair.Value.Except(actualElements))
@@ -125,10 +154,14 @@ namespace x360ce.Tests
 			Console.WriteLine(additions.Count == 0
 				? "Target contract equals the live contract."
 				: "Target adds:" + Environment.NewLine + string.Join(Environment.NewLine, additions));
+			Assert.AreEqual(IsBuiltOnGeneratedClasses(actual), additions.Contains(GeneratedBaseType),
+				"NotifyPropertyChanged replaces the designer's types: a service has the one or the others.");
 			// The additions this release makes: the 4.22 wheel columns of PadSetting, GetServerInfo with
 			// its answer type, for the Options page's Test button, the 4.25 input source of a device, the 4.26
-			// friction of a wheel, and the 4.28 mouse stick columns and ButtonBig of PadSetting.
+			// friction of a wheel, the 4.28 mouse stick columns and ButtonBig of PadSetting, and the empty base type of
+			// the data classes, which replaces the PlannedRemovals.
 			var unexpected = additions
+				.Where(x => x != GeneratedBaseType)
 				.Where(x => !x.StartsWith("PadSetting: +Force") && !x.StartsWith("PadSetting: +WheelRange"))
 				.Where(x => !x.StartsWith("PadSetting: +Mouse") && x != "PadSetting: +ButtonBig:s:string")
 				.Where(x => x != "ServerInfo: new type" && x != "message:GetServerInfo: new type" && x != "message:GetServerInfoResponse: new type")

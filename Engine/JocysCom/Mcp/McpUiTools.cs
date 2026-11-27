@@ -73,13 +73,30 @@ namespace JocysCom.ClassLibrary.Mcp
 			return node;
 		}
 
-		[McpTool(AiAccess.Read, "The program's windows that are open besides the main one, such as a dialog waiting for an answer, as JSON: Path, Name, Modal. Read one with ui_read and its Path; the other tools take paths that start with it.")]
+		[McpTool(AiAccess.Read, "The program's windows that are open besides the main one, such as a dialog waiting for an answer, as JSON: Path, Name, Modal, Handle (the window's handle in Windows, for a program that takes its picture). Read one with ui_read and its Path; the other tools take paths that start with it.")]
 		public static object UiWindows()
 		{
-			return OtherWindows().Select(x => (object)new Dictionary<string, object> { { "Path", WindowName(x) }, { "Name", WindowTitle(x) }, { "Modal", IsModal(x) }, }).ToArray();
+			return OtherWindows().Select(x => (object)new Dictionary<string, object> { { "Path", WindowName(x) }, { "Name", WindowTitle(x) }, { "Modal", IsModal(x) }, { "Handle", HandleOf(x).ToInt64() }, }).ToArray();
 		}
 
-		[McpTool(AiAccess.Read, "What the person is looking at now, as JSON: Windows (every open window of the program: Path, Name, Modal, Active), Window (the path of the window in front, empty for the main one), Tabs (the pages shown in it, from the top down), Focus (the element with keyboard focus: Path, Role, Name, Value) and Row (the current row, when Focus is a grid). The paths work with the other tools.")]
+		[McpTool(AiAccess.Configure, "Closes one of the program's other windows, as the close button on its title bar does: a dialog closes as if cancelled, and the press that opened it carries on. ui_windows lists them; the main window is not one of them.")]
+		public static string UiClose([Description("Path of a window from ui_windows.")] string path)
+		{
+			var window = OtherWindows().FirstOrDefault(x => WindowName(x) == path);
+			if (window == null)
+				throw new InvalidOperationException("No window " + path + " is open. ui_windows lists the open ones.");
+			var form = window as Form;
+			var menu = window as ToolStripDropDown;
+			if (form != null)
+				form.Close();
+			else if (menu != null)
+				menu.Close();
+			else
+				throw new InvalidOperationException("Only a Windows Forms window or menu closes this way.");
+			return null;
+		}
+
+		[McpTool(AiAccess.Read, "What the person is looking at now, as JSON: Windows (every open window of the program: Path, Name, Modal, Active, Handle), Window (the path of the window in front, empty for the main one), Tabs (the pages shown in it, from the top down), Focus (the element with keyboard focus: Path, Role, Name, Value) and Row (the current row, when Focus is a grid). The paths work with the other tools.")]
 		public static object UiCurrent()
 		{
 			var root = RootWindow;
@@ -112,6 +129,31 @@ namespace JocysCom.ClassLibrary.Mcp
 				node = Withheld(UiTreeWalker.Read(start, false, path));
 			});
 			return UiTreeExporter.ToJson(node, false);
+		}
+
+		[McpTool(AiAccess.Read, "Every page the program's windows can show, as JSON in the order a person meets them: each tab and the tabs inside it, in the main window and in the other open windows. Path is the page, Name its words, Window the path of the window it is in (empty for the main one), Way the pages to open first, outermost first, and Hidden true for a page that is there but not shown now. ui_open opens one.")]
+		public static object UiPages()
+		{
+			var pages = new List<object>();
+			// Walked for the names alone, as a search is: a page's contents are not what is asked.
+			AddPages(UiTreeWalker.Read(RootWindow, false, "", false), "", new string[0], false, pages);
+			foreach (var window in OtherWindows())
+				AddPages(UiTreeWalker.Read(window, false, WindowName(window), false), WindowName(window), new string[0], false, pages);
+			return pages.ToArray();
+		}
+
+		/// <summary>The pages in a branch of the tree, each with the pages above it, outermost first.</summary>
+		static void AddPages(UiNode node, string window, string[] way, bool hidden, List<object> pages)
+		{
+			hidden = hidden || node.Hidden;
+			if (node.Role == "Tab" && node.Path != null)
+			{
+				pages.Add(new Dictionary<string, object> { { "Path", node.Path }, { "Name", node.Name }, { "Window", window }, { "Way", way }, { "Hidden", hidden } });
+				way = way.Concat(new[] { node.Path }).ToArray();
+			}
+			if (node.Items != null)
+				foreach (var child in node.Items)
+					AddPages(child, window, way, hidden, pages);
 		}
 
 		[McpTool(AiAccess.Configure, "Sets an element by path: true/false for a CheckBox or Choice, a number for a Slider or Number, an item's shown text for a List, a tab name for Tabs, a row index for a Grid, text for Text.")]
@@ -167,12 +209,15 @@ namespace JocysCom.ClassLibrary.Mcp
 			return text;
 		}
 
-		/// <summary>Frames an element for the person, or says it is hidden: a frame around nothing on screen points at nothing.</summary>
+		/// <summary>
+		/// Frames an element for the person, or says it is hidden: a frame around nothing on screen points at nothing. An entry
+		/// on a tool bar, or a row or a cell of a list, is framed by itself, so a numbered guide marks the button it names.
+		/// </summary>
 		static void PointAt(object element, string text, int seconds)
 		{
 			var pointed = false;
 			PointAtWpf(element, text, seconds, ref pointed);
-			if (!pointed)
+			if (!pointed && !UiCallout.ShowPart(element, text, seconds))
 				PointAt(UiTreeWalker.ControlOf(element), text, seconds);
 		}
 
@@ -188,10 +233,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				element = FindElement(path);
 				if (element == null)
 					throw new InvalidOperationException("No element at " + path + ".");
-				// "Show me" means the window too: a person asking cannot see a tray icon's insides.
-				var main = MainWindow();
-				if (main != null && WindowOf(element) == main && !IsShowing(main))
-					Restore(main);
+				ShowWindowOf(element);
 				if (walk)
 					way = TabsOnTheWay(element);
 			});
@@ -212,6 +254,37 @@ namespace JocysCom.ClassLibrary.Mcp
 			});
 			// The pause is the point: the person reads the balloon before the next step arrives.
 			Thread.Sleep(seconds * 1000);
+			return null;
+		}
+
+		/// <summary>Brings the main window back from the tray when the element is in it: "show me" means the window too, and a person cannot see a tray icon's insides.</summary>
+		static void ShowWindowOf(object element)
+		{
+			var main = MainWindow();
+			if (main != null && WindowOf(element) == main && !IsShowing(main))
+				Restore(main);
+		}
+
+		[McpTool(AiAccess.Read, "Opens a page, or the page an element is on, as a person clicks the tabs: restores the window from the tray if need be, brings each page on the way to the front, outermost first, and answers once the window has drawn it, as ui_wait does. Changes no setting. ui_pages lists the pages.", OnUiThread = false)]
+		public static string UiOpen([Description("Path of a page from ui_pages, or of an element from ui_read or ui_find.")] string path)
+		{
+			McpCatalog.OnUiThread(() =>
+			{
+				var element = FindElement(path);
+				if (element == null)
+					throw new InvalidOperationException("No element at " + path + ".");
+				ShowWindowOf(element);
+				UiTreeWalker.Reveal(element);
+			});
+			return UiWait();
+		}
+
+		[McpTool(AiAccess.Read, "Answers once the program has done the work already asked of it and has drawn every change in its windows, so the screen shows what the calls before it did. Call it after ui_set or ui_invoke when the next step needs the screen up to date, such as a picture of a window; ui_open waits by itself.", OnUiThread = false)]
+		public static string UiWait()
+		{
+			// Twice: work the first pass finds queued, such as a page filling itself in once it is shown, can queue more.
+			for (var pass = 0; pass < 2; pass++)
+				McpCatalog.OnUiThread(DrawWindows);
 			return null;
 		}
 
@@ -284,7 +357,13 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		static bool Has(string text, string query)
 		{
-			return text != null && text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
+			return text != null && Plain(text).IndexOf(Plain(query), StringComparison.OrdinalIgnoreCase) >= 0;
+		}
+
+		/// <summary>The words as a person types them: the typographic apostrophe a program writes is the straight one typed.</summary>
+		static string Plain(string text)
+		{
+			return text.Replace('’', '\'');
 		}
 
 		[McpTool(AiAccess.Read, "Runs a small script, one step per line, in order: 'show <path> | <words> | <seconds>' points at an element, and 0 seconds keeps it until the person acts; 'walk <path> | <words> | <seconds>' does the same after opening and pointing at each tab on the way; 'hide' takes the frame away; 'click <path>' presses a button; 'set <path> | <value>' sets an element; 'wait <seconds>' pauses. Lines starting with # are ignored. Stops at the first step that fails and says which. A click that opens a window goes on to the next line, which may answer it, and a window still waiting at the end is named with its buttons. show, walk, hide and wait need Read access; click and set need Configure.", OnUiThread = false, Changes = true)]

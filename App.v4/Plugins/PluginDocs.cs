@@ -67,30 +67,58 @@ namespace x360ce.App.Plugins
 				sb.Append("- Product GUID: ").Append(type.ProductGuid).Append('\n');
 				sb.Append("- Controls: axes ").Append(type.AxisCount).Append(", sliders ").Append(type.SliderCount)
 					.Append(", hat switches ").Append(type.PovCount).Append(", buttons ").Append(type.ButtonCount).Append('\n');
+				if (type.Mapping != null)
+					sb.Append("- Recommended mapping, which a controller tab takes when the device is put on it and from Auto Preset, in SDL’s form: ")
+						.Append(type.Mapping).Append('\n');
 				if (type.Faulted)
 					sb.Append("- Switched off after it failed, until x360ce starts again: ").Append(type.FaultReason).Append('\n');
-				sb.Append("- To use it: the list a controller tab's Add opens offers one until one is added, and Add Plugin Device on the Devices tab ")
+				sb.Append("- To use it: the list a controller tab’s Add opens offers one until one is added, and Add Plugin Device on the Devices tab ")
 					.Append("adds another; map it to a controller like any device. devices_list lists its tools, and device_call calls them.\n");
 				if (!string.IsNullOrWhiteSpace(type.Description))
 					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
 				AppendTab(sb, type);
 			}
+			foreach (var type in file.TelemetryTypes)
+			{
+				sb.Append("\n## ").Append(type.Name).Append("\n\n");
+				sb.Append("- Kind: wheel telemetry provider (`IPluginWheelTelemetry`), active automatically while a wheel’s centering spring and telemetry are enabled.\n");
+				if (type.ControlType != null)
+					sb.Append("- Dedicated tab: ").Append(type.ControlType.Name).Append(", hosted as the Wheel Telemetry tab on a steering wheel’s controller page.\n");
+				if (type.Faulted)
+					sb.Append("- Switched off after it failed, until x360ce starts again: ").Append(type.FaultReason).Append('\n');
+				if (!string.IsNullOrWhiteSpace(type.Description))
+					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
+			}
+			foreach (var type in file.GameTypes)
+			{
+				sb.Append("\n## ").Append(type.Name).Append("\n\n");
+				var fileNames = type.FileNames;
+				sb.Append("- Kind: game plugin (`IPluginGame`), a tab named ").Append(type.Name).Append(" on the Games tab while a game it is for is selected")
+					.Append(fileNames.Length == 0 ? "" : ": " + string.Join(", ", fileNames)).Append(".\n");
+				if (type.ControlType != null)
+					sb.Append("- Its page: ").Append(type.ControlType.Name).Append(", then Help with the text below.\n");
+				if (type.Faulted)
+					sb.Append("- Switched off after it failed, until x360ce starts again: ").Append(type.FaultReason).Append('\n');
+				if (!string.IsNullOrWhiteSpace(type.Description))
+					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
+			}
 			return sb.ToString();
 		}
 
-		/// <summary>What the device's tab on the controller page holds: its MCP server, each setting, and the plugin's own control.</summary>
+		/// <summary>What the device's tab on the controller page holds: the plugin's own control, its MCP server, each setting, and its help.</summary>
 		static void AppendTab(StringBuilder sb, PluginDeviceType type)
 		{
 			if (!type.HasTab)
 				return;
 			sb.Append("\n### Its tab\n\n");
-			sb.Append("A tab named ").Append(type.Name).Append(" on the controller page the device is mapped to. ");
+			sb.Append("A tab named ").Append(type.Name).Append(" on the controller page the device is mapped to, with a page for each part: ");
+			sb.Append("the plugin’s own control first, then MCP Server, Properties with the settings below, and Help with the text above. ");
 			sb.Append("Each device keeps its own values; Reset gives back the first ones.\n\n");
 			if (type.McpServer != null)
 				sb.Append("- MCP server: closed until the person opens it on the tab, as AI assistant access is opened on the AI page. ")
-					.Append("It listens on the port x360ce's port plan gives the controller and place the device is mapped to, 371CD: ")
+					.Append("It listens on the port x360ce’s port plan gives the controller and place the device is mapped to, 371CD: ")
 					.Append(Mcp.PortPlan.Port(4, 1)).Append(" for the first device on controller 4. ")
-					.Append("It serves this device's tools alone: ").Append(string.Join(", ", PluginDeviceTools.Names(type))).Append(".\n");
+					.Append("It serves this device’s tools alone: ").Append(string.Join(", ", PluginDeviceTools.Names(type))).Append(".\n");
 			foreach (var setting in type.Settings)
 			{
 				sb.Append("- ").Append(setting.DisplayName).Append(" (").Append(setting.Category).Append(", ").Append(setting.Takes);
@@ -109,7 +137,7 @@ namespace x360ce.App.Plugins
 				sb.Append('\n');
 			}
 			if (type.ControlType != null)
-				sb.Append("- The plugin's own control, ").Append(type.ControlType.Name).Append(", on the first page, before Properties.\n");
+				sb.Append("- The plugin’s own control, ").Append(type.ControlType.Name).Append(", on the first page, before Properties.\n");
 		}
 
 		/// <summary>Whether the plugin loaded, and if not, why.</summary>
@@ -119,6 +147,8 @@ namespace x360ce.App.Plugins
 			{
 				case PluginFileState.Loaded:
 					return file.Reason == null ? "loaded" : "loaded. " + file.Reason;
+				case PluginFileState.Disabled:
+					return "disabled. " + file.Reason;
 				case PluginFileState.WaitingForPermission:
 					return "waiting for permission. " + file.Reason;
 				default:
